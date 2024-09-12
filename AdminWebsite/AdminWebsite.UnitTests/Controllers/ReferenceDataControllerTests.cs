@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AdminWebsite.Configuration;
 using Autofac.Extras.Moq;
 using FizzWare.NBuilder;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +23,6 @@ namespace AdminWebsite.UnitTests.Controllers
         private Mock<IBookingsApiClient> _bookingsApiClientMock;
         private Mock<IReferenceDataService> _referenceDataServiceMock;
         private Mock<IUserIdentity> _userIdentityMock;
-        private Mock<IFeatureToggles> _featureTogglesMock;
         private ReferenceDataController _controller;
         private AutoMock _mocker;
 
@@ -34,7 +32,6 @@ namespace AdminWebsite.UnitTests.Controllers
             _mocker = AutoMock.GetLoose();
             _bookingsApiClientMock = _mocker.Mock<IBookingsApiClient>();
             _userIdentityMock = _mocker.Mock<IUserIdentity>();
-            _featureTogglesMock = _mocker.Mock<IFeatureToggles>();
             _referenceDataServiceMock = _mocker.Mock<IReferenceDataService>();
             _controller = _mocker.Create<ReferenceDataController>();
         }
@@ -54,8 +51,6 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_return_all_hearing_types_and_case_types_where_hearing_type_is_empty()
         {
-            
-            _featureTogglesMock.Setup(x => x.UseV2Api()).Returns(true);
             // Arrange
             var includeDeleted = true;
             _userIdentityMock.Setup(x => x.IsATeamLead())
@@ -72,17 +67,12 @@ namespace AdminWebsite.UnitTests.Controllers
             okObjectResult.Value.Should().BeEquivalentTo(GetHearingTypes());
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public async Task Should_return_participants_roles(bool refDataFeatureToggle)
+        [Test]
+        public async Task Should_return_participants_roles()
         {
-            _featureTogglesMock.Setup(x => x.ReferenceDataToggle()).Returns(refDataFeatureToggle);
             List<ICaseRoleResponse> listTypes;
-            if(refDataFeatureToggle)
-                listTypes = new List<ICaseRoleResponse> { new CaseRoleResponseV2 { Name = "type1" } };
-            else
-                listTypes = new List<ICaseRoleResponse> { new CaseRoleResponse { Name = "type1" } };
-            SetTestCase(listTypes, refDataFeatureToggle);
+            listTypes = new List<ICaseRoleResponse> { new CaseRoleResponseV2 { Name = "type1" } };
+            SetTestCase(listTypes);
 
             var response = await _controller.GetParticipantRoles("type1");
             response.Should().NotBeNull();
@@ -119,6 +109,19 @@ namespace AdminWebsite.UnitTests.Controllers
             var result = (OkObjectResult)response.Result;
             List<CaseAndHearingRolesResponse> caseRoles = (List<CaseAndHearingRolesResponse>)result.Value;
             caseRoles.Count.Should().Be(0);
+        }
+
+        private void SetTestCase(List<ICaseRoleResponse> listTypes)
+        {
+            var listHearingRoles2 = new List<HearingRoleResponseV2> { new HearingRoleResponseV2 { Name = "type1", UserRole = "role1"} };
+
+            _userIdentityMock.Setup(x => x.GetAdministratorCaseTypes()).Returns(new List<string> { "type1", "type2" });
+            
+            //v2 endpoints
+            var casetypeV2Response = listTypes?.Select(e => (CaseRoleResponseV2)e).ToList();
+            _bookingsApiClientMock.Setup(x => x.GetCaseRolesForCaseServiceAsync(It.IsAny<string>())).ReturnsAsync(casetypeV2Response);
+            _bookingsApiClientMock.Setup(x => x.GetHearingRolesForCaseRoleV2Async(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(listHearingRoles2);
+            
         }
 
         [Test]
@@ -163,30 +166,6 @@ namespace AdminWebsite.UnitTests.Controllers
             var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
             okObjectResult.Value.Should().BeEquivalentTo(expected);
         }
-        
-        private void SetTestCase(List<ICaseRoleResponse> listTypes, bool refDataToggle = false)
-        {
-            var listHearingRoles = new List<HearingRoleResponse> { new HearingRoleResponse { Name = "type1", UserRole = "role1"} };
-            var listHearingRoles2 = new List<HearingRoleResponseV2> { new HearingRoleResponseV2 { Name = "type1", UserRole = "role1"} };
-
-            _userIdentityMock.Setup(x => x.GetAdministratorCaseTypes()).Returns(new List<string> { "type1", "type2" });
-            if (refDataToggle)
-            {
-                //v2 endpoints
-                var casetypeV2Response = listTypes?.Select(e => (CaseRoleResponseV2)e).ToList();
-                _bookingsApiClientMock.Setup(x => x.GetCaseRolesForCaseServiceAsync(It.IsAny<string>())).ReturnsAsync(casetypeV2Response);
-                _bookingsApiClientMock.Setup(x => x.GetHearingRolesForCaseRoleV2Async(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(listHearingRoles2);
-            }
-            else
-            {
-                //V1 endpoints
-                var casetypeV1Response = listTypes?.Select(e => (CaseRoleResponse)e).ToList();
-                _bookingsApiClientMock.Setup(x => x.GetCaseRolesForCaseTypeAsync(It.IsAny<string>())).ReturnsAsync(casetypeV1Response);   
-                _bookingsApiClientMock.Setup(x => x.GetHearingRolesForCaseRoleAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(listHearingRoles);
-
-            }
-        }
-
         private static List<CaseTypeResponse> GetCaseTypesList()
         {
             return new List<CaseTypeResponse>

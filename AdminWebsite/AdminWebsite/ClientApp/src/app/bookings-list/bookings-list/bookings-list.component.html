@@ -54,20 +54,20 @@
               (blur)="onEndDateBlur()"
             />
           </div>
-          <div class="govuk-grid-column-one-half" *ngIf="workAllocationEnabled()">
+          <div class="govuk-grid-column-one-half">
             <app-justice-users-menu (selectedEmitter)="selectedUsersEmitter($event)"></app-justice-users-menu>
           </div>
         </div>
         <div class="govuk-grid-row govuk-!-margin-left-6 govuk-!-margin-top-6 govuk-!-margin-right-6">
           <div class="govuk-grid-column-one-half">
-            <div *ngIf="isV2" class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
               <div class="govuk-checkboxes__item">
                 <input class="govuk-checkboxes__input" id="noJudge" name="noJudge" type="checkbox" formControlName="noJudge" />
                 <label class="govuk-label govuk-checkboxes__label" for="noJudge"> Hearings with no judge </label>
               </div>
             </div>
           </div>
-          <div class="govuk-grid-column-one-half vh-right-align" *ngIf="workAllocationEnabled()">
+          <div class="govuk-grid-column-one-half vh-right-align">
             <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
               <div class="govuk-checkboxes__item">
                 <input
@@ -116,12 +116,7 @@
     <h1 class="govuk-heading-l">{{ title }}</h1>
   </div>
   <div class="govuk-grid-column-one-half">
-    <button
-      *ngIf="!showSearch && enableSearchFeature"
-      id="openSearchPanelButton"
-      class="govuk-button vh-btnpanel vh-right-align"
-      (click)="openSearchPanel()"
-    >
+    <button *ngIf="!showSearch" id="openSearchPanelButton" class="govuk-button vh-btnpanel vh-right-align" (click)="openSearchPanel()">
       <img src="assets/images/searchicon.png" alt="search" class="vh-searchicon" />Search
     </button>
   </div>
@@ -142,7 +137,7 @@
         *ngFor="let detail of booking.BookingsDetails; index as i"
         [ngClass]="{ 'vh-row-selected': detail.Selected, 'vh-row-cancelled': detail.isCancelled, 'vh-row-created': detail.isCreated }"
       >
-        <div class="govuk-grid-row vh-row vh-a" (click)="rowSelected(b, i)" [attr.id]="b + '_' + i">
+        <div class="govuk-grid-row vh-row vh-a" onKeyPress="" (click)="rowSelected(b, i)" [attr.id]="b + '_' + i">
           <div class="govuk-grid-column-one-quarter">
             <app-booking-status [bookingDetails]="detail" [showTime]="true"></app-booking-status>
           </div>
@@ -178,7 +173,7 @@
                 </span>
               </div>
             </div>
-            <div id="allocated-to-{{ detail.HearingId }}" class="govuk-grid-row" *ngIf="vhoWorkAllocationFeature">
+            <div id="allocated-to-{{ detail.HearingId }}" class="govuk-grid-row">
               <div class="govuk-grid-column-full vh-l">
                 <div class="govuk-hint vh-xsml vh-font-black">Allocated to: {{ detail.AllocatedTo }}</div>
               </div>

@@ -24,23 +24,17 @@ namespace AdminWebsite.Controllers
     public class ReferenceDataController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
-        private readonly IPublicHolidayRetriever _publicHolidayRetriever;
         private readonly IReferenceDataService _referenceDataService;
-        private readonly IFeatureToggles _featureToggles;
 
         /// <summary>
         /// Instantiate the controller
         /// </summary>
         public ReferenceDataController(
-            IBookingsApiClient bookingsApiClient, 
-            IPublicHolidayRetriever publicHolidayRetriever,
-            IReferenceDataService referenceDataService,
-            IFeatureToggles featureToggles)
+            IBookingsApiClient bookingsApiClient,
+            IReferenceDataService referenceDataService)
         {
             _bookingsApiClient = bookingsApiClient;
-            _publicHolidayRetriever = publicHolidayRetriever;
             _referenceDataService = referenceDataService;
-            _featureToggles = featureToggles;
         }
 
         /// <summary>
@@ -63,13 +57,12 @@ namespace AdminWebsite.Controllers
                 Code = hearingType.Code
             } )).ToList();
             
-            if (_featureToggles.UseV2Api())
-                result.AddRange(caseTypes.Where(ct => !ct.HearingTypes.Any())
-                    .Select(caseType => new HearingTypeResponse
-                    {
-                        Group = caseType.Name,
-                        ServiceId = caseType.ServiceId
-                    }));
+            result.AddRange(caseTypes.Where(ct => !ct.HearingTypes.Any())
+                .Select(caseType => new HearingTypeResponse
+                {
+                    Group = caseType.Name,
+                    ServiceId = caseType.ServiceId
+                }));
 
             return Ok(result);
         }
@@ -85,16 +78,9 @@ namespace AdminWebsite.Controllers
         {
             var response = new List<CaseAndHearingRolesResponse>();
             List<ICaseRoleResponse> iCaseRoles;
-            if (_featureToggles.ReferenceDataToggle())
-            {
-                var caseRoles2 = await _bookingsApiClient.GetCaseRolesForCaseServiceAsync(caseTypeParameter);
-                iCaseRoles = caseRoles2?.Select(e => (ICaseRoleResponse)e).ToList();
-            }
-            else
-            {
-                var caseRoles1 = await _bookingsApiClient.GetCaseRolesForCaseTypeAsync(caseTypeParameter);
-                iCaseRoles = caseRoles1?.Select(e => (ICaseRoleResponse)e).ToList();
-            }
+            var caseRoles2 = await _bookingsApiClient.GetCaseRolesForCaseServiceAsync(caseTypeParameter);
+            iCaseRoles = caseRoles2?.Select(e => (ICaseRoleResponse)e).ToList();
+            
         
             if (iCaseRoles != null && iCaseRoles.Any())
             {
@@ -102,16 +88,8 @@ namespace AdminWebsite.Controllers
                 {
                     var caseRole = new CaseAndHearingRolesResponse { Name = caseRoleName };
                     List<IHearingRoleResponse> iHearingRoles;
-                    if (_featureToggles.ReferenceDataToggle())
-                    {
-                        var hearingRoles1 = await _bookingsApiClient.GetHearingRolesForCaseRoleV2Async(caseTypeParameter, caseRoleName);
-                        iHearingRoles = hearingRoles1.Select(e => (IHearingRoleResponse)e).ToList();
-                    }
-                    else
-                    {
-                        var hearingRoles2 = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeParameter, caseRoleName);  
-                        iHearingRoles = hearingRoles2.Select(e => (IHearingRoleResponse)e).ToList();
-                    }
+                    var hearingRoles1 = await _bookingsApiClient.GetHearingRolesForCaseRoleV2Async(caseTypeParameter, caseRoleName);
+                    iHearingRoles = hearingRoles1.Select(e => (IHearingRoleResponse)e).ToList();
                     
                     caseRole.HearingRoles = iHearingRoles.ConvertAll(x => new HearingRole(x.Name, x.UserRole));
 
@@ -134,21 +112,8 @@ namespace AdminWebsite.Controllers
             var response = await _referenceDataService.GetHearingVenuesAsync();
             return Ok(response);
         }
-
-        /// <summary>
-        ///     Get upcoming public holidays in England and Wales
-        /// </summary>
-        /// <returns>List upcoming public holidays</returns>
-        [HttpGet("public-holidays")]
-        [ProducesResponseType(typeof(IList<PublicHolidayResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult<IList<PublicHolidayResponse>>> PublicHolidays()
-        {
-            var holidays = await _publicHolidayRetriever.RetrieveUpcomingHolidays();
-            var response = holidays.Select(PublicHolidayResponseMapper.MapFrom).ToList();
-            return Ok(response);
-        }
         
+                
         /// <summary>
         /// Get available languages for interpreters
         /// </summary>

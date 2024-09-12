@@ -223,7 +223,6 @@ describe('BookingDetailsComponent', () => {
 
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 
         const bookingPersistServiceMock = new BookingDetailsServiceMock() as any;
         component = new BookingDetailsComponent(
@@ -630,7 +629,6 @@ CY: 54321 (ID: 7777)`);
             tick(1000);
             component.hearing.GroupId = '123';
             component.multiDayBookingEnhancementsEnabled = true;
-            component.useV2Api = true;
             expect(component.isMultiDayUpdateAvailable()).toBeTruthy();
             discardPeriodicTasks();
         }));
@@ -640,7 +638,6 @@ CY: 54321 (ID: 7777)`);
             tick(1000);
             component.hearing.GroupId = null;
             component.multiDayBookingEnhancementsEnabled = true;
-            component.useV2Api = true;
             expect(component.isMultiDayUpdateAvailable()).toBeFalsy();
             discardPeriodicTasks();
         }));
@@ -650,17 +647,6 @@ CY: 54321 (ID: 7777)`);
             tick(1000);
             component.hearing.GroupId = '123';
             component.multiDayBookingEnhancementsEnabled = false;
-            component.useV2Api = true;
-            expect(component.isMultiDayUpdateAvailable()).toBeFalsy();
-            discardPeriodicTasks();
-        }));
-
-        it('should return false when not using v2 API', fakeAsync(() => {
-            component.ngOnInit();
-            tick(1000);
-            component.hearing.GroupId = '123';
-            component.multiDayBookingEnhancementsEnabled = true;
-            component.useV2Api = false;
             expect(component.isMultiDayUpdateAvailable()).toBeFalsy();
             discardPeriodicTasks();
         }));
@@ -671,7 +657,6 @@ CY: 54321 (ID: 7777)`);
             component.hearing.GroupId = '123';
             component.hearing.MultiDayHearingLastDayScheduledDateTime = component.hearing.StartTime;
             component.multiDayBookingEnhancementsEnabled = true;
-            component.useV2Api = true;
             expect(component.isMultiDayUpdateAvailable()).toBeFalsy();
             discardPeriodicTasks();
         }));

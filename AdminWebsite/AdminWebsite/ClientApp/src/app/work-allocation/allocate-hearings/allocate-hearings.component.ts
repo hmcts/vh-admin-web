@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AllocateHearingsService } from '../services/allocate-hearings.service';
-import { AllocationHearingsResponse, HearingTypeResponse, JusticeUserResponse } from '../../services/clients/api-client';
+import { AllocationHearingsResponse, JusticeUserResponse } from '../../services/clients/api-client';
 import { faCircleExclamation, faHourglassStart, faTriangleExclamation, faClock } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingModel } from './models/allocate-hearing.model';
 import { Transform } from '@fortawesome/fontawesome-svg-core';
@@ -103,15 +103,6 @@ export class AllocateHearingsComponent implements OnInit {
                     ariaLabel: item.first_name
                 }));
             });
-
-        const distinct = (value, index, array) => array.indexOf(value) === index;
-        this.videoHearingService.getHearingTypes(true).subscribe((data: HearingTypeResponse[]) => {
-            this.caseTypesSelectOptions = data
-                .map(item => item.group)
-                .filter(distinct)
-                .sort((a, b) => a.localeCompare(b))
-                .map(group => ({ entityId: group, label: group }));
-        });
     }
 
     searchForHearings(keepExistingMessage: boolean = false) {

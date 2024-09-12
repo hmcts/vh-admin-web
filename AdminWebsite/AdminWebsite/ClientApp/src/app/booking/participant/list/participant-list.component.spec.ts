@@ -46,7 +46,6 @@ describe('ParticipantListComponent', () => {
 
     beforeEach(waitForAsync(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
-        ldServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
         ldServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
         TestBed.configureTestingModule({
             declarations: [ParticipantListComponent, ParticipantItemComponent],
@@ -318,7 +317,6 @@ describe('ParticipantListComponent-SortParticipants', () => {
     beforeEach(waitForAsync(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
         const ldServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        ldServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
         ldServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
 
         TestBed.configureTestingModule({

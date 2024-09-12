@@ -3,10 +3,9 @@ import { Router } from '@angular/router';
 import { BreadcrumbItems } from './breadcrumbItems';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { first } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+
 @Component({
     selector: 'app-breadcrumb',
     templateUrl: './breadcrumb.component.html',
@@ -18,27 +17,14 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
     currentItem: BreadcrumbItemModel;
     @Input()
     canNavigate: boolean;
-    addJudiciaryMemberFlag = false;
     destroyed$ = new Subject<void>();
 
-    constructor(private router: Router, private videoHearingsService: VideoHearingsService, private featureService: LaunchDarklyService) {}
+    constructor(private router: Router, private videoHearingsService: VideoHearingsService) {}
 
     ngOnInit() {
         this.currentRouter = this.router.url;
-        this.featureService
-            .getFlag<boolean>(FeatureFlags.useV2Api)
-            .pipe(first())
-            .subscribe(result => {
-                this.addJudiciaryMemberFlag = result;
-                let tempBreadcrumbModel: BreadcrumbItemModel[];
-                if (this.addJudiciaryMemberFlag) {
-                    tempBreadcrumbModel = BreadcrumbItems.filter(x => x.Url !== PageUrls.AssignJudge);
-                } else {
-                    tempBreadcrumbModel = BreadcrumbItems.filter(x => x.Url !== PageUrls.AddJudicialOfficeHolders);
-                }
-                this.breadcrumbItems = tempBreadcrumbModel;
-                this.initBreadcrumb();
-            });
+        this.breadcrumbItems = BreadcrumbItems.filter(x => x.Url !== PageUrls.AssignJudge);
+        this.initBreadcrumb();
     }
 
     ngOnDestroy(): void {
@@ -73,7 +59,7 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
             if (item.Name !== 'Judge') {
                 return false;
             } else {
-                return this.addJudiciaryMemberFlag ? !item.LastMinuteAmendable : item.LastMinuteAmendable;
+                return !item.LastMinuteAmendable;
             }
         };
         this.currentItem = this.breadcrumbItems.find(s => s.Url === this.currentRouter);

@@ -1,19 +1,18 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { ParticipantDetailsModel } from 'src/app/common/model/participant-details.model';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ActivatedRoute } from '@angular/router';
 import { Logger } from '../../services/logger';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { ConfigService } from 'src/app/services/config.service';
-import { Subject, Subscription, takeUntil } from 'rxjs';
-import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-hearing-details',
     templateUrl: 'hearing-details.component.html',
     styleUrls: ['hearing-details.component.css']
 })
-export class HearingDetailsComponent implements OnInit, OnDestroy {
+export class HearingDetailsComponent implements OnDestroy {
     @Input() hearing: BookingsDetailsModel = null;
     @Input() participants: Array<ParticipantDetailsModel> = [];
 
@@ -21,31 +20,11 @@ export class HearingDetailsComponent implements OnInit, OnDestroy {
         this.phoneConferenceDetails = value;
     }
 
-    private readonly loggerPrefix = '[HearingDetails] -';
     phoneConferenceDetails = '';
 
-    vhoWorkAllocationFeature = false;
-    $subcription: Subscription;
-
     destroyed$ = new Subject<void>();
-    enableSearchFeature: boolean;
-    ejudFeatureFlag: boolean;
 
-    constructor(
-        private route: ActivatedRoute,
-        private logger: Logger,
-        private configService: ConfigService,
-        private lanchDarklyService: LaunchDarklyService
-    ) {}
-
-    ngOnInit() {
-        this.lanchDarklyService
-            .getFlag<boolean>(FeatureFlags.vhoWorkAllocation)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(flag => {
-                this.vhoWorkAllocationFeature = flag;
-            });
-    }
+    constructor(private route: ActivatedRoute, private logger: Logger, private configService: ConfigService) {}
 
     ngOnDestroy(): void {
         this.destroyed$.next();

@@ -57,7 +57,7 @@ const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'getHearingTypes',
     'getUsers'
 ]);
-const referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
+const referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts']);
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 let returnUrlService: ReturnUrlService;
 const featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
@@ -590,10 +590,6 @@ describe('BookingsListComponent', () => {
         videoHearingServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
         configServiceSpy.getConfig.and.returnValue({});
 
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.adminSearch).and.returnValue(of(true));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(true));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
-
         referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
 
@@ -664,22 +660,9 @@ describe('BookingsListComponent', () => {
         expect(component.loaded).toBeTruthy();
     });
 
-    it('should onSearch (admin_search flag off)', () => {
+    it('should onSearch', () => {
         bookingsListServiceSpy.getBookingsList.calls.reset();
         setFormValue();
-        component.enableSearchFeature = false;
-        component.onSearch();
-        expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
-        expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
-        expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
-        expect(component.bookings.length).toBeGreaterThan(0);
-        expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(undefined, component.limit);
-    });
-
-    it('should onSearch (admin_search flag on)', () => {
-        bookingsListServiceSpy.getBookingsList.calls.reset();
-        setFormValue();
-        component.enableSearchFeature = true;
         component.onSearch();
         expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
         expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
@@ -704,7 +687,6 @@ describe('BookingsListComponent', () => {
     it('should onSearch (admin_search flag on) with populated endDate and empty startDate', () => {
         bookingsListServiceSpy.getBookingsList.calls.reset();
         setFormValue();
-        component.enableSearchFeature = true;
         component.searchForm.controls['startDate'].setValue(null);
         component.onSearch();
         expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
@@ -730,7 +712,6 @@ describe('BookingsListComponent', () => {
     it('should onSearch (admin_search flag on) with populated startDate and empty endDate', () => {
         bookingsListServiceSpy.getBookingsList.calls.reset();
         setFormValue();
-        component.enableSearchFeature = true;
         component.searchForm.controls['endDate'].setValue(null);
         component.onSearch();
         expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
@@ -756,7 +737,6 @@ describe('BookingsListComponent', () => {
     it('should onSearch (admin_search flag on) with no judge option selected', () => {
         bookingsListServiceSpy.getBookingsList.calls.reset();
         setFormValue(true);
-        component.enableSearchFeature = true;
         component.searchForm.controls['endDate'].setValue(null);
         component.onSearch();
         expect(bookingPersistService.noJugdeInHearings).toBeTruthy();
@@ -795,7 +775,6 @@ describe('BookingsListComponent', () => {
         let startDateElement: HTMLInputElement;
 
         beforeEach(() => {
-            component.enableSearchFeature = true;
             component.openSearchPanel();
             fixture.detectChanges();
             startDateControl = component.searchForm.controls['startDate'];
@@ -855,7 +834,6 @@ describe('BookingsListComponent', () => {
         let endDateElement: HTMLInputElement;
 
         beforeEach(() => {
-            component.enableSearchFeature = true;
             component.openSearchPanel();
             fixture.detectChanges();
             startDateControl = component.searchForm.controls['startDate'];
@@ -909,16 +887,9 @@ describe('BookingsListComponent', () => {
         });
     });
 
-    it('should onClear (if workAllocation feature on)', () => {
-        spyOn(component, 'workAllocationEnabled').and.returnValue(true);
+    it('should onClear', () => {
         const csoMenu = onClearTest();
         expect(csoMenu).toHaveBeenCalledTimes(1);
-    });
-
-    it('should onClear (if workAllocation feature off)', () => {
-        spyOn(component, 'workAllocationEnabled').and.returnValue(false);
-        const csoMenu = onClearTest();
-        expect(csoMenu).toHaveBeenCalledTimes(0);
     });
 
     function onClearTest() {
@@ -973,7 +944,6 @@ describe('BookingsListComponent', () => {
         component.venueMenu = new VenuesMenuComponent(bookingPersistServiceSpy, referenceDataServiceSpy, formBuilder, loggerSpy);
 
         setFormValue();
-        component.enableSearchFeature = true;
         component.onSearch();
         expect(component.title).toEqual('Search results');
         component.onClear();
@@ -983,7 +953,6 @@ describe('BookingsListComponent', () => {
     it('should disable search button if all fields are empty', () => {
         component.openSearchPanel();
         clearSearch();
-        component.enableSearchFeature = true;
         fixture.detectChanges();
         const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
         expect(searchButton.disabled).toBe(false);
@@ -993,7 +962,6 @@ describe('BookingsListComponent', () => {
         component.openSearchPanel();
         clearSearch();
         component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
-        component.enableSearchFeature = true;
         fixture.detectChanges();
         const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
         expect(searchButton.disabled).toBe(false);
@@ -1003,7 +971,6 @@ describe('BookingsListComponent', () => {
         component.openSearchPanel();
         clearSearch();
         component.searchForm.controls['participantLastName'].setValue('PARTICIPANT_LAST_NAME');
-        component.enableSearchFeature = true;
         fixture.detectChanges();
         const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
         expect(searchButton.disabled).toBe(false);
@@ -1013,7 +980,6 @@ describe('BookingsListComponent', () => {
         component.openSearchPanel();
         clearSearch();
         component.searchForm.controls['startDate'].setValue(new Date(2022, 3, 25));
-        component.enableSearchFeature = true;
         fixture.detectChanges();
         const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
         expect(searchButton.disabled).toBe(false);
@@ -1023,7 +989,6 @@ describe('BookingsListComponent', () => {
         component.openSearchPanel();
         clearSearch();
         component.searchForm.controls['endDate'].setValue(new Date(2022, 3, 25));
-        component.enableSearchFeature = true;
         fixture.detectChanges();
         const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
         expect(searchButton.disabled).toBe(false);
@@ -1031,7 +996,6 @@ describe('BookingsListComponent', () => {
 
     it('should close search panel when close search button clicked', () => {
         component.openSearchPanel();
-        component.enableSearchFeature = true;
         fixture.detectChanges();
         let searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
         expect(searchPanel).not.toBeNull();
@@ -1055,33 +1019,7 @@ describe('BookingsListComponent', () => {
         expect(component.showSearch).toBe(false);
     });
 
-    it('should not load venues when search feature is disabled', fakeAsync(() => {
-        referenceDataServiceSpy.getCourts.calls.reset();
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.adminSearch).and.returnValue(of(false));
-
-        component.subscribeToFeatureFlags();
-        tick();
-
-        expect(component.enableSearchFeature).toBeFalsy();
-    }));
-
-    it('should load venues when search feature is enabled', () => {
-        referenceDataServiceSpy.getCourts.calls.reset();
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.adminSearch).and.returnValue(of(true));
-
-        fixture.detectChanges();
-        expect(component.enableSearchFeature).toBeTruthy();
-    });
-
-    it('should hide the search panel on initial load when search feature enabled', () => {
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.adminSearch).and.returnValue(of(true));
-        component.ngOnInit();
-        fixture.detectChanges();
-        expect(component.showSearch).toBe(false);
-    });
-
-    it('should hide the search panel on initial load when search feature disabled', () => {
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.adminSearch).and.returnValue(of(false));
+    it('should hide the search panel on initial load', () => {
         component.ngOnInit();
         fixture.detectChanges();
         expect(component.showSearch).toBe(false);
@@ -1280,16 +1218,7 @@ describe('BookingsListComponent', () => {
             expect(bookingPersistService.selectedUsers.length).toEqual(count);
         });
 
-        it('should not show allocated to label if work allocation feature flag is off', async () => {
-            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(false));
-            await component.ngOnInit();
-            fixture.detectChanges();
-            const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookingData.BookingsDetails[0].HearingId));
-            expect(divToHide).toBeFalsy();
-        });
-
-        it('should show allocated label to if work allocation feature flag is on', async () => {
-            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(true));
+        it('should show allocated label to', async () => {
             await component.ngOnInit();
             fixture.detectChanges();
             const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookingData.BookingsDetails[0].HearingId));

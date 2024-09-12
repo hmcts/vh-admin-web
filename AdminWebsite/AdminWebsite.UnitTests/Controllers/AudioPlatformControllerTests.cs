@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using AdminWebsite.Configuration;
 using AdminWebsite.Controllers;
 using AdminWebsite.Models;
 using BookingsApi.Client;
@@ -20,16 +19,14 @@ namespace AdminWebsite.UnitTests.Controllers
         
         private readonly Mock<IBookingsApiClient> _bookingsApiClientMock;
         private readonly Mock<ILogger<AudioPlatformController>> _loggerMock;
-        private readonly Mock<IFeatureToggles> _featureTogglesMock;
 
         public AudioPlatformControllerTests()
         {
             _videoApiClientMock = new Mock<IVideoApiClient>();
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _loggerMock = new Mock<ILogger<AudioPlatformController>>();
-            _featureTogglesMock = new Mock<IFeatureToggles>();
 
-            _controller = new AudioPlatformController(_videoApiClientMock.Object, _loggerMock.Object, _bookingsApiClientMock.Object, _featureTogglesMock.Object);
+            _controller = new AudioPlatformController(_videoApiClientMock.Object, _loggerMock.Object, _bookingsApiClientMock.Object);
         }
 
         [Test]
@@ -41,7 +38,6 @@ namespace AdminWebsite.UnitTests.Controllers
             };
 
             _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkAsync(It.IsAny<string>())).ReturnsAsync(audioResponse);
-            _featureTogglesMock.Setup(x => x.HrsEnabled()).Returns(false);
             
             var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>());
 
@@ -55,7 +51,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
         
         [Test]
-        public async Task Should_return_hrs_file_format_with_hrs_toggle_on()
+        public async Task Should_return_hrs_file_format()
         {
             var audioResponse = new AudioRecordingResponse
             {
@@ -72,7 +68,6 @@ namespace AdminWebsite.UnitTests.Controllers
             };
 
             _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkAsync(It.IsAny<string>())).ReturnsAsync(audioResponse);
-            _featureTogglesMock.Setup(x => x.HrsEnabled()).Returns(true);
             _bookingsApiClientMock.Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>())).ReturnsAsync(hearing);
 
             var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>());

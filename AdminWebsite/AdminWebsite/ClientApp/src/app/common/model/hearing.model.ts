@@ -27,8 +27,6 @@ export class HearingModel {
     case_type?: string;
     case_type_service_id?: string;
     other_information?: string;
-    judge_email?: string;
-    judge_phone?: string;
     court_room?: string;
     hearing_venue_id?: number;
     case_type_id?: number;

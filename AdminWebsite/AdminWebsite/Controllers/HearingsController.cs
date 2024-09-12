@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Attributes;
-using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Contracts.Responses;
@@ -31,7 +30,6 @@ using VideoApi.Client;
 using HearingDetailsResponse = AdminWebsite.Contracts.Responses.HearingDetailsResponse;
 using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
 using LinkedParticipantRequest = AdminWebsite.Contracts.Requests.LinkedParticipantRequest;
-using ParticipantRequest = BookingsApi.Contract.V1.Requests.ParticipantRequest;
 
 namespace AdminWebsite.Controllers
 {
@@ -47,7 +45,6 @@ namespace AdminWebsite.Controllers
         private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
         private readonly IHearingsService _hearingsService;
         private readonly IConferenceDetailsService _conferenceDetailsService;
-        private readonly IFeatureToggles _featureToggles;
         private readonly ILogger<HearingsController> _logger;
         private readonly IUserIdentity _userIdentity;
 
@@ -60,8 +57,7 @@ namespace AdminWebsite.Controllers
             IValidator<EditHearingRequest> editHearingRequestValidator,
             ILogger<HearingsController> logger, 
             IHearingsService hearingsService,
-            IConferenceDetailsService conferenceDetailsService,
-            IFeatureToggles featureToggles)
+            IConferenceDetailsService conferenceDetailsService)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -69,7 +65,6 @@ namespace AdminWebsite.Controllers
             _logger = logger;
             _hearingsService = hearingsService;
             _conferenceDetailsService = conferenceDetailsService;
-            _featureToggles = featureToggles;
         }
 #pragma warning restore S107
         /// <summary>
@@ -128,27 +123,14 @@ namespace AdminWebsite.Controllers
                 
             _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
             
-            if (_featureToggles.UseV2Api())
-            {
-                var newBookingRequestV2 = newBookingRequest.MapToV2();
-                    
-                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingWithCodeAsync(newBookingRequestV2);
+            var newBookingRequestV2 = newBookingRequest.MapToV2();
+                
+            var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingWithCodeAsync(newBookingRequestV2);
 
-                hearingId = hearingDetailsResponse.Id;
-                    
-                response = hearingDetailsResponse.Map();
-            }
-            else
-            {
-                var newBookingRequestV1 = newBookingRequest.MapToV1();
-
-                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequestV1);
-                    
-                hearingId = hearingDetailsResponse.Id;
-                    
-                response = hearingDetailsResponse.Map();
-            }
-
+            hearingId = hearingDetailsResponse.Id;
+                
+            response = hearingDetailsResponse.Map();
+            
             _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}", hearingId);
 
             return response;
@@ -220,7 +202,7 @@ namespace AdminWebsite.Controllers
                 var groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearingId);
 
                 var conferenceStatusToGet = groupedHearings.Where(x => x.Participants?
-                    .Exists(x => x.HearingRoleName == RoleNames.Judge) ?? false);
+                    .Exists(gh => gh.HearingRoleName == RoleNames.Judge) ?? false);
                 var tasks = conferenceStatusToGet.Select(x => GetHearingConferenceStatus(x.Id)).ToList();
                 await Task.WhenAll(tasks);
                 
@@ -410,26 +392,14 @@ namespace AdminWebsite.Controllers
 
         private async Task<HearingDetailsResponse> GetHearing(Guid hearingId)
         {
-            if (_featureToggles.UseV2Api())
-            {
-                var responseV2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
-                return responseV2.Map();
-            }
-
-            var responseV1 = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-            return responseV1.Map();
+            var responseV2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
+            return responseV2.Map();
         }
 
         private async Task<HearingDetailsResponse> MapHearingToUpdate(Guid hearingId)
         {
-            if (_featureToggles.UseV2Api())
-            {
-                var updatedHearing2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
-                return updatedHearing2.Map();
-            }
-            
-            var updatedHearing1 = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-            return updatedHearing1.Map();
+            var updatedHearing2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
+            return updatedHearing2.Map();
         }
 
         private async Task UpdateHearing(EditHearingRequest request, Guid hearingId, HearingDetailsResponse originalHearing)
@@ -450,19 +420,10 @@ namespace AdminWebsite.Controllers
                 request.AudioRecordingRequired = originalHearing.AudioRecordingRequired;
             }
             
-            if (_featureToggles.UseV2Api())
-            {
-                var updateHearingRequestV2 = HearingUpdateRequestMapper.MapToV2(request, _userIdentity.GetUserIdentityName());
-                await _bookingsApiClient.UpdateHearingDetails2Async(hearingId, updateHearingRequestV2);
-                await UpdateParticipantsV2(hearingId, request.Participants, request.Endpoints, originalHearing);
-                await UpdateJudiciaryParticipants(hearingId, request.JudiciaryParticipants, originalHearing);
-            }
-            else
-            {
-                var updateHearingRequestV1 = HearingUpdateRequestMapper.MapToV1(request, _userIdentity.GetUserIdentityName());
-                await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequestV1);
-                await UpdateParticipantsV1(hearingId, request.Participants, request.Endpoints, originalHearing);
-            }
+            var updateHearingRequestV2 = HearingUpdateRequestMapper.MapToV2(request, _userIdentity.GetUserIdentityName());
+            await _bookingsApiClient.UpdateHearingDetails2Async(hearingId, updateHearingRequestV2);
+            await UpdateParticipantsV2(hearingId, request.Participants, request.Endpoints, originalHearing);
+            await UpdateJudiciaryParticipants(hearingId, request.JudiciaryParticipants, originalHearing);
         }
 
         private async Task UpdateMultiDayHearing(EditMultiDayHearingRequest request, Guid hearingId, Guid groupId)
@@ -587,45 +548,6 @@ namespace AdminWebsite.Controllers
             };
 
             await _bookingsApiClient.CancelHearingsInGroupAsync(groupId, cancelRequest);
-        }
-
-        private async Task UpdateParticipantsV1(Guid hearingId, List<EditParticipantRequest> participants, List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
-        {
-            var request = await MapUpdateHearingParticipantsRequestV1(hearingId, participants, originalHearing);
-
-            await _hearingsService.ProcessParticipants(hearingId, request.ExistingParticipants, request.NewParticipants, request.RemovedParticipantIds, request.LinkedParticipants);
-            await _hearingsService.ProcessEndpoints(hearingId, endpoints, originalHearing, new List<IParticipantRequest>(request.NewParticipants));
-        }
-
-        private async Task<UpdateHearingParticipantsRequest> MapUpdateHearingParticipantsRequestV1(Guid hearingId, 
-            List<EditParticipantRequest> participants, 
-            HearingDetailsResponse originalHearing)
-        {
-            var existingParticipants = new List<UpdateParticipantRequest>();
-            var newParticipants = new List<ParticipantRequest>();
-            var removedParticipantIds = GetRemovedParticipantIds(participants, originalHearing);
-
-            foreach (var participant in participants)
-            {
-                var newParticipantToAdd = NewParticipantRequestMapper.MapTo(participant);
-                if (participant.Id.HasValue)
-                    ExtractExistingParticipants(originalHearing, participant, existingParticipants);
-                else if (await _hearingsService.ProcessNewParticipant(hearingId, participant, newParticipantToAdd, removedParticipantIds, originalHearing) is { } newParticipant)
-                    newParticipants.Add((ParticipantRequest)newParticipant);
-            }
-            
-            var linkedParticipants = ExtractLinkedParticipants(participants, originalHearing, removedParticipantIds, new List<IUpdateParticipantRequest>(existingParticipants), new List<IParticipantRequest>(newParticipants));
-            var linkedParticipantsV1 = linkedParticipants.Select(lp => lp.MapToV1()).ToList();
-            
-            var updateHearingParticipantsRequest = new UpdateHearingParticipantsRequest
-            {
-                ExistingParticipants = existingParticipants,
-                NewParticipants = newParticipants,
-                RemovedParticipantIds = removedParticipantIds,
-                LinkedParticipants = linkedParticipantsV1
-            };
-
-            return updateHearingParticipantsRequest;
         }
         
         private async Task UpdateParticipantsV2(Guid hearingId, List<EditParticipantRequest> participants, List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
@@ -939,19 +861,6 @@ namespace AdminWebsite.Controllers
             }
             return linkedParticipants;
         }
-
-        private static void ExtractExistingParticipants(
-            HearingDetailsResponse originalHearing,
-            EditParticipantRequest participant, 
-            List<UpdateParticipantRequest> existingParticipants)
-        {
-            var existingParticipant = originalHearing.Participants.Find(p => p.Id.Equals(participant.Id));
-            if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
-                return;
-            
-            var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
-            existingParticipants.Add(updateParticipantRequest);
-        }
         
         private static void ExtractExistingParticipantsV2(
             HearingDetailsResponse originalHearing,
@@ -981,26 +890,14 @@ namespace AdminWebsite.Controllers
             try
             {
                 HearingDetailsResponse hearingResponse;
-                if (_featureToggles.UseV2Api())
+                var response = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
+                ICollection<HearingDetailsResponseV2> groupedHearings = null;
+                if (response.GroupId != null)
                 {
-                    var response = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
-                    ICollection<HearingDetailsResponseV2> groupedHearings = null;
-                    if (response.GroupId != null)
-                    {
-                        groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdV2Async(response.GroupId.Value);
-                    }
-                    hearingResponse = response.Map(groupedHearings);
+                    groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdV2Async(response.GroupId.Value);
                 }
-                else
-                {
-                    var response = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                    ICollection<BookingsApi.Contract.V1.Responses.HearingDetailsResponse> groupedHearings = null;
-                    if (response.GroupId != null)
-                    {
-                        groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(response.GroupId.Value);
-                    }
-                    hearingResponse = response.Map(groupedHearings);
-                }
+                hearingResponse = response.Map(groupedHearings);
+                
                 return Ok(hearingResponse);
             }
             catch (BookingsApiException e)
@@ -1053,11 +950,10 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogDebug("Hearing {1} is booked. Polling for the status in BookingsApi", hearingId);
                 var response = await GetHearing(hearingId);
-                var participantsNeedVHAccounts = ParticipantsNeedVHAccounts(response.Participants);
-                var accountsStillNeedCreating = participantsNeedVHAccounts.Any(x => x.ContactEmail == x.Username);
+                var participantsNeedVhAccounts = ParticipantsNeedVhAccounts(response.Participants);
+                var accountsStillNeedCreating = participantsNeedVhAccounts.Any(x => x.ContactEmail == x.Username);
                 var isMultiDay = response.GroupId != null;
-                var isNotifyFlagOn = _featureToggles.UsePostMay2023Template();
-                if (isMultiDay && isNotifyFlagOn)
+                if (isMultiDay)
                 {
                     // Users are created as part of the clone process, so don't wait for them here
                     accountsStillNeedCreating = false;
@@ -1201,19 +1097,11 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        private IEnumerable<ParticipantResponse> ParticipantsNeedVHAccounts(List<ParticipantResponse> allParticipants)
+        private IEnumerable<ParticipantResponse> ParticipantsNeedVhAccounts(List<ParticipantResponse> allParticipants)
         {
-            IEnumerable<ParticipantResponse> participantsNeedVHAccounts;
-            if (_featureToggles.UseV2Api())
-            {
-                participantsNeedVHAccounts = allParticipants.Where(x => x.UserRoleName == RoleNames.Individual || x.UserRoleName == RoleNames.Representative);
-            }
-            else
-            {
-                participantsNeedVHAccounts = allParticipants.Where(x => x.UserRoleName != RoleNames.Judge);
-            }
-
-            return participantsNeedVHAccounts;
+            var participantsNeedVhAccounts = allParticipants.Where(x => x.UserRoleName == RoleNames.Individual || x.UserRoleName == RoleNames.Representative);
+            
+            return participantsNeedVhAccounts;
         }
     }
 }

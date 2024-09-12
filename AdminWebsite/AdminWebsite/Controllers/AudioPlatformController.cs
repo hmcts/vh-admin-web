@@ -24,14 +24,12 @@ namespace AdminWebsite.Controllers
         private readonly IVideoApiClient _videoAPiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<AudioPlatformController> _logger;
-        private readonly IFeatureToggles _featureToggles;
 
-        public AudioPlatformController(IVideoApiClient videoAPiClient, ILogger<AudioPlatformController> logger, IBookingsApiClient bookingsApiClient, IFeatureToggles featureToggles)
+        public AudioPlatformController(IVideoApiClient videoAPiClient, ILogger<AudioPlatformController> logger, IBookingsApiClient bookingsApiClient)
         {
             _videoAPiClient = videoAPiClient;
             _logger = logger;
             _bookingsApiClient = bookingsApiClient;
-            _featureToggles = featureToggles;
         }
 
         /// <summary>
@@ -50,14 +48,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 var requestKey = "";
-                if (_featureToggles.HrsEnabled())
-                {
-                    requestKey = await GetAudioHrsFileName(hearingId);
-                }
-                else
-                {
-                    requestKey = hearingId.ToString();
-                }
+                requestKey = await GetAudioHrsFileName(hearingId);
                 
                 var response = await _videoAPiClient.GetAudioRecordingLinkAsync(requestKey);
                 return Ok(new HearingAudioRecordingResponse { AudioFileLinks = response.AudioFileLinks });

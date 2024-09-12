@@ -46,7 +46,6 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     phoneDetails = '';
     showCancelBookingFailed = false;
     multiDayBookingEnhancementsEnabled: boolean;
-    useV2Api: boolean;
 
     private destroyed$ = new Subject<void>();
 
@@ -90,12 +89,6 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroyed$))
             .subscribe(enabled => {
                 this.multiDayBookingEnhancementsEnabled = enabled;
-            });
-        this.ldService
-            .getFlag<boolean>(FeatureFlags.useV2Api)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(enabled => {
-                this.useV2Api = enabled;
             });
     }
 
@@ -375,8 +368,6 @@ CY: ${this.conferencePhoneNumberWelsh} (ID: ${this.telephoneConferenceId})`;
     }
 
     isMultiDayUpdateAvailable(): boolean {
-        return (
-            this.hearing.isMultiDay && this.multiDayBookingEnhancementsEnabled && this.useV2Api && !this.hearing.isLastDayOfMultiDayHearing
-        );
+        return this.hearing.isMultiDay && this.multiDayBookingEnhancementsEnabled && !this.hearing.isLastDayOfMultiDayHearing;
     }
 }

@@ -59,15 +59,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _kinlyOptionsMock.Setup((op) => op.Value).Returns(_kinlyConfigurationMock.Object);
 
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
-            _hearingsService = new HearingsService(BookingsApiClient.Object, _participantGroupLogger.Object, FeatureToggle.Object);
+            _hearingsService = new HearingsService(BookingsApiClient.Object, _participantGroupLogger.Object);
 
             Controller = new AdminWebsite.Controllers.HearingsController(BookingsApiClient.Object,
                 UserIdentity.Object,
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
-                _conferencesServiceMock.Object,
-                 FeatureToggle.Object);
+                _conferencesServiceMock.Object);
         }
         
         protected static List<HearingDetailsResponse> CreateListOfV1HearingsInMultiDayGroup(

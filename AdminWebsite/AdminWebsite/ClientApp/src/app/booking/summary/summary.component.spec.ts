@@ -125,7 +125,6 @@ const videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService> = jasmine.cr
 ]);
 videoHearingsServiceSpy.isBookingServiceDegraded.and.returnValue(of(false));
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
 launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
 launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
 const bookingStatusService = new BookingStatusService(videoHearingsServiceSpy);
@@ -695,16 +694,6 @@ describe('SummaryComponent  with invalid request', () => {
         expect(component.showErrorSaving).toBeTruthy();
         expect(component.showWaitSaving).toBeFalsy();
     });
-
-    it('should not save booking, when no judge assigned and Ejud flag off', async () => {
-        component.ngOnInit();
-        fixture.detectChanges();
-        component.useApiV2 = false;
-        await component.bookHearing();
-        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalledTimes(0);
-        expect(component.showWaitSaving).toBeFalsy();
-        expect(component.showErrorSaving).toBeTruthy();
-    });
 });
 
 describe('SummaryComponent  with existing request', () => {
@@ -938,7 +927,6 @@ describe('SummaryComponent  with existing request', () => {
 describe('SummaryComponent  with multi days request', () => {
     const bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
     const ldServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-    ldServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
     ldServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
     ldServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
     recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [

@@ -14,9 +14,9 @@
       },
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[2.2.15, )",
-        "resolved": "2.2.15",
-        "contentHash": "rYSX6fU8e9uwEAvJFnObT6/05ysR/TyBxBcI10Dy1DTuuQJrqQxd2JD7bcSYmeVauvcfBkXgWFGvKbvh9oTJAg==",
+        "requested": "[2.3.1, )",
+        "resolved": "2.3.1",
+        "contentHash": "fELMrU9fK/QaLJo9rw1BKPKDWiNIypCXicOC61lkXkdAraQfeEIOuyQtVsopIl+PpUkHmkdbeXBITP+zS55y5w==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -155,9 +155,9 @@
       },
       "NotificationApi.Client": {
         "type": "Direct",
-        "requested": "[1.52.4, )",
-        "resolved": "1.52.4",
-        "contentHash": "xp9gHhPZwSxFHVBHIYVwyrOKXxkSFBT6PYG093PHI+w043S2a0JP2TFqoGB1h9i2+M9ie4eOc3GN8ujR6iA0gQ==",
+        "requested": "[2.1.3, )",
+        "resolved": "2.1.3",
+        "contentHash": "+7BiDpsJLK82OCoch76ighk8fQuq6wlO7i7leV3SsZtMmxWq1vQ9yjJkwsXwNVG6wH0T/lj2V8kywVcvG1pKSQ==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.3"
@@ -235,9 +235,9 @@
       },
       "UserApi.Client": {
         "type": "Direct",
-        "requested": "[1.49.6, )",
-        "resolved": "1.49.6",
-        "contentHash": "XgPR6E9T0nk4BzEOWXr7rYJHxhLkgnrxwqcW92hdlfOCwLCNrA178LWHt50bzLxl0jt9iiVSAWEbPTFtL3x2yg==",
+        "requested": "[2.1.1, )",
+        "resolved": "2.1.1",
+        "contentHash": "HLnaoli0hCvSU2/zCFvSZwsiP3lLkPo0ZH/l9d1d64vxdBe/Gccg1J/VaZMvbsOAMl3A9m3i2fDYE8JaZZS9ag==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -257,9 +257,9 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[2.2.10, )",
-        "resolved": "2.2.10",
-        "contentHash": "2F6+S8N4aCbuts3fS2lmzon+9S5Pqgt0GW2mo4obbP6u/YdS7mSqJ0uU9z1PsRpdGnRmrfrQ67O/N7/N3AIlPg==",
+        "requested": "[2.2.11, )",
+        "resolved": "2.2.11",
+        "contentHash": "ciMnAm7RGQ+yFX+/YUHlzwcPwIVKfyv3kGmNlvBS9ewItIqOEhVXMXjmDVwMPixYFx+Yept0gmdivo8woo044w==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.3"

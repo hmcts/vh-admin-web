@@ -50,7 +50,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     newDatesFormArray: FormArray;
 
     private destroyed$ = new Subject<void>();
-    private addJudciaryMembersFeatureEnabled: boolean;
     multiDayBookingEnhancementsEnabled: boolean;
 
     @ViewChild('editHearingDates') editHearingDates: EditHearingDatesComponent;
@@ -70,12 +69,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     ngOnInit() {
-        this.ldService
-            .getFlag<boolean>(FeatureFlags.useV2Api)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(result => {
-                this.addJudciaryMembersFeatureEnabled = result;
-            });
         this.ldService
             .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)
             .pipe(takeUntil(this.destroyed$))
@@ -536,12 +529,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         if (this.editMode) {
             this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary page.`);
             this.router.navigate([PageUrls.Summary]);
-        } else if (this.addJudciaryMembersFeatureEnabled) {
+        } else {
             this.logger.debug(`${this.loggerPrefix} Navigating to add joh page.`);
             this.router.navigate([PageUrls.AddJudicialOfficeHolders]);
-        } else {
-            this.logger.debug(`${this.loggerPrefix} Navigating to judge assignment.`);
-            this.router.navigate([PageUrls.AssignJudge]);
         }
     }
 

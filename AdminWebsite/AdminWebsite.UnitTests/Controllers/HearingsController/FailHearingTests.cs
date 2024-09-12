@@ -41,7 +41,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     Participants = [new ParticipantResponse { HearingRoleName = "Judge" }]
                 });
-            _mocker.Mock<IFeatureToggles>().Setup(e => e.BookAndConfirmToggle()).Returns(true);
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
         }
         
