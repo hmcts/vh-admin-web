@@ -1,3 +1,4 @@
+using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Mappers;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Contract.V1.Enums;
@@ -22,6 +23,8 @@ namespace AdminWebsite.UnitTests.Mappers
                 .WithEndPoints(2)
                 .WithSupplier(BookingSupplier.Vodafone);
             // Arrange
+            var existingEndpoint = hearing.Endpoints[0];
+            var existingParticipant = hearing.Participants[0];
             var endpoint = new V2.EndpointResponseV2
             {
                 Id = Guid.NewGuid(),
@@ -40,8 +43,8 @@ namespace AdminWebsite.UnitTests.Mappers
                 Screening = new V2.ScreeningResponseV2()
                 {
                     Type = ScreeningType.All,
-                    ProtectFromEndpointsIds = [hearing.Endpoints[0].Id],
-                    ProtectFromParticipantsIds = [hearing.Participants[0].Id]
+                    ProtectFromEndpointsIds = [existingEndpoint.Id],
+                    ProtectFromParticipantsIds = [existingParticipant.Id]
                 },
             };
 
@@ -58,8 +61,11 @@ namespace AdminWebsite.UnitTests.Mappers
             result.InterpreterLanguage.Should().BeEquivalentTo(endpoint.InterpreterLanguage.Map());
             result.ScreeningRequirement.Should().NotBeNull();
             result.ScreeningRequirement.Type.Should().Be(AdminWebsite.Contracts.Enums.ScreeningType.All);
-            result.ScreeningRequirement.ProtectFromEndpoints.Should().BeEquivalentTo(endpoint.Screening.ProtectFromEndpointsIds);
-            result.ScreeningRequirement.ProtectFromParticipants.Should().BeEquivalentTo(endpoint.Screening.ProtectFromParticipantsIds);
+            
+            var expectedProtectFromEndpoints = new List<ProtectFromResponse> { new() { Id =existingEndpoint.Id, Value = existingEndpoint.DisplayName} };
+            var expectedProtectFromParticipants = new List<ProtectFromResponse> { new() { Id = existingParticipant.Id, Value = existingParticipant.ContactEmail} };
+            result.ScreeningRequirement.ProtectFromEndpoints.Should().BeEquivalentTo(expectedProtectFromEndpoints);
+            result.ScreeningRequirement.ProtectFromParticipants.Should().BeEquivalentTo(expectedProtectFromParticipants);
         }
         
         [Test]

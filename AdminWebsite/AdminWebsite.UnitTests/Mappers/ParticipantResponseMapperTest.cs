@@ -1,4 +1,5 @@
-﻿using AdminWebsite.Mappers;
+﻿using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Mappers;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V2.Enums;
@@ -72,6 +73,8 @@ namespace AdminWebsite.UnitTests.Mappers
             
             var id = Guid.NewGuid();
             var participants = new List<ParticipantResponseV2>();
+            var existingEndpoint = hearing.Endpoints[0];
+            var existingParticipant = hearing.Participants[0];
             var participant = new ParticipantResponseV2
             {
                 FirstName = "Sam",
@@ -99,8 +102,8 @@ namespace AdminWebsite.UnitTests.Mappers
                 Screening = new ScreeningResponseV2
                 {
                     Type = ScreeningType.All,
-                    ProtectFromEndpointsIds = [hearing.Endpoints[0].Id],
-                    ProtectFromParticipantsIds = [hearing.Participants[0].Id]
+                    ProtectFromEndpointsIds = [existingEndpoint.Id],
+                    ProtectFromParticipantsIds = [existingParticipant.Id]
                 },
                 LinkedParticipants = new List<LinkedParticipantResponseV2>()
             };
@@ -129,8 +132,11 @@ namespace AdminWebsite.UnitTests.Mappers
                 participantResponse.InterpreterLanguage.Should().BeEquivalentTo(participant.InterpreterLanguage.Map());
                 participantResponse.ScreeningRequirement.Should().NotBeNull();
                 participantResponse.ScreeningRequirement.Type.Should().Be(AdminWebsite.Contracts.Enums.ScreeningType.All);
-                participantResponse.ScreeningRequirement.ProtectFromEndpoints.Should().BeEquivalentTo(participant.Screening.ProtectFromEndpointsIds);
-                participantResponse.ScreeningRequirement.ProtectFromParticipants.Should().BeEquivalentTo(participant.Screening.ProtectFromParticipantsIds);
+                
+                var expectedProtectFromEndpoints = new List<ProtectFromResponse> { new() { Id =existingEndpoint.Id, Value = existingEndpoint.DisplayName} };
+                var expectedProtectFromParticipants = new List<ProtectFromResponse> { new() { Id = existingParticipant.Id, Value = existingParticipant.ContactEmail} };
+                participantResponse.ScreeningRequirement.ProtectFromEndpoints.Should().BeEquivalentTo(expectedProtectFromEndpoints);
+                participantResponse.ScreeningRequirement.ProtectFromParticipants.Should().BeEquivalentTo(expectedProtectFromParticipants);
             }
         }
 
