@@ -28,7 +28,7 @@ namespace AdminWebsite.UnitTests.Services
             _mocker = AutoMock.GetLoose();
             _mocker.Mock<IOptions<VodafoneConfiguration>>().Setup(opt => opt.Value).Returns(new VodafoneConfiguration
             {
-                ConferencePhoneNumber = ExpectedTeleConferencePhoneNumber
+                VodafoneConferencePhoneNumber = ExpectedTeleConferencePhoneNumber
             });
 
             _mocker.Mock<IConferenceDetailsService>()
