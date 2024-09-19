@@ -14,19 +14,21 @@ export class ScreeningFormComponent {
     @Input() set hearing(hearing: HearingModel) {
         this.allParticipants = hearing.participants
             .filter(x => x.email)
-            .map(participant => {
-                return {
-                    contactEmail: participant.email,
-                    displayName: participant.display_name
-                } as GenericParticipantsModel;
-            });
+            .map(
+                participant =>
+                    ({
+                        contactEmail: participant.email,
+                        displayName: participant.display_name
+                    } as GenericParticipantsModel)
+            );
 
-        const mappedEndpoints = hearing.endpoints.map(endpoint => {
-            return {
-                contactEmail: null,
-                displayName: endpoint.displayName
-            } as GenericParticipantsModel;
-        });
+        const mappedEndpoints = hearing.endpoints.map(
+            endpoint =>
+                ({
+                    contactEmail: null,
+                    displayName: endpoint.displayName
+                } as GenericParticipantsModel)
+        );
 
         this.allParticipants = [...this.allParticipants, ...mappedEndpoints];
         this.createForm();
@@ -85,14 +87,6 @@ export class ScreeningFormComponent {
 
     initaliseScreening(displayName: string) {
         this.availableProtectParticipantFromList = this.allParticipants.filter(participant => participant.displayName !== displayName);
-    }
-
-    selectAll() {
-        this.selectedProtectParticipantFromList = this.availableProtectParticipantFromList;
-    }
-
-    unselectAll() {
-        this.selectedProtectParticipantFromList = [];
     }
 
     onSave() {

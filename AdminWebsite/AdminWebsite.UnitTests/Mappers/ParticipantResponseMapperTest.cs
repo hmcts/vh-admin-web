@@ -1,7 +1,8 @@
 ﻿using AdminWebsite.Mappers;
+using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Contract.V1.Enums;
+using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Responses;
-using LinkedParticipantResponse = BookingsApi.Contract.V1.Responses.LinkedParticipantResponse;
 using V1 = BookingsApi.Contract.V1.Responses;
 
 namespace AdminWebsite.UnitTests.Mappers
@@ -12,8 +13,8 @@ namespace AdminWebsite.UnitTests.Mappers
         public void Should_map_participant_response_V1()
         {
             var id = Guid.NewGuid();
-            var participants = new List<BookingsApi.Contract.V1.Responses.ParticipantResponse>();
-            var participant = new BookingsApi.Contract.V1.Responses.ParticipantResponse()
+            var participants = new List<V1.ParticipantResponse>();
+            var participant = new V1.ParticipantResponse
             {
                 FirstName = "Sam",
                 LastName = "Smith",
@@ -29,11 +30,11 @@ namespace AdminWebsite.UnitTests.Mappers
                 Username = "UserName",
                 Organisation = "Pluto",
                 Representee = "Representee",
-                LinkedParticipants = new List<LinkedParticipantResponse>()
+                LinkedParticipants = new List<V1.LinkedParticipantResponse>(),
             };
             participants.Add(participant);
 
-            var participantsResponse = ParticipantResponseMapper.Map(participants);
+            var participantsResponse = participants.Map();
 
             foreach (var participantResponse in participantsResponse)
             {
@@ -59,9 +60,19 @@ namespace AdminWebsite.UnitTests.Mappers
         [Test]
         public void Should_map_participant_response_V2()
         {
+            var hearing = HearingResponseV2Builder.Build()
+                .WithEndPoints(2)
+                .WithParticipant("Representative", "username1@hmcts.net")
+                .WithParticipant("Individual", "fname2.lname2@hmcts.net")
+                .WithParticipant("Individual", "fname3.lname3@hmcts.net")
+                .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
+                .WithParticipant("Judge", "judge.fudge@hmcts.net")
+                .WithEndPoints(2)
+                .WithSupplier(BookingSupplier.Vodafone);
+            
             var id = Guid.NewGuid();
-            var participants = new List<BookingsApi.Contract.V2.Responses.ParticipantResponseV2>();
-            var participant = new BookingsApi.Contract.V2.Responses.ParticipantResponseV2()
+            var participants = new List<ParticipantResponseV2>();
+            var participant = new ParticipantResponseV2
             {
                 FirstName = "Sam",
                 LastName = "Smith",
@@ -85,11 +96,17 @@ namespace AdminWebsite.UnitTests.Mappers
                     WelshValue = "WelshValue",
                     Live = true
                 },
+                Screening = new ScreeningResponseV2
+                {
+                    Type = ScreeningType.All,
+                    ProtectFromEndpointsIds = [hearing.Endpoints[0].Id],
+                    ProtectFromParticipantsIds = [hearing.Participants[0].Id]
+                },
                 LinkedParticipants = new List<LinkedParticipantResponseV2>()
             };
             participants.Add(participant);
 
-            var participantsResponse = ParticipantResponseMapper.Map(participants);
+            var participantsResponse = participants.Map(hearing);
 
             foreach (var participantResponse in participantsResponse)
             {
@@ -110,6 +127,10 @@ namespace AdminWebsite.UnitTests.Mappers
                 participantResponse.LinkedParticipants.Should().AllBeEquivalentTo(participant.LinkedParticipants);
                 participantResponse.InterpreterLanguage.Should().NotBeNull();
                 participantResponse.InterpreterLanguage.Should().BeEquivalentTo(participant.InterpreterLanguage.Map());
+                participantResponse.ScreeningRequirement.Should().NotBeNull();
+                participantResponse.ScreeningRequirement.Type.Should().Be(AdminWebsite.Contracts.Enums.ScreeningType.All);
+                participantResponse.ScreeningRequirement.ProtectFromEndpoints.Should().BeEquivalentTo(participant.Screening.ProtectFromEndpointsIds);
+                participantResponse.ScreeningRequirement.ProtectFromParticipants.Should().BeEquivalentTo(participant.Screening.ProtectFromParticipantsIds);
             }
         }
 
@@ -141,7 +162,7 @@ namespace AdminWebsite.UnitTests.Mappers
             };
 
             // Act
-            var participantsResponse = participants.Map();
+            var participantsResponse = participants.Map(null);
 
             // Assert
             participantsResponse[0].InterpreterLanguage.Should().BeNull();

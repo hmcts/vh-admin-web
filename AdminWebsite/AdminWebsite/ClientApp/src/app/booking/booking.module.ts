@@ -29,6 +29,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ScreeningFormComponent } from './screening/screening-form.component';
 import { ScreeningListComponent } from './screening/screening-list.component';
 import { ScreeningListItemComponent } from './screening/screening-list-item.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
@@ -60,7 +61,7 @@ export const Components: Type<any>[] = [
 ];
 
 @NgModule({
-    imports: [SharedModule, BookingRoutingModule, PopupModule, NgOptimizedImage, NgSelectModule],
+    imports: [SharedModule, BookingRoutingModule, PopupModule, NgOptimizedImage, NgSelectModule, FontAwesomeModule],
     declarations: Components,
     exports: Components
 })

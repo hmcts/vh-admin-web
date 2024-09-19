@@ -26,7 +26,7 @@
 
 <ng-container *ngIf="displayProtectFromList">
   <div class="govuk-form-group">
-    <label class="govuk-label" [for]="'protect-participant-from'"> Protect from: </label>
+    <label class="govuk-label" [for]="'protect-participant-from'"> Screen from: </label>
     <div class="govuk-checkboxes" data-module="govuk-checkboxes">
       <ng-select
         [id]="'protect-participant-from'"
@@ -37,14 +37,6 @@
         class="custom"
         [(ngModel)]="selectedProtectParticipantFromList"
       >
-        <!-- header template, shown before the list -->
-        <ng-template ng-header-tmp>
-          <div class="govuk-button-group govuk-!-margin-top-3 govuk-!-margin-bottom-0">
-            <button (click)="selectAll()" class="govuk-button" data-module="govuk-button">Select All</button>
-            <button (click)="unselectAll()" class="govuk-button govuk-button--secondary" data-module="govuk-button">Unselect All</button>
-          </div>
-        </ng-template>
-
         <!-- selected itemtemplate, similar to the default but with the govuk style -->
         <ng-template ng-label-tmp let-item="item">
           <div class="ng-value">

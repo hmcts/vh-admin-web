@@ -12,7 +12,7 @@ import { WindowRef } from './window-ref';
 import { LongDatetimePipe } from './directives/date-time.pipe';
 import { WindowScrolling } from './window-scrolling';
 import { ClipboardModule } from 'ngx-clipboard';
-import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { CaseTypesMenuComponent } from './menus/case-types-menu/case-types-menu.component';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -25,6 +25,7 @@ import { RolesToDisplayPipe } from './pipes/roles-to-display.pipe';
 import { SpinnerInterceptor } from './interceptors/spinner.interceptor';
 import { TruncatableTextComponent } from './truncatable-text/truncatable-text.component';
 import { FeatureFlagDirective } from '../src/app/shared/feature-flag.directive';
+import { ScreeningEnabledBageComponent as ScreeningEnabledBadgeComponent } from './screening-enabled-badge/screening-enabled-badge.component';
 
 @NgModule({
     imports: [
@@ -36,7 +37,8 @@ import { FeatureFlagDirective } from '../src/app/shared/feature-flag.directive';
         HttpClientModule,
         SharedRoutingModule,
         ClipboardModule,
-        NgSelectModule
+        NgSelectModule,
+        FontAwesomeModule
     ],
     declarations: [
         HeaderComponent,
@@ -53,7 +55,8 @@ import { FeatureFlagDirective } from '../src/app/shared/feature-flag.directive';
         TooltipDirective,
         FeatureFlagDirective,
         SelectComponent,
-        TruncatableTextComponent
+        TruncatableTextComponent,
+        ScreeningEnabledBadgeComponent
     ],
     providers: [WindowRef, WindowScrolling, { provide: HTTP_INTERCEPTORS, useClass: SpinnerInterceptor, multi: true }],
     exports: [
@@ -75,7 +78,8 @@ import { FeatureFlagDirective } from '../src/app/shared/feature-flag.directive';
         FeatureFlagDirective,
         SelectComponent,
         RolesToDisplayPipe,
-        TruncatableTextComponent
+        TruncatableTextComponent,
+        ScreeningEnabledBadgeComponent
     ]
 })
 export class SharedModule {

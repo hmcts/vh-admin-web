@@ -7,6 +7,7 @@ import { JudiciaryParticipantDetailsModel } from '../common/model/judiciary-part
 import { HearingDetailsResponse, ParticipantResponse } from './clients/api-client';
 import { JudicaryRoleCode } from '../booking/judicial-office-holders/models/add-judicial-member.model';
 import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
+import { mapScreeningResponseToScreeningDto } from '../booking/screening/screening.model';
 
 @Injectable({ providedIn: 'root' })
 export class BookingDetailsService {
@@ -91,6 +92,7 @@ export class BookingDetailsService {
                     p.linked_participants
                 );
                 model.InterpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(p.interpreter_language);
+                model.Screening = mapScreeningResponseToScreeningDto(p.screening_requirement);
                 if (p.user_role_name === this.JUDGE) {
                     judges.push(model);
                 } else {
@@ -114,6 +116,7 @@ export class BookingDetailsService {
                 epModel.sip = e.sip;
                 epModel.defenceAdvocate = defenceAdvocate?.contact_email;
                 epModel.interpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(e.interpreter_language);
+                epModel.screening = mapScreeningResponseToScreeningDto(e.screening_requirement);
                 endpoints.push(epModel);
             });
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using AdminWebsite.Contracts.Requests;
 
 namespace AdminWebsite.Models
 {
@@ -85,6 +86,11 @@ namespace AdminWebsite.Models
         ///     The code for the participant's interpreter language, if applicable
         /// </summary>
         public string InterpreterLanguageCode { get; set; }
+        
+        /// <summary>
+        /// Screening requirements for a participant (optional)
+        /// </summary>
+        public SpecialMeasureScreeningRequest ScreeningRequirements { get; set; }
 
         /// <summary>
         ///     List of linked participants

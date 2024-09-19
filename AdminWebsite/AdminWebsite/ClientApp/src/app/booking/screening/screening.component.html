@@ -8,8 +8,7 @@
     <app-screening-form [hearing]="hearing" (screeningSaved)="onScreeningSaved($event)"></app-screening-form>
 
     <div class="govuk-!-margin-top-8 govuk-button-group">
-      <button id="nextButton" type="button" class="govuk-button" data-module="govuk-button">Next</button>
-      <button id="cancelButton" type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button">Cancel</button>
+      <button id="nextButton" type="button" class="govuk-button" data-module="govuk-button" (click)="onContinue()">Next</button>
     </div>
   </div>
 

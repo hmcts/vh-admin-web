@@ -3,8 +3,9 @@ import { Router } from '@angular/router';
 import { BreadcrumbItems } from './breadcrumbItems';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+import { LaunchDarklyService, FeatureFlags } from 'src/app/services/launch-darkly.service';
 
 @Component({
     selector: 'app-breadcrumb',
@@ -19,12 +20,19 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
     canNavigate: boolean;
     destroyed$ = new Subject<void>();
 
-    constructor(private router: Router, private videoHearingsService: VideoHearingsService) {}
+    constructor(private router: Router, private videoHearingsService: VideoHearingsService, private featureService: LaunchDarklyService) {}
 
     ngOnInit() {
         this.currentRouter = this.router.url;
-        this.breadcrumbItems = BreadcrumbItems.filter(x => x.Url !== PageUrls.AssignJudge);
-        this.initBreadcrumb();
+        const specialMeasures$ = this.featureService.getFlag<boolean>(FeatureFlags.specialMeasures);
+        specialMeasures$.pipe(takeUntil(this.destroyed$)).subscribe(specialMeasuresEnabled => {
+            let tempBreadcrumbModel: BreadcrumbItemModel[] = BreadcrumbItems;
+            if (!specialMeasuresEnabled) {
+                tempBreadcrumbModel = tempBreadcrumbModel.filter(x => x.Url !== PageUrls.Screening);
+            }
+            this.breadcrumbItems = tempBreadcrumbModel;
+            this.initBreadcrumb();
+        });
     }
 
     ngOnDestroy(): void {

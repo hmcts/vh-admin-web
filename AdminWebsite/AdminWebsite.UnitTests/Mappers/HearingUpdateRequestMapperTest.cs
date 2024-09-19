@@ -29,10 +29,10 @@ namespace AdminWebsite.UnitTests.Mappers
         [Test]
         public void Should_map_properties_for_update_hearing_request()
         {
-            var result = HearingUpdateRequestMapper.MapToV1(_newParticipantRequest, _username);
+            var result = HearingUpdateRequestMapper.MapToV2(_newParticipantRequest, _username);
 
             result.HearingRoomName.Should().Be(_newParticipantRequest.HearingRoomName);
-            result.HearingVenueName.Should().Be(_newParticipantRequest.HearingVenueName);
+            result.HearingVenueCode.Should().Be(_newParticipantRequest.HearingVenueCode);
             result.ScheduledDateTime.Should().Be(_scheduledDateTime);
             result.ScheduledDuration.Should().Be(_newParticipantRequest.ScheduledDuration);
             result.OtherInformation.Should().Be(_newParticipantRequest.OtherInformation);

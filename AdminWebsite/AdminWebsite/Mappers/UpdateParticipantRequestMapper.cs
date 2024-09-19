@@ -36,7 +36,8 @@ namespace AdminWebsite.Mappers
                 FirstName = participant.FirstName,
                 LastName = participant.LastName,
                 MiddleNames = participant.MiddleNames,
-                InterpreterLanguageCode = participant.InterpreterLanguageCode
+                InterpreterLanguageCode = participant.InterpreterLanguageCode,
+                Screening = participant.ScreeningRequirements?.MapToV2()
             };
             return updateParticipantRequest;
         }

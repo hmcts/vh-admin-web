@@ -6,6 +6,9 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { SelectedScreeningDto } from './screening.model';
 import { EndpointModel } from '../../common/model/endpoint.model';
 import { ParticipantModel } from '../../common/model/participant.model';
+import { BookingService } from 'src/app/services/booking.service';
+import { PageUrls } from 'src/app/shared/page-url.constants';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-screening',
@@ -18,10 +21,14 @@ export class ScreeningComponent implements OnInit, OnDestroy {
 
     private readonly loggerPrefix: string = '[Booking] Screening (Special Measures) -';
 
-    constructor(private hearingService: VideoHearingsService, private logger: Logger) {}
+    constructor(
+        private router: Router,
+        private hearingService: VideoHearingsService,
+        private bookingService: BookingService,
+        private logger: Logger
+    ) {}
 
     ngOnInit(): void {
-        // init judicial office holders from cache if exists
         this.hearing = this.hearingService.getCurrentRequest();
     }
 
@@ -68,4 +75,16 @@ export class ScreeningComponent implements OnInit, OnDestroy {
         });
         this.hearing = { ...this.hearing };
     }
+
+    onContinue() {
+        if (this.bookingService.isEditMode()) {
+            this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary.`);
+            this.router.navigate([PageUrls.Summary]);
+        } else {
+            this.logger.debug(`${this.loggerPrefix} Navigating to other information.`);
+            this.router.navigate([PageUrls.OtherInformation]);
+        }
+    }
+
+    onCancel() {}
 }

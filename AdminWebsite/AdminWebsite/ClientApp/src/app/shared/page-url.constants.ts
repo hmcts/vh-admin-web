@@ -5,7 +5,6 @@ export const PageUrls = {
     Dashboard: '/dashboard',
     CreateHearing: '/book-hearing',
     HearingSchedule: '/hearing-schedule',
-    AssignJudge: '/assign-judge',
     AddJudicialOfficeHolders: '/add-judicial-office-holders',
     Screening: '/screening',
     AddParticipants: '/add-participants',

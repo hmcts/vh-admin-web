@@ -9,4 +9,5 @@ public class EndpointResponse
     public string Pin { get; set; }
     public Guid? DefenceAdvocateId { get; set; }
     public AvailableLanguageResponse InterpreterLanguage { get; set; }
+    public ScreeningResponse ScreeningRequirement { get; set; }
 }

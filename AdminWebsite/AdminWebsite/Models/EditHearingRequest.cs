@@ -55,9 +55,7 @@ namespace AdminWebsite.Models
         ///     List of judiciary participants in hearing
         /// </summary>
         public List<JudiciaryParticipantRequest> JudiciaryParticipants { get; set; }
-
-        public List<EditTelephoneParticipantRequest> TelephoneParticipants { get; set; }
-
+        
         /// <summary>
         ///     Any other information about the hearing
         /// </summary>

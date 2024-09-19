@@ -10,7 +10,8 @@ namespace AdminWebsite.Mappers
             {
                 DisplayName = request.DisplayName,
                 DefenceAdvocateContactEmail = request.DefenceAdvocateContactEmail,
-                InterpreterLanguageCode = request.InterpreterLanguageCode
+                InterpreterLanguageCode = request.InterpreterLanguageCode,
+                Screening = request.ScreeningRequirements.MapToV2()
             };
     }
 }

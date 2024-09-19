@@ -95,6 +95,9 @@
               {{ endpoint.interpretationLanguage.spokenLanguageCodeDescription ?? endpoint.interpretationLanguage.signLanguageDescription }}
             </div>
           </div>
+          <ng-container *ngIf="endpoint.screening">
+            <app-screening-enabled-badge [screening]="endpoint.screening"></app-screening-enabled-badge>
+          </ng-container>
           <div *ngIf="getDefenceAdvocateByContactEmail(endpoint.defenceAdvocate)" class="govuk-grid-row govuk-!-padding-bottom-3">
             <div class="govuk-grid-column-full vh-representee" id="defenceAdvocateRep{{ +i }}">
               <img src="/assets/images/link.png" class="icon" alt="link to endpoint" />

@@ -9,12 +9,9 @@ public class BookingDetailsRequest
 {
     public DateTime ScheduledDateTime { get; set; }
     public int ScheduledDuration { get; set; }
-    public string HearingVenueName { get; set; }
     public string HearingVenueCode { get; set; }
     public string CaseTypeName { get; set; }
     public string CaseTypeServiceId { get; set; }
-    public string HearingTypeName { get; set; }
-    public string HearingTypeCode { get; set; }
     public List<CaseRequest> Cases { get; set; }
     public List<ParticipantRequest> Participants { get; set; }
     public List<JudiciaryParticipantRequest> JudiciaryParticipants { get; set; }

@@ -9,4 +9,8 @@ public class EndpointRequest
     public string DisplayName { get; set; }
     public string DefenceAdvocateContactEmail { get; set; }
     public string InterpreterLanguageCode { get; set; }
+    /// <summary>
+    /// Screening requirements for an endpoint (optional)
+    /// </summary>
+    public SpecialMeasureScreeningRequest ScreeningRequirements { get; set; }
 }

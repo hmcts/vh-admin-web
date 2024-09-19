@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using AdminWebsite.Contracts.Requests;
 
 namespace AdminWebsite.Models
 {
@@ -26,6 +27,11 @@ namespace AdminWebsite.Models
         ///     The code for the endpoint's interpreter language, if applicable
         /// </summary>
         public string InterpreterLanguageCode { get; set; }
+        
+        /// <summary>
+        /// Screening requirements for a participant (optional)
+        /// </summary>
+        public SpecialMeasureScreeningRequest ScreeningRequirements { get; set; }
 
         private sealed class EditEndpointRequestEqualityComparer : IEqualityComparer<EditEndpointRequest>
         {
@@ -35,7 +41,9 @@ namespace AdminWebsite.Models
                 if (ReferenceEquals(x, null)) return false;
                 if (ReferenceEquals(y, null)) return false;
                 if (x.GetType() != y.GetType()) return false;
-                return Nullable.Equals(x.Id, y.Id) && x.DisplayName == y.DisplayName && x.DefenceAdvocateContactEmail == y.DefenceAdvocateContactEmail;
+                return Nullable.Equals(x.Id, y.Id) && x.DisplayName == y.DisplayName &&
+                       x.DefenceAdvocateContactEmail == y.DefenceAdvocateContactEmail &&
+                       x.InterpreterLanguageCode == y.InterpreterLanguageCode;
             }
 
             public int GetHashCode(EditEndpointRequest obj)
