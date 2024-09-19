@@ -302,6 +302,7 @@ describe('AddParticipantComponent', () => {
             'mapParticipantHearingRoles'
         ]);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.specialMeasures).and.returnValue(of(false));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
@@ -1049,6 +1050,7 @@ describe('AddParticipantComponent edit mode', () => {
         }).compileComponents();
 
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.specialMeasures).and.returnValue(of(false));
 
         const hearing = initExistHearingRequest();
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
@@ -1466,6 +1468,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.specialMeasures).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
             imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],

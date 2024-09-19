@@ -25,7 +25,8 @@ describe('VideoEndpointItemComponent', () => {
         const dto: VideoAccessPointDto = {
             displayName: 'Test',
             defenceAdvocate: null,
-            interpretationLanguage: undefined
+            interpretationLanguage: undefined,
+            screening: undefined
         };
         component.videoEndpoint = dto;
         component.edit();
@@ -37,7 +38,8 @@ describe('VideoEndpointItemComponent', () => {
         const dto: VideoAccessPointDto = {
             displayName: 'Test',
             defenceAdvocate: null,
-            interpretationLanguage: undefined
+            interpretationLanguage: undefined,
+            screening: undefined
         };
         component.videoEndpoint = dto;
         component.delete();

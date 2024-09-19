@@ -150,7 +150,8 @@ describe('BookingParticipantListComponent', () => {
                     showCaseRole(): boolean {
                         return false;
                     },
-                    InterpretationLanguage: null
+                    InterpretationLanguage: null,
+                    Screening: null
                 });
             });
             return participantsArray;

@@ -7,12 +7,11 @@ import { ProtectFrom, SelectedScreeningDto, ScreeningType } from './screening.mo
 
 @Component({
     selector: 'app-screening-form',
-    templateUrl: './screening-form.component.html',
-    styleUrls: ['./screening-form.component.scss']
+    templateUrl: './screening-form.component.html'
 })
 export class ScreeningFormComponent {
     @Input() set hearing(hearing: HearingModel) {
-        this.allParticipants = hearing.participants
+        const mappedParticipants = hearing.participants
             .filter(x => x.email)
             .map(
                 participant =>
@@ -30,7 +29,7 @@ export class ScreeningFormComponent {
                 } as GenericParticipantsModel)
         );
 
-        this.allParticipants = [...this.allParticipants, ...mappedEndpoints];
+        this.allParticipants = [...mappedParticipants, ...mappedEndpoints];
         this.createForm();
         this.cdRef.detectChanges();
     }
@@ -45,8 +44,6 @@ export class ScreeningFormComponent {
 
     destroyed$ = new Subject<void>();
     form: FormGroup<ScreeningSelectParticipantForm>;
-
-    private readonly loggerPrefix: string = '[Booking] Special Measures Form -';
 
     constructor(private formBuilder: FormBuilder, private cdRef: ChangeDetectorRef, private logger: Logger) {}
 

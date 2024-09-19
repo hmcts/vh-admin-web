@@ -3,6 +3,9 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BreadcrumbComponent } from './breadcrumb.component';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { BreadcrumbItems } from './breadcrumbItems';
+import { of } from 'rxjs';
+import { LaunchDarklyService, FeatureFlags } from 'src/app/services/launch-darkly.service';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 
 describe('BreadcrumbComponent', () => {
     const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
@@ -15,9 +18,12 @@ describe('BreadcrumbComponent', () => {
         url: '/hearing-schedule',
         ...jasmine.createSpyObj<Router>(['navigate'])
     } as jasmine.SpyObj<Router>;
+    let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 
     beforeEach(() => {
-        component = new BreadcrumbComponent(router, videoHearingsServiceSpy);
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.specialMeasures).and.returnValue(of(false));
+        component = new BreadcrumbComponent(router, videoHearingsServiceSpy, launchDarklyServiceSpy);
         component.breadcrumbItems = BreadcrumbItems.slice();
         component.canNavigate = true;
         component.ngOnInit();
@@ -29,6 +35,7 @@ describe('BreadcrumbComponent', () => {
 
     it('should create breadcrumb component', () => {
         expect(component).toBeTruthy();
+        expect(component.breadcrumbItems.find(b => b.Url === PageUrls.Screening)).toBeFalsy(); // screening breadcrumb item should not be included by default
     });
 
     it('should have predefine navigation items', () => {
@@ -93,5 +100,11 @@ describe('BreadcrumbComponent', () => {
         component.ngOnDestroy();
         expect(component.destroyed$.next).toHaveBeenCalled();
         expect(component.destroyed$.complete).toHaveBeenCalled();
+    });
+
+    it('should set the include the screening breadcrumb item when special-measure feature is ON', () => {
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.specialMeasures).and.returnValue(of(true));
+        component.ngOnInit();
+        expect(component.breadcrumbItems.find(b => b.Url === PageUrls.Screening)).toBeTruthy();
     });
 });

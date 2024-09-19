@@ -67,7 +67,7 @@ export class ScreeningComponent implements OnInit, OnDestroy {
         this.hearing = { ...this.hearing };
     }
 
-    ondDeleteParticipantScreening(participant: ParticipantModel) {
+    onDeleteParticipantScreening(participant: ParticipantModel) {
         this.hearing.participants.forEach(p => {
             if (p.email === participant.email) {
                 p.screening = null;
@@ -85,6 +85,4 @@ export class ScreeningComponent implements OnInit, OnDestroy {
             this.router.navigate([PageUrls.OtherInformation]);
         }
     }
-
-    onCancel() {}
 }

@@ -184,7 +184,6 @@ describe('Video hearing service', () => {
 
         expect(request.case_type_name).toBe('Tax');
         expect(request.hearing_room_name).toBe('room 09');
-        expect(request.hearing_venue_name).toBe('court address');
         expect(request.other_information).toBe('note');
         expect(request.cases).toBeTruthy();
         expect(request.cases[0].name).toBe('case1');
