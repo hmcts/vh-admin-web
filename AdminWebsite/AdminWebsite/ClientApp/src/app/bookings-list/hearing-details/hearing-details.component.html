@@ -82,7 +82,7 @@
 <div *ngIf="hearing.isCreated">
   <h2 class="govuk-heading-s remove-header-padding">Joining by phone / Video Hearing link</h2>
   <div class="vh-section">
-    <div *ngIf="phoneConferenceDetails.length > 0 && isJoinByPhone()" class="govuk-grid-row">
+    <div *ngIf="phoneConferenceDetails.length > 0" class="govuk-grid-row">
       <div class="govuk-grid-column-full" id="conferencePhoneDetails">
         <app-copy-conference-phone [phoneConferenceDetails]="phoneConferenceDetails"></app-copy-conference-phone>
       </div>

@@ -35,7 +35,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 ResourceId = null
             };
             
-            var kinlyConfiguration = new KinlyConfiguration { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
+            var vodafoneConfiguration = new VodafoneConfiguration { VodafoneConferencePhoneNumber = "1111111" };
 
             var testSettings = new TestUserSecrets
             {
@@ -43,7 +43,7 @@ namespace AdminWebsite.UnitTests.Controllers
             };
 
             
-            var configSettingsController = InitController(dom1AdConfiguration, azureAdConfiguration, kinlyConfiguration, testSettings);
+            var configSettingsController = InitController(dom1AdConfiguration, azureAdConfiguration, vodafoneConfiguration, testSettings);
             _featureToggleMock.Setup(opt => opt.Dom1Enabled()).Returns(true);
 
             var actionResult = (OkObjectResult)configSettingsController.Get().Result;
@@ -54,8 +54,7 @@ namespace AdminWebsite.UnitTests.Controllers
             clientSettings.RedirectUri.Should().Be(dom1AdConfiguration.RedirectUri);
             clientSettings.PostLogoutRedirectUri.Should().Be(dom1AdConfiguration.PostLogoutRedirectUri);
             clientSettings.ResourceId.Should().BeNull();
-            clientSettings.ConferencePhoneNumber.Should().Be(kinlyConfiguration.ConferencePhoneNumber);
-            clientSettings.JoinByPhoneFromDate.Should().Be(kinlyConfiguration.JoinByPhoneFromDate);
+            clientSettings.ConferencePhoneNumber.Should().Be(vodafoneConfiguration.VodafoneConferencePhoneNumber);
             clientSettings.TestUsernameStem.Should().Be(testSettings.TestUsernameStem);
         }
 
@@ -83,7 +82,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 ResourceId = null
             };
             
-            var kinlyConfiguration = new KinlyConfiguration { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
+            var vodafoneConfiguration = new VodafoneConfiguration { VodafoneConferencePhoneNumber = "1111111" };
 
             var testSettings = new TestUserSecrets
             {
@@ -91,7 +90,7 @@ namespace AdminWebsite.UnitTests.Controllers
             };
 
             
-            var configSettingsController = InitController(dom1AdConfiguration, azureAdConfiguration, kinlyConfiguration, testSettings);
+            var configSettingsController = InitController(dom1AdConfiguration, azureAdConfiguration, vodafoneConfiguration, testSettings);
             _featureToggleMock.Setup(opt => opt.Dom1Enabled()).Returns(false);
 
             var actionResult = (OkObjectResult)configSettingsController.Get().Result;
@@ -102,14 +101,13 @@ namespace AdminWebsite.UnitTests.Controllers
             clientSettings.RedirectUri.Should().Be(dom1AdConfiguration.RedirectUri);
             clientSettings.PostLogoutRedirectUri.Should().Be(dom1AdConfiguration.PostLogoutRedirectUri);
             clientSettings.ResourceId.Should().Be(azureAdConfiguration.ResourceId);
-            clientSettings.ConferencePhoneNumber.Should().Be(kinlyConfiguration.ConferencePhoneNumber);
-            clientSettings.JoinByPhoneFromDate.Should().Be(kinlyConfiguration.JoinByPhoneFromDate);
+            clientSettings.ConferencePhoneNumber.Should().Be(vodafoneConfiguration.VodafoneConferencePhoneNumber);
             clientSettings.TestUsernameStem.Should().Be(testSettings.TestUsernameStem);
 
         }
-        
+
         private ConfigSettingsController InitController(Dom1AdConfiguration dom1AdConfiguration,
-            AzureAdConfiguration azureAdConfiguration, KinlyConfiguration kinlyConfiguration,
+            AzureAdConfiguration azureAdConfiguration, VodafoneConfiguration vodafoneConfiguration,
             TestUserSecrets testSettings)
         {
             _featureToggleMock = new Mock<IFeatureToggles>();
@@ -134,7 +132,7 @@ namespace AdminWebsite.UnitTests.Controllers
             var configSettingsController = new ConfigSettingsController(
                 Options.Create(azureAdConfiguration),
                 Options.Create(dom1AdConfiguration),
-                Options.Create(kinlyConfiguration),
+                Options.Create(vodafoneConfiguration),
                 Options.Create(applicationInsightsConfiguration),
                 Options.Create(testSettings),
                 Options.Create(vhServiceConfiguration),

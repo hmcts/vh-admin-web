@@ -8,9 +8,9 @@
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
 
-import { mergeMap as _observableMergeMap, catchError as _observableCatch } from 'rxjs/operators';
-import { Observable, from as _observableFrom, throwError as _observableThrow, of as _observableOf } from 'rxjs';
-import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
+import { catchError as _observableCatch, mergeMap as _observableMergeMap } from 'rxjs/operators';
+import { from as _observableFrom, Observable, of as _observableOf, throwError as _observableThrow } from 'rxjs';
+import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
 
 export const BH_API_BASE_URL = new InjectionToken<string>('BH_API_BASE_URL');
@@ -3684,109 +3684,6 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * Get upcoming public holidays in England and Wales
-     * @return OK
-     */
-    publicHolidays(): Observable<PublicHolidayResponse[]> {
-        let url_ = this.baseUrl + '/api/reference/public-holidays';
-        url_ = url_.replace(/[?&]$/, '');
-
-        let options_: any = {
-            observe: 'response',
-            responseType: 'blob',
-            headers: new HttpHeaders({
-                Accept: 'application/json'
-            })
-        };
-
-        return _observableFrom(this.transformOptions(options_))
-            .pipe(
-                _observableMergeMap(transformedOptions_ => {
-                    return this.http.request('get', url_, transformedOptions_);
-                })
-            )
-            .pipe(
-                _observableMergeMap((response_: any) => {
-                    return this.processPublicHolidays(response_);
-                })
-            )
-            .pipe(
-                _observableCatch((response_: any) => {
-                    if (response_ instanceof HttpResponseBase) {
-                        try {
-                            return this.processPublicHolidays(response_ as any);
-                        } catch (e) {
-                            return _observableThrow(e) as any as Observable<PublicHolidayResponse[]>;
-                        }
-                    } else return _observableThrow(response_) as any as Observable<PublicHolidayResponse[]>;
-                })
-            );
-    }
-
-    protected processPublicHolidays(response: HttpResponseBase): Observable<PublicHolidayResponse[]> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse
-                ? response.body
-                : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
-
-        let _headers: any = {};
-        if (response.headers) {
-            for (let key of response.headers.keys()) {
-                _headers[key] = response.headers.get(key);
-            }
-        }
-        if (status === 500) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result500: any = null;
-                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
-                })
-            );
-        } else if (status === 200) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result200: any = null;
-                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    if (Array.isArray(resultData200)) {
-                        result200 = [] as any;
-                        for (let item of resultData200) result200!.push(PublicHolidayResponse.fromJS(item));
-                    } else {
-                        result200 = <any>null;
-                    }
-                    return _observableOf(result200);
-                })
-            );
-        } else if (status === 404) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result404: any = null;
-                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result404 = ProblemDetails.fromJS(resultData404);
-                    return throwException('Not Found', status, _responseText, _headers, result404);
-                })
-            );
-        } else if (status === 401) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    return throwException('Unauthorized', status, _responseText, _headers);
-                })
-            );
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-                })
-            );
-        }
-        return _observableOf(null as any);
-    }
-
-    /**
      * Get available languages for interpreters
      * @return OK
      */
@@ -6719,8 +6616,6 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     conference_phone_number?: string | undefined;
     /** To join the conference phone number - welsh */
     conference_phone_number_welsh?: string | undefined;
-    /** The date to switch on option to join by phone */
-    join_by_phone_from_date?: string | undefined;
     /** The Uri to video web url */
     video_web_url?: string | undefined;
     /** The LaunchDarkly Client ID */
@@ -6751,7 +6646,6 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
             this.test_username_stem = _data['test_username_stem'];
             this.conference_phone_number = _data['conference_phone_number'];
             this.conference_phone_number_welsh = _data['conference_phone_number_welsh'];
-            this.join_by_phone_from_date = _data['join_by_phone_from_date'];
             this.video_web_url = _data['video_web_url'];
             (<any>this).launch_darkly_client_id = _data['launch_darkly_client_id'];
             this.reform_tenant_config = _data['reform_tenant_config']
@@ -6778,7 +6672,6 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
         data['test_username_stem'] = this.test_username_stem;
         data['conference_phone_number'] = this.conference_phone_number;
         data['conference_phone_number_welsh'] = this.conference_phone_number_welsh;
-        data['join_by_phone_from_date'] = this.join_by_phone_from_date;
         data['video_web_url'] = this.video_web_url;
         data['launch_darkly_client_id'] = this.launch_darkly_client_id;
         data['reform_tenant_config'] = this.reform_tenant_config ? this.reform_tenant_config.toJSON() : <any>undefined;
@@ -6801,8 +6694,6 @@ export interface IClientSettingsResponse {
     conference_phone_number?: string | undefined;
     /** To join the conference phone number - welsh */
     conference_phone_number_welsh?: string | undefined;
-    /** The date to switch on option to join by phone */
-    join_by_phone_from_date?: string | undefined;
     /** The Uri to video web url */
     video_web_url?: string | undefined;
     /** The LaunchDarkly Client ID */
@@ -7630,51 +7521,6 @@ export interface IParticipantResponse {
     representee?: string | undefined;
     interpreter_language?: AvailableLanguageResponse;
     linked_participants?: LinkedParticipantResponse[] | undefined;
-}
-
-/** A public holiday */
-export class PublicHolidayResponse implements IPublicHolidayResponse {
-    /** Name of a public holiday */
-    name?: string | undefined;
-    /** Date of a public holiday */
-    date?: Date;
-
-    constructor(data?: IPublicHolidayResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.name = _data['name'];
-            this.date = _data['date'] ? new Date(_data['date'].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): PublicHolidayResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new PublicHolidayResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['name'] = this.name;
-        data['date'] = this.date ? this.date.toISOString() : <any>undefined;
-        return data;
-    }
-}
-
-/** A public holiday */
-export interface IPublicHolidayResponse {
-    /** Name of a public holiday */
-    name?: string | undefined;
-    /** Date of a public holiday */
-    date?: Date;
 }
 
 export class TelephoneParticipantResponse implements ITelephoneParticipantResponse {
