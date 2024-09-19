@@ -16,19 +16,19 @@ namespace AdminWebsite.UnitTests.Services
 {
     public class HearingServiceTests
     {
-        private AutoMock _mocker;
-        private HearingsService _service;
-        private HearingDetailsResponse _hearing;
         private const string ExpectedTeleConferencePhoneNumber = "expected_conference_phone_number";
         private const string ExpectedTeleConferenceId = "expected_conference_phone_id";
-        
+        private HearingDetailsResponse _hearing;
+        private AutoMock _mocker;
+        private HearingsService _service;
+
         [SetUp]
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
-            _mocker.Mock<IOptions<KinlyConfiguration>>().Setup(opt => opt.Value).Returns(new KinlyConfiguration
+            _mocker.Mock<IOptions<VodafoneConfiguration>>().Setup(opt => opt.Value).Returns(new VodafoneConfiguration
             {
-                ConferencePhoneNumber = ExpectedTeleConferencePhoneNumber
+                VodafoneConferencePhoneNumber = ExpectedTeleConferencePhoneNumber
             });
 
             _mocker.Mock<IConferenceDetailsService>()
@@ -92,7 +92,7 @@ namespace AdminWebsite.UnitTests.Services
 
             ClassicAssert.AreEqual(1, _service.GetAddedParticipant(originalParticipants, editParticipantRequest).Count);
         }
-        
+
         [Test]
         public async Task Should_process_participants()
         {
@@ -115,7 +115,7 @@ namespace AdminWebsite.UnitTests.Services
                         && x.RemovedParticipantIds == removedParticipantIds
                         && x.LinkedParticipants == linkedParticipants)), Times.Once);
         }
-        
+
         private HearingDetailsResponse InitHearing()
         {
             var cases = new List<CaseResponse> { new CaseResponse { Name = "Test", Number = "123456" } };

@@ -26,11 +26,6 @@
         public string ConferencePhoneNumberWelsh { get; set; }
 
         /// <summary>
-        ///  The date to switch on option to join by phone 
-        /// </summary>
-        public string JoinByPhoneFromDate { get; set; }
-
-        /// <summary>
         /// The Uri to video web url
         /// </summary>
         public string VideoWebUrl { get; set; }
@@ -39,7 +34,7 @@
         /// The LaunchDarkly Client ID
         /// </summary>
         public string LaunchDarklyClientId { get; internal set; }
-        
+
         /// <summary>
         /// Reform Test Ad tenant configuration
         /// </summary>
