@@ -53,8 +53,8 @@ namespace AdminWebsite.Controllers
             {
                 ConnectionString = _applicationInsightsConfiguration.ConnectionString,
                 TestUsernameStem = _testUserSecrets.TestUsernameStem,
-                ConferencePhoneNumber = _vodafoneConfiguration.VodafoneConferencePhoneNumber,
-                ConferencePhoneNumberWelsh = _vodafoneConfiguration.VodafoneConferencePhoneNumberWelsh,
+                ConferencePhoneNumber = _vodafoneConfiguration.ConferencePhoneNumber,
+                ConferencePhoneNumberWelsh = _vodafoneConfiguration.ConferencePhoneNumberWelsh,
                 VideoWebUrl = _vhServiceConfiguration.VideoWebUrl,
                 LaunchDarklyClientId = _vhServiceConfiguration.LaunchDarklyClientId
             };

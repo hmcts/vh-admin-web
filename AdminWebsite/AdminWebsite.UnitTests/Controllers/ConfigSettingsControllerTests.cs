@@ -35,7 +35,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 ResourceId = null
             };
             
-            var vodafoneConfiguration = new VodafoneConfiguration { VodafoneConferencePhoneNumber = "1111111" };
+            var vodafoneConfiguration = new VodafoneConfiguration { ConferencePhoneNumber = "1111111" };
 
             var testSettings = new TestUserSecrets
             {
@@ -54,7 +54,7 @@ namespace AdminWebsite.UnitTests.Controllers
             clientSettings.RedirectUri.Should().Be(dom1AdConfiguration.RedirectUri);
             clientSettings.PostLogoutRedirectUri.Should().Be(dom1AdConfiguration.PostLogoutRedirectUri);
             clientSettings.ResourceId.Should().BeNull();
-            clientSettings.ConferencePhoneNumber.Should().Be(vodafoneConfiguration.VodafoneConferencePhoneNumber);
+            clientSettings.ConferencePhoneNumber.Should().Be(vodafoneConfiguration.ConferencePhoneNumber);
             clientSettings.TestUsernameStem.Should().Be(testSettings.TestUsernameStem);
         }
 
@@ -82,7 +82,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 ResourceId = null
             };
             
-            var vodafoneConfiguration = new VodafoneConfiguration { VodafoneConferencePhoneNumber = "1111111" };
+            var vodafoneConfiguration = new VodafoneConfiguration { ConferencePhoneNumber = "1111111" };
 
             var testSettings = new TestUserSecrets
             {
@@ -101,7 +101,7 @@ namespace AdminWebsite.UnitTests.Controllers
             clientSettings.RedirectUri.Should().Be(dom1AdConfiguration.RedirectUri);
             clientSettings.PostLogoutRedirectUri.Should().Be(dom1AdConfiguration.PostLogoutRedirectUri);
             clientSettings.ResourceId.Should().Be(azureAdConfiguration.ResourceId);
-            clientSettings.ConferencePhoneNumber.Should().Be(vodafoneConfiguration.VodafoneConferencePhoneNumber);
+            clientSettings.ConferencePhoneNumber.Should().Be(vodafoneConfiguration.ConferencePhoneNumber);
             clientSettings.TestUsernameStem.Should().Be(testSettings.TestUsernameStem);
 
         }

@@ -5,11 +5,11 @@
         /// <summary>
         /// To join the conference phone number
         /// </summary>
-        public string VodafoneConferencePhoneNumber { get; set; }
+        public string ConferencePhoneNumber { get; set; }
 
         /// <summary>
         /// To join the conference phone number - welsh
         /// </summary>
-        public string VodafoneConferencePhoneNumberWelsh { get; set; }
+        public string ConferencePhoneNumberWelsh { get; set; }
     }
 }
