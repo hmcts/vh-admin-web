@@ -62,6 +62,8 @@ describe('ScreeningListItemComponent', () => {
     describe('ngOnChanges', () => {
         it('should init model for a partipant', () => {
             // Arrange
+            component.hearing = hearing;
+            component.participant = hearing.participants[1];
             const changes: SimpleChanges = {
                 hearing: new SimpleChange(null, hearing, true),
                 participant: new SimpleChange(null, hearing.participants[1], true)
@@ -79,6 +81,8 @@ describe('ScreeningListItemComponent', () => {
 
         it('should init model for an endpoint', () => {
             // Arrange
+            component.hearing = hearing;
+            component.endpoint = hearing.endpoints[1];
             const changes: SimpleChanges = {
                 hearing: new SimpleChange(null, hearing, true),
                 endpoint: new SimpleChange(null, hearing.endpoints[1], true)

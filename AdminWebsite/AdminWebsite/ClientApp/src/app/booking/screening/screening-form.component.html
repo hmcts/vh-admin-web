@@ -63,4 +63,13 @@
   </div>
 </ng-container>
 
-<button type="submit" id="confirmScreeningBtn" class="govuk-button" data-module="govuk-button" (click)="onSave()">Save</button>
+<button
+  *ngIf="form.value.displayName"
+  type="submit"
+  id="confirmScreeningBtn"
+  class="govuk-button"
+  data-module="govuk-button"
+  (click)="onSave()"
+>
+  Save
+</button>

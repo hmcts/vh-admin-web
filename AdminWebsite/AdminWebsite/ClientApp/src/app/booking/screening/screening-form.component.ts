@@ -60,7 +60,7 @@ export class ScreeningFormComponent {
                 return;
             }
             if (value) {
-                this.onParticipantSelected();
+                this.onParticipantSelected(value);
             }
         });
 
@@ -78,8 +78,10 @@ export class ScreeningFormComponent {
         }
     }
 
-    onParticipantSelected(): void {
+    onParticipantSelected(displayName: string): void {
         this.displayMeasureType = true;
+        this.initaliseScreening(displayName);
+        this.selectedProtectParticipantFromList = [];
     }
 
     initaliseScreening(displayName: string) {

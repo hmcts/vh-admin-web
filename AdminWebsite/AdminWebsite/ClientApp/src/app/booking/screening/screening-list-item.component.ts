@@ -20,11 +20,11 @@ export class ScreeningListItemComponent implements OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.hearing || changes.participant || changes.endpoint) {
-            if (changes.participant && changes.hearing) {
-                this.model = this.initModelForParticipant(changes.hearing.currentValue, changes.participant.currentValue);
+            if (this.participant && this.hearing) {
+                this.model = this.initModelForParticipant(this.hearing, this.participant);
             }
-            if (changes.endpoint && changes.hearing) {
-                this.model = this.initModelForEndpoint(changes.hearing.currentValue, changes.endpoint.currentValue);
+            if (this.endpoint && this.hearing) {
+                this.model = this.initModelForEndpoint(this.hearing, this.endpoint);
             }
         }
     }
