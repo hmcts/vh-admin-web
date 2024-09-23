@@ -961,7 +961,9 @@ namespace AdminWebsite.Controllers
                 
                 VideoApi.Contract.Responses.ConferenceDetailsResponse conferenceDetailsResponse;
                 
-                if (response.Status == BookingStatus.Created && !accountsStillNeedCreating)
+                if ((response.Status == BookingStatus.Created || 
+                        response.Status == BookingStatus.ConfirmedWithoutJudge) 
+                        && !accountsStillNeedCreating)
                 {
                     try
                     {
