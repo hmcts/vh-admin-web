@@ -20,18 +20,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
     public abstract class HearingsControllerTests
     {
-        protected Mock<IBookingsApiClient> BookingsApiClient;
-        protected Mock<IUserIdentity> UserIdentity;
-        protected Mock<IFeatureToggles> FeatureToggle;
-        protected AdminWebsite.Controllers.HearingsController Controller;
-        
-        private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private Mock<IConferenceDetailsService> _conferencesServiceMock;
-        private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
-        private Mock<KinlyConfiguration> _kinlyConfigurationMock;
-        private Mock<ILogger<HearingsService>> _participantGroupLogger;
+
+        private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private IHearingsService _hearingsService;
-        
+        private Mock<ILogger<HearingsService>> _participantGroupLogger;
+        private Mock<VodafoneConfiguration> _VodafoneConfigurationMock;
+        private Mock<IOptions<VodafoneConfiguration>> _VodafoneOptionsMock;
+        protected Mock<IBookingsApiClient> BookingsApiClient;
+        protected AdminWebsite.Controllers.HearingsController Controller;
+        protected Mock<IFeatureToggles> FeatureToggle;
+        protected Mock<IUserIdentity> UserIdentity;
+
         [SetUp]
         protected virtual void Setup()
         {
@@ -54,9 +54,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 });
 
-            _kinlyOptionsMock = new Mock<IOptions<KinlyConfiguration>>();
-            _kinlyConfigurationMock = new Mock<KinlyConfiguration>();
-            _kinlyOptionsMock.Setup((op) => op.Value).Returns(_kinlyConfigurationMock.Object);
+            _VodafoneOptionsMock = new Mock<IOptions<VodafoneConfiguration>>();
+            _VodafoneConfigurationMock = new Mock<VodafoneConfiguration>();
+            _VodafoneOptionsMock.Setup((op) => op.Value).Returns(_VodafoneConfigurationMock.Object);
 
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(BookingsApiClient.Object, _participantGroupLogger.Object);
@@ -68,7 +68,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _hearingsService,
                 _conferencesServiceMock.Object);
         }
-        
+
         protected static List<HearingDetailsResponse> CreateListOfV1HearingsInMultiDayGroup(
             Guid groupId, Guid initialHearingId)
         {
@@ -81,7 +81,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             return CreateListOfV1HearingsInMultiDayGroup(groupId, initialHearingId, hearingDates);
         }
-        
+
         protected static List<HearingDetailsResponse> CreateListOfV1HearingsInMultiDayGroup(
             Guid groupId, Guid initialHearingId, List<DateTime> scheduledDates)
         {
@@ -143,7 +143,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             return hearingsInMultiDay;
         }
-        
+
         protected static List<HearingDetailsResponseV2> CreateListOfV2HearingsInMultiDayGroup(
             Guid groupId, Guid initialHearingId)
         {
@@ -156,7 +156,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             return CreateListOfV2HearingsInMultiDayGroupAsV2(groupId, initialHearingId, hearingDates);
         }
-        
+
         protected static List<HearingDetailsResponse> CreateListOfV2HearingsInMultiDayGroup(
             Guid groupId, Guid initialHearingId, List<DateTime> scheduledDates)
         {
@@ -220,7 +220,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             return hearingsInMultiDay;
         }
-        
+
         protected static List<HearingDetailsResponseV2> CreateListOfV2HearingsInMultiDayGroupAsV2(
             Guid groupId, Guid initialHearingId, List<DateTime> scheduledDates)
         {

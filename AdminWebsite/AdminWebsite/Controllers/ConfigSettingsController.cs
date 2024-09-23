@@ -1,10 +1,10 @@
+using System.Net;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Net;
 
 namespace AdminWebsite.Controllers
 {
@@ -13,18 +13,18 @@ namespace AdminWebsite.Controllers
     [Route("api/config")]
     public class ConfigSettingsController : ControllerBase
     {
+        private readonly ApplicationInsightsConfiguration _applicationInsightsConfiguration;
         private readonly AzureAdConfiguration _azureAdConfiguration;
         private readonly Dom1AdConfiguration _dom1AdConfiguration;
-        private readonly KinlyConfiguration _kinlyConfiguration;
-        private readonly ApplicationInsightsConfiguration _applicationInsightsConfiguration;
+        private readonly IFeatureToggles _featureToggles;
         private readonly TestUserSecrets _testUserSecrets;
         private readonly ServiceConfiguration _vhServiceConfiguration;
-        private readonly IFeatureToggles _featureToggles;
+        private readonly VodafoneConfiguration _vodafoneConfiguration;
 
         public ConfigSettingsController(
             IOptions<AzureAdConfiguration> azureAdConfiguration,
             IOptions<Dom1AdConfiguration> dom1AdConfiguration,
-            IOptions<KinlyConfiguration> kinlyConfiguration,
+            IOptions<VodafoneConfiguration> VodafoneConfiguration,
             IOptions<ApplicationInsightsConfiguration> applicationInsightsConfiguration,
             IOptions<TestUserSecrets> testSettings,
             IOptions<ServiceConfiguration> vhServiceConfiguration,
@@ -33,7 +33,7 @@ namespace AdminWebsite.Controllers
             _featureToggles = featureToggles;
             _azureAdConfiguration = azureAdConfiguration.Value;
             _dom1AdConfiguration = dom1AdConfiguration.Value;
-            _kinlyConfiguration = kinlyConfiguration.Value;
+            _vodafoneConfiguration = VodafoneConfiguration.Value;
             _applicationInsightsConfiguration = applicationInsightsConfiguration.Value;
             _testUserSecrets = testSettings.Value;
             _vhServiceConfiguration = vhServiceConfiguration.Value;
@@ -53,9 +53,8 @@ namespace AdminWebsite.Controllers
             {
                 ConnectionString = _applicationInsightsConfiguration.ConnectionString,
                 TestUsernameStem = _testUserSecrets.TestUsernameStem,
-                ConferencePhoneNumber = _kinlyConfiguration.ConferencePhoneNumber,
-                ConferencePhoneNumberWelsh = _kinlyConfiguration.ConferencePhoneNumberWelsh,
-                JoinByPhoneFromDate = _kinlyConfiguration.JoinByPhoneFromDate,
+                ConferencePhoneNumber = _vodafoneConfiguration.ConferencePhoneNumber,
+                ConferencePhoneNumberWelsh = _vodafoneConfiguration.ConferencePhoneNumberWelsh,
                 VideoWebUrl = _vhServiceConfiguration.VideoWebUrl,
                 LaunchDarklyClientId = _vhServiceConfiguration.LaunchDarklyClientId
             };

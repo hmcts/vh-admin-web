@@ -1,17 +1,9 @@
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using AdminWebsite.Configuration;
-using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Requests.Enums;
@@ -19,44 +11,47 @@ using BookingsApi.Contract.V1.Responses;
 using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Requests;
 using BookingsApi.Contract.V2.Responses;
+using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using VideoApi.Contract.Consts;
 using VideoApi.Contract.Responses;
-using BookingStatus = BookingsApi.Contract.V1.Enums.BookingStatus;
 using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
 using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
 using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
 using LinkedParticipantResponse = BookingsApi.Contract.V1.Responses.LinkedParticipantResponse;
 using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
 using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
-using RoleNames = AdminWebsite.Contracts.Enums.RoleNames;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
     public class EditHearingTests
     {
         private EditHearingRequest _addEndpointToHearingRequest;
-        private EditHearingRequest _editEndpointOnHearingRequestWithJudge;
-        private EditHearingRequest _removeEndpointOnHearingRequest;
         private EditHearingRequest _addNewParticipantRequest;
         private Mock<IBookingsApiClient> _bookingsApiClient;
+        private Mock<IConferenceDetailsService> _conferencesServiceMock;
 
         private AdminWebsite.Controllers.HearingsController _controller;
+        private EditHearingRequest _editEndpointOnHearingRequestWithJudge;
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private HearingDetailsResponse _existingHearingWithEndpointsOriginal;
-        private HearingDetailsResponse _existingHearingWithLinkedParticipants;
         private HearingDetailsResponse _existingHearingWithJudge;
+        private HearingDetailsResponse _existingHearingWithLinkedParticipants;
+        private Mock<IFeatureToggles> _featureToggle;
         private IHearingsService _hearingsService;
 
         private Mock<ILogger<HearingsService>> _participantGroupLogger;
+        private EditHearingRequest _removeEndpointOnHearingRequest;
         private HearingDetailsResponse _updatedExistingParticipantHearingOriginal;
         private Mock<IUserIdentity> _userIdentity;
-        private Mock<IConferenceDetailsService> _conferencesServiceMock;
-        private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
-        private Mock<KinlyConfiguration> _kinlyConfigurationMock;
+        private HearingDetailsResponseV2 _v2HearingDetailsResponse;
 
         private Guid _validId;
-        private Mock<IFeatureToggles> _featureToggle;
-        private HearingDetailsResponseV2 _v2HearingDetailsResponse;
+        private Mock<VodafoneConfiguration> _VodafoneConfigurationMock;
+        private Mock<IOptions<VodafoneConfiguration>> _VodafoneOptionsMock;
 
         [SetUp]
         public void Setup()
@@ -80,9 +75,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 });
 
-            _kinlyOptionsMock = new Mock<IOptions<KinlyConfiguration>>();
-            _kinlyConfigurationMock = new Mock<KinlyConfiguration>();
-            _kinlyOptionsMock.Setup((op) => op.Value).Returns(_kinlyConfigurationMock.Object);
+            _VodafoneOptionsMock = new Mock<IOptions<VodafoneConfiguration>>();
+            _VodafoneConfigurationMock = new Mock<VodafoneConfiguration>();
+            _VodafoneOptionsMock.Setup((op) => op.Value).Returns(_VodafoneConfigurationMock.Object);
 
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_bookingsApiClient.Object, _participantGroupLogger.Object);
@@ -406,7 +401,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var errors = validationProblems.Errors;
             errors["participants"].Should().Contain( "Please provide at least one participant");
         }
-        
+
         [Test]
         public async Task Should_return_updated_hearing2()
         {
@@ -492,7 +487,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                             r.Any(y => y.PersonalCode == panelMemberToAdd.PersonalCode))),
                 Times.Once);
         }
-        
+
         [Test]
         public async Task Should_return_updated_hearingV2()
         {
@@ -533,7 +528,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     It.IsAny<UpdateHearingParticipantsRequestV2>()),
                 Times.Never);
         }
-        
+
         [Test]
         public async Task Should_return_updated_hearingV2_with_no_judiciary_participants_provided()
         {
@@ -651,7 +646,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             AssertJudiciaryJudgeReassigned(updatedHearing, newJudge);
         }
-        
+
         [Test]
         public async Task Should_return_updated_hearingV2_with_old_judge_and_no_new_judge()
         {
@@ -681,7 +676,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Times.Never);
         }
 
-                
+
         [Test]
         public async Task Should_reassign_a_generic_judge_booked_with_v1_to_ejud_judge_on_v2()
         {
@@ -803,7 +798,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     It.IsAny<List<BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest>>()),
                 Times.Never);
         }
-        
+
         [Test]
         public async Task Should_update_endpoint_to_be_linked_to_new_defence_advocate_when_endpoint_is_not_currently_linked()
         {

@@ -1,6 +1,6 @@
 ﻿namespace AdminWebsite.Configuration
 {
-    public class KinlyConfiguration
+    public class VodafoneConfiguration
     {
         /// <summary>
         /// To join the conference phone number
@@ -11,7 +11,5 @@
         /// To join the conference phone number - welsh
         /// </summary>
         public string ConferencePhoneNumberWelsh { get; set; }
-
-        public string JoinByPhoneFromDate { get; set; }
     }
 }
