@@ -39,26 +39,6 @@ export class HearingDetailsComponent implements OnDestroy {
         return represents;
     }
 
-    isJoinByPhone(): boolean {
-        const config = this.configService.getConfig();
-        const datePhone = config.join_by_phone_from_date;
-
-        if (!datePhone || datePhone.length === 0) {
-            return true;
-        }
-        const dateFrom = this.getDateFromString(datePhone);
-        if (this.hearing.ConfirmedDate) {
-            return Date.parse(this.hearing.ConfirmedDate.toString()) >= Date.parse(dateFrom.toString());
-        } else {
-            return false;
-        }
-    }
-
-    getDateFromString(datePhone: string): Date {
-        const dateParts = datePhone.split('-');
-        return new Date(+dateParts[0], +dateParts[1] - 1, +dateParts[2]);
-    }
-
     getOtherInformationText(): string {
         try {
             const otherInfo = OtherInformationModel.init(this.hearing?.OtherInformation);

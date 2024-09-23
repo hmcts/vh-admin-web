@@ -35,9 +35,8 @@ java:
           alias: VhServices--ResourceId
         - name: azuread--identifieruri
           alias: azuread--ResourceId
-        - kinlyconfiguration--conferencephonenumber
-        - kinlyconfiguration--conferencephonenumberwelsh
-        - kinlyconfiguration--joinbyphonefromdate
+        - vodafoneconfiguration--conferencephonenumber
+        - vodafoneconfiguration--conferencephonenumberwelsh
         - name: FeatureToggles--SDK-Key
           alias: FeatureToggle--SDKKey
         - NotifyConfiguration--ApiKey
