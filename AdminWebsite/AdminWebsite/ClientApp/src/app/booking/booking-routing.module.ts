@@ -42,7 +42,7 @@ export const routes: Routes = [
     {
         path: 'screening',
         component: ScreeningComponent,
-        canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard]
+        canActivate: [AuthGuard, AdminGuard]
     },
     { path: 'video-access-points', component: EndpointsComponent, canActivate: [AuthGuard, AdminGuard] },
     {
