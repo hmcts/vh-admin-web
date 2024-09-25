@@ -270,7 +270,7 @@ namespace AdminWebsite.Services
             _logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
                 endpoint.Id, endpoint.DisplayName, hearingId);
             
-            await _bookingsApiClient.UpdateDisplayNameForEndpoint2Async(hearing.Id, endpoint.Id.Value, request);
+            await _bookingsApiClient.UpdateEndpointV2Async(hearing.Id, endpoint.Id!.Value, request);
         }
 
         private UpdateEndpointRequestV2 MapToUpdateEndpointRequest(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint,

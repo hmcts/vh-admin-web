@@ -811,7 +811,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
             var expectedUpdatedEndpointCount = request.Endpoints.Count;
             _bookingsApiClient.Verify(
-                x => x.UpdateDisplayNameForEndpoint2Async(hearingId, It.IsAny<Guid>(),
+                x => x.UpdateEndpointV2Async(hearingId, It.IsAny<Guid>(),
                     It.Is<UpdateEndpointRequestV2>(r =>
                         r.DefenceAdvocateContactEmail == newParticipantDefenceAdvocate.ContactEmail)), 
                 Times.Exactly(expectedUpdatedEndpointCount));
