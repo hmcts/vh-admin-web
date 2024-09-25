@@ -1,5 +1,6 @@
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Mappers;
+using BookingsApi.Contract.V2.Enums;
 
 namespace AdminWebsite.UnitTests.Mappers
 {
@@ -13,7 +14,13 @@ namespace AdminWebsite.UnitTests.Mappers
             {
                 DisplayName = "DisplayName",
                 DefenceAdvocateContactEmail = "email@email.com",
-                InterpreterLanguageCode = "spa"
+                InterpreterLanguageCode = "spa",
+                ScreeningRequirements = new SpecialMeasureScreeningRequest()
+                {
+                    ScreenAll = false,
+                    ScreenFromParticipantContactEmails = ["participant1@test.com"],
+                    ScreenFromJvsDisplayNames = ["endpoint1"]
+                }
             };
 
             // Act
@@ -23,6 +30,12 @@ namespace AdminWebsite.UnitTests.Mappers
             result.DisplayName.Should().Be(request.DisplayName);
             result.DefenceAdvocateContactEmail.Should().Be(request.DefenceAdvocateContactEmail);
             result.InterpreterLanguageCode.Should().Be(request.InterpreterLanguageCode);
+            
+            result.Screening.Type.Should().Be(ScreeningType.Specific);
+            result.Screening.ProtectFromParticipants.Should()
+                .BeEquivalentTo(request.ScreeningRequirements.ScreenFromParticipantContactEmails);
+            result.Screening.ProtectFromEndpoints.Should()
+                .BeEquivalentTo(request.ScreeningRequirements.ScreenFromJvsDisplayNames);
         }
     }
 }

@@ -92,7 +92,7 @@ namespace AdminWebsite.Services
                 RemovedParticipantIds = removedParticipantIds,
                 LinkedParticipants = linkedParticipants
             };
-            await _bookingsApiClient.UpdateHearingParticipants2Async(hearingId, updateHearingParticipantsRequest);
+            await _bookingsApiClient.UpdateHearingParticipantsV2Async(hearingId, updateHearingParticipantsRequest);
         }
         
         public Task<IParticipantRequest> ProcessNewParticipant(
@@ -170,14 +170,15 @@ namespace AdminWebsite.Services
             return endpointsV2;
         }
         
-        private UpdateHearingEndpointsRequest MapUpdateHearingEndpointsRequest(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing,
+        private UpdateHearingEndpointsRequestV2 MapUpdateHearingEndpointsRequest(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing,
             List<IParticipantRequest> newParticipantList, HearingChanges hearingChanges = null)
         {
             if (hearing.Endpoints == null) return null;
 
-            var request = new UpdateHearingEndpointsRequest();
-            
-            var listOfEndpointsToDelete = hearing.Endpoints.Where(e => endpoints.TrueForAll(re => re.Id != e.Id));
+            var request = new UpdateHearingEndpointsRequestV2();
+
+            var listOfEndpointsToDelete =
+                hearing.Endpoints.Where(e => endpoints.TrueForAll(re => re.Id != e.Id)).ToList();
             if (hearingChanges != null)
             {
                 // Only remove endpoints that have been explicitly removed as part of this request, if they exist on this hearing
@@ -202,7 +203,7 @@ namespace AdminWebsite.Services
 
                 if (endpoint.Id.HasValue)
                 {
-                    var updateEndpointRequest = MapEditableEndpointRequest(hearingId, hearing, endpoint, newParticipantList);
+                    var updateEndpointRequest = MapToUpdateEndpointRequest(hearingId, hearing, endpoint, newParticipantList);
                     if (updateEndpointRequest != null)
                     {
                         request.ExistingEndpoints.Add(updateEndpointRequest);
@@ -210,10 +211,12 @@ namespace AdminWebsite.Services
                 }
                 else
                 {
-                    var addEndpointRequest = new AddEndpointRequest
+                    var addEndpointRequest = new EndpointRequestV2
                     {
                         DisplayName = endpoint.DisplayName,
-                        DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail
+                        DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail,
+                        InterpreterLanguageCode = endpoint.InterpreterLanguageCode,
+                        Screening = endpoint.ScreeningRequirements?.MapToV2()
                     };
                 
                     request.NewEndpoints.Add(addEndpointRequest);
@@ -248,28 +251,29 @@ namespace AdminWebsite.Services
         {
             _logger.LogDebug("Adding endpoint {EndpointDisplayName} to hearing {Hearing}",
                 endpoint.DisplayName, hearingId);
-            var addEndpointRequest = new AddEndpointRequest
+            var addEndpointRequest = new EndpointRequestV2()
             {
                 DisplayName = endpoint.DisplayName,
                 DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail,
-                InterpreterLanguageCode = endpoint.InterpreterLanguageCode
+                InterpreterLanguageCode = endpoint.InterpreterLanguageCode,
+                Screening = endpoint.ScreeningRequirements.MapToV2()
             };
-            await _bookingsApiClient.AddEndPointToHearingAsync(hearing.Id, addEndpointRequest);
+            await _bookingsApiClient.AddEndPointToHearingV2Async(hearing.Id, addEndpointRequest);
         }
 
         private async Task UpdateEndpointInHearing(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint,
             IEnumerable<IParticipantRequest> newParticipantList)
         {
-            var request = MapEditableEndpointRequest(hearingId, hearing, endpoint, newParticipantList);
+            var request = MapToUpdateEndpointRequest(hearingId, hearing, endpoint, newParticipantList);
             if (request == null) return;
             
             _logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
                 endpoint.Id, endpoint.DisplayName, hearingId);
             
-            await _bookingsApiClient.UpdateDisplayNameForEndpointAsync(hearing.Id, endpoint.Id.Value, request);
+            await _bookingsApiClient.UpdateEndpointV2Async(hearing.Id, endpoint.Id!.Value, request);
         }
 
-        private EditableEndpointRequest MapEditableEndpointRequest(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint,
+        private UpdateEndpointRequestV2 MapToUpdateEndpointRequest(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint,
             IEnumerable<IParticipantRequest> newParticipantList)
         {
             var existingEndpointToEdit = hearing.Endpoints.Find(e => e.Id.Equals(endpoint.Id));
@@ -285,12 +289,13 @@ namespace AdminWebsite.Services
 
             _logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
                 existingEndpointToEdit.Id, existingEndpointToEdit.DisplayName, hearingId);
-            var updateEndpointRequest = new EditableEndpointRequest
+            var updateEndpointRequest = new UpdateEndpointRequestV2()
             {
-                Id = endpoint.Id.Value,
+                Id = endpoint.Id.GetValueOrDefault(),
                 DisplayName = endpoint.DisplayName,
                 DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail,
-                InterpreterLanguageCode = endpoint.InterpreterLanguageCode
+                InterpreterLanguageCode = endpoint.InterpreterLanguageCode,
+                Screening = endpoint.ScreeningRequirements?.MapToV2()
             };
 
             return updateEndpointRequest;

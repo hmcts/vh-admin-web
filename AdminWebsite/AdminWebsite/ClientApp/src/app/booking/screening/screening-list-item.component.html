@@ -1,0 +1,17 @@
+<div *ngIf="model" class="govuk-grid-row screening-item-container">
+  <div class="screening-row">
+    <div class="screening-row__name">{{ model.displayName }}</div>
+    <div class="screening-row__measure_type">
+      Screen from: <strong *ngIf="model.measureType === 'All'">{{ model.measureType }}</strong>
+    </div>
+
+    <div _ngcontent-ng-c365104424="" class="screening-row__actions">
+      <a _ngcontent-ng-c365104424="" href="javascript:void(0)" class="vhlink" (click)="delete()">Remove</a>
+    </div>
+  </div>
+  <div class="govuk-!-margin-left-3" *ngIf="model.measureType === 'Specific'">
+    <ul class="govuk-list govuk-list--bullet">
+      <li class="govuk-body-s" *ngFor="let protectedFrom of model.protectFrom">{{ protectedFrom.displayName }}</li>
+    </ul>
+  </div>
+</div>

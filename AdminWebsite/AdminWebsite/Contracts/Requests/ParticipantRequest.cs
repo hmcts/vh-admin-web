@@ -21,4 +21,8 @@ public class ParticipantRequest
     public string Representee { get; set; }
     public string OrganisationName { get; set; }
     public string InterpreterLanguageCode { get; set; }
+    /// <summary>
+    /// Screening requirements for a participant (optional)
+    /// </summary>
+    public SpecialMeasureScreeningRequest ScreeningRequirements { get; set; }
 }

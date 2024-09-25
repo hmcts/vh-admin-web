@@ -8,9 +8,9 @@
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
 
-import { catchError as _observableCatch, mergeMap as _observableMergeMap } from 'rxjs/operators';
-import { from as _observableFrom, Observable, of as _observableOf, throwError as _observableThrow } from 'rxjs';
-import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
+import { mergeMap as _observableMergeMap, catchError as _observableCatch } from 'rxjs/operators';
+import { Observable, from as _observableFrom, throwError as _observableThrow, of as _observableOf } from 'rxjs';
+import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
 
 export const BH_API_BASE_URL = new InjectionToken<string>('BH_API_BASE_URL');
@@ -5219,6 +5219,11 @@ export enum LinkedParticipantType {
     Interpreter = 'Interpreter'
 }
 
+export enum ScreeningType {
+    All = 'All',
+    Specific = 'Specific'
+}
+
 export enum VideoSupplier {
     Kinly = 'Kinly',
     Vodafone = 'Vodafone'
@@ -5345,12 +5350,9 @@ export interface IBookHearingRequest {
 export class BookingDetailsRequest implements IBookingDetailsRequest {
     scheduled_date_time?: Date;
     scheduled_duration?: number;
-    hearing_venue_name?: string | undefined;
     hearing_venue_code?: string | undefined;
     case_type_name?: string | undefined;
     case_type_service_id?: string | undefined;
-    hearing_type_name?: string | undefined;
-    hearing_type_code?: string | undefined;
     cases?: CaseRequest[] | undefined;
     participants?: ParticipantRequest[] | undefined;
     judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
@@ -5378,12 +5380,9 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
         if (_data) {
             this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
             this.scheduled_duration = _data['scheduled_duration'];
-            this.hearing_venue_name = _data['hearing_venue_name'];
             this.hearing_venue_code = _data['hearing_venue_code'];
             this.case_type_name = _data['case_type_name'];
             this.case_type_service_id = _data['case_type_service_id'];
-            this.hearing_type_name = _data['hearing_type_name'];
-            this.hearing_type_code = _data['hearing_type_code'];
             if (Array.isArray(_data['cases'])) {
                 this.cases = [] as any;
                 for (let item of _data['cases']) this.cases!.push(CaseRequest.fromJS(item));
@@ -5425,12 +5424,9 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
         data = typeof data === 'object' ? data : {};
         data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
         data['scheduled_duration'] = this.scheduled_duration;
-        data['hearing_venue_name'] = this.hearing_venue_name;
         data['hearing_venue_code'] = this.hearing_venue_code;
         data['case_type_name'] = this.case_type_name;
         data['case_type_service_id'] = this.case_type_service_id;
-        data['hearing_type_name'] = this.hearing_type_name;
-        data['hearing_type_code'] = this.hearing_type_code;
         if (Array.isArray(this.cases)) {
             data['cases'] = [];
             for (let item of this.cases) data['cases'].push(item.toJSON());
@@ -5464,12 +5460,9 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
 export interface IBookingDetailsRequest {
     scheduled_date_time?: Date;
     scheduled_duration?: number;
-    hearing_venue_name?: string | undefined;
     hearing_venue_code?: string | undefined;
     case_type_name?: string | undefined;
     case_type_service_id?: string | undefined;
-    hearing_type_name?: string | undefined;
-    hearing_type_code?: string | undefined;
     cases?: CaseRequest[] | undefined;
     participants?: ParticipantRequest[] | undefined;
     judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
@@ -5794,6 +5787,7 @@ export class EndpointRequest implements IEndpointRequest {
     display_name?: string | undefined;
     defence_advocate_contact_email?: string | undefined;
     interpreter_language_code?: string | undefined;
+    screening_requirements?: SpecialMeasureScreeningRequest;
 
     constructor(data?: IEndpointRequest) {
         if (data) {
@@ -5808,6 +5802,9 @@ export class EndpointRequest implements IEndpointRequest {
             this.display_name = _data['display_name'];
             this.defence_advocate_contact_email = _data['defence_advocate_contact_email'];
             this.interpreter_language_code = _data['interpreter_language_code'];
+            this.screening_requirements = _data['screening_requirements']
+                ? SpecialMeasureScreeningRequest.fromJS(_data['screening_requirements'])
+                : <any>undefined;
         }
     }
 
@@ -5823,6 +5820,7 @@ export class EndpointRequest implements IEndpointRequest {
         data['display_name'] = this.display_name;
         data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
         data['interpreter_language_code'] = this.interpreter_language_code;
+        data['screening_requirements'] = this.screening_requirements ? this.screening_requirements.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -5831,6 +5829,7 @@ export interface IEndpointRequest {
     display_name?: string | undefined;
     defence_advocate_contact_email?: string | undefined;
     interpreter_language_code?: string | undefined;
+    screening_requirements?: SpecialMeasureScreeningRequest;
 }
 
 export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest {
@@ -5946,6 +5945,7 @@ export class ParticipantRequest implements IParticipantRequest {
     representee?: string | undefined;
     organisation_name?: string | undefined;
     interpreter_language_code?: string | undefined;
+    screening_requirements?: SpecialMeasureScreeningRequest;
 
     constructor(data?: IParticipantRequest) {
         if (data) {
@@ -5971,6 +5971,9 @@ export class ParticipantRequest implements IParticipantRequest {
             this.representee = _data['representee'];
             this.organisation_name = _data['organisation_name'];
             this.interpreter_language_code = _data['interpreter_language_code'];
+            this.screening_requirements = _data['screening_requirements']
+                ? SpecialMeasureScreeningRequest.fromJS(_data['screening_requirements'])
+                : <any>undefined;
         }
     }
 
@@ -5997,6 +6000,7 @@ export class ParticipantRequest implements IParticipantRequest {
         data['representee'] = this.representee;
         data['organisation_name'] = this.organisation_name;
         data['interpreter_language_code'] = this.interpreter_language_code;
+        data['screening_requirements'] = this.screening_requirements ? this.screening_requirements.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -6016,6 +6020,70 @@ export interface IParticipantRequest {
     representee?: string | undefined;
     organisation_name?: string | undefined;
     interpreter_language_code?: string | undefined;
+    screening_requirements?: SpecialMeasureScreeningRequest;
+}
+
+/** Screening requirements for a participant */
+export class SpecialMeasureScreeningRequest implements ISpecialMeasureScreeningRequest {
+    /** True if screen from all, or false if screen from specific participants */
+    screen_all?: boolean;
+    /** List of participant contact emails to screen from */
+    screen_from_participant_contact_emails?: string[] | undefined;
+    /** List of endpoint display names to screen from */
+    screen_from_jvs_display_names?: string[] | undefined;
+
+    constructor(data?: ISpecialMeasureScreeningRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.screen_all = _data['screen_all'];
+            if (Array.isArray(_data['screen_from_participant_contact_emails'])) {
+                this.screen_from_participant_contact_emails = [] as any;
+                for (let item of _data['screen_from_participant_contact_emails']) this.screen_from_participant_contact_emails!.push(item);
+            }
+            if (Array.isArray(_data['screen_from_jvs_display_names'])) {
+                this.screen_from_jvs_display_names = [] as any;
+                for (let item of _data['screen_from_jvs_display_names']) this.screen_from_jvs_display_names!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SpecialMeasureScreeningRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpecialMeasureScreeningRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['screen_all'] = this.screen_all;
+        if (Array.isArray(this.screen_from_participant_contact_emails)) {
+            data['screen_from_participant_contact_emails'] = [];
+            for (let item of this.screen_from_participant_contact_emails) data['screen_from_participant_contact_emails'].push(item);
+        }
+        if (Array.isArray(this.screen_from_jvs_display_names)) {
+            data['screen_from_jvs_display_names'] = [];
+            for (let item of this.screen_from_jvs_display_names) data['screen_from_jvs_display_names'].push(item);
+        }
+        return data;
+    }
+}
+
+/** Screening requirements for a participant */
+export interface ISpecialMeasureScreeningRequest {
+    /** True if screen from all, or false if screen from specific participants */
+    screen_all?: boolean;
+    /** List of participant contact emails to screen from */
+    screen_from_participant_contact_emails?: string[] | undefined;
+    /** List of endpoint display names to screen from */
+    screen_from_jvs_display_names?: string[] | undefined;
 }
 
 export class UpdateAccountDetailsRequest implements IUpdateAccountDetailsRequest {
@@ -6761,6 +6829,7 @@ export class EndpointResponse implements IEndpointResponse {
     pin?: string | undefined;
     defence_advocate_id?: string | undefined;
     interpreter_language?: AvailableLanguageResponse;
+    screening_requirement?: ScreeningResponse;
 
     constructor(data?: IEndpointResponse) {
         if (data) {
@@ -6780,6 +6849,9 @@ export class EndpointResponse implements IEndpointResponse {
             this.interpreter_language = _data['interpreter_language']
                 ? AvailableLanguageResponse.fromJS(_data['interpreter_language'])
                 : <any>undefined;
+            this.screening_requirement = _data['screening_requirement']
+                ? ScreeningResponse.fromJS(_data['screening_requirement'])
+                : <any>undefined;
         }
     }
 
@@ -6798,6 +6870,7 @@ export class EndpointResponse implements IEndpointResponse {
         data['pin'] = this.pin;
         data['defence_advocate_id'] = this.defence_advocate_id;
         data['interpreter_language'] = this.interpreter_language ? this.interpreter_language.toJSON() : <any>undefined;
+        data['screening_requirement'] = this.screening_requirement ? this.screening_requirement.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -6809,6 +6882,7 @@ export interface IEndpointResponse {
     pin?: string | undefined;
     defence_advocate_id?: string | undefined;
     interpreter_language?: AvailableLanguageResponse;
+    screening_requirement?: ScreeningResponse;
 }
 
 export class HearingDetailsResponse implements IHearingDetailsResponse {
@@ -7433,6 +7507,7 @@ export class ParticipantResponse implements IParticipantResponse {
     organisation?: string | undefined;
     representee?: string | undefined;
     interpreter_language?: AvailableLanguageResponse;
+    screening_requirement?: ScreeningResponse;
     linked_participants?: LinkedParticipantResponse[] | undefined;
 
     constructor(data?: IParticipantResponse) {
@@ -7462,6 +7537,9 @@ export class ParticipantResponse implements IParticipantResponse {
             this.representee = _data['representee'];
             this.interpreter_language = _data['interpreter_language']
                 ? AvailableLanguageResponse.fromJS(_data['interpreter_language'])
+                : <any>undefined;
+            this.screening_requirement = _data['screening_requirement']
+                ? ScreeningResponse.fromJS(_data['screening_requirement'])
                 : <any>undefined;
             if (Array.isArray(_data['linked_participants'])) {
                 this.linked_participants = [] as any;
@@ -7495,6 +7573,7 @@ export class ParticipantResponse implements IParticipantResponse {
         data['organisation'] = this.organisation;
         data['representee'] = this.representee;
         data['interpreter_language'] = this.interpreter_language ? this.interpreter_language.toJSON() : <any>undefined;
+        data['screening_requirement'] = this.screening_requirement ? this.screening_requirement.toJSON() : <any>undefined;
         if (Array.isArray(this.linked_participants)) {
             data['linked_participants'] = [];
             for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
@@ -7520,7 +7599,110 @@ export interface IParticipantResponse {
     organisation?: string | undefined;
     representee?: string | undefined;
     interpreter_language?: AvailableLanguageResponse;
+    screening_requirement?: ScreeningResponse;
     linked_participants?: LinkedParticipantResponse[] | undefined;
+}
+
+export class ProtectFromResponse implements IProtectFromResponse {
+    /** Id of the participant or endpoint to be protected from */
+    id?: string;
+    /** The participant contact email or endpoint display name */
+    value?: string | undefined;
+
+    constructor(data?: IProtectFromResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.value = _data['value'];
+        }
+    }
+
+    static fromJS(data: any): ProtectFromResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProtectFromResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['value'] = this.value;
+        return data;
+    }
+}
+
+export interface IProtectFromResponse {
+    /** Id of the participant or endpoint to be protected from */
+    id?: string;
+    /** The participant contact email or endpoint display name */
+    value?: string | undefined;
+}
+
+export class ScreeningResponse implements IScreeningResponse {
+    type?: ScreeningType;
+    /** A list of participant ids to be protected from */
+    protect_from_participants?: ProtectFromResponse[] | undefined;
+    /** A list of endpoint ids to be protected from */
+    protect_from_endpoints?: ProtectFromResponse[] | undefined;
+
+    constructor(data?: IScreeningResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.type = _data['type'];
+            if (Array.isArray(_data['protect_from_participants'])) {
+                this.protect_from_participants = [] as any;
+                for (let item of _data['protect_from_participants']) this.protect_from_participants!.push(ProtectFromResponse.fromJS(item));
+            }
+            if (Array.isArray(_data['protect_from_endpoints'])) {
+                this.protect_from_endpoints = [] as any;
+                for (let item of _data['protect_from_endpoints']) this.protect_from_endpoints!.push(ProtectFromResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ScreeningResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ScreeningResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['type'] = this.type;
+        if (Array.isArray(this.protect_from_participants)) {
+            data['protect_from_participants'] = [];
+            for (let item of this.protect_from_participants) data['protect_from_participants'].push(item.toJSON());
+        }
+        if (Array.isArray(this.protect_from_endpoints)) {
+            data['protect_from_endpoints'] = [];
+            for (let item of this.protect_from_endpoints) data['protect_from_endpoints'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IScreeningResponse {
+    type?: ScreeningType;
+    /** A list of participant ids to be protected from */
+    protect_from_participants?: ProtectFromResponse[] | undefined;
+    /** A list of endpoint ids to be protected from */
+    protect_from_endpoints?: ProtectFromResponse[] | undefined;
 }
 
 export class TelephoneParticipantResponse implements ITelephoneParticipantResponse {
@@ -7863,6 +8045,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
     defence_advocate_contact_email?: string | undefined;
     /** The code for the endpoint's interpreter language, if applicable */
     interpreter_language_code?: string | undefined;
+    screening_requirements?: SpecialMeasureScreeningRequest;
 
     constructor(data?: IEditEndpointRequest) {
         if (data) {
@@ -7878,6 +8061,9 @@ export class EditEndpointRequest implements IEditEndpointRequest {
             this.display_name = _data['display_name'];
             this.defence_advocate_contact_email = _data['defence_advocate_contact_email'];
             this.interpreter_language_code = _data['interpreter_language_code'];
+            this.screening_requirements = _data['screening_requirements']
+                ? SpecialMeasureScreeningRequest.fromJS(_data['screening_requirements'])
+                : <any>undefined;
         }
     }
 
@@ -7894,6 +8080,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
         data['display_name'] = this.display_name;
         data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
         data['interpreter_language_code'] = this.interpreter_language_code;
+        data['screening_requirements'] = this.screening_requirements ? this.screening_requirements.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -7907,6 +8094,7 @@ export interface IEditEndpointRequest {
     defence_advocate_contact_email?: string | undefined;
     /** The code for the endpoint's interpreter language, if applicable */
     interpreter_language_code?: string | undefined;
+    screening_requirements?: SpecialMeasureScreeningRequest;
 }
 
 /** Request for updating an existing hearing */
@@ -7926,7 +8114,6 @@ export class EditHearingRequest implements IEditHearingRequest {
     participants!: EditParticipantRequest[] | undefined;
     /** List of judiciary participants in hearing */
     judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
-    telephone_participants?: EditTelephoneParticipantRequest[] | undefined;
     /** Any other information about the hearing */
     other_information?: string | undefined;
     /** Gets or sets audio recording required flag */
@@ -7962,11 +8149,6 @@ export class EditHearingRequest implements IEditHearingRequest {
                 for (let item of _data['judiciary_participants'])
                     this.judiciary_participants!.push(JudiciaryParticipantRequest.fromJS(item));
             }
-            if (Array.isArray(_data['telephone_participants'])) {
-                this.telephone_participants = [] as any;
-                for (let item of _data['telephone_participants'])
-                    this.telephone_participants!.push(EditTelephoneParticipantRequest.fromJS(item));
-            }
             this.other_information = _data['other_information'];
             this.audio_recording_required = _data['audio_recording_required'];
             if (Array.isArray(_data['endpoints'])) {
@@ -7999,10 +8181,6 @@ export class EditHearingRequest implements IEditHearingRequest {
             data['judiciary_participants'] = [];
             for (let item of this.judiciary_participants) data['judiciary_participants'].push(item.toJSON());
         }
-        if (Array.isArray(this.telephone_participants)) {
-            data['telephone_participants'] = [];
-            for (let item of this.telephone_participants) data['telephone_participants'].push(item.toJSON());
-        }
         data['other_information'] = this.other_information;
         data['audio_recording_required'] = this.audio_recording_required;
         if (Array.isArray(this.endpoints)) {
@@ -8030,7 +8208,6 @@ export interface IEditHearingRequest {
     participants: EditParticipantRequest[] | undefined;
     /** List of judiciary participants in hearing */
     judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
-    telephone_participants?: EditTelephoneParticipantRequest[] | undefined;
     /** Any other information about the hearing */
     other_information?: string | undefined;
     /** Gets or sets audio recording required flag */
@@ -8069,6 +8246,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
     organisation_name?: string | undefined;
     /** The code for the participant's interpreter language, if applicable */
     interpreter_language_code?: string | undefined;
+    screening_requirements?: SpecialMeasureScreeningRequest;
     /** List of linked participants */
     linked_participants?: LinkedParticipant[] | undefined;
 
@@ -8096,6 +8274,9 @@ export class EditParticipantRequest implements IEditParticipantRequest {
             this.representee = _data['representee'];
             this.organisation_name = _data['organisation_name'];
             this.interpreter_language_code = _data['interpreter_language_code'];
+            this.screening_requirements = _data['screening_requirements']
+                ? SpecialMeasureScreeningRequest.fromJS(_data['screening_requirements'])
+                : <any>undefined;
             if (Array.isArray(_data['linked_participants'])) {
                 this.linked_participants = [] as any;
                 for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipant.fromJS(item));
@@ -8126,6 +8307,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
         data['representee'] = this.representee;
         data['organisation_name'] = this.organisation_name;
         data['interpreter_language_code'] = this.interpreter_language_code;
+        data['screening_requirements'] = this.screening_requirements ? this.screening_requirements.toJSON() : <any>undefined;
         if (Array.isArray(this.linked_participants)) {
             data['linked_participants'] = [];
             for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
@@ -8164,106 +8346,8 @@ export interface IEditParticipantRequest {
     organisation_name?: string | undefined;
     /** The code for the participant's interpreter language, if applicable */
     interpreter_language_code?: string | undefined;
+    screening_requirements?: SpecialMeasureScreeningRequest;
     /** List of linked participants */
-    linked_participants?: LinkedParticipant[] | undefined;
-}
-
-/** Participant request */
-export class EditTelephoneParticipantRequest implements IEditTelephoneParticipantRequest {
-    /** Participant Id */
-    id?: string;
-    /** The name of the participant's case role */
-    case_role_name?: string | undefined;
-    /** The name of the participant's hearing role */
-    hearing_role_name?: string | undefined;
-    /** Participant first name. */
-    first_name?: string | undefined;
-    /** Participant last name. */
-    last_name?: string | undefined;
-    /** Participant contact email */
-    contact_email?: string | undefined;
-    /** Participant telephone number */
-    telephone_number?: string | undefined;
-    /** Participant telephone number */
-    mobile_number?: string | undefined;
-    /** Gets or sets the person name that Representative represents. */
-    representee?: string | undefined;
-    /** The participant linked to this participant response */
-    linked_participants?: LinkedParticipant[] | undefined;
-
-    constructor(data?: IEditTelephoneParticipantRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data['id'];
-            this.case_role_name = _data['case_role_name'];
-            this.hearing_role_name = _data['hearing_role_name'];
-            this.first_name = _data['first_name'];
-            this.last_name = _data['last_name'];
-            this.contact_email = _data['contact_email'];
-            this.telephone_number = _data['telephone_number'];
-            this.mobile_number = _data['mobile_number'];
-            this.representee = _data['representee'];
-            if (Array.isArray(_data['linked_participants'])) {
-                this.linked_participants = [] as any;
-                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipant.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): EditTelephoneParticipantRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new EditTelephoneParticipantRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['id'] = this.id;
-        data['case_role_name'] = this.case_role_name;
-        data['hearing_role_name'] = this.hearing_role_name;
-        data['first_name'] = this.first_name;
-        data['last_name'] = this.last_name;
-        data['contact_email'] = this.contact_email;
-        data['telephone_number'] = this.telephone_number;
-        data['mobile_number'] = this.mobile_number;
-        data['representee'] = this.representee;
-        if (Array.isArray(this.linked_participants)) {
-            data['linked_participants'] = [];
-            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-/** Participant request */
-export interface IEditTelephoneParticipantRequest {
-    /** Participant Id */
-    id?: string;
-    /** The name of the participant's case role */
-    case_role_name?: string | undefined;
-    /** The name of the participant's hearing role */
-    hearing_role_name?: string | undefined;
-    /** Participant first name. */
-    first_name?: string | undefined;
-    /** Participant last name. */
-    last_name?: string | undefined;
-    /** Participant contact email */
-    contact_email?: string | undefined;
-    /** Participant telephone number */
-    telephone_number?: string | undefined;
-    /** Participant telephone number */
-    mobile_number?: string | undefined;
-    /** Gets or sets the person name that Representative represents. */
-    representee?: string | undefined;
-    /** The participant linked to this participant response */
     linked_participants?: LinkedParticipant[] | undefined;
 }
 

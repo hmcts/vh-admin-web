@@ -29,7 +29,8 @@ import {
     JudiciaryParticipantRequest,
     EditMultiDayHearingRequest,
     CancelMultiDayHearingRequest,
-    UpdateHearingInGroupRequest
+    UpdateHearingInGroupRequest,
+    SpecialMeasureScreeningRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -41,6 +42,7 @@ import * as moment from 'moment';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
 import { map } from 'rxjs/operators';
 import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
+import { mapScreeningResponseToScreeningDto, ScreeningDto } from '../booking/screening/screening.model';
 
 @Injectable({
     providedIn: 'root'
@@ -293,6 +295,7 @@ export class VideoHearingsService {
         editParticipant.organisation_name = participant.company;
         editParticipant.linked_participants = this.mapLinkedParticipantModelToEditLinkedParticipantRequest(participant.linked_participants);
         editParticipant.interpreter_language_code = this.mapInterpreterLanguageCode(participant.interpretation_language);
+        editParticipant.screening_requirements = this.mapScreeningRequirementDtoToRequest(participant.screening);
         return editParticipant;
     }
 
@@ -319,6 +322,7 @@ export class VideoHearingsService {
         editEndpoint.display_name = endpoint.displayName;
         editEndpoint.defence_advocate_contact_email = endpoint.defenceAdvocate;
         editEndpoint.interpreter_language_code = this.mapInterpreterLanguageCode(endpoint.interpretationLanguage);
+        editEndpoint.screening_requirements = this.mapScreeningRequirementDtoToRequest(endpoint.screening);
         return editEndpoint;
     }
 
@@ -329,7 +333,6 @@ export class VideoHearingsService {
         newHearingRequest.case_type_service_id = newRequest.case_type_service_id;
         newHearingRequest.scheduled_date_time = new Date(newRequest.scheduled_date_time);
         newHearingRequest.scheduled_duration = newRequest.scheduled_duration;
-        newHearingRequest.hearing_venue_name = newRequest.court_name;
         newHearingRequest.hearing_venue_code = newRequest.court_code;
         newHearingRequest.hearing_room_name = newRequest.court_room;
         newHearingRequest.participants = this.mapParticipants(newRequest.participants);
@@ -437,6 +440,7 @@ export class VideoHearingsService {
                 participant.representee = p.representee;
                 participant.organisation_name = p.company;
                 participant.interpreter_language_code = this.mapInterpreterLanguageCode(p.interpretation_language);
+                participant.screening_requirements = this.mapScreeningRequirementDtoToRequest(p.screening);
                 participants.push(participant);
             });
         }
@@ -452,10 +456,27 @@ export class VideoHearingsService {
                 endpoint.display_name = e.displayName;
                 endpoint.defence_advocate_contact_email = e.defenceAdvocate;
                 endpoint.interpreter_language_code = this.mapInterpreterLanguageCode(e.interpretationLanguage);
+                endpoint.screening_requirements = this.mapScreeningRequirementDtoToRequest(e.screening);
                 eps.push(endpoint);
             });
         }
         return eps;
+    }
+
+    mapScreeningRequirementDtoToRequest(screeningDto: ScreeningDto): SpecialMeasureScreeningRequest {
+        if (!screeningDto) {
+            return null;
+        }
+        if (screeningDto && screeningDto.measureType === 'All') {
+            return new SpecialMeasureScreeningRequest({ screen_all: true });
+        }
+        return new SpecialMeasureScreeningRequest({
+            screen_all: false,
+            screen_from_jvs_display_names: screeningDto.protectFrom.filter(x => x.endpointDisplayName).map(x => x.endpointDisplayName),
+            screen_from_participant_contact_emails: screeningDto.protectFrom
+                .filter(x => x.participantContactEmail)
+                .map(x => x.participantContactEmail)
+        });
     }
 
     mapParticipantResponseToParticipantModel(response: ParticipantResponse[]): ParticipantModel[] {
@@ -483,6 +504,7 @@ export class VideoHearingsService {
                 participant.linked_participants = this.mapLinkedParticipantResponseToLinkedParticipantModel(p.linked_participants);
                 participant.user_role_name = p.user_role_name;
                 participant.interpretation_language = InterpreterSelectedDto.fromAvailableLanguageResponse(p.interpreter_language);
+                participant.screening = mapScreeningResponseToScreeningDto(p.screening_requirement);
                 participants.push(participant);
             });
         }
@@ -516,6 +538,7 @@ export class VideoHearingsService {
                 endpoint.sip = e.sip;
                 endpoint.defenceAdvocate = defenceAdvocate?.contact_email;
                 endpoint.interpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(e.interpreter_language);
+                endpoint.screening = mapScreeningResponseToScreeningDto(e.screening_requirement);
                 endpoints.push(endpoint);
             });
         }

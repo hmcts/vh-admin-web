@@ -133,6 +133,10 @@
               {{ endpoint.interpretationLanguage.spokenLanguageCodeDescription ?? endpoint.interpretationLanguage.signLanguageDescription }}
             </div>
           </ng-container>
+
+          <ng-container *ngIf="endpoint.screening">
+            <app-screening-enabled-badge [screening]="endpoint.screening"></app-screening-enabled-badge>
+          </ng-container>
         </div>
       </div>
       <div *ngIf="getDefenceAdvocateByContactEmail(endpoint.defenceAdvocate)" class="govuk-grid-row">

@@ -63,6 +63,10 @@
               }}
             </div>
           </ng-container>
+
+          <ng-container *ngIf="participant.Screening">
+            <app-screening-enabled-badge [screening]="participant.Screening"></app-screening-enabled-badge>
+          </ng-container>
         </div>
         <div class="participant-row__icon" *ngIf="participant.isInterpreter || participant.isInterpretee">
           <img

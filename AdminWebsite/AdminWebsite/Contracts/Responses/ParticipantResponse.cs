@@ -21,5 +21,6 @@ public class ParticipantResponse
     public string Organisation { get; set; }
     public string Representee { get; set; }
     public AvailableLanguageResponse InterpreterLanguage { get; set; }
-    public List<LinkedParticipantResponse> LinkedParticipants { get; set; }
+    public ScreeningResponse ScreeningRequirement { get; set; }
+    public List<LinkedParticipantResponse> LinkedParticipants { get; set; } = [];
 }

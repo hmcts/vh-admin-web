@@ -14,9 +14,10 @@ import { CopyJoinLinkComponent } from './copy-join-link/copy-join-link.component
 import { NgSelectModule } from '@ng-select/ng-select';
 import { BookingStatusComponent } from './booking-status/booking-status.component';
 import { JudicialParticipantDetailsComponent } from './participant-details/judicial-participant-details.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
-    imports: [SharedModule, BookingsListRoutingModule, PopupModule, MomentModule, NgSelectModule],
+    imports: [SharedModule, BookingsListRoutingModule, PopupModule, MomentModule, NgSelectModule, FontAwesomeModule],
     declarations: [
         BookingsListComponent,
         BookingDetailsComponent,

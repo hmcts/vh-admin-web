@@ -24,6 +24,12 @@ import { VideoEndpointFormComponent } from './endpoints/video-endpoint-form/vide
 import { VideoEndpointListComponent } from './endpoints/video-endpoint-list/video-endpoint-list.component';
 import { VideoEndpointItemComponent } from './endpoints/video-endpoint-item/video-endpoint-item.component';
 import { InterpreterFormComponent } from './interpreter-form/interpreter-form.component';
+import { ScreeningComponent } from './screening/screening.component';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { ScreeningFormComponent } from './screening/screening-form.component';
+import { ScreeningListComponent } from './screening/screening-list.component';
+import { ScreeningListItemComponent } from './screening/screening-list-item.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
@@ -44,6 +50,10 @@ export const Components: Type<any>[] = [
     ParticipantItemComponent,
     EndpointsComponent,
     MultiDayHearingScheduleComponent,
+    ScreeningComponent,
+    ScreeningFormComponent,
+    ScreeningListComponent,
+    ScreeningListItemComponent,
     VideoEndpointFormComponent,
     VideoEndpointListComponent,
     VideoEndpointItemComponent,
@@ -51,7 +61,7 @@ export const Components: Type<any>[] = [
 ];
 
 @NgModule({
-    imports: [SharedModule, BookingRoutingModule, PopupModule, NgOptimizedImage],
+    imports: [SharedModule, BookingRoutingModule, PopupModule, NgOptimizedImage, NgSelectModule, FontAwesomeModule],
     declarations: Components,
     exports: Components
 })

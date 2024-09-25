@@ -1,4 +1,6 @@
 using System.Linq;
+using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Models;
@@ -292,8 +294,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal);
 
-            _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>()))
-                .Returns(new ValidationResult());
+            _editHearingRequestValidator.Setup(x => x.ValidateAsync(It.IsAny<EditHearingRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ValidationResult());
 
             _v2HearingDetailsResponse = new HearingDetailsResponseV2
             {
@@ -364,44 +366,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             validationProblems!.Errors.ContainsKey(key).Should().BeTrue();
             validationProblems.Errors[key][0].Should().Be(errorMessage);
         }
-
-        [Test]
-        public async Task Should_return_bad_request_if_case_is_not_given()
-        {
-            _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>()))
-                .Returns(new ValidationResult(new[]
-                {
-                    new ValidationFailure("case", "Please provide valid case details", new object())
-                }));
-
-            _addNewParticipantRequest.Case = null;
-
-            var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
-            var objectResult = (ObjectResult)result.Result;
-            var validationProblems = (ValidationProblemDetails)objectResult.Value;
-            
-            var errors = validationProblems.Errors;
-            errors["case"].Should().BeEquivalentTo("Please provide valid case details");
-        }
-
-        [Test]
-        public async Task Should_return_bad_request_if_no_participants_are_given()
-        {
-            _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>()))
-                .Returns(new ValidationResult(new[]
-                {
-                    new ValidationFailure("participants", "Please provide at least one participant", new object())
-                }));
-
-            _addNewParticipantRequest.Participants.Clear();
-            var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
-            var objectResult = (ObjectResult)result.Result;
-            var validationProblems = (ValidationProblemDetails)objectResult.Value;
-            
-            var errors = validationProblems.Errors;
-            errors["participants"].Should().Contain( "Please provide at least one participant");
-        }
-
+        
         [Test]
         public async Task Should_return_updated_hearing2()
         {
@@ -465,7 +430,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             var hearing = (AdminWebsite.Contracts.Responses.HearingDetailsResponse)((OkObjectResult)result.Result).Value;
             hearing.Id.Should().Be(updatedHearing.Id);
-            _bookingsApiClient.Verify(x => x.UpdateHearingDetails2Async(It.IsAny<Guid>(),
+            _bookingsApiClient.Verify(x => x.UpdateHearingDetailsV2Async(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequestV2>(u =>
                         u.Cases.Count > 0)),
                 Times.Once);
@@ -523,7 +488,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
             
-            _bookingsApiClient.Verify(x => x.UpdateHearingParticipants2Async(
+            _bookingsApiClient.Verify(x => x.UpdateHearingParticipantsV2Async(
                     It.IsAny<Guid>(), 
                     It.IsAny<UpdateHearingParticipantsRequestV2>()),
                 Times.Never);
@@ -553,7 +518,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
             
-            _bookingsApiClient.Verify(x => x.UpdateHearingParticipants2Async(
+            _bookingsApiClient.Verify(x => x.UpdateHearingParticipantsV2Async(
                     It.IsAny<Guid>(), 
                     It.IsAny<UpdateHearingParticipantsRequestV2>()),
                 Times.Never);
@@ -846,8 +811,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
             var expectedUpdatedEndpointCount = request.Endpoints.Count;
             _bookingsApiClient.Verify(
-                x => x.UpdateDisplayNameForEndpointAsync(hearingId, It.IsAny<Guid>(),
-                    It.Is<UpdateEndpointRequest>(r =>
+                x => x.UpdateEndpointV2Async(hearingId, It.IsAny<Guid>(),
+                    It.Is<UpdateEndpointRequestV2>(r =>
                         r.DefenceAdvocateContactEmail == newParticipantDefenceAdvocate.ContactEmail)), 
                 Times.Exactly(expectedUpdatedEndpointCount));
         }

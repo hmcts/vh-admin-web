@@ -1,0 +1,75 @@
+<form [formGroup]="form">
+  <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': false }">
+    <label class="govuk-label" for="screening-participant"> Participant / Endpoint </label>
+    <select class="govuk-select" id="screening-participant" name="displayName" formControlName="displayName">
+      <option [value]="null">Please select</option>
+      <option *ngFor="let participant of allParticipants" [value]="participant.displayName">
+        {{ participant.displayName }} {{ participant.contactEmail ? '(' + participant.contactEmail + ')' : '' }}
+      </option>
+    </select>
+  </div>
+  <div *ngIf="displayMeasureType" class="govuk-form-group">
+    <fieldset class="govuk-fieldset">
+      <div class="govuk-radios" data-module="govuk-radios">
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="protectFromAll" type="radio" value="All" formControlName="measureType" />
+          <label class="govuk-label govuk-radios__label" for="protectFromAll"> All </label>
+        </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="protectFromSpecific" type="radio" value="Specific" formControlName="measureType" />
+          <label class="govuk-label govuk-radios__label" for="protectFromSpecific"> Specific </label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+</form>
+
+<ng-container *ngIf="displayProtectFromList">
+  <div class="govuk-form-group">
+    <label class="govuk-label" [for]="'protect-participant-from'"> Screen from: </label>
+    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+      <ng-select
+        [id]="'protect-participant-from'"
+        [items]="availableProtectParticipantFromList"
+        [multiple]="true"
+        bindLabel="displayName"
+        [closeOnSelect]="false"
+        class="custom"
+        [(ngModel)]="selectedProtectParticipantFromList"
+      >
+        <!-- selected itemtemplate, similar to the default but with the govuk style -->
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ng-value">
+            <span aria-hidden="true" class="ng-value-icon left">×</span>
+            <span class="govuk-body govuk-!-padding-left-1">{{ item.displayName }}</span>
+          </div>
+        </ng-template>
+
+        <!-- availavle item template -->
+        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+          <div class="govuk-checkboxes__item">
+            <input
+              class="govuk-checkboxes__input"
+              id="item-{{ index }}"
+              type="checkbox"
+              [checked]="item$.selected"
+              [attr.aria-label]="'Participant display name ' + item.displayName"
+            />
+            <label class="govuk-label govuk-checkboxes__label" for="item-{{ index }}"> {{ item.displayName }} </label>
+          </div>
+        </ng-template>
+      </ng-select>
+    </div>
+  </div>
+</ng-container>
+
+<button
+  *ngIf="form.value.displayName"
+  type="submit"
+  id="confirmScreeningBtn"
+  class="govuk-button"
+  data-module="govuk-button"
+  (click)="onSave()"
+>
+  Save
+</button>

@@ -1,0 +1,21 @@
+<div class="screening-list-container">
+  <h3 class="govuk-heading-m">Screening selected</h3>
+
+  <div class="screening-list" id="screening-list">
+    <app-screening-list-item
+      class="screening-item"
+      *ngFor="let participant of participantsWithScreening"
+      [participant]="participant"
+      [hearing]="hearing"
+      (deleteScreening)="onParticipantScreeningDeleted(participant)"
+    ></app-screening-list-item>
+
+    <app-screening-list-item
+      class="screening-item"
+      *ngFor="let endpoint of endpointsWithScreening"
+      [endpoint]="endpoint"
+      [hearing]="hearing"
+      (deleteScreening)="onEndpointScreeningDeleted(endpoint)"
+    ></app-screening-list-item>
+  </div>
+</div>

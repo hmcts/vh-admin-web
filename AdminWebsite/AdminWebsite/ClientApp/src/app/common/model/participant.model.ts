@@ -2,6 +2,7 @@ import { JudgeAccountType, JudgeResponse, PersonResponse } from 'src/app/service
 import { LinkedParticipantModel } from './linked-participant.model';
 import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 import { InterpreterSelectedDto } from 'src/app/booking/interpreter-form/interpreter-selected.model';
+import { ScreeningDto } from 'src/app/booking/screening/screening.model';
 
 export class ParticipantModel {
     id?: string;
@@ -31,6 +32,7 @@ export class ParticipantModel {
     contact_email?: string;
     isJudiciaryMember?: boolean;
     interpretation_language: InterpreterSelectedDto;
+    screening?: ScreeningDto;
 
     constructor(init?: Partial<ParticipantModel>) {
         Object.assign(this, init);

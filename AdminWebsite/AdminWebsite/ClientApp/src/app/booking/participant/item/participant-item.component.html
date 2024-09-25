@@ -116,6 +116,10 @@
           }}
         </div>
       </ng-container>
+
+      <ng-container *ngIf="participant.screening">
+        <app-screening-enabled-badge [screening]="participant.screening"></app-screening-enabled-badge>
+      </ng-container>
     </div>
     <div
       *ngIf="

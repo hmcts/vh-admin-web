@@ -27,9 +27,11 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
+using VideoApi.Contract.Responses;
 using HearingDetailsResponse = AdminWebsite.Contracts.Responses.HearingDetailsResponse;
 using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
 using LinkedParticipantRequest = AdminWebsite.Contracts.Requests.LinkedParticipantRequest;
+using ParticipantResponse = AdminWebsite.Contracts.Responses.ParticipantResponse;
 
 namespace AdminWebsite.Controllers
 {
@@ -116,23 +118,14 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        private async Task<object> BookNewHearing(BookingDetailsRequest newBookingRequest)
+        private async Task<HearingDetailsResponse> BookNewHearing(BookingDetailsRequest newBookingRequest)
         {
-            object response;
-            Guid hearingId;
-                
             _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
-            
             var newBookingRequestV2 = newBookingRequest.MapToV2();
-                
             var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingWithCodeAsync(newBookingRequestV2);
-
-            hearingId = hearingDetailsResponse.Id;
-                
-            response = hearingDetailsResponse.Map();
-            
+            var hearingId = hearingDetailsResponse.Id;
+            var response = hearingDetailsResponse.Map();
             _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}", hearingId);
-
             return response;
         }
 
@@ -256,7 +249,7 @@ namespace AdminWebsite.Controllers
             }
 
             _logger.LogDebug("Attempting to edit hearing {Hearing}", hearingId);
-            var result = _editHearingRequestValidator.Validate(request);
+            var result = await _editHearingRequestValidator.ValidateAsync(request);
             if (!result.IsValid)
             {
                 _logger.LogWarning("Failed edit hearing validation");
@@ -421,7 +414,7 @@ namespace AdminWebsite.Controllers
             }
             
             var updateHearingRequestV2 = HearingUpdateRequestMapper.MapToV2(request, _userIdentity.GetUserIdentityName());
-            await _bookingsApiClient.UpdateHearingDetails2Async(hearingId, updateHearingRequestV2);
+            await _bookingsApiClient.UpdateHearingDetailsV2Async(hearingId, updateHearingRequestV2);
             await UpdateParticipantsV2(hearingId, request.Participants, request.Endpoints, originalHearing);
             await UpdateJudiciaryParticipants(hearingId, request.JudiciaryParticipants, originalHearing);
         }
@@ -959,38 +952,38 @@ namespace AdminWebsite.Controllers
                     accountsStillNeedCreating = false;
                 }
                 
-                VideoApi.Contract.Responses.ConferenceDetailsResponse conferenceDetailsResponse;
-                
-                if (response.Status == BookingStatus.Created && !accountsStillNeedCreating)
-                {
-                    try
-                    {
-                        conferenceDetailsResponse = await _conferenceDetailsService.GetConferenceDetailsByHearingId(hearingId);
-                        if (!conferenceDetailsResponse.HasValidMeetingRoom())
-                        {
-                            return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
-                        }
-                    }
-                    catch(VideoApiException e)
-                    {
-                        _logger.LogError(e, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
-                        if (e.StatusCode == (int)HttpStatusCode.NotFound)
-                        {
-                            return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
-                        }
+                ConferenceDetailsResponse conferenceDetailsResponse;
 
-                        return BadRequest(e.Response);
-                    }
-                    return Ok(new UpdateBookingStatusResponse
-                    {
-                        Success = true,
-                        TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
-                    });
-                }
-                else
+                if (response.Status != BookingStatus.Created || accountsStillNeedCreating)
                 {
                     return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
                 }
+
+                try
+                {
+                    conferenceDetailsResponse =
+                        await _conferenceDetailsService.GetConferenceDetailsByHearingId(hearingId);
+                    if (!conferenceDetailsResponse.HasValidMeetingRoom())
+                    {
+                        return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
+                    }
+                }
+                catch (VideoApiException e)
+                {
+                    _logger.LogError(e, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
+                    if (e.StatusCode == (int)HttpStatusCode.NotFound)
+                    {
+                        return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
+                    }
+
+                    return BadRequest(e.Response);
+                }
+
+                return Ok(new UpdateBookingStatusResponse
+                {
+                    Success = true,
+                    TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
+                });
             }
             catch (BookingsApiException e)
             {

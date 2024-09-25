@@ -31,7 +31,7 @@ public static class ParticipantResponseMapper
             }).ToList();
     }
 
-    public static List<ParticipantResponse> Map(this List<V2.ParticipantResponseV2> participants)
+    public static List<ParticipantResponse> Map(this List<V2.ParticipantResponseV2> participants, BookingsApi.Contract.V2.Responses.HearingDetailsResponseV2 hearingDetails)
     {
         return participants.Select(p =>
             new ParticipantResponse
@@ -51,6 +51,7 @@ public static class ParticipantResponseMapper
                 Organisation = p.Organisation,
                 Representee = p.Representee,
                 InterpreterLanguage = p.InterpreterLanguage?.Map(),
+                ScreeningRequirement = p.Screening?.Map(hearingDetails),
                 LinkedParticipants = p.LinkedParticipants?.Select(lp => lp.Map()).ToList()
         }).ToList();
     }

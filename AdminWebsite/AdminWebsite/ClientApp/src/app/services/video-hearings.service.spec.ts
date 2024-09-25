@@ -23,11 +23,12 @@ import {
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
-import { lastValueFrom, map, of, scheduled } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
 import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
+import { ScreeningDto } from '../booking/screening/screening.model';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
@@ -184,7 +185,6 @@ describe('Video hearing service', () => {
 
         expect(request.case_type_name).toBe('Tax');
         expect(request.hearing_room_name).toBe('room 09');
-        expect(request.hearing_venue_name).toBe('court address');
         expect(request.other_information).toBe('note');
         expect(request.cases).toBeTruthy();
         expect(request.cases[0].name).toBe('case1');
@@ -1133,6 +1133,47 @@ describe('Video hearing service', () => {
 
             // Assert
             expect(result).toBeNull();
+        });
+    });
+
+    describe('mapScreeningRequirementDtoToRequest', () => {
+        it('should map specific ScreeningDto to SpecialMeasureScreeningRequest', () => {
+            // arrange
+            const dto: ScreeningDto = {
+                measureType: 'Specific',
+                protectFrom: [
+                    { endpointDisplayName: 'endpoint1', participantContactEmail: undefined },
+                    { endpointDisplayName: undefined, participantContactEmail: 'test1@me.com' }
+                ]
+            };
+
+            // act
+            const result = service.mapScreeningRequirementDtoToRequest(dto);
+
+            // assert
+            expect(result.screen_all).toBeFalse();
+            expect(result.screen_from_jvs_display_names).toEqual(['endpoint1']);
+            expect(result.screen_from_participant_contact_emails).toEqual(['test1@me.com']);
+        });
+
+        it('should map all ScreeningDto to SpecialMeasureScreeningRequest', () => {
+            // arrange
+            const dto: ScreeningDto = {
+                measureType: 'All',
+                protectFrom: []
+            };
+
+            // act
+            const result = service.mapScreeningRequirementDtoToRequest(dto);
+
+            // assert
+            expect(result.screen_all).toBeTrue();
+            expect(result.screen_from_jvs_display_names).toBeUndefined();
+            expect(result.screen_from_participant_contact_emails).toBeUndefined();
+        });
+
+        it('should handle null ScreeningDto', () => {
+            expect(service.mapScreeningRequirementDtoToRequest(null)).toBeNull();
         });
     });
 

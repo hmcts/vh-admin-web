@@ -1,0 +1,12 @@
+<div
+  class="participant-row__screening"
+  appTooltip
+  [text]="
+    screening.measureType === 'Specific'
+      ? 'Participant is being screened from specific users'
+      : 'Participant is being screened from all users'
+  "
+  [colour]="'blue'"
+>
+  <fa-icon [icon]="faScreeningIcon"></fa-icon> Screening enabled
+</div>

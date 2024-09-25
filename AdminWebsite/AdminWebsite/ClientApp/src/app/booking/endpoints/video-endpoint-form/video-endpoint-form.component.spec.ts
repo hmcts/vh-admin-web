@@ -48,6 +48,7 @@ describe('VideoEndpointFormComponent', () => {
     beforeEach(async () => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.specialMeasures).and.returnValue(of(false));
 
         await TestBed.configureTestingModule({
             declarations: [VideoEndpointFormComponent, MockComponent(InterpreterFormComponent), FeatureFlagDirective],
@@ -81,7 +82,8 @@ describe('VideoEndpointFormComponent', () => {
             const dto: VideoAccessPointDto = {
                 displayName: 'Test',
                 defenceAdvocate: null,
-                interpretationLanguage: undefined
+                interpretationLanguage: undefined,
+                screening: undefined
             };
             component.form.setValue({
                 displayName: dto.displayName,
@@ -107,13 +109,15 @@ describe('VideoEndpointFormComponent', () => {
                 id: '1',
                 displayName: 'Original',
                 defenceAdvocate: null,
-                interpretationLanguage: undefined
+                interpretationLanguage: undefined,
+                screening: undefined
             };
             const updatedDto: VideoAccessPointDto = {
                 id: '1',
                 displayName: 'Updated',
                 defenceAdvocate: null,
-                interpretationLanguage: undefined
+                interpretationLanguage: undefined,
+                screening: undefined
             };
             component.existingVideoEndpoint = originalDto;
             component.form.setValue({
@@ -145,7 +149,8 @@ describe('VideoEndpointFormComponent', () => {
                     email: rep.email,
                     displayName: rep.display_name
                 },
-                interpretationLanguage: undefined
+                interpretationLanguage: undefined,
+                screening: undefined
             });
         });
 
@@ -165,14 +170,16 @@ describe('VideoEndpointFormComponent', () => {
                     id: '1',
                     displayName: 'Test',
                     defenceAdvocate: null,
-                    interpretationLanguage: undefined
+                    interpretationLanguage: undefined,
+                    screening: undefined
                 }
             ];
             component.videoEndpoint = {
                 id: '2',
                 displayName: 'Test',
                 defenceAdvocate: null,
-                interpretationLanguage: undefined
+                interpretationLanguage: undefined,
+                screening: undefined
             };
             component.form.setValue({
                 displayName: 'Test',

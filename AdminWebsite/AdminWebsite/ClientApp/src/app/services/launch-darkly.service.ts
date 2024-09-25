@@ -11,6 +11,7 @@ export const FeatureFlags = {
     multiDayBookingEnhancements: 'multi-day-booking-enhancements',
     interpreterEnhancements: 'interpreter-enhancements',
     vodafone: 'vodafone',
+    specialMeasures: 'special-measures',
     supplierOverrides: 'supported-override-supplier'
 };
 

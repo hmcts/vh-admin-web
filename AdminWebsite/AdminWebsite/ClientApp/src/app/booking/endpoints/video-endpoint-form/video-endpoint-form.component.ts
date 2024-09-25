@@ -93,7 +93,8 @@ export class VideoEndpointFormComponent {
             ...this.videoEndpoint,
             displayName: this.form.value.displayName,
             defenceAdvocate,
-            interpretationLanguage: this.interpreterSelection
+            interpretationLanguage: this.interpreterSelection,
+            screening: this.videoEndpoint?.screening
         };
         if (this.editMode) {
             this.endpointUpdated.emit({ original: this.videoEndpoint, updated: dto });

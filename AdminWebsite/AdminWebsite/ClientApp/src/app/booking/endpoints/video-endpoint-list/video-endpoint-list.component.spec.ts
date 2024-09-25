@@ -25,7 +25,8 @@ describe('VideoEndpointListComponent', () => {
         const dto: VideoAccessPointDto = {
             displayName: 'Test',
             defenceAdvocate: null,
-            interpretationLanguage: undefined
+            interpretationLanguage: undefined,
+            screening: undefined
         };
         component.editEndpoint.emit(dto);
         expect(component.editEndpoint.emit).toHaveBeenCalledWith(dto);
@@ -36,7 +37,8 @@ describe('VideoEndpointListComponent', () => {
         const dto: VideoAccessPointDto = {
             displayName: 'Test',
             defenceAdvocate: null,
-            interpretationLanguage: undefined
+            interpretationLanguage: undefined,
+            screening: undefined
         };
         component.deleteEndpoint.emit(dto);
         expect(component.deleteEndpoint.emit).toHaveBeenCalledWith(dto);

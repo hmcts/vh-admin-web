@@ -60,6 +60,7 @@ describe('CreateHearingComponent with multiple case types', () => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vodafone).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.specialMeasures).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag
             .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
             .and.returnValue(of(defaultOverrideValue));
@@ -201,6 +202,7 @@ describe('CreateHearingComponent with single case type', () => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vodafone).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.specialMeasures).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag
             .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
             .and.returnValue(of(defaultOverrideValue));
@@ -266,6 +268,7 @@ describe('CreateHearingComponent with existing request in session', () => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vodafone).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.specialMeasures).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag
             .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
             .and.returnValue(of(defaultOverrideValue));
