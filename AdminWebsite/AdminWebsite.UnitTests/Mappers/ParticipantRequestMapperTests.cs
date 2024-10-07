@@ -26,8 +26,7 @@ namespace AdminWebsite.UnitTests.Mappers
                 ScreeningRequirements = new SpecialMeasureScreeningRequest()
                 {
                     ScreenAll = false,
-                    ScreenFromParticipantContactEmails = ["participant1@test.com"],
-                    ScreenFromJvsDisplayNames = ["endpoint1"]
+                    ScreenFromExternalReferenceIds = ["participant1@test.com", "endpoint1"]
                 }
             };
 
@@ -48,10 +47,8 @@ namespace AdminWebsite.UnitTests.Mappers
             result.InterpreterLanguageCode.Should().Be(request.InterpreterLanguageCode);
 
             result.Screening.Type.Should().Be(ScreeningType.Specific);
-            result.Screening.ProtectFromParticipants.Should()
-                .BeEquivalentTo(request.ScreeningRequirements.ScreenFromParticipantContactEmails);
-            result.Screening.ProtectFromEndpoints.Should()
-                .BeEquivalentTo(request.ScreeningRequirements.ScreenFromJvsDisplayNames);
+            result.Screening.ProtectedFrom.Should()
+                .BeEquivalentTo(request.ScreeningRequirements.ScreenFromExternalReferenceIds);
         }
     }
 }

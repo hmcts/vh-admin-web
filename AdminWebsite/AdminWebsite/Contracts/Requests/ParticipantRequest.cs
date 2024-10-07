@@ -4,6 +4,7 @@ namespace AdminWebsite.Contracts.Requests;
 
 public class ParticipantRequest
 {
+    public string ExternalReferenceId { get; set; }
     public string Title { get; set; }
     public string FirstName { get; set; }
     public string MiddleNames { get; set; }

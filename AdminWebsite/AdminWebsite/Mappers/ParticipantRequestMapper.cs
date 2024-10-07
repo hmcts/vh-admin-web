@@ -8,6 +8,7 @@ public static class ParticipantRequestMapper
     {
         return new V2.ParticipantRequestV2
         {
+            ExternalParticipantId = participantRequest.ExternalReferenceId,
             ContactEmail = participantRequest.ContactEmail,
             DisplayName = participantRequest.DisplayName,
             FirstName = participantRequest.FirstName,

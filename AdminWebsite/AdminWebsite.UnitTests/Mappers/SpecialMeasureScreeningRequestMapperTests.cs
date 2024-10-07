@@ -24,8 +24,7 @@ public class SpecialMeasureScreeningRequestMapperTests
         var result = req.MapToV2();
             
         result.Type.Should().Be(ScreeningType.All);
-        result.ProtectFromParticipants.Should().BeEmpty();
-        result.ProtectFromEndpoints.Should().BeEmpty();
+        result.ProtectedFrom.Should().BeEmpty();
     }
 
     [Test]
@@ -34,14 +33,13 @@ public class SpecialMeasureScreeningRequestMapperTests
         var req = new SpecialMeasureScreeningRequest()
         {
             ScreenAll = false,
-            ScreenFromParticipantContactEmails = ["participant1@test.com"],
-            ScreenFromJvsDisplayNames = ["endpoint1"]
+            ScreenFromExternalReferenceIds = ["participant1@test.com", "endpoint1"]
         };
 
         var result = req.MapToV2();
 
         result.Type.Should().Be(ScreeningType.Specific);
-        result.ProtectFromParticipants.Should().BeEquivalentTo(req.ScreenFromParticipantContactEmails);
-        result.ProtectFromEndpoints.Should().BeEquivalentTo(req.ScreenFromJvsDisplayNames);
+
+        result.ProtectedFrom.Should().BeEquivalentTo("participant1@test.com", "endpoint1");
     }
 }

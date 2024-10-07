@@ -7,6 +7,7 @@ public class EndpointRequest
     [StringLength(255, ErrorMessage = "Display name max length is 255 characters")]
     [RegularExpression(@"^[\p{L}\p{N}\s',._-]+$")]
     public string DisplayName { get; set; }
+    public string ExternalReferenceId { get; set; }
     public string DefenceAdvocateContactEmail { get; set; }
     public string InterpreterLanguageCode { get; set; }
     /// <summary>

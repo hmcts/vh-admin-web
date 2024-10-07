@@ -12,25 +12,7 @@ public class ScreeningResponse
     public ScreeningType Type { get; set; }
     
     /// <summary>
-    ///     A list of participant ids to be protected from
+    ///     A list of participant/endpoint external ref ids to be protected from
     /// </summary>
-    public List<ProtectFromResponse> ProtectFromParticipants { get; set; } = [];
-    
-    /// <summary>
-    ///     A list of endpoint ids to be protected from
-    /// </summary>
-    public List<ProtectFromResponse> ProtectFromEndpoints { get; set; } = [];
-}
-
-public class ProtectFromResponse
-{
-    /// <summary>
-    /// Id of the participant or endpoint to be protected from
-    /// </summary>
-    public Guid Id { get; set; }
-    
-    /// <summary>
-    /// The participant contact email or endpoint display name 
-    /// </summary>
-    public string Value { get; set; }
+    public List<string> ProtectFrom { get; set; } = [];
 }

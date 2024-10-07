@@ -1141,10 +1141,7 @@ describe('Video hearing service', () => {
             // arrange
             const dto: ScreeningDto = {
                 measureType: 'Specific',
-                protectFrom: [
-                    { endpointDisplayName: 'endpoint1', participantContactEmail: undefined },
-                    { endpointDisplayName: undefined, participantContactEmail: 'test1@me.com' }
-                ]
+                protectFrom: [{ externalReferenceId: 'abc' }, { externalReferenceId: '123' }]
             };
 
             // act
@@ -1152,8 +1149,8 @@ describe('Video hearing service', () => {
 
             // assert
             expect(result.screen_all).toBeFalse();
-            expect(result.screen_from_jvs_display_names).toEqual(['endpoint1']);
-            expect(result.screen_from_participant_contact_emails).toEqual(['test1@me.com']);
+            expect(result.screen_from_external_reference_ids).toContain('abc');
+            expect(result.screen_from_external_reference_ids).toContain('123');
         });
 
         it('should map all ScreeningDto to SpecialMeasureScreeningRequest', () => {
@@ -1168,8 +1165,7 @@ describe('Video hearing service', () => {
 
             // assert
             expect(result.screen_all).toBeTrue();
-            expect(result.screen_from_jvs_display_names).toBeUndefined();
-            expect(result.screen_from_participant_contact_emails).toBeUndefined();
+            expect(result.screen_from_external_reference_ids).toBeUndefined();
         });
 
         it('should handle null ScreeningDto', () => {

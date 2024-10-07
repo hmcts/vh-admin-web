@@ -426,6 +426,7 @@ export class VideoHearingsService {
         if (newRequest && newRequest.length > 0) {
             newRequest.forEach(p => {
                 participant = new ParticipantRequest();
+                participant.external_reference_id = p.externalReferenceId;
                 participant.title = p.title;
                 participant.first_name = p.first_name;
                 participant.middle_names = p.middle_names;
@@ -457,6 +458,7 @@ export class VideoHearingsService {
                 endpoint.defence_advocate_contact_email = e.defenceAdvocate;
                 endpoint.interpreter_language_code = this.mapInterpreterLanguageCode(e.interpretationLanguage);
                 endpoint.screening_requirements = this.mapScreeningRequirementDtoToRequest(e.screening);
+                endpoint.external_reference_id = e.externalReferenceId;
                 eps.push(endpoint);
             });
         }
@@ -472,10 +474,7 @@ export class VideoHearingsService {
         }
         return new SpecialMeasureScreeningRequest({
             screen_all: false,
-            screen_from_jvs_display_names: screeningDto.protectFrom.filter(x => x.endpointDisplayName).map(x => x.endpointDisplayName),
-            screen_from_participant_contact_emails: screeningDto.protectFrom
-                .filter(x => x.participantContactEmail)
-                .map(x => x.participantContactEmail)
+            screen_from_external_reference_ids: screeningDto.protectFrom.map(x => x.externalReferenceId)
         });
     }
 

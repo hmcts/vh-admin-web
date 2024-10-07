@@ -1,10 +1,5 @@
 import { mapScreeningResponseToScreeningDto, ScreeningDto } from './screening.model';
-import {
-    IScreeningResponse,
-    ScreeningType as ApiScreeningType,
-    ScreeningResponse,
-    ProtectFromResponse
-} from 'src/app/services/clients/api-client';
+import { IScreeningResponse, ScreeningType as ApiScreeningType, ScreeningResponse } from 'src/app/services/clients/api-client';
 
 describe('Screening Model', () => {
     describe('mapScreeningResponseToScreeningDto', () => {
@@ -16,8 +11,7 @@ describe('Screening Model', () => {
         it('should map IScreeningResponse to ScreeningDto correctly', () => {
             const response: IScreeningResponse = new ScreeningResponse({
                 type: ApiScreeningType.All,
-                protect_from_endpoints: [],
-                protect_from_participants: []
+                protect_from: []
             });
 
             const expectedDto: ScreeningDto = {
@@ -32,23 +26,16 @@ describe('Screening Model', () => {
         it('should map IScreeningResponse with Specific type to ScreeningDto correctly', () => {
             const response: IScreeningResponse = {
                 type: ApiScreeningType.Specific,
-                protect_from_endpoints: [
-                    new ProtectFromResponse({ value: 'Endpoint1', id: '1' }),
-                    new ProtectFromResponse({ value: 'Endpoint2', id: '2' })
-                ],
-                protect_from_participants: [
-                    new ProtectFromResponse({ value: 'Participant1', id: '3' }),
-                    new ProtectFromResponse({ value: 'Participant2', id: '4' })
-                ]
+                protect_from: ['123', '456', 'abc', 'def']
             };
 
             const expectedDto: ScreeningDto = {
                 measureType: 'Specific',
                 protectFrom: [
-                    { endpointDisplayName: 'Endpoint1', participantContactEmail: undefined },
-                    { endpointDisplayName: 'Endpoint2', participantContactEmail: undefined },
-                    { endpointDisplayName: undefined, participantContactEmail: 'Participant1' },
-                    { endpointDisplayName: undefined, participantContactEmail: 'Participant2' }
+                    { externalReferenceId: '123' },
+                    { externalReferenceId: '456' },
+                    { externalReferenceId: 'abc' },
+                    { externalReferenceId: 'def' }
                 ]
             };
 
