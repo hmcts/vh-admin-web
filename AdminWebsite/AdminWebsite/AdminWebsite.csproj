@@ -57,7 +57,7 @@
     </PackageReference>
     <PackageReference Include="TimeZoneConverter" Version="6.1.0" />
     <PackageReference Include="UserApi.Client" Version="2.1.1" />
-    <PackageReference Include="VideoApi.Client" Version="2.2.24" />
+    <PackageReference Include="VideoApi.Client" Version="2.2.25" />
   </ItemGroup>
 
   <ItemGroup>

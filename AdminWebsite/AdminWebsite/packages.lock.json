@@ -244,9 +244,9 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[2.2.24, )",
-        "resolved": "2.2.24",
-        "contentHash": "xA+bk69Y0S0jCOiqOUvz9prYiBpdS1xJld22YJkYrADl3JOEb0t6EtFxaR51KpWLLAoAR5WT5cBV/cb6cXB1QQ==",
+        "requested": "[2.2.25, )",
+        "resolved": "2.2.25",
+        "contentHash": "H7cvU5VzHLy1kfV4xKTZfLsPy3GIVWo1kBpNEhCYvZXl1OefMDiyAXKR1UZ2prWc8J0TdutF98NG6SmyXZKOQQ==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.3"
