@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
-using VH.Core.Configuration;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.KeyPerFile;
+using Microsoft.Extensions.FileProviders;
 
 namespace AdminWebsite
 {
@@ -17,7 +19,7 @@ namespace AdminWebsite
 
         private static IHostBuilder CreateWebHostBuilder(string[] args)
         {
-            var keyVaults=new List<string> (){
+            var keyVaults = new List<string>(){
                 "vh-infra-core",
                 "vh-admin-web",
                 "vh-bookings-api",
@@ -30,10 +32,7 @@ namespace AdminWebsite
             return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((configBuilder) =>
                 {
-                    foreach (var keyVault in keyVaults)
-                    {
-                        configBuilder.AddAksKeyVaultSecretProvider($"/mnt/secrets/{keyVault}");
-                    }
+                    LoadKeyVaultsForConfig(configBuilder, keyVaults);
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
@@ -47,12 +46,32 @@ namespace AdminWebsite
                     });
                     webBuilder.ConfigureAppConfiguration(configBuilder =>
                     {
-                        foreach (var keyVault in keyVaults)
-                        {
-                            configBuilder.AddAksKeyVaultSecretProvider($"/mnt/secrets/{keyVault}");
-                        }
+                        LoadKeyVaultsForConfig(configBuilder, keyVaults);
                     });
                 });
+        }
+        
+        private static void LoadKeyVaultsForConfig(IConfigurationBuilder configBuilder, List<string> keyVaults)
+        {
+            foreach (var keyVault in keyVaults)
+            {
+                var filePath = $"/mnt/secrets/{keyVault}";
+                if (Directory.Exists(filePath))
+                {
+                    configBuilder.Add(GetKeyPerFileSource(filePath));
+                }
+            }
+        }
+
+        private static KeyPerFileConfigurationSource GetKeyPerFileSource(string filePath)
+        {
+            return new KeyPerFileConfigurationSource
+            {
+                FileProvider = new PhysicalFileProvider(filePath),
+                Optional = true,
+                ReloadOnChange = true,
+                SectionDelimiter = "--" // Set your custom delimiter here
+            };
         }
     }
 }
