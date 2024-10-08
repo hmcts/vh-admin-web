@@ -73,6 +73,7 @@ export class BookingDetailsService {
             hearingResponse.participants.forEach(p => {
                 const model = new ParticipantDetailsModel(
                     p.id,
+                    p.external_reference_id,
                     p.title,
                     p.first_name,
                     p.last_name,
@@ -111,6 +112,7 @@ export class BookingDetailsService {
                 const defenceAdvocate = hearingResponse.participants.find(p => p.id === e.defence_advocate_id);
                 const epModel = new EndpointModel();
                 epModel.id = e.id;
+                epModel.externalReferenceId = e.external_reference_id;
                 epModel.displayName = e.display_name;
                 epModel.pin = e.pin;
                 epModel.sip = e.sip;

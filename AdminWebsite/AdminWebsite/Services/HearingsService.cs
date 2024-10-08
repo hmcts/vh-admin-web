@@ -216,7 +216,8 @@ namespace AdminWebsite.Services
                         DisplayName = endpoint.DisplayName,
                         DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail,
                         InterpreterLanguageCode = endpoint.InterpreterLanguageCode,
-                        Screening = endpoint.ScreeningRequirements?.MapToV2()
+                        Screening = endpoint.ScreeningRequirements?.MapToV2(),
+                        ExternalParticipantId = endpoint.ExternalReferenceId
                     };
                 
                     request.NewEndpoints.Add(addEndpointRequest);
@@ -256,7 +257,8 @@ namespace AdminWebsite.Services
                 DisplayName = endpoint.DisplayName,
                 DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail,
                 InterpreterLanguageCode = endpoint.InterpreterLanguageCode,
-                Screening = endpoint.ScreeningRequirements.MapToV2()
+                Screening = endpoint.ScreeningRequirements.MapToV2(),
+                ExternalParticipantId = endpoint.ExternalReferenceId
             };
             await _bookingsApiClient.AddEndPointToHearingV2Async(hearing.Id, addEndpointRequest);
         }
@@ -280,11 +282,14 @@ namespace AdminWebsite.Services
             var defenceAdvocates = DefenceAdvocateMapper.Map(hearing.Participants, newParticipantList);
             var endpointRequestDefenceAdvocate = defenceAdvocates.Find(e => e.ContactEmail == endpoint.DefenceAdvocateContactEmail);
             var isNewDefenceAdvocate = endpointRequestDefenceAdvocate?.Id == null;
-            
+
+            var screeningChanged = HasScreeningRequirementForEndpointChanged(endpoint, existingEndpointToEdit);
+
             if (existingEndpointToEdit == null ||
                 existingEndpointToEdit.DisplayName == endpoint.DisplayName &&
                 existingEndpointToEdit.DefenceAdvocateId == endpointRequestDefenceAdvocate?.Id &&
-                !isNewDefenceAdvocate)
+                existingEndpointToEdit.ExternalReferenceId == endpoint.ExternalReferenceId &&
+                !screeningChanged && !isNewDefenceAdvocate)
                 return null;
 
             _logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
@@ -295,10 +300,27 @@ namespace AdminWebsite.Services
                 DisplayName = endpoint.DisplayName,
                 DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail,
                 InterpreterLanguageCode = endpoint.InterpreterLanguageCode,
-                Screening = endpoint.ScreeningRequirements?.MapToV2()
+                Screening = endpoint.ScreeningRequirements?.MapToV2(),
+                ExternalParticipantId = endpoint.ExternalReferenceId
             };
 
             return updateEndpointRequest;
+        }
+
+        private static bool HasScreeningRequirementForEndpointChanged(EditEndpointRequest endpoint,
+            EndpointResponse existingEndpointToEdit)
+        {
+            var screeningRemoved = endpoint.ScreeningRequirements == null &&
+                                   existingEndpointToEdit.ScreeningRequirement != null;
+            var screeningAdded = endpoint.ScreeningRequirements != null &&
+                                 existingEndpointToEdit.ScreeningRequirement == null;
+
+            var existingScreenIds = existingEndpointToEdit.ScreeningRequirement?.ProtectFrom;
+            var newScreenIds = endpoint.ScreeningRequirements?.ScreenFromExternalReferenceIds;
+            var areListsIdentical = existingScreenIds?.OrderBy(id => id).SequenceEqual(newScreenIds.OrderBy(id => id)) ?? false;
+            
+            var screeningChanged = screeningRemoved || screeningAdded || !areListsIdentical;
+            return screeningChanged;
         }
 
         private static List<EditEndpointRequest> MapNewOrExistingEndpointsFromHearingChanges(

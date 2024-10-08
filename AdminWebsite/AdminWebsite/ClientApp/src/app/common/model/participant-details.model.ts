@@ -7,6 +7,7 @@ import { ScreeningDto } from 'src/app/booking/screening/screening.model';
 export class ParticipantDetailsModel {
     constructor(
         participantId: string,
+        externalReferenceId: string,
         title: string,
         firstName: string,
         lastName: string,
@@ -26,6 +27,7 @@ export class ParticipantDetailsModel {
         linkedParticipants: LinkedParticipant[]
     ) {
         this.ParticipantId = participantId;
+        this.ExternalReferenceId = externalReferenceId;
         this.FirstName = firstName ?? '';
         this.LastName = lastName ?? '';
         this.Title = title ?? '';
@@ -47,6 +49,7 @@ export class ParticipantDetailsModel {
     }
 
     ParticipantId: string;
+    ExternalReferenceId: string;
     Title: string;
     FirstName: string;
     LastName: string;

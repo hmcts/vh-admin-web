@@ -51,7 +51,8 @@ namespace AdminWebsite.UnitTests.Mappers
                 TelephoneNumber = "1234",
                 Title = "Title",
                 OrganisationName = "OrganisationName",
-                InterpreterLanguageCode = "spa"
+                InterpreterLanguageCode = "spa",
+                ExternalReferenceId = "12345abcde"
             };
             
             // Act
@@ -69,6 +70,7 @@ namespace AdminWebsite.UnitTests.Mappers
             result.Title.Should().Be(participant.Title);
             result.OrganisationName.Should().Be(participant.OrganisationName);
             result.InterpreterLanguageCode.Should().Be(participant.InterpreterLanguageCode);
+            result.ExternalParticipantId.Should().Be("12345abcde");
         }
     }
 }

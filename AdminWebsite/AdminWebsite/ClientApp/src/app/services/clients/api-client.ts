@@ -6820,6 +6820,8 @@ export interface IDateForUnallocatedHearings {
 
 export class EndpointResponse implements IEndpointResponse {
     id?: string;
+    external_reference_id?: string | undefined;
+    measures_external_id?: string | undefined;
     display_name?: string | undefined;
     sip?: string | undefined;
     pin?: string | undefined;
@@ -6838,6 +6840,8 @@ export class EndpointResponse implements IEndpointResponse {
     init(_data?: any) {
         if (_data) {
             this.id = _data['id'];
+            this.external_reference_id = _data['external_reference_id'];
+            this.measures_external_id = _data['measures_external_id'];
             this.display_name = _data['display_name'];
             this.sip = _data['sip'];
             this.pin = _data['pin'];
@@ -6861,6 +6865,8 @@ export class EndpointResponse implements IEndpointResponse {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['id'] = this.id;
+        data['external_reference_id'] = this.external_reference_id;
+        data['measures_external_id'] = this.measures_external_id;
         data['display_name'] = this.display_name;
         data['sip'] = this.sip;
         data['pin'] = this.pin;
@@ -6873,6 +6879,8 @@ export class EndpointResponse implements IEndpointResponse {
 
 export interface IEndpointResponse {
     id?: string;
+    external_reference_id?: string | undefined;
+    measures_external_id?: string | undefined;
     display_name?: string | undefined;
     sip?: string | undefined;
     pin?: string | undefined;
@@ -7488,6 +7496,8 @@ export interface ILinkedParticipantResponse {
 
 export class ParticipantResponse implements IParticipantResponse {
     id?: string;
+    external_reference_id?: string | undefined;
+    measures_external_id?: string | undefined;
     display_name?: string | undefined;
     case_role_name?: string | undefined;
     hearing_role_name?: string | undefined;
@@ -7517,6 +7527,8 @@ export class ParticipantResponse implements IParticipantResponse {
     init(_data?: any) {
         if (_data) {
             this.id = _data['id'];
+            this.external_reference_id = _data['external_reference_id'];
+            this.measures_external_id = _data['measures_external_id'];
             this.display_name = _data['display_name'];
             this.case_role_name = _data['case_role_name'];
             this.hearing_role_name = _data['hearing_role_name'];
@@ -7554,6 +7566,8 @@ export class ParticipantResponse implements IParticipantResponse {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['id'] = this.id;
+        data['external_reference_id'] = this.external_reference_id;
+        data['measures_external_id'] = this.measures_external_id;
         data['display_name'] = this.display_name;
         data['case_role_name'] = this.case_role_name;
         data['hearing_role_name'] = this.hearing_role_name;
@@ -7580,6 +7594,8 @@ export class ParticipantResponse implements IParticipantResponse {
 
 export interface IParticipantResponse {
     id?: string;
+    external_reference_id?: string | undefined;
+    measures_external_id?: string | undefined;
     display_name?: string | undefined;
     case_role_name?: string | undefined;
     hearing_role_name?: string | undefined;
@@ -7980,6 +7996,8 @@ export interface IEditCaseRequest {
 export class EditEndpointRequest implements IEditEndpointRequest {
     /** Endpoint Id. */
     id?: string | undefined;
+    /** The external reference id for the participant */
+    external_reference_id?: string | undefined;
     /** The display name for the endpoint */
     display_name?: string | undefined;
     /** The username of the participant */
@@ -7999,6 +8017,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
     init(_data?: any) {
         if (_data) {
             this.id = _data['id'];
+            this.external_reference_id = _data['external_reference_id'];
             this.display_name = _data['display_name'];
             this.defence_advocate_contact_email = _data['defence_advocate_contact_email'];
             this.interpreter_language_code = _data['interpreter_language_code'];
@@ -8018,6 +8037,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['id'] = this.id;
+        data['external_reference_id'] = this.external_reference_id;
         data['display_name'] = this.display_name;
         data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
         data['interpreter_language_code'] = this.interpreter_language_code;
@@ -8029,6 +8049,8 @@ export class EditEndpointRequest implements IEditEndpointRequest {
 export interface IEditEndpointRequest {
     /** Endpoint Id. */
     id?: string | undefined;
+    /** The external reference id for the participant */
+    external_reference_id?: string | undefined;
     /** The display name for the endpoint */
     display_name?: string | undefined;
     /** The username of the participant */
@@ -8161,6 +8183,8 @@ export interface IEditHearingRequest {
 export class EditParticipantRequest implements IEditParticipantRequest {
     /** Participant Id. */
     id?: string | undefined;
+    /** The external reference id for the participant */
+    external_reference_id?: string | undefined;
     /** Participant Title. */
     title?: string | undefined;
     /** Participant first name. */
@@ -8202,6 +8226,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
     init(_data?: any) {
         if (_data) {
             this.id = _data['id'];
+            this.external_reference_id = _data['external_reference_id'];
             this.title = _data['title'];
             this.first_name = _data['first_name'];
             this.middle_names = _data['middle_names'];
@@ -8235,6 +8260,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['id'] = this.id;
+        data['external_reference_id'] = this.external_reference_id;
         data['title'] = this.title;
         data['first_name'] = this.first_name;
         data['middle_names'] = this.middle_names;
@@ -8261,6 +8287,8 @@ export class EditParticipantRequest implements IEditParticipantRequest {
 export interface IEditParticipantRequest {
     /** Participant Id. */
     id?: string | undefined;
+    /** The external reference id for the participant */
+    external_reference_id?: string | undefined;
     /** Participant Title. */
     title?: string | undefined;
     /** Participant first name. */

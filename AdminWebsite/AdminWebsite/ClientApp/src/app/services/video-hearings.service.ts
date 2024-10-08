@@ -281,6 +281,7 @@ export class VideoHearingsService {
     mappingToEditParticipantRequest(participant: ParticipantModel): EditParticipantRequest {
         const editParticipant = new EditParticipantRequest();
         editParticipant.id = participant.id;
+        editParticipant.external_reference_id = participant.externalReferenceId;
         editParticipant.case_role_name = participant.case_role_name;
         editParticipant.contact_email = participant.email;
         editParticipant.display_name = participant.display_name;
@@ -319,6 +320,7 @@ export class VideoHearingsService {
     mappingToEditEndpointRequest(endpoint: EndpointModel): EditEndpointRequest {
         const editEndpoint = new EditEndpointRequest();
         editEndpoint.id = endpoint.id;
+        editEndpoint.external_reference_id = endpoint.externalReferenceId;
         editEndpoint.display_name = endpoint.displayName;
         editEndpoint.defence_advocate_contact_email = endpoint.defenceAdvocate;
         editEndpoint.interpreter_language_code = this.mapInterpreterLanguageCode(endpoint.interpretationLanguage);
@@ -504,6 +506,10 @@ export class VideoHearingsService {
                 participant.user_role_name = p.user_role_name;
                 participant.interpretation_language = InterpreterSelectedDto.fromAvailableLanguageResponse(p.interpreter_language);
                 participant.screening = mapScreeningResponseToScreeningDto(p.screening_requirement);
+                if (p.external_reference_id) {
+                    // only override the external reference id if it is not null else ParticipantModel will initialise to a UUID in the ctor
+                    participant.externalReferenceId = p.external_reference_id;
+                }
                 participants.push(participant);
             });
         }
@@ -538,6 +544,10 @@ export class VideoHearingsService {
                 endpoint.defenceAdvocate = defenceAdvocate?.contact_email;
                 endpoint.interpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(e.interpreter_language);
                 endpoint.screening = mapScreeningResponseToScreeningDto(e.screening_requirement);
+                if (e.external_reference_id) {
+                    // only override the external reference id if it is not null else EndpointModel will initialise to a UUID in the ctor
+                    endpoint.externalReferenceId = e.external_reference_id;
+                }
                 endpoints.push(endpoint);
             });
         }
