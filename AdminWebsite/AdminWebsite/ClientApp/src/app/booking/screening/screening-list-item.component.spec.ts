@@ -39,12 +39,10 @@ describe('ScreeningListItemComponent', () => {
             measureType: 'Specific',
             protectFrom: [
                 {
-                    endpointDisplayName: endpointWithoutScreening.displayName,
-                    participantContactEmail: undefined
+                    externalReferenceId: endpointWithoutScreening.externalReferenceId
                 },
                 {
-                    endpointDisplayName: undefined,
-                    participantContactEmail: participantWithoutScreening.email
+                    externalReferenceId: participantWithoutScreening.externalReferenceId
                 }
             ]
         };

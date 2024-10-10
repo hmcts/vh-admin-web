@@ -19,6 +19,11 @@ namespace AdminWebsite.Models
         ///     Participant Id.
         /// </summary>
         public Guid? Id { get; set; }
+        
+        /// <summary>
+        /// The external reference id for the participant
+        /// </summary>
+        public string ExternalReferenceId { get; set; }
 
         /// <summary>
         ///     Participant Title.

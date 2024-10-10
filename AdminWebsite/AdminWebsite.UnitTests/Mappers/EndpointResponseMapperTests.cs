@@ -28,6 +28,7 @@ namespace AdminWebsite.UnitTests.Mappers
             var endpoint = new V2.EndpointResponseV2
             {
                 Id = Guid.NewGuid(),
+                ExternalReferenceId = Guid.NewGuid().ToString(),
                 DisplayName = "DisplayName",
                 Sip = "Sip",
                 Pin = "Pin",
@@ -43,8 +44,7 @@ namespace AdminWebsite.UnitTests.Mappers
                 Screening = new V2.ScreeningResponseV2()
                 {
                     Type = ScreeningType.All,
-                    ProtectFromEndpointsIds = [existingEndpoint.Id],
-                    ProtectFromParticipantsIds = [existingParticipant.Id]
+                    ProtectedFrom = [existingEndpoint.ExternalReferenceId, existingParticipant.ExternalReferenceId]
                 },
             };
 
@@ -55,6 +55,8 @@ namespace AdminWebsite.UnitTests.Mappers
             result.Id.Should().Be(endpoint.Id);
             result.DisplayName.Should().Be(endpoint.DisplayName);
             result.Sip.Should().Be(endpoint.Sip);
+            result.ExternalReferenceId.Should().Be(endpoint.ExternalReferenceId);
+            result.MeasuresExternalId.Should().Be(endpoint.MeasuresExternalId);
             result.Pin.Should().Be(endpoint.Pin);
             result.DefenceAdvocateId.Should().Be(endpoint.DefenceAdvocateId);
             result.InterpreterLanguage.Should().NotBeNull();
@@ -62,10 +64,7 @@ namespace AdminWebsite.UnitTests.Mappers
             result.ScreeningRequirement.Should().NotBeNull();
             result.ScreeningRequirement.Type.Should().Be(AdminWebsite.Contracts.Enums.ScreeningType.All);
             
-            var expectedProtectFromEndpoints = new List<ProtectFromResponse> { new() { Id =existingEndpoint.Id, Value = existingEndpoint.DisplayName} };
-            var expectedProtectFromParticipants = new List<ProtectFromResponse> { new() { Id = existingParticipant.Id, Value = existingParticipant.ContactEmail} };
-            result.ScreeningRequirement.ProtectFromEndpoints.Should().BeEquivalentTo(expectedProtectFromEndpoints);
-            result.ScreeningRequirement.ProtectFromParticipants.Should().BeEquivalentTo(expectedProtectFromParticipants);
+            result.ScreeningRequirement.ProtectFrom.Should().BeEquivalentTo(existingEndpoint.ExternalReferenceId, existingParticipant.ExternalReferenceId);
         }
         
         [Test]

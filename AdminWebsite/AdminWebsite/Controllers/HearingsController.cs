@@ -415,7 +415,7 @@ namespace AdminWebsite.Controllers
             
             var updateHearingRequestV2 = HearingUpdateRequestMapper.MapToV2(request, _userIdentity.GetUserIdentityName());
             await _bookingsApiClient.UpdateHearingDetailsV2Async(hearingId, updateHearingRequestV2);
-            await UpdateParticipantsV2(hearingId, request.Participants, request.Endpoints, originalHearing);
+            await UpdateParticipantsAndEndpointsV2(hearingId, request.Participants, request.Endpoints, originalHearing);
             await UpdateJudiciaryParticipants(hearingId, request.JudiciaryParticipants, originalHearing);
         }
 
@@ -543,7 +543,7 @@ namespace AdminWebsite.Controllers
             await _bookingsApiClient.CancelHearingsInGroupAsync(groupId, cancelRequest);
         }
         
-        private async Task UpdateParticipantsV2(Guid hearingId, List<EditParticipantRequest> participants, List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
+        private async Task UpdateParticipantsAndEndpointsV2(Guid hearingId, List<EditParticipantRequest> participants, List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
         {
             var request = await MapUpdateHearingParticipantsRequestV2(hearingId, participants, originalHearing);
 
@@ -882,14 +882,13 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                HearingDetailsResponse hearingResponse;
                 var response = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
                 ICollection<HearingDetailsResponseV2> groupedHearings = null;
                 if (response.GroupId != null)
                 {
                     groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdV2Async(response.GroupId.Value);
                 }
-                hearingResponse = response.Map(groupedHearings);
+                var hearingResponse = response.Map(groupedHearings);
                 
                 return Ok(hearingResponse);
             }

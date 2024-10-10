@@ -40,7 +40,8 @@ namespace AdminWebsite.Mappers
                 Title = participant.Title,
                 OrganisationName = participant.OrganisationName,
                 InterpreterLanguageCode = participant.InterpreterLanguageCode,
-                Screening = participant.ScreeningRequirements?.MapToV2()
+                Screening = participant.ScreeningRequirements?.MapToV2(),
+                ExternalParticipantId = participant.ExternalReferenceId
             };
             return newParticipant;
         }

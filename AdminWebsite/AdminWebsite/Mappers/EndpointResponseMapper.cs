@@ -9,6 +9,8 @@ public static class EndpointResponseMapper
         return new EndpointResponse
         {
             Id = endpointResponse.Id,
+            ExternalReferenceId = endpointResponse.ExternalReferenceId,
+            MeasuresExternalId = endpointResponse.MeasuresExternalId,
             DisplayName = endpointResponse.DisplayName,
             Sip = endpointResponse.Sip,
             Pin = endpointResponse.Pin,

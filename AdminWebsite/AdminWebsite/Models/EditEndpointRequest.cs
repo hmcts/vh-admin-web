@@ -11,6 +11,12 @@ namespace AdminWebsite.Models
         ///     Endpoint Id.
         /// </summary>
         public Guid? Id { get; set; }
+        
+        /// <summary>
+        /// The external reference id for the participant
+        /// </summary>
+        public string ExternalReferenceId { get; set; }
+        
         /// <summary>
         ///     The display name for the endpoint
         /// </summary>
@@ -43,7 +49,8 @@ namespace AdminWebsite.Models
                 if (x.GetType() != y.GetType()) return false;
                 return Nullable.Equals(x.Id, y.Id) && x.DisplayName == y.DisplayName &&
                        x.DefenceAdvocateContactEmail == y.DefenceAdvocateContactEmail &&
-                       x.InterpreterLanguageCode == y.InterpreterLanguageCode;
+                       x.InterpreterLanguageCode == y.InterpreterLanguageCode &&
+                       x.ExternalReferenceId == y.ExternalReferenceId;
             }
 
             public int GetHashCode(EditEndpointRequest obj)

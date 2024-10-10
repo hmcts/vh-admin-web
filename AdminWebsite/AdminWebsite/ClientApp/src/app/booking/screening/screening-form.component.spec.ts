@@ -111,6 +111,9 @@ describe('ScreeningFormComponent', () => {
             component.form.controls.displayName.setValue('Participant1');
             component.form.controls.measureType.setValue('Specific');
 
+            const entity1 = component.availableProtectParticipantFromList[0];
+            const entity2 = component.availableProtectParticipantFromList[1];
+
             // Assert
             expect(component.displayProtectFromList).toBeTrue();
             expect(component.availableProtectParticipantFromList.length).toBe(3);
@@ -129,10 +132,7 @@ describe('ScreeningFormComponent', () => {
             expect(component.screeningSaved.emit).toHaveBeenCalledWith({
                 participantDisplayName: 'Participant1',
                 measureType: 'Specific',
-                protectFrom: [
-                    { participantContactEmail: 'email2', endpointDisplayName: null },
-                    { participantContactEmail: null, endpointDisplayName: 'Endpoint 1' }
-                ]
+                protectFrom: [{ externalReferenceId: entity1.externalReferenceId }, { externalReferenceId: entity2.externalReferenceId }]
             });
 
             expect(component.displayMeasureType).toBeFalse();

@@ -16,16 +16,16 @@ export class ScreeningFormComponent {
             .map(
                 participant =>
                     ({
-                        contactEmail: participant.email,
-                        displayName: participant.display_name
+                        displayName: participant.display_name,
+                        externalReferenceId: participant.externalReferenceId
                     } as GenericParticipantsModel)
             );
 
         const mappedEndpoints = hearing.endpoints.map(
             endpoint =>
                 ({
-                    contactEmail: null,
-                    displayName: endpoint.displayName
+                    displayName: endpoint.displayName,
+                    externalReferenceId: endpoint.externalReferenceId
                 } as GenericParticipantsModel)
         );
 
@@ -89,18 +89,9 @@ export class ScreeningFormComponent {
     }
 
     onSave() {
-        const protectFromMapped: ProtectFrom[] = this.selectedProtectParticipantFromList.map(participant => {
-            if (participant.contactEmail === null) {
-                return {
-                    participantContactEmail: null,
-                    endpointDisplayName: participant.displayName
-                };
-            }
-            return {
-                participantContactEmail: participant.contactEmail,
-                endpointDisplayName: null
-            };
-        });
+        const protectFromMapped: ProtectFrom[] = this.selectedProtectParticipantFromList.map(participant => ({
+            externalReferenceId: participant.externalReferenceId
+        }));
         this.screeningSaved.emit({
             participantDisplayName: this.form.controls.displayName.value,
             protectFrom: protectFromMapped,
@@ -120,5 +111,5 @@ interface ScreeningSelectParticipantForm {
 
 interface GenericParticipantsModel {
     displayName: string;
-    contactEmail: string;
+    externalReferenceId: string;
 }

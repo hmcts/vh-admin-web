@@ -20,21 +20,25 @@ function initHearingRequest(): HearingModel {
     hearing.participants = [
         {
             display_name: 'Jane',
-            email: 'jane@doe.com'
+            email: 'jane@doe.com',
+            externalReferenceId: '1Jane'
         } as ParticipantModel,
         {
             display_name: 'Johnny',
-            email: 'john@doe.com'
+            email: 'john@doe.com',
+            externalReferenceId: '2John'
         } as ParticipantModel,
         {
             display_name: 'Greeno',
-            email: 'james@green.com'
+            email: 'james@green.com',
+            externalReferenceId: '3Green'
         } as ParticipantModel
     ];
     hearing.judiciaryParticipants = [];
     hearing.endpoints = [
         {
-            displayName: 'Silver'
+            displayName: 'Silver',
+            externalReferenceId: '4Silver'
         } as EndpointModel
     ];
 
@@ -114,19 +118,13 @@ describe('ScreeningComponent', () => {
             component.onScreeningSaved({
                 participantDisplayName: participant.display_name,
                 measureType: 'Specific',
-                protectFrom: [
-                    { endpointDisplayName: 'Silver', participantContactEmail: undefined },
-                    { endpointDisplayName: undefined, participantContactEmail: 'john@doe.com' }
-                ]
+                protectFrom: [{ externalReferenceId: '4Silver' }, { externalReferenceId: '2John' }]
             });
 
             // Assert
             expect(component.hearing.participants[0].screening).toEqual({
                 measureType: 'Specific',
-                protectFrom: [
-                    { endpointDisplayName: 'Silver', participantContactEmail: undefined },
-                    { endpointDisplayName: undefined, participantContactEmail: 'john@doe.com' }
-                ]
+                protectFrom: [{ externalReferenceId: '4Silver' }, { externalReferenceId: '2John' }]
             });
         });
 
@@ -162,19 +160,13 @@ describe('ScreeningComponent', () => {
             component.onScreeningSaved({
                 participantDisplayName: endpoint.displayName,
                 measureType: 'Specific',
-                protectFrom: [
-                    { endpointDisplayName: 'Silver', participantContactEmail: undefined },
-                    { endpointDisplayName: undefined, participantContactEmail: 'john@doe.com' }
-                ]
+                protectFrom: [{ externalReferenceId: '4Silver' }, { externalReferenceId: '2John' }]
             });
 
             // Assert
             expect(component.hearing.endpoints[0].screening).toEqual({
                 measureType: 'Specific',
-                protectFrom: [
-                    { endpointDisplayName: 'Silver', participantContactEmail: undefined },
-                    { endpointDisplayName: undefined, participantContactEmail: 'john@doe.com' }
-                ]
+                protectFrom: [{ externalReferenceId: '4Silver' }, { externalReferenceId: '2John' }]
             });
         });
     });

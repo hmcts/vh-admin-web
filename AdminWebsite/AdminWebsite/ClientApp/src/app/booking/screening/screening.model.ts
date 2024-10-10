@@ -14,20 +14,14 @@ export function mapScreeningResponseToScreeningDto(response: IScreeningResponse)
     if (!response) {
         return undefined;
     }
-    const protectFromEndpointList: ProtectFrom[] = response.protect_from_endpoints.map(protectFrom => ({
-        endpointDisplayName: protectFrom.value,
-        participantContactEmail: undefined
+
+    const mappedProtectFrom = response.protect_from.map(protectFrom => ({
+        externalReferenceId: protectFrom
     }));
 
-    const protectFromParticipantList: ProtectFrom[] = response.protect_from_participants.map(protectFrom => ({
-        endpointDisplayName: undefined,
-        participantContactEmail: protectFrom.value
-    }));
-
-    const combinedProtectFromList: ProtectFrom[] = [...protectFromEndpointList, ...protectFromParticipantList];
     return {
         measureType: response.type === ApiScreeningType.All ? 'All' : 'Specific',
-        protectFrom: combinedProtectFromList
+        protectFrom: mappedProtectFrom
     };
 }
 
@@ -41,6 +35,5 @@ export interface SelectedScreeningDto {
 }
 
 export interface ProtectFrom {
-    participantContactEmail: string;
-    endpointDisplayName: string;
+    externalReferenceId: string;
 }

@@ -6,6 +6,7 @@ describe('participant details model', () => {
     it('should get full Name', () => {
         const model = new ParticipantDetailsModel(
             'id',
+            'externalRefId',
             'title',
             'first_name',
             'last_name',
@@ -31,6 +32,7 @@ describe('participant details model', () => {
     it('should get full Name of judge without title when first name is judge', () => {
         const model = new ParticipantDetailsModel(
             'id',
+            'externalRefId',
             'Judge',
             'Judge',
             'last_name',
@@ -56,6 +58,7 @@ describe('participant details model', () => {
     it('should get full Name of judge without title when last name is judge', () => {
         const model = new ParticipantDetailsModel(
             'id',
+            'externalRefId',
             'Judge',
             'first_name',
             'Judge',
@@ -81,6 +84,7 @@ describe('participant details model', () => {
     it('should validate AAD Judge Email ', () => {
         const model = new ParticipantDetailsModel(
             'id',
+            'externalRefId',
             'Judge',
             'first_name',
             'Judge',
@@ -104,6 +108,7 @@ describe('participant details model', () => {
     it('should validate E-Judge email ', () => {
         const model = new ParticipantDetailsModel(
             'id',
+            'externalRefId',
             'Judge',
             'first_name',
             'Judge',
@@ -127,6 +132,7 @@ describe('participant details model', () => {
     it('should return true when user is representative', () => {
         const model = new ParticipantDetailsModel(
             'id',
+            'externalRefId',
             'title',
             'first_name',
             'last_name',
@@ -152,6 +158,7 @@ describe('participant details model', () => {
     it('should return false when user is not representative', () => {
         const model = new ParticipantDetailsModel(
             'id',
+            'externalRefId',
             'title',
             'first_name',
             'last_name',
@@ -176,6 +183,7 @@ describe('participant details model', () => {
     it('should return false when case role is none', () => {
         const model = new ParticipantDetailsModel(
             'id',
+            'externalRefId',
             'title',
             'first_name',
             'last_name',
@@ -199,6 +207,7 @@ describe('participant details model', () => {
     it('should return false when case role is staff member', () => {
         const model = new ParticipantDetailsModel(
             'id',
+            'externalRefId',
             'title',
             'first_name',
             'last_name',
@@ -222,6 +231,7 @@ describe('participant details model', () => {
     it('should return false when case role is observer', () => {
         const model = new ParticipantDetailsModel(
             'id',
+            'externalRefId',
             'title',
             'first_name',
             'last_name',
@@ -245,6 +255,7 @@ describe('participant details model', () => {
     it('should return true when case role is representative', () => {
         const model = new ParticipantDetailsModel(
             'id',
+            'externalRefId',
             'title',
             'first_name',
             'last_name',
@@ -268,6 +279,7 @@ describe('participant details model', () => {
     it('should return true when hearing role is interpreter', () => {
         const model = new ParticipantDetailsModel(
             'id',
+            'externalRefId',
             'title',
             'first_name',
             'last_name',
@@ -291,6 +303,7 @@ describe('participant details model', () => {
     it('should return true when hearing role is interpreter', () => {
         const model = new ParticipantDetailsModel(
             'id',
+            'externalRefId',
             'title',
             'first_name',
             'last_name',
@@ -314,6 +327,7 @@ describe('participant details model', () => {
     it('should not show case role when case role name is null', () => {
         const model = new ParticipantDetailsModel(
             'id',
+            'externalRefId',
             'title',
             'first_name',
             'last_name',

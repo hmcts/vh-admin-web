@@ -14,12 +14,7 @@ public class SpecialMeasureScreeningRequest
     public bool ScreenAll { get; set; }
     
     /// <summary>
-    /// List of participant contact emails to screen from
+    /// List of participant/endpoint external reference ids to screen from
     /// </summary>
-    public List<string> ScreenFromParticipantContactEmails { get; set; }
-    
-    /// <summary>
-    /// List of endpoint display names to screen from
-    /// </summary>
-    public List<string> ScreenFromJvsDisplayNames { get; set; }
+    public List<string> ScreenFromExternalReferenceIds { get; set; }
 }

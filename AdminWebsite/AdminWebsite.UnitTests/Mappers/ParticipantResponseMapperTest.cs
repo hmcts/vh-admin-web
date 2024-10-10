@@ -1,4 +1,5 @@
-﻿using AdminWebsite.Contracts.Responses;
+﻿using System.Diagnostics;
+using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Mappers;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Contract.V1.Enums;
@@ -74,7 +75,9 @@ namespace AdminWebsite.UnitTests.Mappers
             var id = Guid.NewGuid();
             var participants = new List<ParticipantResponseV2>();
             var existingEndpoint = hearing.Endpoints[0];
+            Debug.Assert(existingEndpoint.ExternalReferenceId != null, "existingEndpoint.ExternalReferenceId != null");
             var existingParticipant = hearing.Participants[0];
+            Debug.Assert(existingParticipant.ExternalReferenceId != null, "existingParticipant.ExternalReferenceId != null");
             var participant = new ParticipantResponseV2
             {
                 FirstName = "Sam",
@@ -102,8 +105,7 @@ namespace AdminWebsite.UnitTests.Mappers
                 Screening = new ScreeningResponseV2
                 {
                     Type = ScreeningType.All,
-                    ProtectFromEndpointsIds = [existingEndpoint.Id],
-                    ProtectFromParticipantsIds = [existingParticipant.Id]
+                    ProtectedFrom = [existingEndpoint.ExternalReferenceId, existingParticipant.ExternalReferenceId]
                 },
                 LinkedParticipants = new List<LinkedParticipantResponseV2>()
             };
@@ -113,6 +115,8 @@ namespace AdminWebsite.UnitTests.Mappers
 
             foreach (var participantResponse in participantsResponse)
             {
+                participantResponse.ExternalReferenceId.Should().Be(participant.ExternalReferenceId);
+                participantResponse.MeasuresExternalId.Should().Be(participant.MeasuresExternalId);
                 participantResponse.FirstName.Should().Be(participant.FirstName);
                 participantResponse.LastName.Should().Be(participant.LastName);
                 participantResponse.ContactEmail.Should().Be(participant.ContactEmail);
@@ -133,10 +137,7 @@ namespace AdminWebsite.UnitTests.Mappers
                 participantResponse.ScreeningRequirement.Should().NotBeNull();
                 participantResponse.ScreeningRequirement.Type.Should().Be(AdminWebsite.Contracts.Enums.ScreeningType.All);
                 
-                var expectedProtectFromEndpoints = new List<ProtectFromResponse> { new() { Id =existingEndpoint.Id, Value = existingEndpoint.DisplayName} };
-                var expectedProtectFromParticipants = new List<ProtectFromResponse> { new() { Id = existingParticipant.Id, Value = existingParticipant.ContactEmail} };
-                participantResponse.ScreeningRequirement.ProtectFromEndpoints.Should().BeEquivalentTo(expectedProtectFromEndpoints);
-                participantResponse.ScreeningRequirement.ProtectFromParticipants.Should().BeEquivalentTo(expectedProtectFromParticipants);
+                participantResponse.ScreeningRequirement.ProtectFrom.Should().BeEquivalentTo(existingEndpoint.ExternalReferenceId, existingParticipant.ExternalReferenceId);
             }
         }
 

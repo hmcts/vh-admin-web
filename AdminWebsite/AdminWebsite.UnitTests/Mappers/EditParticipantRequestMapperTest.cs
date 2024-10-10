@@ -36,7 +36,8 @@ namespace AdminWebsite.UnitTests.Mappers
                 OrganisationName = "organisation",
                 TelephoneNumber = "01234567890",
                 Representee = "representee",
-                InterpreterLanguageCode = "spa"
+                InterpreterLanguageCode = "spa",
+                ExternalReferenceId = "12345abcde"
             };
 
             var result = UpdateParticipantRequestMapper.MapToV2(source);
@@ -47,6 +48,7 @@ namespace AdminWebsite.UnitTests.Mappers
             result.TelephoneNumber.Should().Be(source.TelephoneNumber);
             result.Representee.Should().Be(source.Representee);
             result.InterpreterLanguageCode.Should().Be(source.InterpreterLanguageCode);
+            result.ExternalParticipantId.Should().Be("12345abcde");
         }
     }
 }

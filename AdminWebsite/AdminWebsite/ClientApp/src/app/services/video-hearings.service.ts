@@ -281,6 +281,7 @@ export class VideoHearingsService {
     mappingToEditParticipantRequest(participant: ParticipantModel): EditParticipantRequest {
         const editParticipant = new EditParticipantRequest();
         editParticipant.id = participant.id;
+        editParticipant.external_reference_id = participant.externalReferenceId;
         editParticipant.case_role_name = participant.case_role_name;
         editParticipant.contact_email = participant.email;
         editParticipant.display_name = participant.display_name;
@@ -319,6 +320,7 @@ export class VideoHearingsService {
     mappingToEditEndpointRequest(endpoint: EndpointModel): EditEndpointRequest {
         const editEndpoint = new EditEndpointRequest();
         editEndpoint.id = endpoint.id;
+        editEndpoint.external_reference_id = endpoint.externalReferenceId;
         editEndpoint.display_name = endpoint.displayName;
         editEndpoint.defence_advocate_contact_email = endpoint.defenceAdvocate;
         editEndpoint.interpreter_language_code = this.mapInterpreterLanguageCode(endpoint.interpretationLanguage);
@@ -426,6 +428,7 @@ export class VideoHearingsService {
         if (newRequest && newRequest.length > 0) {
             newRequest.forEach(p => {
                 participant = new ParticipantRequest();
+                participant.external_reference_id = p.externalReferenceId;
                 participant.title = p.title;
                 participant.first_name = p.first_name;
                 participant.middle_names = p.middle_names;
@@ -457,6 +460,7 @@ export class VideoHearingsService {
                 endpoint.defence_advocate_contact_email = e.defenceAdvocate;
                 endpoint.interpreter_language_code = this.mapInterpreterLanguageCode(e.interpretationLanguage);
                 endpoint.screening_requirements = this.mapScreeningRequirementDtoToRequest(e.screening);
+                endpoint.external_reference_id = e.externalReferenceId;
                 eps.push(endpoint);
             });
         }
@@ -472,10 +476,7 @@ export class VideoHearingsService {
         }
         return new SpecialMeasureScreeningRequest({
             screen_all: false,
-            screen_from_jvs_display_names: screeningDto.protectFrom.filter(x => x.endpointDisplayName).map(x => x.endpointDisplayName),
-            screen_from_participant_contact_emails: screeningDto.protectFrom
-                .filter(x => x.participantContactEmail)
-                .map(x => x.participantContactEmail)
+            screen_from_external_reference_ids: screeningDto.protectFrom.map(x => x.externalReferenceId)
         });
     }
 
@@ -505,6 +506,10 @@ export class VideoHearingsService {
                 participant.user_role_name = p.user_role_name;
                 participant.interpretation_language = InterpreterSelectedDto.fromAvailableLanguageResponse(p.interpreter_language);
                 participant.screening = mapScreeningResponseToScreeningDto(p.screening_requirement);
+                if (p.external_reference_id) {
+                    // only override the external reference id if it is not null else ParticipantModel will initialise to a UUID in the ctor
+                    participant.externalReferenceId = p.external_reference_id;
+                }
                 participants.push(participant);
             });
         }
@@ -539,6 +544,10 @@ export class VideoHearingsService {
                 endpoint.defenceAdvocate = defenceAdvocate?.contact_email;
                 endpoint.interpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(e.interpreter_language);
                 endpoint.screening = mapScreeningResponseToScreeningDto(e.screening_requirement);
+                if (e.external_reference_id) {
+                    // only override the external reference id if it is not null else EndpointModel will initialise to a UUID in the ctor
+                    endpoint.externalReferenceId = e.external_reference_id;
+                }
                 endpoints.push(endpoint);
             });
         }

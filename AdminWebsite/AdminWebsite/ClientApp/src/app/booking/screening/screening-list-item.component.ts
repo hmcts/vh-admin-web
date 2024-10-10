@@ -48,18 +48,25 @@ export class ScreeningListItemComponent implements OnChanges {
     }
 
     initProtectFromViewModel(hearing: HearingModel, screening: ScreeningDto): ProtectFromViewModel[] {
-        return screening.protectFrom.map(p => {
-            if (p.endpointDisplayName) {
+        const protectFrom = (screening.protectFrom = screening.protectFrom || []);
+        if (protectFrom.length === 0) {
+            return [];
+        }
+
+        return protectFrom.map(p => {
+            const matchedParticipant = hearing.participants.find(x => x.externalReferenceId === p.externalReferenceId);
+
+            if (matchedParticipant) {
                 return {
-                    contactEmail: p.participantContactEmail,
-                    displayName: p.endpointDisplayName
+                    contactEmail: matchedParticipant.email,
+                    displayName: matchedParticipant.display_name
                 };
             }
-            if (p.participantContactEmail) {
-                const matchedParticipant = hearing.participants.find(x => x.email === p.participantContactEmail);
+            const matchedEndpoint = hearing.endpoints.find(x => x.externalReferenceId === p.externalReferenceId);
+            if (matchedEndpoint) {
                 return {
-                    contactEmail: p.participantContactEmail,
-                    displayName: matchedParticipant.display_name
+                    contactEmail: matchedEndpoint.contactEmail,
+                    displayName: matchedEndpoint.displayName
                 };
             }
         });

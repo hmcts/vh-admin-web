@@ -35,7 +35,7 @@ describe('ScreeningListComponent', () => {
         endpointWithScreening.displayName = 'Endpoint With Screening';
         endpointWithScreening.screening = {
             measureType: 'Specific',
-            protectFrom: [{ endpointDisplayName: endpointWithoutScreening.displayName, participantContactEmail: undefined }]
+            protectFrom: [{ externalReferenceId: endpointWithoutScreening.externalReferenceId }]
         };
         hearing.endpoints = [endpointWithoutScreening, endpointWithScreening];
 
