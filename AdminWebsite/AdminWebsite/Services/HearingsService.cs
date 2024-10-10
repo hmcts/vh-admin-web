@@ -316,7 +316,7 @@ namespace AdminWebsite.Services
                                  existingEndpointToEdit.ScreeningRequirement == null;
 
             var existingScreenIds = existingEndpointToEdit.ScreeningRequirement?.ProtectFrom;
-            var newScreenIds = endpoint.ScreeningRequirements?.ScreenFromExternalReferenceIds;
+            var newScreenIds = endpoint.ScreeningRequirements?.ScreenFromExternalReferenceIds ?? new List<string>();
             var areListsIdentical = existingScreenIds?.OrderBy(id => id).SequenceEqual(newScreenIds.OrderBy(id => id)) ?? false;
             
             var screeningChanged = screeningRemoved || screeningAdded || !areListsIdentical;
