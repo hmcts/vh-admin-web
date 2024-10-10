@@ -89,6 +89,7 @@ describe('HearingDetailsComponent', () => {
         const participants: Array<ParticipantDetailsModel> = [];
         const participant = new ParticipantDetailsModel(
             '123-123',
+            '123-123',
             'Judge',
             'Judge',
             'last_name',
@@ -115,6 +116,7 @@ describe('HearingDetailsComponent', () => {
     it('it should display the participant and representee', () => {
         const participants: Array<ParticipantDetailsModel> = [];
         const participant = new ParticipantDetailsModel(
+            '123-123',
             '123-123',
             'Judge',
             'Judge',
