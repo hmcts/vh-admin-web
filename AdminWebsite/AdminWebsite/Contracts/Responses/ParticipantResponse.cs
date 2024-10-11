@@ -6,6 +6,8 @@ namespace AdminWebsite.Contracts.Responses;
 public class ParticipantResponse
 {
     public Guid Id { get; set; }
+    public string ExternalReferenceId { get; set; }
+    public string MeasuresExternalId { get; set; }
     public string DisplayName { get; set; }
     public string CaseRoleName { get; set; }
     public string HearingRoleName { get; set; }

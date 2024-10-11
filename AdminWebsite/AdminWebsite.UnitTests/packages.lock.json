@@ -109,8 +109,8 @@
       },
       "BookingsApi.Client": {
         "type": "Transitive",
-        "resolved": "2.3.4",
-        "contentHash": "nyQKTA9uWMQKZqFHHxh30c8Un74FElrwPSHQFnZct8bmcy2vLV0CsB+Hqxbk1BHUT6mEvvmXyyI4HBVfFSw63A==",
+        "resolved": "2.3.9",
+        "contentHash": "Bzwufird9sw4QpyCuJBQpcNDuAZXmZWCjLMdoYyFUDdRlJm1xE9uMXaaOyYK2FFPE5WfLAftC/o0nYhhSgFeiQ==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -1088,8 +1088,8 @@
       },
       "NotificationApi.Client": {
         "type": "Transitive",
-        "resolved": "2.3.2",
-        "contentHash": "wsirEJM2HHKWpH6CcjA80AjsbUPpXOu/Q304hjDfzvTiWO9Nu6p9hSJfFn4BwJ/a/oguEwtcGDo7bDkc+hKhhQ==",
+        "resolved": "2.3.4",
+        "contentHash": "BwxsCI+DORSasyvqktvdWt2jUJIrxwTgLDVx/3sOBDJkqMKJsn+glINBsQ7/kgyldaZningYYuasa3+JIFSVKA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.3"
@@ -2210,8 +2210,8 @@
       },
       "VideoApi.Client": {
         "type": "Transitive",
-        "resolved": "2.2.17",
-        "contentHash": "qtnCC+uEUrF95Gstc4Vit2+k31zm8vHntu9NSKcXDIOOU71el+PoZ+Hk1jpQIv9OCMsUBvgoSvascsp11PRbNw==",
+        "resolved": "2.2.26",
+        "contentHash": "tkKsLUUKliw5iPA8It+R/Fv+oKsCwdeQfWFWHVhU+/mfNG2bT89L9SHDvjqLIXawTV35pigCRuidPaYt641sow==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.3"
@@ -2221,7 +2221,7 @@
         "type": "Project",
         "dependencies": {
           "AspNetCore.HealthChecks.Uris": "[8.0.1, )",
-          "BookingsApi.Client": "[2.3.4, )",
+          "BookingsApi.Client": "[2.3.9, )",
           "FluentValidation.AspNetCore": "[11.3.0, )",
           "LaunchDarkly.ServerSdk": "[8.5.0, )",
           "MicroElements.Swashbuckle.FluentValidation": "[6.0.0, )",
@@ -2236,7 +2236,7 @@
           "Microsoft.OpenApi": "[1.6.14, )",
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "[1.20.1, )",
           "NWebsec.AspNetCore.Middleware": "[3.0.0, )",
-          "NotificationApi.Client": "[2.3.2, )",
+          "NotificationApi.Client": "[2.3.4, )",
           "Polly": "[8.4.0, )",
           "Swashbuckle.AspNetCore": "[6.6.1, )",
           "Swashbuckle.AspNetCore.Annotations": "[6.6.1, )",
@@ -2244,7 +2244,7 @@
           "Swashbuckle.AspNetCore.Swagger": "[6.6.1, )",
           "TimeZoneConverter": "[6.1.0, )",
           "UserApi.Client": "[2.1.1, )",
-          "VideoApi.Client": "[2.2.17, )"
+          "VideoApi.Client": "[2.2.26, )"
         }
       },
       "adminwebsite.testing.common": {

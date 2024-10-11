@@ -67,6 +67,7 @@ export class BookingDetailsTestData {
         const judges: Array<ParticipantDetailsModel> = [];
         const p1 = new ParticipantDetailsModel(
             '1',
+            'externalRefId',
             'Mrs',
             'Alan',
             'Brake',
@@ -87,6 +88,7 @@ export class BookingDetailsTestData {
         );
         const p2 = new ParticipantDetailsModel(
             '2',
+            'externalRefId',
             'Mrs',
             'Roy',
             'Bark',
@@ -107,6 +109,7 @@ export class BookingDetailsTestData {
         );
         const p3 = new ParticipantDetailsModel(
             '2',
+            'externalRefId',
             'Mrs',
             'Fill',
             'Green',

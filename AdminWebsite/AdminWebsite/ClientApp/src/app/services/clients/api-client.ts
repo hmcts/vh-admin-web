@@ -5785,6 +5785,7 @@ export interface IEditMultiDayHearingRequest {
 
 export class EndpointRequest implements IEndpointRequest {
     display_name?: string | undefined;
+    external_reference_id?: string | undefined;
     defence_advocate_contact_email?: string | undefined;
     interpreter_language_code?: string | undefined;
     screening_requirements?: SpecialMeasureScreeningRequest;
@@ -5800,6 +5801,7 @@ export class EndpointRequest implements IEndpointRequest {
     init(_data?: any) {
         if (_data) {
             this.display_name = _data['display_name'];
+            this.external_reference_id = _data['external_reference_id'];
             this.defence_advocate_contact_email = _data['defence_advocate_contact_email'];
             this.interpreter_language_code = _data['interpreter_language_code'];
             this.screening_requirements = _data['screening_requirements']
@@ -5818,6 +5820,7 @@ export class EndpointRequest implements IEndpointRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['display_name'] = this.display_name;
+        data['external_reference_id'] = this.external_reference_id;
         data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
         data['interpreter_language_code'] = this.interpreter_language_code;
         data['screening_requirements'] = this.screening_requirements ? this.screening_requirements.toJSON() : <any>undefined;
@@ -5827,6 +5830,7 @@ export class EndpointRequest implements IEndpointRequest {
 
 export interface IEndpointRequest {
     display_name?: string | undefined;
+    external_reference_id?: string | undefined;
     defence_advocate_contact_email?: string | undefined;
     interpreter_language_code?: string | undefined;
     screening_requirements?: SpecialMeasureScreeningRequest;
@@ -5931,6 +5935,7 @@ export interface ILinkedParticipantRequest {
 }
 
 export class ParticipantRequest implements IParticipantRequest {
+    external_reference_id?: string | undefined;
     title?: string | undefined;
     first_name?: string | undefined;
     middle_names?: string | undefined;
@@ -5957,6 +5962,7 @@ export class ParticipantRequest implements IParticipantRequest {
 
     init(_data?: any) {
         if (_data) {
+            this.external_reference_id = _data['external_reference_id'];
             this.title = _data['title'];
             this.first_name = _data['first_name'];
             this.middle_names = _data['middle_names'];
@@ -5986,6 +5992,7 @@ export class ParticipantRequest implements IParticipantRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data['external_reference_id'] = this.external_reference_id;
         data['title'] = this.title;
         data['first_name'] = this.first_name;
         data['middle_names'] = this.middle_names;
@@ -6006,6 +6013,7 @@ export class ParticipantRequest implements IParticipantRequest {
 }
 
 export interface IParticipantRequest {
+    external_reference_id?: string | undefined;
     title?: string | undefined;
     first_name?: string | undefined;
     middle_names?: string | undefined;
@@ -6027,10 +6035,8 @@ export interface IParticipantRequest {
 export class SpecialMeasureScreeningRequest implements ISpecialMeasureScreeningRequest {
     /** True if screen from all, or false if screen from specific participants */
     screen_all?: boolean;
-    /** List of participant contact emails to screen from */
-    screen_from_participant_contact_emails?: string[] | undefined;
-    /** List of endpoint display names to screen from */
-    screen_from_jvs_display_names?: string[] | undefined;
+    /** List of participant/endpoint external reference ids to screen from */
+    screen_from_external_reference_ids?: string[] | undefined;
 
     constructor(data?: ISpecialMeasureScreeningRequest) {
         if (data) {
@@ -6043,13 +6049,9 @@ export class SpecialMeasureScreeningRequest implements ISpecialMeasureScreeningR
     init(_data?: any) {
         if (_data) {
             this.screen_all = _data['screen_all'];
-            if (Array.isArray(_data['screen_from_participant_contact_emails'])) {
-                this.screen_from_participant_contact_emails = [] as any;
-                for (let item of _data['screen_from_participant_contact_emails']) this.screen_from_participant_contact_emails!.push(item);
-            }
-            if (Array.isArray(_data['screen_from_jvs_display_names'])) {
-                this.screen_from_jvs_display_names = [] as any;
-                for (let item of _data['screen_from_jvs_display_names']) this.screen_from_jvs_display_names!.push(item);
+            if (Array.isArray(_data['screen_from_external_reference_ids'])) {
+                this.screen_from_external_reference_ids = [] as any;
+                for (let item of _data['screen_from_external_reference_ids']) this.screen_from_external_reference_ids!.push(item);
             }
         }
     }
@@ -6064,13 +6066,9 @@ export class SpecialMeasureScreeningRequest implements ISpecialMeasureScreeningR
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['screen_all'] = this.screen_all;
-        if (Array.isArray(this.screen_from_participant_contact_emails)) {
-            data['screen_from_participant_contact_emails'] = [];
-            for (let item of this.screen_from_participant_contact_emails) data['screen_from_participant_contact_emails'].push(item);
-        }
-        if (Array.isArray(this.screen_from_jvs_display_names)) {
-            data['screen_from_jvs_display_names'] = [];
-            for (let item of this.screen_from_jvs_display_names) data['screen_from_jvs_display_names'].push(item);
+        if (Array.isArray(this.screen_from_external_reference_ids)) {
+            data['screen_from_external_reference_ids'] = [];
+            for (let item of this.screen_from_external_reference_ids) data['screen_from_external_reference_ids'].push(item);
         }
         return data;
     }
@@ -6080,10 +6078,8 @@ export class SpecialMeasureScreeningRequest implements ISpecialMeasureScreeningR
 export interface ISpecialMeasureScreeningRequest {
     /** True if screen from all, or false if screen from specific participants */
     screen_all?: boolean;
-    /** List of participant contact emails to screen from */
-    screen_from_participant_contact_emails?: string[] | undefined;
-    /** List of endpoint display names to screen from */
-    screen_from_jvs_display_names?: string[] | undefined;
+    /** List of participant/endpoint external reference ids to screen from */
+    screen_from_external_reference_ids?: string[] | undefined;
 }
 
 export class UpdateAccountDetailsRequest implements IUpdateAccountDetailsRequest {
@@ -6824,6 +6820,8 @@ export interface IDateForUnallocatedHearings {
 
 export class EndpointResponse implements IEndpointResponse {
     id?: string;
+    external_reference_id?: string | undefined;
+    measures_external_id?: string | undefined;
     display_name?: string | undefined;
     sip?: string | undefined;
     pin?: string | undefined;
@@ -6842,6 +6840,8 @@ export class EndpointResponse implements IEndpointResponse {
     init(_data?: any) {
         if (_data) {
             this.id = _data['id'];
+            this.external_reference_id = _data['external_reference_id'];
+            this.measures_external_id = _data['measures_external_id'];
             this.display_name = _data['display_name'];
             this.sip = _data['sip'];
             this.pin = _data['pin'];
@@ -6865,6 +6865,8 @@ export class EndpointResponse implements IEndpointResponse {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['id'] = this.id;
+        data['external_reference_id'] = this.external_reference_id;
+        data['measures_external_id'] = this.measures_external_id;
         data['display_name'] = this.display_name;
         data['sip'] = this.sip;
         data['pin'] = this.pin;
@@ -6877,6 +6879,8 @@ export class EndpointResponse implements IEndpointResponse {
 
 export interface IEndpointResponse {
     id?: string;
+    external_reference_id?: string | undefined;
+    measures_external_id?: string | undefined;
     display_name?: string | undefined;
     sip?: string | undefined;
     pin?: string | undefined;
@@ -7492,6 +7496,8 @@ export interface ILinkedParticipantResponse {
 
 export class ParticipantResponse implements IParticipantResponse {
     id?: string;
+    external_reference_id?: string | undefined;
+    measures_external_id?: string | undefined;
     display_name?: string | undefined;
     case_role_name?: string | undefined;
     hearing_role_name?: string | undefined;
@@ -7521,6 +7527,8 @@ export class ParticipantResponse implements IParticipantResponse {
     init(_data?: any) {
         if (_data) {
             this.id = _data['id'];
+            this.external_reference_id = _data['external_reference_id'];
+            this.measures_external_id = _data['measures_external_id'];
             this.display_name = _data['display_name'];
             this.case_role_name = _data['case_role_name'];
             this.hearing_role_name = _data['hearing_role_name'];
@@ -7558,6 +7566,8 @@ export class ParticipantResponse implements IParticipantResponse {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['id'] = this.id;
+        data['external_reference_id'] = this.external_reference_id;
+        data['measures_external_id'] = this.measures_external_id;
         data['display_name'] = this.display_name;
         data['case_role_name'] = this.case_role_name;
         data['hearing_role_name'] = this.hearing_role_name;
@@ -7584,6 +7594,8 @@ export class ParticipantResponse implements IParticipantResponse {
 
 export interface IParticipantResponse {
     id?: string;
+    external_reference_id?: string | undefined;
+    measures_external_id?: string | undefined;
     display_name?: string | undefined;
     case_role_name?: string | undefined;
     hearing_role_name?: string | undefined;
@@ -7603,55 +7615,10 @@ export interface IParticipantResponse {
     linked_participants?: LinkedParticipantResponse[] | undefined;
 }
 
-export class ProtectFromResponse implements IProtectFromResponse {
-    /** Id of the participant or endpoint to be protected from */
-    id?: string;
-    /** The participant contact email or endpoint display name */
-    value?: string | undefined;
-
-    constructor(data?: IProtectFromResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data['id'];
-            this.value = _data['value'];
-        }
-    }
-
-    static fromJS(data: any): ProtectFromResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new ProtectFromResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['id'] = this.id;
-        data['value'] = this.value;
-        return data;
-    }
-}
-
-export interface IProtectFromResponse {
-    /** Id of the participant or endpoint to be protected from */
-    id?: string;
-    /** The participant contact email or endpoint display name */
-    value?: string | undefined;
-}
-
 export class ScreeningResponse implements IScreeningResponse {
     type?: ScreeningType;
-    /** A list of participant ids to be protected from */
-    protect_from_participants?: ProtectFromResponse[] | undefined;
-    /** A list of endpoint ids to be protected from */
-    protect_from_endpoints?: ProtectFromResponse[] | undefined;
+    /** A list of participant/endpoint external ref ids to be protected from */
+    protect_from?: string[] | undefined;
 
     constructor(data?: IScreeningResponse) {
         if (data) {
@@ -7664,13 +7631,9 @@ export class ScreeningResponse implements IScreeningResponse {
     init(_data?: any) {
         if (_data) {
             this.type = _data['type'];
-            if (Array.isArray(_data['protect_from_participants'])) {
-                this.protect_from_participants = [] as any;
-                for (let item of _data['protect_from_participants']) this.protect_from_participants!.push(ProtectFromResponse.fromJS(item));
-            }
-            if (Array.isArray(_data['protect_from_endpoints'])) {
-                this.protect_from_endpoints = [] as any;
-                for (let item of _data['protect_from_endpoints']) this.protect_from_endpoints!.push(ProtectFromResponse.fromJS(item));
+            if (Array.isArray(_data['protect_from'])) {
+                this.protect_from = [] as any;
+                for (let item of _data['protect_from']) this.protect_from!.push(item);
             }
         }
     }
@@ -7685,13 +7648,9 @@ export class ScreeningResponse implements IScreeningResponse {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['type'] = this.type;
-        if (Array.isArray(this.protect_from_participants)) {
-            data['protect_from_participants'] = [];
-            for (let item of this.protect_from_participants) data['protect_from_participants'].push(item.toJSON());
-        }
-        if (Array.isArray(this.protect_from_endpoints)) {
-            data['protect_from_endpoints'] = [];
-            for (let item of this.protect_from_endpoints) data['protect_from_endpoints'].push(item.toJSON());
+        if (Array.isArray(this.protect_from)) {
+            data['protect_from'] = [];
+            for (let item of this.protect_from) data['protect_from'].push(item);
         }
         return data;
     }
@@ -7699,10 +7658,8 @@ export class ScreeningResponse implements IScreeningResponse {
 
 export interface IScreeningResponse {
     type?: ScreeningType;
-    /** A list of participant ids to be protected from */
-    protect_from_participants?: ProtectFromResponse[] | undefined;
-    /** A list of endpoint ids to be protected from */
-    protect_from_endpoints?: ProtectFromResponse[] | undefined;
+    /** A list of participant/endpoint external ref ids to be protected from */
+    protect_from?: string[] | undefined;
 }
 
 export class TelephoneParticipantResponse implements ITelephoneParticipantResponse {
@@ -8039,6 +7996,8 @@ export interface IEditCaseRequest {
 export class EditEndpointRequest implements IEditEndpointRequest {
     /** Endpoint Id. */
     id?: string | undefined;
+    /** The external reference id for the participant */
+    external_reference_id?: string | undefined;
     /** The display name for the endpoint */
     display_name?: string | undefined;
     /** The username of the participant */
@@ -8058,6 +8017,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
     init(_data?: any) {
         if (_data) {
             this.id = _data['id'];
+            this.external_reference_id = _data['external_reference_id'];
             this.display_name = _data['display_name'];
             this.defence_advocate_contact_email = _data['defence_advocate_contact_email'];
             this.interpreter_language_code = _data['interpreter_language_code'];
@@ -8077,6 +8037,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['id'] = this.id;
+        data['external_reference_id'] = this.external_reference_id;
         data['display_name'] = this.display_name;
         data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
         data['interpreter_language_code'] = this.interpreter_language_code;
@@ -8088,6 +8049,8 @@ export class EditEndpointRequest implements IEditEndpointRequest {
 export interface IEditEndpointRequest {
     /** Endpoint Id. */
     id?: string | undefined;
+    /** The external reference id for the participant */
+    external_reference_id?: string | undefined;
     /** The display name for the endpoint */
     display_name?: string | undefined;
     /** The username of the participant */
@@ -8220,6 +8183,8 @@ export interface IEditHearingRequest {
 export class EditParticipantRequest implements IEditParticipantRequest {
     /** Participant Id. */
     id?: string | undefined;
+    /** The external reference id for the participant */
+    external_reference_id?: string | undefined;
     /** Participant Title. */
     title?: string | undefined;
     /** Participant first name. */
@@ -8261,6 +8226,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
     init(_data?: any) {
         if (_data) {
             this.id = _data['id'];
+            this.external_reference_id = _data['external_reference_id'];
             this.title = _data['title'];
             this.first_name = _data['first_name'];
             this.middle_names = _data['middle_names'];
@@ -8294,6 +8260,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['id'] = this.id;
+        data['external_reference_id'] = this.external_reference_id;
         data['title'] = this.title;
         data['first_name'] = this.first_name;
         data['middle_names'] = this.middle_names;
@@ -8320,6 +8287,8 @@ export class EditParticipantRequest implements IEditParticipantRequest {
 export interface IEditParticipantRequest {
     /** Participant Id. */
     id?: string | undefined;
+    /** The external reference id for the participant */
+    external_reference_id?: string | undefined;
     /** Participant Title. */
     title?: string | undefined;
     /** Participant first name. */

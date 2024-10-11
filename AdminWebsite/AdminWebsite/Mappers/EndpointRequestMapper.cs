@@ -11,7 +11,8 @@ namespace AdminWebsite.Mappers
                 DisplayName = request.DisplayName,
                 DefenceAdvocateContactEmail = request.DefenceAdvocateContactEmail,
                 InterpreterLanguageCode = request.InterpreterLanguageCode,
-                Screening = request.ScreeningRequirements.MapToV2()
+                Screening = request.ScreeningRequirements.MapToV2(),
+                ExternalParticipantId = request.ExternalReferenceId
             };
     }
 }

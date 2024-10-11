@@ -37,6 +37,8 @@ public static class ParticipantResponseMapper
             new ParticipantResponse
             {
                 Id = p.Id,
+                ExternalReferenceId = p.ExternalReferenceId,
+                MeasuresExternalId = p.MeasuresExternalId,
                 DisplayName = p.DisplayName,
                 HearingRoleCode = p.HearingRoleCode,
                 HearingRoleName = p.HearingRoleName,

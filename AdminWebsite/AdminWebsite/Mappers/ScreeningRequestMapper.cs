@@ -20,8 +20,7 @@ public static class ScreeningRequestMapper
         return new BookingsApi.Contract.V2.Requests.ScreeningRequest()
         {
             Type = ScreeningType.Specific,
-            ProtectFromParticipants = specialMeasureScreeningRequest.ScreenFromParticipantContactEmails,
-            ProtectFromEndpoints = specialMeasureScreeningRequest.ScreenFromJvsDisplayNames
+            ProtectedFrom = specialMeasureScreeningRequest.ScreenFromExternalReferenceIds
         };
     }
 }

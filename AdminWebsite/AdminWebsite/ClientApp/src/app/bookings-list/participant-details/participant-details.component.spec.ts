@@ -52,6 +52,7 @@ describe('ParticipantDetailsComponent', () => {
     it('should display participant details', () => {
         const pr = new ParticipantDetailsModel(
             '1',
+            'externalRefId',
             'Mrs',
             'Alan',
             'Brake',
@@ -98,6 +99,7 @@ describe('ParticipantDetailsComponent', () => {
     it('should be able to know whether participant is judge', () => {
         const pr = new ParticipantDetailsModel(
             '1',
+            'externalRefId',
             'Mr',
             'Alex',
             'Super',

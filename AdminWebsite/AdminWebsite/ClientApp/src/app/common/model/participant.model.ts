@@ -3,9 +3,11 @@ import { LinkedParticipantModel } from './linked-participant.model';
 import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 import { InterpreterSelectedDto } from 'src/app/booking/interpreter-form/interpreter-selected.model';
 import { ScreeningDto } from 'src/app/booking/screening/screening.model';
+import { v4 as uuid } from 'uuid';
 
 export class ParticipantModel {
     id?: string;
+    externalReferenceId?: string | undefined;
     title?: string;
     first_name?: string;
     last_name?: string;
@@ -36,6 +38,9 @@ export class ParticipantModel {
 
     constructor(init?: Partial<ParticipantModel>) {
         Object.assign(this, init);
+        if (!this.externalReferenceId) {
+            this.externalReferenceId = uuid();
+        }
     }
 
     static fromPersonResponse(person: PersonResponse): ParticipantModel {

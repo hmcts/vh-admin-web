@@ -35,6 +35,7 @@ describe('BookingParticipantListComponent', () => {
     it('should display participants list', done => {
         const pr1 = new ParticipantDetailsModel(
             '1',
+            'externalRefId',
             'Mrs',
             'Alan',
             'Brake',
@@ -72,6 +73,7 @@ describe('BookingParticipantListComponent', () => {
     it('should display judges list', done => {
         const pr1 = new ParticipantDetailsModel(
             '1',
+            'externalRefId',
             'Mrs',
             'Alan',
             'Brake',
@@ -112,6 +114,7 @@ describe('BookingParticipantListComponent', () => {
             inputParticipants.forEach((p, i) => {
                 participantsArray.push({
                     FirstName: p.FirstName,
+                    ExternalReferenceId: p.ExternalReferenceId ?? undefined,
                     isJudge: p.isJudge ?? false,
                     HearingRoleCode: p.HearingRoleCode,
                     HearingRoleName: p.HearingRoleName,
