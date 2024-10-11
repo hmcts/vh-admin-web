@@ -50,7 +50,7 @@ export class ScreeningFormComponent {
     createForm() {
         this.form = this.formBuilder.group<ScreeningSelectParticipantForm>({
             displayName: new FormControl(null),
-            measureType: new FormControl('All')
+            measureType: new FormControl('Specific')
         });
 
         this.form.controls.displayName.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
@@ -61,25 +61,22 @@ export class ScreeningFormComponent {
             }
             if (value) {
                 this.onParticipantSelected(value);
+                this.onMeasureTypeSelected('Specific', value);
             }
-        });
-
-        this.form.controls.measureType.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
-            this.onMeasureTypeSelected(value);
         });
     }
 
-    onMeasureTypeSelected(measureType: ScreeningType) {
+    onMeasureTypeSelected(measureType: ScreeningType, participantDisplayName: string) {
         this.displayProtectFromList = measureType === 'Specific';
         if (measureType === 'Specific') {
-            const particpant = this.allParticipants.find(participant => participant.displayName === this.form.value.displayName);
+            const particpant = this.allParticipants.find(participant => participant.displayName === participantDisplayName);
             this.initaliseScreening(particpant.displayName);
             this.selectedProtectParticipantFromList = [];
         }
     }
 
     onParticipantSelected(displayName: string): void {
-        this.displayMeasureType = true;
+        this.displayMeasureType = false;
         this.initaliseScreening(displayName);
         this.selectedProtectParticipantFromList = [];
     }
