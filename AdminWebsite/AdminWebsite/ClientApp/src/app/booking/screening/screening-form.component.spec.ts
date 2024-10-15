@@ -76,36 +76,10 @@ describe('ScreeningFormComponent', () => {
             component.form.controls.displayName.setValue('Participant1');
 
             // Assert
-            expect(component.displayMeasureType).toBeTrue();
-        });
-    });
-
-    describe('on measureType value change and then save', () => {
-        it('should not display protectFromList when value is All', () => {
-            // Arrange
-            spyOn(component.screeningSaved, 'emit');
-            component.form.controls.displayName.setValue('Participant1');
-            component.form.controls.measureType.setValue('All');
-
-            // Assert
-            expect(component.displayProtectFromList).toBeFalse();
-
-            // Act
-            component.onSave();
-
-            // Assert
-            expect(component.screeningSaved.emit).toHaveBeenCalledWith({
-                participantDisplayName: 'Participant1',
-                measureType: 'All',
-                protectFrom: []
-            });
-
-            expect(component.selectedProtectParticipantFromList).toEqual([]);
             expect(component.displayMeasureType).toBeFalse();
-            expect(component.displayProtectFromList).toBeFalse();
         });
 
-        it('should display protectFromList when value is Specific', () => {
+        it('should display protectFromList when participant is selected', () => {
             // Arrange
             spyOn(component.screeningSaved, 'emit');
             component.form.controls.displayName.setValue('Participant1');
