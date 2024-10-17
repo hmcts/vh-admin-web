@@ -44,6 +44,7 @@ export class BookingDetailsService {
         );
 
         model.OtherInformation = hearingResponse.other_information;
+        model.AllocatedTo = hearingResponse.allocated_to_username;
         return model;
     }
 
