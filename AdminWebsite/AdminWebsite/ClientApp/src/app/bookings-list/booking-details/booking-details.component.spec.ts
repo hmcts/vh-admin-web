@@ -10,7 +10,6 @@ import { ParticipantDetailsModel } from '../../common/model/participant-details.
 import { BookingService } from '../../services/booking.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import {
-    AllocatedCsoResponse,
     BookingStatus,
     HearingDetailsResponse,
     JusticeUserResponse,
@@ -58,7 +57,8 @@ export class BookingDetailsTestData {
             'reason',
             'Financial Remedy',
             'judge.green@hmcts.net',
-            '1234567'
+            '1234567',
+            'Not Allocated'
         );
     }
 
@@ -147,7 +147,6 @@ export class BookingDetailsTestData {
 }
 
 const hearingResponse = new HearingDetailsResponse();
-let allocatedCsoResponse = new AllocatedCsoResponse();
 
 const caseModel = new CaseModel();
 caseModel.name = 'X vs Y';
@@ -213,13 +212,11 @@ describe('BookingDetailsComponent', () => {
     let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 
     beforeEach(() => {
-        allocatedCsoResponse = new AllocatedCsoResponse({ cso: null, supports_work_allocation: true, hearing_id: hearingResponse.id });
         videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
         videoHearingServiceSpy.cancelBooking.and.returnValue(of(defaultUpdateBookingStatusResponse));
         videoHearingServiceSpy.cancelMultiDayBooking.and.returnValue(of(defaultUpdateBookingStatusResponse));
         videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
         videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
-        videoHearingServiceSpy.getAllocatedCsoForHearing.and.returnValue(of(allocatedCsoResponse));
 
         bookingPersistServiceSpy.selectedHearingId = '44';
         userIdentityServiceSpy.getUserInformation.and.returnValue(of(new UserProfileResponse({ is_vh_officer_administrator_role: true })));
@@ -265,25 +262,6 @@ describe('BookingDetailsComponent', () => {
         expect(component.booking.cases[0].number).toBe('XX3456234565');
         expect(component.hearing.AudioRecordingRequired).toBeTruthy();
         expect(component.hearing.AllocatedTo).toBe('Not Allocated');
-        discardPeriodicTasks();
-    }));
-
-    it('should get allocated cso details', fakeAsync(() => {
-        const username = 'foo@test.com';
-        allocatedCsoResponse.cso = new JusticeUserResponse({ username });
-        videoHearingServiceSpy.getAllocatedCsoForHearing.and.returnValue(of(allocatedCsoResponse));
-        component.ngOnInit();
-        tick();
-        expect(component.hearing.AllocatedTo).toBe(username);
-        discardPeriodicTasks();
-    }));
-
-    it('should set hearing AllocatedTo "Not Required" when venue does not support work allocation', fakeAsync(() => {
-        allocatedCsoResponse.supports_work_allocation = false;
-        videoHearingServiceSpy.getAllocatedCsoForHearing.and.returnValue(of(allocatedCsoResponse));
-        component.ngOnInit();
-        tick();
-        expect(component.hearing.AllocatedTo).toBe('Not Required');
         discardPeriodicTasks();
     }));
 
