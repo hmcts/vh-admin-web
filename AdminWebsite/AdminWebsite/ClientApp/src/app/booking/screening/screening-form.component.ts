@@ -42,7 +42,7 @@ export class ScreeningFormComponent {
                 ({
                     displayName: endpoint.displayName,
                     externalReferenceId: endpoint.externalReferenceId,
-                    isNewlyAdded: endpoint.sip === null || endpoint.sip === undefined
+                    isNewlyAdded: endpoint.id === null || endpoint.id === undefined
                 } as GenericParticipantsModel)
         );
         this.isEditMode = hearing.hearing_id !== null && hearing.hearing_id !== undefined;

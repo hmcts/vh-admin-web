@@ -126,7 +126,7 @@ describe('ScreeningFormComponent', () => {
             const newlyAddedParticipant = hearing.participants[0];
             const newlyAddedEndpoint = hearing.endpoints[0];
             newlyAddedParticipant.id = undefined;
-            newlyAddedEndpoint.sip = undefined;
+            newlyAddedEndpoint.id = undefined;
 
             // Act
             component.hearing = hearing;
