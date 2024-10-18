@@ -140,12 +140,21 @@ describe('AppComponent - ConnectionService', () => {
     let window: jasmine.SpyObj<WindowRef>;
     let deviceTypeServiceSpy: jasmine.SpyObj<DeviceType>;
     let dynatraceServiceSpy: jasmine.SpyObj<DynatraceService>;
-    
+
     const mockSecurityService = new MockSecurityService();
+
+    const clientSettings = new ClientSettingsResponse({
+        tenant_id: 'tenantid',
+        client_id: 'clientid',
+        post_logout_redirect_uri: '/dashboard',
+        redirect_uri: '/dashboard'
+    });
 
     beforeEach(waitForAsync(() => {
         configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
         dynatraceServiceSpy = jasmine.createSpyObj<DynatraceService>('DynatraceService', ['addDynatraceScript', 'addUserIdentifyScript']);
+
+        configServiceSpy.getClientSettings.and.returnValue(of(clientSettings));
 
         window = jasmine.createSpyObj('WindowRef', ['getLocation']);
         window.getLocation.and.returnValue(new WindowLocation('/url'));
@@ -230,7 +239,7 @@ describe('AppComponent - ConnectionService', () => {
             mockSecurityService.setAuthenticatedResult(IdpProviders.main, true);
             eventServiceSpy.registerForEvents.and.returnValue(of(null));
         });
-        fit('should checkAuthMultiple and set loggedIn to true if currentIdpConfig is authenticated', () => {
+        it('should checkAuthMultiple and set loggedIn to true if currentIdpConfig is authenticated', () => {
             const fixture = TestBed.createComponent(AppComponent);
             const component = fixture.componentInstance;
             component.ngOnInit();
