@@ -132,8 +132,8 @@ describe('ScreeningFormComponent', () => {
             component.hearing = hearing;
 
             // Assert
-            expect(component.allParticipants.filter(p => p.displayName === newlyAddedParticipant.display_name)).toBe([]);
-            expect(component.allParticipants.filter(p => p.displayName === newlyAddedEndpoint.displayName)).toBe([]);
+            expect(component.allParticipants.filter(p => p.displayName === newlyAddedParticipant.display_name)).toEqual([]);
+            expect(component.allParticipants.filter(p => p.displayName === newlyAddedEndpoint.displayName)).toEqual([]);
             expect(component.allParticipants.length).toBe(2);
             expect(component.newParticipantRemovedFromOptions).toBeTrue();
         });
