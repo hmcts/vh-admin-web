@@ -32,5 +32,6 @@ public class HearingDetailsResponseMapperTests
         actual.ServiceId.Should().Be(hearing.ServiceId);
         actual.CaseTypeName.Should().Be(hearing.ServiceName);
         actual.ConferenceSupplier.Should().Be(AdminWebsite.Contracts.Enums.VideoSupplier.Vodafone);
+        actual.AllocatedToUsername.Should().Be(hearing.AllocatedToUsername);
     }
 }

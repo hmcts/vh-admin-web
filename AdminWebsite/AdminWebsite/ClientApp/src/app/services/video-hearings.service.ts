@@ -24,7 +24,6 @@ import {
     LinkedParticipantResponse,
     LinkedParticipant,
     BookingStatus,
-    AllocatedCsoResponse,
     HearingRoleResponse,
     JudiciaryParticipantRequest,
     EditMultiDayHearingRequest,
@@ -630,10 +629,6 @@ export class VideoHearingsService {
         } else {
             return false;
         }
-    }
-
-    getAllocatedCsoForHearing(hearingId: string): Observable<AllocatedCsoResponse> {
-        return this.bhClient.getAllocationForHearing(hearingId);
     }
 
     addJudiciaryJudge(judicialMember: JudicialMemberDto) {

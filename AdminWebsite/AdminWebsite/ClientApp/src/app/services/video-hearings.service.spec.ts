@@ -11,7 +11,6 @@ import {
     HearingRole,
     LinkedParticipantResponse,
     BookingStatus,
-    AllocatedCsoResponse,
     JusticeUserResponse,
     JudiciaryParticipantResponse,
     EditMultiDayHearingRequest,
@@ -45,7 +44,6 @@ describe('Video hearing service', () => {
             'getTelephoneConferenceIdById',
             'getConfigSettings',
             'getUserList',
-            'getAllocationForHearing',
             'rebookHearing',
             'getHearingRoles',
             'editMultiDayHearing',
@@ -696,19 +694,6 @@ describe('Video hearing service', () => {
             expect(service.hasUnsavedVhoNonAvailabilityChanges()).toBe(true);
             service.setVhoNonAvailabiltiesHaveChanged(false);
             expect(service.hasUnsavedVhoNonAvailabilityChanges()).toBe(false);
-        });
-    });
-
-    describe('getAllocatedCsoForHearing', () => {
-        it('should return an allocated cso for the hearing id', done => {
-            const allocatedCsoObj = new AllocatedCsoResponse({ hearing_id: 'id', cso: new JusticeUserResponse() });
-            clientApiSpy.getAllocationForHearing.and.returnValue(of(allocatedCsoObj));
-            const response = lastValueFrom(clientApiSpy.getAllocationForHearing(allocatedCsoObj.hearing_id));
-            response.then(res => {
-                expect(clientApiSpy.getAllocationForHearing).toHaveBeenCalled();
-                expect(res).toEqual(allocatedCsoObj);
-                done();
-            });
         });
     });
 
