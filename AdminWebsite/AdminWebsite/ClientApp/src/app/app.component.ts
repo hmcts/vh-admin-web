@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
         private videoHearingsService: VideoHearingsService,
         private bookingService: BookingService,
         private deviceTypeService: DeviceType,
-        private configService: ConfigService,
+        private readonly configService: ConfigService,
         private readonly dynatraceService: DynatraceService,
         connection: ConnectionService
     ) {
