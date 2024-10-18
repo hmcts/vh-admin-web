@@ -20,8 +20,8 @@ import { SignOutPopupStubComponent } from './testing/stubs/sign-out-popup-stub';
 import { WaitPopupComponent } from './popups/wait-popup/wait-popup.component';
 import { IdpProviders, SecurityService } from './security/services/security.service';
 import { MockSecurityService } from './testing/mocks/MockOidcSecurityService';
-import { PublicEventsService } from 'angular-auth-oidc-client';
 import { Logger } from './services/logger';
+import { DynatraceService } from './services/dynatrace.service';
 
 describe('AppComponent', () => {
     const router = {
@@ -32,6 +32,7 @@ describe('AppComponent', () => {
     const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['hasUnsavedChanges']);
 
     let configServiceSpy: jasmine.SpyObj<ConfigService>;
+    let dynatraceServiceSpy: jasmine.SpyObj<DynatraceService>;
     let pageTracker: jasmine.SpyObj<PageTrackerService>;
     let window: jasmine.SpyObj<WindowRef>;
     let deviceTypeServiceSpy: jasmine.SpyObj<DeviceType>;
@@ -56,6 +57,8 @@ describe('AppComponent', () => {
     beforeEach(waitForAsync(() => {
         configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
         configServiceSpy.getClientSettings.and.returnValue(of(clientSettings));
+
+        dynatraceServiceSpy = jasmine.createSpyObj<DynatraceService>('DynatraceService', ['addDynatraceScript', 'addUserIdentifyScript']);
 
         window = jasmine.createSpyObj('WindowRef', ['getLocation']);
         window.getLocation.and.returnValue(new WindowLocation('/url'));
@@ -85,6 +88,7 @@ describe('AppComponent', () => {
                 { provide: WindowRef, useValue: window },
                 { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
                 { provide: DeviceType, useValue: deviceTypeServiceSpy },
+                { provide: DynatraceService, useValue: dynatraceServiceSpy },
                 { provide: ConnectionService, useFactory: () => mockConnectionService }
             ]
         }).compileComponents();
@@ -135,10 +139,13 @@ describe('AppComponent - ConnectionService', () => {
     let pageTracker: jasmine.SpyObj<PageTrackerService>;
     let window: jasmine.SpyObj<WindowRef>;
     let deviceTypeServiceSpy: jasmine.SpyObj<DeviceType>;
+    let dynatraceServiceSpy: jasmine.SpyObj<DynatraceService>;
+    
     const mockSecurityService = new MockSecurityService();
 
     beforeEach(waitForAsync(() => {
         configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
+        dynatraceServiceSpy = jasmine.createSpyObj<DynatraceService>('DynatraceService', ['addDynatraceScript', 'addUserIdentifyScript']);
 
         window = jasmine.createSpyObj('WindowRef', ['getLocation']);
         window.getLocation.and.returnValue(new WindowLocation('/url'));
@@ -165,6 +172,7 @@ describe('AppComponent - ConnectionService', () => {
                 { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
                 { provide: DeviceType, useValue: deviceTypeServiceSpy },
                 { provide: ConfigService, useValue: configServiceSpy },
+                { provide: DynatraceService, useValue: dynatraceServiceSpy },
                 { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } }
             ]
         }).compileComponents();
@@ -222,7 +230,7 @@ describe('AppComponent - ConnectionService', () => {
             mockSecurityService.setAuthenticatedResult(IdpProviders.main, true);
             eventServiceSpy.registerForEvents.and.returnValue(of(null));
         });
-        it('should checkAuthMultiple and set loggedIn to true if currentIdpConfig is authenticated', () => {
+        fit('should checkAuthMultiple and set loggedIn to true if currentIdpConfig is authenticated', () => {
             const fixture = TestBed.createComponent(AppComponent);
             const component = fixture.componentInstance;
             component.ngOnInit();
