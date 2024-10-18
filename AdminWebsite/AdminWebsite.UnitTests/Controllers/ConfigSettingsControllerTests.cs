@@ -41,9 +41,10 @@ namespace AdminWebsite.UnitTests.Controllers
             {
                 TestUsernameStem = "@hmcts.net"
             };
-
             
-            var configSettingsController = InitController(dom1AdConfiguration, azureAdConfiguration, vodafoneConfiguration, testSettings);
+            var dynatraceConfiguration = new DynatraceConfiguration();
+
+            var configSettingsController = InitController(dom1AdConfiguration, azureAdConfiguration, vodafoneConfiguration, testSettings, dynatraceConfiguration);
             _featureToggleMock.Setup(opt => opt.Dom1Enabled()).Returns(true);
 
             var actionResult = (OkObjectResult)configSettingsController.Get().Result;
@@ -89,8 +90,9 @@ namespace AdminWebsite.UnitTests.Controllers
                 TestUsernameStem = "@hmcts.net"
             };
 
+            var dynatraceConfiguration = new DynatraceConfiguration();
             
-            var configSettingsController = InitController(dom1AdConfiguration, azureAdConfiguration, vodafoneConfiguration, testSettings);
+            var configSettingsController = InitController(dom1AdConfiguration, azureAdConfiguration, vodafoneConfiguration, testSettings, dynatraceConfiguration);
             _featureToggleMock.Setup(opt => opt.Dom1Enabled()).Returns(false);
 
             var actionResult = (OkObjectResult)configSettingsController.Get().Result;
@@ -108,7 +110,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
         private ConfigSettingsController InitController(Dom1AdConfiguration dom1AdConfiguration,
             AzureAdConfiguration azureAdConfiguration, VodafoneConfiguration vodafoneConfiguration,
-            TestUserSecrets testSettings)
+            TestUserSecrets testSettings, DynatraceConfiguration dynatraceConfiguration)
         {
             _featureToggleMock = new Mock<IFeatureToggles>();
             var applicationInsightsConfiguration = new ApplicationInsightsConfiguration();
@@ -136,6 +138,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 Options.Create(applicationInsightsConfiguration),
                 Options.Create(testSettings),
                 Options.Create(vhServiceConfiguration),
+                Options.Create(dynatraceConfiguration),
                 _featureToggleMock.Object) {
 
                 ControllerContext = controllerContext

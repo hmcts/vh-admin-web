@@ -39,5 +39,10 @@
         /// Reform Test Ad tenant configuration
         /// </summary>
         public AzureConfiguration ReformTenantConfig { get; set; }
+
+        /// <summary>
+        /// The url to the Dynatrace Real User Monitoring javascript script.
+        /// </summary>
+        public string DynatraceRumLink { get; set; }
     }
 }
