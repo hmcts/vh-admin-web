@@ -24,6 +24,7 @@ java:
           alias: DOM1--ClientId
         - name: launchdarkly-client-id
           alias: VHSERVICES--LAUNCHDARKLYCLIENTID
+        - dynatraceconfiguration--dynatracerumlink
     vh-admin-web:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}

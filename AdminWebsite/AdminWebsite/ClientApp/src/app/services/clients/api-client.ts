@@ -6584,6 +6584,8 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     /** The LaunchDarkly Client ID */
     readonly launch_darkly_client_id?: string | undefined;
     reform_tenant_config?: AzureConfiguration;
+    /** The url to the Dynatrace Real User Monitoring javascript script. */
+    dynatrace_rum_link?: string | undefined;
     /** The Azure Tenant Id */
     tenant_id?: string | undefined;
     /** The UI Client Id */
@@ -6614,6 +6616,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
             this.reform_tenant_config = _data['reform_tenant_config']
                 ? AzureConfiguration.fromJS(_data['reform_tenant_config'])
                 : <any>undefined;
+            this.dynatrace_rum_link = _data['dynatrace_rum_link'];
             this.tenant_id = _data['tenant_id'];
             this.client_id = _data['client_id'];
             this.resource_id = _data['resource_id'];
@@ -6638,6 +6641,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
         data['video_web_url'] = this.video_web_url;
         data['launch_darkly_client_id'] = this.launch_darkly_client_id;
         data['reform_tenant_config'] = this.reform_tenant_config ? this.reform_tenant_config.toJSON() : <any>undefined;
+        data['dynatrace_rum_link'] = this.dynatrace_rum_link;
         data['tenant_id'] = this.tenant_id;
         data['client_id'] = this.client_id;
         data['resource_id'] = this.resource_id;
@@ -6662,6 +6666,8 @@ export interface IClientSettingsResponse {
     /** The LaunchDarkly Client ID */
     launch_darkly_client_id?: string | undefined;
     reform_tenant_config?: AzureConfiguration;
+    /** The url to the Dynatrace Real User Monitoring javascript script. */
+    dynatrace_rum_link?: string | undefined;
     /** The Azure Tenant Id */
     tenant_id?: string | undefined;
     /** The UI Client Id */

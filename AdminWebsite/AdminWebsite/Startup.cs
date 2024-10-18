@@ -73,6 +73,7 @@ namespace AdminWebsite
                 Configuration.Bind("ApplicationInsights", options));
 
             services.Configure<TestUserSecrets>(options => Configuration.Bind("TestUserSecrets", options));
+            services.Configure<DynatraceConfiguration>(options => Configuration.Bind("DynatraceConfiguration", options));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

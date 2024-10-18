@@ -20,6 +20,7 @@ namespace AdminWebsite.Controllers
         private readonly TestUserSecrets _testUserSecrets;
         private readonly ServiceConfiguration _vhServiceConfiguration;
         private readonly VodafoneConfiguration _vodafoneConfiguration;
+        private readonly DynatraceConfiguration _dynatraceConfiguration;
 
         public ConfigSettingsController(
             IOptions<AzureAdConfiguration> azureAdConfiguration,
@@ -28,6 +29,7 @@ namespace AdminWebsite.Controllers
             IOptions<ApplicationInsightsConfiguration> applicationInsightsConfiguration,
             IOptions<TestUserSecrets> testSettings,
             IOptions<ServiceConfiguration> vhServiceConfiguration,
+            IOptions<DynatraceConfiguration> dynatraceConfiguration,
             IFeatureToggles featureToggles)
         {
             _featureToggles = featureToggles;
@@ -37,6 +39,7 @@ namespace AdminWebsite.Controllers
             _applicationInsightsConfiguration = applicationInsightsConfiguration.Value;
             _testUserSecrets = testSettings.Value;
             _vhServiceConfiguration = vhServiceConfiguration.Value;
+            _dynatraceConfiguration = dynatraceConfiguration.Value;
         }
 
         /// <summary>
@@ -56,7 +59,8 @@ namespace AdminWebsite.Controllers
                 ConferencePhoneNumber = _vodafoneConfiguration.ConferencePhoneNumber,
                 ConferencePhoneNumberWelsh = _vodafoneConfiguration.ConferencePhoneNumberWelsh,
                 VideoWebUrl = _vhServiceConfiguration.VideoWebUrl,
-                LaunchDarklyClientId = _vhServiceConfiguration.LaunchDarklyClientId
+                LaunchDarklyClientId = _vhServiceConfiguration.LaunchDarklyClientId,
+                DynatraceRumLink = _dynatraceConfiguration.DynatraceRumLink
             };
 
             IdpConfiguration idpConfiguration = _featureToggles.Dom1Enabled()
