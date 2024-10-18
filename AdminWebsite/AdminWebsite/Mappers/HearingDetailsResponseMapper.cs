@@ -42,7 +42,8 @@ public static class HearingDetailsResponseMapper
             Endpoints = hearingDetails.Endpoints?.Select(e => e.Map(hearingDetails)).ToList(),
             JudiciaryParticipants = hearingDetails.JudiciaryParticipants?.Select(j => j.Map()).ToList(),
             GroupId = hearingDetails.GroupId,
-            ConferenceSupplier = Enum.TryParse<VideoSupplier>(hearingDetails.BookingSupplier.ToString(), out var supplier) ? supplier : VideoSupplier.Kinly
+            ConferenceSupplier = Enum.TryParse<VideoSupplier>(hearingDetails.BookingSupplier.ToString(), out var supplier) ? supplier : VideoSupplier.Kinly,
+            AllocatedToUsername = hearingDetails.AllocatedToUsername
         };
     }
     

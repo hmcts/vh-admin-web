@@ -65,4 +65,9 @@ public class HearingDetailsResponse
     /// The supplier with whom the conference has been booked with
     /// </summary>
     public VideoSupplier ConferenceSupplier { get; set; }
+
+    /// <summary>
+    /// Username of the CSO allocated to the hearing, if applicable
+    /// </summary>
+    public string AllocatedToUsername { get; set; }
 }
