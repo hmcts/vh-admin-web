@@ -2,37 +2,17 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angu
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { HearingModel } from 'src/app/common/model/hearing.model';
-import { Logger } from 'src/app/services/logger';
-import { ProtectFrom, SelectedScreeningDto, ScreeningType } from './screening.model';
+import { ProtectFrom, ScreeningType, SelectedScreeningDto } from './screening.model';
 
 @Component({
     selector: 'app-screening-form',
     templateUrl: './screening-form.component.html'
 })
 export class ScreeningFormComponent {
-    @Input() set hearing(hearing: HearingModel) {
-        const mappedParticipants = hearing.participants
-            .filter(x => x.email)
-            .map(
-                participant =>
-                    ({
-                        displayName: participant.display_name,
-                        externalReferenceId: participant.externalReferenceId
-                    } as GenericParticipantsModel)
-            );
+    isEditMode = false;
+    newParticipantRemovedFromOptions = false;
 
-        const mappedEndpoints = hearing.endpoints.map(
-            endpoint =>
-                ({
-                    displayName: endpoint.displayName,
-                    externalReferenceId: endpoint.externalReferenceId
-                } as GenericParticipantsModel)
-        );
-
-        this.allParticipants = [...mappedParticipants, ...mappedEndpoints];
-        this.createForm();
-        this.cdRef.detectChanges();
-    }
+    constructor(private formBuilder: FormBuilder, private cdRef: ChangeDetectorRef) {}
 
     @Output() screeningSaved = new EventEmitter<SelectedScreeningDto>();
 
@@ -45,7 +25,33 @@ export class ScreeningFormComponent {
     destroyed$ = new Subject<void>();
     form: FormGroup<ScreeningSelectParticipantForm>;
 
-    constructor(private formBuilder: FormBuilder, private cdRef: ChangeDetectorRef, private logger: Logger) {}
+    @Input() set hearing(hearing: HearingModel) {
+        const mappedParticipants = hearing.participants
+            .filter(x => x.email)
+            .map(
+                participant =>
+                    ({
+                        displayName: participant.display_name,
+                        externalReferenceId: participant.externalReferenceId,
+                        isNewlyAdded: participant.id === null || participant.id === undefined
+                    } as GenericParticipantsModel)
+            );
+
+        const mappedEndpoints = hearing.endpoints.map(
+            endpoint =>
+                ({
+                    displayName: endpoint.displayName,
+                    externalReferenceId: endpoint.externalReferenceId,
+                    isNewlyAdded: endpoint.sip === null || endpoint.sip === undefined
+                } as GenericParticipantsModel)
+        );
+        this.isEditMode = hearing.hearing_id === null || hearing.hearing_id === undefined;
+        this.allParticipants = [...mappedParticipants, ...mappedEndpoints].filter(participant =>
+            this.includeParticipantInScreeningOptions(participant)
+        );
+        this.createForm();
+        this.cdRef.detectChanges();
+    }
 
     createForm() {
         this.form = this.formBuilder.group<ScreeningSelectParticipantForm>({
@@ -69,19 +75,19 @@ export class ScreeningFormComponent {
     onMeasureTypeSelected(measureType: ScreeningType, participantDisplayName: string) {
         this.displayProtectFromList = measureType === 'Specific';
         if (measureType === 'Specific') {
-            const particpant = this.allParticipants.find(participant => participant.displayName === participantDisplayName);
-            this.initaliseScreening(particpant.displayName);
+            const participantsModel = this.allParticipants.find(participant => participant.displayName === participantDisplayName);
+            this.initialiseScreening(participantsModel.displayName);
             this.selectedProtectParticipantFromList = [];
         }
     }
 
     onParticipantSelected(displayName: string): void {
         this.displayMeasureType = false;
-        this.initaliseScreening(displayName);
+        this.initialiseScreening(displayName);
         this.selectedProtectParticipantFromList = [];
     }
 
-    initaliseScreening(displayName: string) {
+    initialiseScreening(displayName: string) {
         this.availableProtectParticipantFromList = this.allParticipants.filter(participant => participant.displayName !== displayName);
     }
 
@@ -99,6 +105,18 @@ export class ScreeningFormComponent {
         this.displayMeasureType = false;
         this.displayProtectFromList = false;
     }
+
+    /// VIH-11046: due to the way updating a hearing orchestrates updating participants and endpoints in two separate requests to the booking-api,
+    // we need to restrict the ability to add a screening link between a newly added participant and newly added endpoints else the id won't be available to link the two.
+    // The user needs to save booking first then add a screening option.
+    // this can be removed in future if the way we change how updating hearing participants works.
+    private includeParticipantInScreeningOptions(participant: GenericParticipantsModel): boolean {
+        if (this.isEditMode && participant.isNewlyAdded) {
+            this.newParticipantRemovedFromOptions = true;
+            return false;
+        }
+        return true;
+    }
 }
 
 interface ScreeningSelectParticipantForm {
@@ -109,4 +127,5 @@ interface ScreeningSelectParticipantForm {
 interface GenericParticipantsModel {
     displayName: string;
     externalReferenceId: string;
+    isNewlyAdded: boolean;
 }

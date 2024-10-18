@@ -28,10 +28,12 @@ describe('ScreeningFormComponent', () => {
         const endpoint1 = new EndpointModel();
         endpoint1.id = '3';
         endpoint1.displayName = 'Endpoint 1';
+        endpoint1.sip = 'sip1';
 
         const endpoint2 = new EndpointModel();
         endpoint2.id = '4';
         endpoint2.displayName = 'Endpoint 2';
+        endpoint2.sip = 'sip2';
 
         hearing.participants = [participant1, participant2];
         hearing.endpoints = [endpoint1, endpoint2];
@@ -47,6 +49,8 @@ describe('ScreeningFormComponent', () => {
         component = fixture.componentInstance;
         component.hearing = hearing;
         fixture.detectChanges();
+        component.newParticipantRemovedFromOptions = false;
+        component.isEditMode = false;
     });
 
     it('init component from input on create', () => {
@@ -111,6 +115,36 @@ describe('ScreeningFormComponent', () => {
 
             expect(component.displayMeasureType).toBeFalse();
             expect(component.displayProtectFromList).toBeFalse();
+        });
+    });
+
+    describe('filtering selectable participants for screening', () => {
+        it('should exclude newly added participants from screening options', () => {
+            // Arrange
+            hearing.hearing_id = undefined; // isEditMode = true
+            const newlyAddedParticipant = hearing.participants[0];
+            const newlyAddedEndpoint = hearing.endpoints[0];
+            newlyAddedParticipant.id = undefined;
+            newlyAddedEndpoint.sip = undefined;
+
+            // Act
+            component.hearing = hearing;
+
+            // Assert
+            expect(component.allParticipants.filter(p => p.displayName === newlyAddedParticipant.display_name)).toBeFalsy();
+            expect(component.allParticipants.filter(p => p.displayName === newlyAddedEndpoint.displayName)).toBeFalsy();
+            expect(component.allParticipants.length).toBe(2);
+            expect(component.newParticipantRemovedFromOptions).toBeTrue();
+        });
+
+        it('should include existing participant in screening options', () => {
+            // Arrange
+            hearing.hearing_id = undefined; // isEditMode = true
+            // Act
+            component.hearing = hearing;
+            // Assert
+            expect(component.allParticipants.length).toBe(4);
+            expect(component.newParticipantRemovedFromOptions).toBeFalse();
         });
     });
 });
