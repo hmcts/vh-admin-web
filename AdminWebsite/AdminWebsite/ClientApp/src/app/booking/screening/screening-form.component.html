@@ -63,7 +63,15 @@
     </div>
   </div>
 </ng-container>
-
+<div *ngIf="newParticipantRemovedFromOptions">
+  <div class="govuk-warning-text">
+    <span aria-hidden="true" class="govuk-warning-text__icon">!</span>
+    <strong class="govuk-warning-text__text">
+      <span class="govuk-warning-text__assistive">Warning</span>
+      New participants and endpoints cannot be included in screening options, without being saved first.
+    </strong>
+  </div>
+</div>
 <button
   *ngIf="form.value.displayName"
   type="submit"
