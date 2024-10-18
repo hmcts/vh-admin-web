@@ -37,6 +37,7 @@ describe('ScreeningFormComponent', () => {
 
         hearing.participants = [participant1, participant2];
         hearing.endpoints = [endpoint1, endpoint2];
+        hearing.hearing_id = null; //new hearing
 
         loggerSpy = jasmine.createSpyObj('Logger', ['debug']);
         await TestBed.configureTestingModule({
@@ -121,7 +122,7 @@ describe('ScreeningFormComponent', () => {
     describe('filtering selectable participants for screening', () => {
         it('should exclude newly added participants from screening options', () => {
             // Arrange
-            hearing.hearing_id = undefined; // isEditMode = true
+            hearing.hearing_id = '1'; // isEditMode = true
             const newlyAddedParticipant = hearing.participants[0];
             const newlyAddedEndpoint = hearing.endpoints[0];
             newlyAddedParticipant.id = undefined;
@@ -139,7 +140,7 @@ describe('ScreeningFormComponent', () => {
 
         it('should include existing participant in screening options', () => {
             // Arrange
-            hearing.hearing_id = undefined; // isEditMode = true
+            hearing.hearing_id = '1'; // isEditMode = true
             // Act
             component.hearing = hearing;
             // Assert
