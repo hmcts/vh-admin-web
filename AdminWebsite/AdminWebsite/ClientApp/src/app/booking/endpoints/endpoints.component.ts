@@ -95,7 +95,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
         const newEndpointsArray: EndpointModel[] = [];
         for (const vapDto of this.videoEndpoints) {
-            const endpointModel = new EndpointModel();
+            const endpointModel = new EndpointModel(vapDto.externalReferenceId);
             endpointModel.id = vapDto.id;
             endpointModel.displayName = vapDto.displayName;
             endpointModel.defenceAdvocate = vapDto.defenceAdvocate?.email;
@@ -197,7 +197,8 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
                       }
                     : null,
                 interpretationLanguage: e.interpretationLanguage,
-                screening: e.screening
+                screening: e.screening,
+                externalReferenceId: e.externalReferenceId
             };
         });
     }

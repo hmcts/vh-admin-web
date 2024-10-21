@@ -25,12 +25,12 @@ describe('ScreeningFormComponent', () => {
         participant2.email = 'email2';
         participant2.display_name = 'Participant2';
 
-        const endpoint1 = new EndpointModel();
+        const endpoint1 = new EndpointModel(null);
         endpoint1.id = '3';
         endpoint1.displayName = 'Endpoint 1';
         endpoint1.sip = 'sip1';
 
-        const endpoint2 = new EndpointModel();
+        const endpoint2 = new EndpointModel(null);
         endpoint2.id = '4';
         endpoint2.displayName = 'Endpoint 2';
         endpoint2.sip = 'sip2';

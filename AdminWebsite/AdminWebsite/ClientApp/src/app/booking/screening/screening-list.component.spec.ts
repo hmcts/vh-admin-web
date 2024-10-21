@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ScreeningListComponent } from './screening-list.component';
 import { HearingModel } from 'src/app/common/model/hearing.model';
@@ -26,11 +26,11 @@ describe('ScreeningListComponent', () => {
         };
         hearing.participants = [participantWithoutScreening, participantWithScreening];
 
-        const endpointWithoutScreening = new EndpointModel();
+        const endpointWithoutScreening = new EndpointModel(null);
         endpointWithoutScreening.id = '3';
         endpointWithoutScreening.displayName = 'Endpoint No Screening';
 
-        const endpointWithScreening = new EndpointModel();
+        const endpointWithScreening = new EndpointModel(null);
         endpointWithScreening.id = '4';
         endpointWithScreening.displayName = 'Endpoint With Screening';
         endpointWithScreening.screening = {
@@ -67,7 +67,7 @@ describe('ScreeningListComponent', () => {
     describe('onEndpointScreeningDeleted', () => {
         it('should emit deleteEndpointScreening event', () => {
             // Arrange
-            const endpoint = new EndpointModel();
+            const endpoint = new EndpointModel(null);
             spyOn(component.deleteEndpointScreening, 'emit');
 
             // Act
