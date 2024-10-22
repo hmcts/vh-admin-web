@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { VideoEndpointFormComponent } from './video-endpoint-form.component';
 import { VideoAccessPointDto } from '../models/video-access-point.model';
@@ -83,7 +83,8 @@ describe('VideoEndpointFormComponent', () => {
                 displayName: 'Test',
                 defenceAdvocate: null,
                 interpretationLanguage: undefined,
-                screening: undefined
+                screening: undefined,
+                externalReferenceId: undefined
             };
             component.form.setValue({
                 displayName: dto.displayName,
@@ -110,14 +111,16 @@ describe('VideoEndpointFormComponent', () => {
                 displayName: 'Original',
                 defenceAdvocate: null,
                 interpretationLanguage: undefined,
-                screening: undefined
+                screening: undefined,
+                externalReferenceId: undefined
             };
             const updatedDto: VideoAccessPointDto = {
                 id: '1',
                 displayName: 'Updated',
                 defenceAdvocate: null,
                 interpretationLanguage: undefined,
-                screening: undefined
+                screening: undefined,
+                externalReferenceId: undefined
             };
             component.existingVideoEndpoint = originalDto;
             component.form.setValue({
@@ -134,11 +137,11 @@ describe('VideoEndpointFormComponent', () => {
 
             const rep = component.availableRepresentatives[0];
             // update the input field with the email of the first participant via the debug fixture element
-            const displayNameInput = fixture.nativeElement.querySelector('[id="displayName"') as HTMLInputElement;
+            const displayNameInput = fixture.nativeElement.querySelector('[id="displayName"]') as HTMLInputElement;
             displayNameInput.value = 'Test Endpoint';
             displayNameInput.dispatchEvent(new Event('input'));
 
-            const linkedRepresentativeInput = fixture.nativeElement.querySelector('[id="representative"') as HTMLSelectElement;
+            const linkedRepresentativeInput = fixture.nativeElement.querySelector('[id="representative"]') as HTMLSelectElement;
             linkedRepresentativeInput.value = rep.email;
             linkedRepresentativeInput.dispatchEvent(new Event('change'));
 
@@ -150,7 +153,8 @@ describe('VideoEndpointFormComponent', () => {
                     displayName: rep.display_name
                 },
                 interpretationLanguage: undefined,
-                screening: undefined
+                screening: undefined,
+                externalReferenceId: undefined
             });
         });
 
@@ -171,7 +175,8 @@ describe('VideoEndpointFormComponent', () => {
                     displayName: 'Test',
                     defenceAdvocate: null,
                     interpretationLanguage: undefined,
-                    screening: undefined
+                    screening: undefined,
+                    externalReferenceId: undefined
                 }
             ];
             component.videoEndpoint = {
@@ -179,7 +184,8 @@ describe('VideoEndpointFormComponent', () => {
                 displayName: 'Test',
                 defenceAdvocate: null,
                 interpretationLanguage: undefined,
-                screening: undefined
+                screening: undefined,
+                externalReferenceId: undefined
             };
             component.form.setValue({
                 displayName: 'Test',

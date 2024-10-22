@@ -1,28 +1,27 @@
 import { VideoHearingsService } from './video-hearings.service';
 import {
-    BHClient,
-    HearingDetailsResponse,
-    CaseResponse,
-    ParticipantResponse,
-    CaseAndHearingRolesResponse,
-    EndpointResponse,
-    MultiHearingRequest,
-    ClientSettingsResponse,
-    HearingRole,
-    LinkedParticipantResponse,
-    BookingStatus,
-    JusticeUserResponse,
-    JudiciaryParticipantResponse,
-    EditMultiDayHearingRequest,
-    CancelMultiDayHearingRequest,
-    UpdateHearingInGroupRequest,
     AppHealthStatusResponse,
+    BHClient,
+    BookingStatus,
+    CancelMultiDayHearingRequest,
+    CaseAndHearingRolesResponse,
+    CaseResponse,
+    ClientSettingsResponse,
+    EditMultiDayHearingRequest,
+    EndpointResponse,
+    HearingDetailsResponse,
+    HearingRole,
+    JudiciaryParticipantResponse,
+    LinkedParticipantResponse,
+    MultiHearingRequest,
+    ParticipantResponse,
+    UpdateHearingInGroupRequest,
     VideoSupplier
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
-import { lastValueFrom, of } from 'rxjs';
+import { of } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
@@ -404,7 +403,7 @@ describe('Video hearing service', () => {
         hearingModel.cases = [caseModel];
         hearingModel.audio_recording_required = true;
         const endpoints: EndpointModel[] = [];
-        const endpoint = new EndpointModel();
+        const endpoint = new EndpointModel(null);
         endpoint.displayName = 'endpoint 001';
         endpoints.push(endpoint);
         hearingModel.endpoints = endpoints;
@@ -474,7 +473,7 @@ describe('Video hearing service', () => {
         hearingModel.cases = [caseModel];
         hearingModel.audio_recording_required = true;
         const endpoints: EndpointModel[] = [];
-        const endpoint = new EndpointModel();
+        const endpoint = new EndpointModel(null);
         endpoint.displayName = 'court room1';
         endpoints.push(endpoint);
         hearingModel.endpoints = endpoints;
@@ -519,7 +518,7 @@ describe('Video hearing service', () => {
 
     it('should map EndpointModel toEndpointResponse', () => {
         const endpoints: EndpointModel[] = [];
-        const endpoint = new EndpointModel();
+        const endpoint = new EndpointModel(null);
         endpoint.displayName = 'court room 001';
         endpoints.push(endpoint);
 
@@ -889,7 +888,7 @@ describe('Video hearing service', () => {
         );
         hearing.participants = participants;
         const endpoints: EndpointModel[] = [];
-        const endpoint = new EndpointModel();
+        const endpoint = new EndpointModel(null);
         endpoint.id = 'b3e1521e-9e0e-496e-4cc9-08dc1682b559';
         endpoint.displayName = 'Endpoint A';
         endpoints.push(endpoint);
@@ -1065,7 +1064,7 @@ describe('Video hearing service', () => {
                 spokenLanguageCode: 'fr',
                 interpreterRequired: true
             };
-            const endpoint = new EndpointModel();
+            const endpoint = new EndpointModel(null);
             endpoint.interpretationLanguage = language;
             endpoints.push(endpoint);
 

@@ -4,7 +4,7 @@ import { ScreeningListItemComponent } from './screening-list-item.component';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingModel } from 'src/app/common/model/hearing.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
-import { SimpleChanges, SimpleChange } from '@angular/core';
+import { SimpleChange, SimpleChanges } from '@angular/core';
 
 describe('ScreeningListItemComponent', () => {
     let component: ScreeningListItemComponent;
@@ -28,11 +28,11 @@ describe('ScreeningListItemComponent', () => {
         };
         hearing.participants = [participantWithoutScreening, participantWithScreening];
 
-        const endpointWithoutScreening = new EndpointModel();
+        const endpointWithoutScreening = new EndpointModel(null);
         endpointWithoutScreening.id = '3';
         endpointWithoutScreening.displayName = 'Endpoint No Screening';
 
-        const endpointWithScreening = new EndpointModel();
+        const endpointWithScreening = new EndpointModel(null);
         endpointWithScreening.id = '4';
         endpointWithScreening.displayName = 'Endpoint With Screening';
         endpointWithScreening.screening = {

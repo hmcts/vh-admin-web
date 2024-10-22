@@ -49,7 +49,7 @@ describe('CopySipComponent', () => {
         expect(component.displayTooltip).toBeTruthy();
     });
     it('should copy the endpoint sip address and pin to the clipboard', () => {
-        const endpoint = new EndpointModel();
+        const endpoint = new EndpointModel(null);
         endpoint.sip = '12345@12345';
         endpoint.pin = '3000';
         const address = endpoint.sip + ':' + endpoint.pin;
@@ -61,7 +61,7 @@ describe('CopySipComponent', () => {
         expect(component.tooltip).toBe('Address copied to clipboard');
     });
     it('should set on input details to copy', () => {
-        const endPointModel = new EndpointModel();
+        const endPointModel = new EndpointModel(null);
         endPointModel.pin = 'pin';
         endPointModel.sip = 'sip';
         component.endpoint = endPointModel;
