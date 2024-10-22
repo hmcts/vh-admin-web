@@ -2,34 +2,34 @@ import { Injectable } from '@angular/core';
 import { firstValueFrom, lastValueFrom, Observable } from 'rxjs';
 import {
     BHClient,
+    BookHearingRequest,
     BookingDetailsRequest,
+    BookingStatus,
+    CancelMultiDayHearingRequest,
     CaseAndHearingRolesResponse,
     CaseRequest,
     CaseResponse,
     EditCaseRequest,
     EditEndpointRequest,
     EditHearingRequest,
+    EditMultiDayHearingRequest,
     EditParticipantRequest,
     EndpointRequest,
     EndpointResponse,
     HearingDetailsResponse,
+    HearingRoleResponse,
     HearingTypeResponse,
-    ParticipantRequest,
-    ParticipantResponse,
-    UpdateBookingStatusResponse,
-    MultiHearingRequest,
-    PhoneConferenceResponse,
-    BookHearingRequest,
+    JudiciaryParticipantRequest,
+    LinkedParticipant,
     LinkedParticipantRequest,
     LinkedParticipantResponse,
-    LinkedParticipant,
-    BookingStatus,
-    HearingRoleResponse,
-    JudiciaryParticipantRequest,
-    EditMultiDayHearingRequest,
-    CancelMultiDayHearingRequest,
-    UpdateHearingInGroupRequest,
-    SpecialMeasureScreeningRequest
+    MultiHearingRequest,
+    ParticipantRequest,
+    ParticipantResponse,
+    PhoneConferenceResponse,
+    SpecialMeasureScreeningRequest,
+    UpdateBookingStatusResponse,
+    UpdateHearingInGroupRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -535,7 +535,7 @@ export class VideoHearingsService {
         if (response && response.length > 0) {
             response.forEach(e => {
                 const defenceAdvocate = participants.find(p => p.id === e.defence_advocate_id);
-                endpoint = new EndpointModel();
+                endpoint = new EndpointModel(e.external_reference_id);
                 endpoint.id = e.id;
                 endpoint.displayName = e.display_name;
                 endpoint.pin = e.pin;
@@ -543,10 +543,6 @@ export class VideoHearingsService {
                 endpoint.defenceAdvocate = defenceAdvocate?.contact_email;
                 endpoint.interpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(e.interpreter_language);
                 endpoint.screening = mapScreeningResponseToScreeningDto(e.screening_requirement);
-                if (e.external_reference_id) {
-                    // only override the external reference id if it is not null else EndpointModel will initialise to a UUID in the ctor
-                    endpoint.externalReferenceId = e.external_reference_id;
-                }
                 endpoints.push(endpoint);
             });
         }

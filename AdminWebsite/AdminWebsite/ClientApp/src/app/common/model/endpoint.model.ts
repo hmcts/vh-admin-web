@@ -3,11 +3,12 @@ import { ScreeningDto } from 'src/app/booking/screening/screening.model';
 import { v4 as uuid } from 'uuid';
 
 export class EndpointModel {
-    constructor() {
-        this.externalReferenceId = uuid();
-    }
+    externalReferenceId: string;
     id?: string | undefined;
-    externalReferenceId?: string | undefined;
+
+    constructor(externalReferenceId: string) {
+        this.externalReferenceId = externalReferenceId || uuid();
+    }
     displayName?: string | undefined;
     sip?: string | undefined;
     pin?: string | undefined;
