@@ -6,6 +6,7 @@ export class BreadcrumbItemModel {
         this.Url = url;
         this.Active = active;
         this.LastMinuteAmendable = lastMinuteAmendable;
+        this.TabIndex = 0;
     }
     Id: number;
     Value: boolean;
@@ -13,4 +14,5 @@ export class BreadcrumbItemModel {
     Url: string;
     Active: boolean;
     LastMinuteAmendable: boolean;
+    TabIndex: number;
 }

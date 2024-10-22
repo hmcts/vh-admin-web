@@ -5,9 +5,9 @@
         class="govuk-breadcrumbs__link"
         [ngClass]="{ 'vh-active': step.Active && !step.Value, 'vh-notactive': !step.Active, 'vh-current': step.Value }"
         href="javascript:void(0)"
+        tabindex="{{step.TabIndex}}"
         (click)="clickBreadcrumbs(step)"
-        >{{ step.Name }}</a
-      >
+        >{{ step.Name }}</a>      
     </li>
   </ol>
 </div>
