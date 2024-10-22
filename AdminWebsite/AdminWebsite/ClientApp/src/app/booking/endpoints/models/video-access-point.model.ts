@@ -7,6 +7,7 @@ export interface VideoAccessPointDto {
     defenceAdvocate?: EndpointLink;
     interpretationLanguage: InterpreterSelectedDto; // This should not be optional once the backend is implemented
     screening: ScreeningDto;
+    externalReferenceId: string;
 }
 
 export interface EndpointLink {

@@ -94,7 +94,8 @@ export class VideoEndpointFormComponent {
             displayName: this.form.value.displayName,
             defenceAdvocate,
             interpretationLanguage: this.interpreterSelection,
-            screening: this.videoEndpoint?.screening
+            screening: this.videoEndpoint?.screening,
+            externalReferenceId: this.videoEndpoint?.externalReferenceId
         };
         if (this.editMode) {
             this.endpointUpdated.emit({ original: this.videoEndpoint, updated: dto });

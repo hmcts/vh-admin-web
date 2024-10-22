@@ -25,16 +25,19 @@ describe('ScreeningFormComponent', () => {
         participant2.email = 'email2';
         participant2.display_name = 'Participant2';
 
-        const endpoint1 = new EndpointModel();
+        const endpoint1 = new EndpointModel(null);
         endpoint1.id = '3';
         endpoint1.displayName = 'Endpoint 1';
+        endpoint1.sip = 'sip1';
 
-        const endpoint2 = new EndpointModel();
+        const endpoint2 = new EndpointModel(null);
         endpoint2.id = '4';
         endpoint2.displayName = 'Endpoint 2';
+        endpoint2.sip = 'sip2';
 
         hearing.participants = [participant1, participant2];
         hearing.endpoints = [endpoint1, endpoint2];
+        hearing.hearing_id = null; //new hearing
 
         loggerSpy = jasmine.createSpyObj('Logger', ['debug']);
         await TestBed.configureTestingModule({
@@ -47,6 +50,8 @@ describe('ScreeningFormComponent', () => {
         component = fixture.componentInstance;
         component.hearing = hearing;
         fixture.detectChanges();
+        component.newParticipantRemovedFromOptions = false;
+        component.isEditMode = false;
     });
 
     it('init component from input on create', () => {
@@ -111,6 +116,36 @@ describe('ScreeningFormComponent', () => {
 
             expect(component.displayMeasureType).toBeFalse();
             expect(component.displayProtectFromList).toBeFalse();
+        });
+    });
+
+    describe('filtering selectable participants for screening', () => {
+        it('should exclude newly added participants from screening options', () => {
+            // Arrange
+            hearing.hearing_id = '1'; // isEditMode = true
+            const newlyAddedParticipant = hearing.participants[0];
+            const newlyAddedEndpoint = hearing.endpoints[0];
+            newlyAddedParticipant.id = undefined;
+            newlyAddedEndpoint.id = undefined;
+
+            // Act
+            component.hearing = hearing;
+
+            // Assert
+            expect(component.allParticipants.filter(p => p.displayName === newlyAddedParticipant.display_name)).toEqual([]);
+            expect(component.allParticipants.filter(p => p.displayName === newlyAddedEndpoint.displayName)).toEqual([]);
+            expect(component.allParticipants.length).toBe(2);
+            expect(component.newParticipantRemovedFromOptions).toBeTrue();
+        });
+
+        it('should include existing participant in screening options', () => {
+            // Arrange
+            hearing.hearing_id = '1'; // isEditMode = true
+            // Act
+            component.hearing = hearing;
+            // Assert
+            expect(component.allParticipants.length).toBe(4);
+            expect(component.newParticipantRemovedFromOptions).toBeFalse();
         });
     });
 });

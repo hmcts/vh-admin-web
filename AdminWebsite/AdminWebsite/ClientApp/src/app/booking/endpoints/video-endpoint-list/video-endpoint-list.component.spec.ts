@@ -26,7 +26,8 @@ describe('VideoEndpointListComponent', () => {
             displayName: 'Test',
             defenceAdvocate: null,
             interpretationLanguage: undefined,
-            screening: undefined
+            screening: undefined,
+            externalReferenceId: undefined
         };
         component.editEndpoint.emit(dto);
         expect(component.editEndpoint.emit).toHaveBeenCalledWith(dto);
@@ -38,7 +39,8 @@ describe('VideoEndpointListComponent', () => {
             displayName: 'Test',
             defenceAdvocate: null,
             interpretationLanguage: undefined,
-            screening: undefined
+            screening: undefined,
+            externalReferenceId: undefined
         };
         component.deleteEndpoint.emit(dto);
         expect(component.deleteEndpoint.emit).toHaveBeenCalledWith(dto);
