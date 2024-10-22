@@ -849,11 +849,11 @@ describe('SummaryComponent  with existing request', () => {
         component.hearing = initExistingHearingRequest();
         component.hearing.hearing_id = '12345';
         component.hearing.endpoints = [];
-        const ep1 = new EndpointModel();
+        const ep1 = new EndpointModel(null);
         ep1.displayName = 'test endpoint 001';
-        const ep2 = new EndpointModel();
+        const ep2 = new EndpointModel(null);
         ep2.displayName = 'test endpoint 002';
-        const ep3 = new EndpointModel();
+        const ep3 = new EndpointModel(null);
         ep3.displayName = 'test endpoint 003';
         component.hearing.endpoints.push(ep1);
         component.hearing.endpoints.push(ep2);

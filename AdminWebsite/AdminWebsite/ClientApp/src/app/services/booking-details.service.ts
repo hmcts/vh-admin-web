@@ -111,7 +111,7 @@ export class BookingDetailsService {
         if (hearingResponse.endpoints && hearingResponse.endpoints.length > 0) {
             hearingResponse.endpoints.forEach(e => {
                 const defenceAdvocate = hearingResponse.participants.find(p => p.id === e.defence_advocate_id);
-                const epModel = new EndpointModel();
+                const epModel = new EndpointModel(e.external_reference_id);
                 epModel.id = e.id;
                 epModel.externalReferenceId = e.external_reference_id;
                 epModel.displayName = e.display_name;

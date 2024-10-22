@@ -57,7 +57,8 @@ function initHearingRequest(): HearingModel {
             pin: 'pin',
             username: 'test@existing.com',
             contactEmail: 'test@existing.com',
-            interpretationLanguage: undefined
+            interpretationLanguage: undefined,
+            externalReferenceId: 'ex1'
         }
     ];
     return newHearing;
@@ -212,7 +213,14 @@ describe('EndpointsComponent', () => {
             featureServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
             component.ngOnInit();
             component.videoEndpoints = [
-                { id: '1', displayName: 'Test', defenceAdvocate: null, interpretationLanguage: undefined, screening: undefined }
+                {
+                    id: '1',
+                    displayName: 'Test',
+                    defenceAdvocate: null,
+                    interpretationLanguage: undefined,
+                    screening: undefined,
+                    externalReferenceId: '1'
+                }
             ];
             component.saveEndpoints();
             expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
@@ -232,7 +240,8 @@ describe('EndpointsComponent', () => {
                 displayName: 'Test',
                 defenceAdvocate: null,
                 interpretationLanguage: undefined,
-                screening: undefined
+                screening: undefined,
+                externalReferenceId: '1'
             };
             component.onEndpointAdded(endpoint);
             expect(component.videoEndpoints).toContain(endpoint);
@@ -244,7 +253,8 @@ describe('EndpointsComponent', () => {
                 displayName: 'Test',
                 defenceAdvocate: null,
                 interpretationLanguage: undefined,
-                screening: undefined
+                screening: undefined,
+                externalReferenceId: '1'
             };
             component.videoEndpoints = [endpoint];
             component.onEndpointAdded(endpoint);
@@ -255,8 +265,22 @@ describe('EndpointsComponent', () => {
     describe('onEndpointUpdated', () => {
         beforeEach(() => {
             component.videoEndpoints = [
-                { id: '1', displayName: 'Test', defenceAdvocate: null, interpretationLanguage: undefined, screening: undefined },
-                { id: '2', displayName: 'Test2', defenceAdvocate: null, interpretationLanguage: undefined, screening: undefined }
+                {
+                    id: '1',
+                    displayName: 'Test',
+                    defenceAdvocate: null,
+                    interpretationLanguage: undefined,
+                    screening: undefined,
+                    externalReferenceId: '1'
+                },
+                {
+                    id: '2',
+                    displayName: 'Test2',
+                    defenceAdvocate: null,
+                    interpretationLanguage: undefined,
+                    screening: undefined,
+                    externalReferenceId: '1'
+                }
             ];
         });
 
@@ -266,7 +290,8 @@ describe('EndpointsComponent', () => {
                 displayName: 'Test',
                 defenceAdvocate: null,
                 interpretationLanguage: undefined,
-                screening: undefined
+                screening: undefined,
+                externalReferenceId: '1'
             };
             component.videoEndpoints = [endpoint];
             const updatedEndpoint = {
@@ -274,7 +299,8 @@ describe('EndpointsComponent', () => {
                 displayName: 'Updated',
                 defenceAdvocate: null,
                 interpretationLanguage: undefined,
-                screening: undefined
+                screening: undefined,
+                externalReferenceId: '1'
             };
             component.onEndpointUpdated({ original: endpoint, updated: updatedEndpoint });
             expect(component.videoEndpoints).toContain(updatedEndpoint);
@@ -286,14 +312,16 @@ describe('EndpointsComponent', () => {
                 displayName: 'DoesNotExist',
                 defenceAdvocate: null,
                 interpretationLanguage: undefined,
-                screening: undefined
+                screening: undefined,
+                externalReferenceId: '1'
             };
             const updatedEndpoint = {
                 id: '1',
                 displayName: 'Updated',
                 defenceAdvocate: null,
                 interpretationLanguage: undefined,
-                screening: undefined
+                screening: undefined,
+                externalReferenceId: '1'
             };
             component.onEndpointUpdated({ original: endpoint, updated: updatedEndpoint });
             expect(component.videoEndpoints).not.toContain(endpoint);
@@ -303,8 +331,22 @@ describe('EndpointsComponent', () => {
     describe('onEndpointSelectedForDeletion', () => {
         beforeEach(() => {
             component.videoEndpoints = [
-                { id: '1', displayName: 'Test', defenceAdvocate: null, interpretationLanguage: undefined, screening: undefined },
-                { id: '2', displayName: 'Test2', defenceAdvocate: null, interpretationLanguage: undefined, screening: undefined }
+                {
+                    id: '1',
+                    displayName: 'Test',
+                    defenceAdvocate: null,
+                    interpretationLanguage: undefined,
+                    screening: undefined,
+                    externalReferenceId: '1'
+                },
+                {
+                    id: '2',
+                    displayName: 'Test2',
+                    defenceAdvocate: null,
+                    interpretationLanguage: undefined,
+                    screening: undefined,
+                    externalReferenceId: '1'
+                }
             ];
         });
 
@@ -314,7 +356,8 @@ describe('EndpointsComponent', () => {
                 displayName: 'Test',
                 defenceAdvocate: null,
                 interpretationLanguage: undefined,
-                screening: undefined
+                screening: undefined,
+                externalReferenceId: '1'
             };
             component.onEndpointSelectedForDeletion(endpoint);
             expect(component.videoEndpoints).not.toContain(endpoint);
@@ -326,7 +369,8 @@ describe('EndpointsComponent', () => {
                 displayName: 'Test3',
                 defenceAdvocate: null,
                 interpretationLanguage: undefined,
-                screening: undefined
+                screening: undefined,
+                externalReferenceId: '1'
             };
             component.onEndpointSelectedForDeletion(endpoint);
             expect(component.videoEndpoints.length).toBe(2);
@@ -340,7 +384,8 @@ describe('EndpointsComponent', () => {
                 displayName: 'Test',
                 defenceAdvocate: null,
                 interpretationLanguage: undefined,
-                screening: undefined
+                screening: undefined,
+                externalReferenceId: '1'
             };
             component.onEndpointSelectedForEdit(endpoint);
             expect(component.videoEndpointToEdit).toBe(endpoint);

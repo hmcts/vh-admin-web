@@ -12,7 +12,6 @@ import { BookingPersistService } from '../../services/bookings-persist.service';
 import {
     BookingStatus,
     HearingDetailsResponse,
-    JusticeUserResponse,
     PhoneConferenceResponse,
     UpdateBookingStatusResponse,
     UserProfileResponse
@@ -136,10 +135,10 @@ export class BookingDetailsTestData {
 
     getEndpoints() {
         const endpoints: EndpointModel[] = [];
-        let endpoint = new EndpointModel();
+        let endpoint = new EndpointModel(null);
         endpoint.displayName = 'Courtroom 001';
         endpoints.push(endpoint);
-        endpoint = new EndpointModel();
+        endpoint = new EndpointModel(null);
         endpoint.displayName = 'Courtroom 002';
         endpoints.push(endpoint);
         return endpoints;
