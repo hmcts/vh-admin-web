@@ -51,12 +51,12 @@ describe('ScreeningFormComponent', () => {
         component.hearing = hearing;
         fixture.detectChanges();
         component.newParticipantRemovedFromOptions = false;
-        component.isEditMode = false;
     });
 
     it('init component from input on create', () => {
         expect(component).toBeTruthy();
 
+        expect(component.isEditMode).toBeFalse();
         expect(component.allParticipants.length).toBe(4);
         expect(component.allParticipants[0].displayName).toBe('Participant1');
         expect(component.allParticipants[1].displayName).toBe('Participant2');
@@ -132,6 +132,7 @@ describe('ScreeningFormComponent', () => {
             component.hearing = hearing;
 
             // Assert
+            expect(component.isEditMode).toBeTrue();
             expect(component.allParticipants.filter(p => p.displayName === newlyAddedParticipant.display_name)).toEqual([]);
             expect(component.allParticipants.filter(p => p.displayName === newlyAddedEndpoint.displayName)).toEqual([]);
             expect(component.allParticipants.length).toBe(2);
@@ -144,6 +145,7 @@ describe('ScreeningFormComponent', () => {
             // Act
             component.hearing = hearing;
             // Assert
+            expect(component.isEditMode).toBeTrue();
             expect(component.allParticipants.length).toBe(4);
             expect(component.newParticipantRemovedFromOptions).toBeFalse();
         });

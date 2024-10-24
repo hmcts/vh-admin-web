@@ -45,7 +45,7 @@ export class ScreeningFormComponent {
                     isNewlyAdded: endpoint.id === null || endpoint.id === undefined
                 } as GenericParticipantsModel)
         );
-        this.isEditMode = hearing.hearing_id !== null && hearing.hearing_id !== undefined;
+        this.isEditMode = !!hearing.hearing_id;
         this.allParticipants = [...mappedParticipants, ...mappedEndpoints].filter(participant =>
             this.includeParticipantInScreeningOptions(participant)
         );
