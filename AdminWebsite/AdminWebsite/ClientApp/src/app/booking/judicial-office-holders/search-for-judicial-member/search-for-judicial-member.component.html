@@ -1,7 +1,7 @@
 <form [formGroup]="form">
   <div class="govuk-form-group">
     <label class="govuk-label" for="judiciaryEmailInput">Email</label>
-    <input id="judiciaryEmailInput" class="govuk-input" type="email" autocomplete="off" formControlName="judiciaryEmail" tabindex="1" />
+    <input id="judiciaryEmailInput" class="govuk-input" type="email" autocomplete="off" formControlName="judiciaryEmail" />
     <ul id="search-results-list" *ngIf="showResult && searchResult?.length > 0" class="vh-li-email govuk-body">
       <li *ngFor="let result of searchResult | slice : 0 : 9" class="vk-showlist-m30" tabindex="2">
         <span class="vh-a-email" (keypress)="selectJudicialMember(result)" (click)="selectJudicialMember(result)">{{ result.email }}</span>
@@ -13,7 +13,7 @@
       <span id="judiciaryDisplayNameInputError" class="govuk-error-message">Display Name Invalid</span>
     </div>
     <label class="govuk-label" for="judiciaryDisplayNameInput">Display Name</label>
-    <input id="judiciaryDisplayNameInput" class="govuk-input" type="text" formControlName="displayName" tabindex="2" />
+    <input id="judiciaryDisplayNameInput" class="govuk-input" type="text" formControlName="displayName" />
   </div>
   <div *ngIf="isSelectedAccountGeneric && this.form.dirty">
     <div class="govuk-form-group">
@@ -21,14 +21,14 @@
         <span id="judiciaryOptionContactTelephoneError" class="govuk-error-message">Contact Telephone Invalid</span>
       </div>
       <label class="govuk-label" for="judiciaryOptionContactTelephone">Optional Contact Telephone</label>
-      <input id="judiciaryOptionContactTelephone" class="govuk-input" type="text" formControlName="optionalContactTelephone" tabindex="2" />
+      <input id="judiciaryOptionContactTelephone" class="govuk-input" type="text" formControlName="optionalContactTelephone" />
     </div>
     <div class="govuk-form-group">
       <div *ngIf="displayContactEmailError" class="alert alert-danger">
         <span id="judiciaryOptionContactEmailError" class="govuk-error-message">Contact Email Invalid</span>
       </div>
       <label class="govuk-label" for="judiciaryOptionContactEmail">Optional Contact Email</label>
-      <input id="judiciaryOptionContactEmail" class="govuk-input" type="text" formControlName="optionalContactEmail" tabindex="2" />
+      <input id="judiciaryOptionContactEmail" class="govuk-input" type="text" formControlName="optionalContactEmail" />
     </div>
   </div>
 

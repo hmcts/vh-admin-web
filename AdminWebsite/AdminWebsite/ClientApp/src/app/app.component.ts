@@ -7,6 +7,9 @@ import { BookingService } from './services/booking.service';
 import { DeviceType } from './services/device-type';
 import { ConnectionService } from './services/connection/connection.service';
 import { SecurityService } from './security/services/security.service';
+import { ConfigService } from './services/config.service';
+import { first } from 'rxjs';
+import { DynatraceService } from './services/dynatrace.service';
 
 @Component({
     selector: 'app-root',
@@ -34,6 +37,8 @@ export class AppComponent implements OnInit {
         private videoHearingsService: VideoHearingsService,
         private bookingService: BookingService,
         private deviceTypeService: DeviceType,
+        private readonly configService: ConfigService,
+        private readonly dynatraceService: DynatraceService,
         connection: ConnectionService
     ) {
         pageTracker.trackNavigation(router);
@@ -48,11 +53,29 @@ export class AppComponent implements OnInit {
     ngOnInit() {
         this.checkBrowser();
 
+        this.configService
+            .getClientSettings()
+            .pipe(first())
+            .subscribe({
+                next: clientSettings => {
+                    this.dynatraceService.addDynatraceScript(clientSettings.dynatrace_rum_link);
+                }
+            });
+
         this.securityService.checkAuthMultiple().subscribe(response => {
             const user = response.find(x => x.configId === this.securityService.currentIdpConfigId && x.isAuthenticated);
+
             if (user) {
                 this.loggedIn = true;
                 this.username = user.userData?.preferred_username?.toLowerCase();
+
+                /* The line
+                `this.dynatraceService.addUserIdentifyScript(userData?.preferred_username?.toLowerCase());`
+                is calling a method `addUserIdentifyScript` from the `dynatraceService`
+                service. This method is used to identify the user in Dynatrace
+                monitoring by passing the user's preferred username in lowercase as a
+                parameter.*/
+                this.dynatraceService.addUserIdentifyScript(this.username);
             }
         });
 
