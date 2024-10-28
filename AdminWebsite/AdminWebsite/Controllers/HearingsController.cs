@@ -1021,9 +1021,8 @@ namespace AdminWebsite.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "There was an unknown error updating status for hearing {Hearing}", hearingId);
-                if (ex is BookingsApiException)
+                if (ex is BookingsApiException e)
                 {
-                    var e = ex as BookingsApiException;
                     if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                     if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound(e.Response);
                     return BadRequest(e);
@@ -1089,7 +1088,7 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        private IEnumerable<ParticipantResponse> ParticipantsNeedVhAccounts(List<ParticipantResponse> allParticipants)
+        private static IEnumerable<ParticipantResponse> ParticipantsNeedVhAccounts(List<ParticipantResponse> allParticipants)
         {
             var participantsNeedVhAccounts = allParticipants.Where(x => x.UserRoleName == RoleNames.Individual || x.UserRoleName == RoleNames.Representative);
             

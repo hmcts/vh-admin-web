@@ -8,7 +8,7 @@ namespace AdminWebsite.UnitTests.Mappers
     {
         private EditHearingRequest _newParticipantRequest;
         private readonly string _username = "username";
-        private readonly DateTime _scheduledDateTime = new(2020, 12, 12);
+        private readonly DateTime _scheduledDateTime = new(2020, 12, 12, 8, 0, 0, DateTimeKind.Utc);
         private readonly CaseRequest _caseRequest = new() {Name = "casename", Number = "casenumber"};
 
         [SetUp]

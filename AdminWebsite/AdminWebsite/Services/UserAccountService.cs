@@ -209,20 +209,12 @@ namespace AdminWebsite.Services
 
         private async Task AddGroup(string username, string groupName)
         {
-            try
+            var addUserToGroupRequest = new AddUserToGroupRequest
             {
-                var addUserToGroupRequest = new AddUserToGroupRequest
-                {
-                    UserId = username,
-                    GroupName = groupName
-                };
-                await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-            }
-            catch (UserApiException e)
-            {
-                _logger.LogError(e, "Failed to add user to {GroupName} in User API", groupName);
-                throw;
-            }
+                UserId = username,
+                GroupName = groupName
+            };
+            await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
         }
 
         private async Task<bool> CheckUsernameExistsInAdAsync(string username)

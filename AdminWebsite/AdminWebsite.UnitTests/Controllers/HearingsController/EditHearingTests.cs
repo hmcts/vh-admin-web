@@ -31,7 +31,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
     public class EditHearingTests
     {
-        private EditHearingRequest _addEndpointToHearingRequest;
         private EditHearingRequest _addNewParticipantRequest;
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IConferenceDetailsService> _conferencesServiceMock;
@@ -39,21 +38,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private AdminWebsite.Controllers.HearingsController _controller;
         private EditHearingRequest _editEndpointOnHearingRequestWithJudge;
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
-        private HearingDetailsResponse _existingHearingWithEndpointsOriginal;
-        private HearingDetailsResponse _existingHearingWithJudge;
-        private HearingDetailsResponse _existingHearingWithLinkedParticipants;
-        private Mock<IFeatureToggles> _featureToggle;
         private IHearingsService _hearingsService;
 
         private Mock<ILogger<HearingsService>> _participantGroupLogger;
-        private EditHearingRequest _removeEndpointOnHearingRequest;
         private HearingDetailsResponse _updatedExistingParticipantHearingOriginal;
         private Mock<IUserIdentity> _userIdentity;
         private HearingDetailsResponseV2 _v2HearingDetailsResponse;
 
         private Guid _validId;
-        private Mock<VodafoneConfiguration> _VodafoneConfigurationMock;
-        private Mock<IOptions<VodafoneConfiguration>> _VodafoneOptionsMock;
+        private Mock<VodafoneConfiguration> _vodafoneConfigurationMock;
+        private Mock<IOptions<VodafoneConfiguration>> _vodafoneOptionsMock;
 
         [SetUp]
         public void Setup()
@@ -62,7 +56,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity = new Mock<IUserIdentity>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _conferencesServiceMock = new Mock<IConferenceDetailsService>();
-            _featureToggle = new Mock<IFeatureToggles>();
+            new Mock<IFeatureToggles>();
             _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(new ConferenceDetailsResponse
                 {
@@ -77,9 +71,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 });
 
-            _VodafoneOptionsMock = new Mock<IOptions<VodafoneConfiguration>>();
-            _VodafoneConfigurationMock = new Mock<VodafoneConfiguration>();
-            _VodafoneOptionsMock.Setup((op) => op.Value).Returns(_VodafoneConfigurationMock.Object);
+            _vodafoneOptionsMock = new Mock<IOptions<VodafoneConfiguration>>();
+            _vodafoneConfigurationMock = new Mock<VodafoneConfiguration>();
+            _vodafoneOptionsMock.Setup((op) => op.Value).Returns(_vodafoneConfigurationMock.Object);
 
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_bookingsApiClient.Object, _participantGroupLogger.Object);
@@ -143,7 +137,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var defenceAdvocate2 = "defenceAdvocate2";
             var defenceAdvocate3 = "defenceAdvocate3";
             var defenceAdvocate4 = "defenceAdvocate4";
-            _existingHearingWithLinkedParticipants = new HearingDetailsResponse()
+            new HearingDetailsResponse()
             {
                 Id = _validId,
                 GroupId = _validId,
@@ -184,7 +178,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 ScheduledDateTime = DateTime.UtcNow.AddHours(3),
                 OtherInformation = ""
             };
-            _addEndpointToHearingRequest = new EditHearingRequest
+            new EditHearingRequest
             {
                 Case = new EditCaseRequest { Name = "Case", Number = "123" },
                 Participants = new List<EditParticipantRequest>(),
@@ -232,7 +226,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
 
-            _removeEndpointOnHearingRequest = new EditHearingRequest
+            new EditHearingRequest
             {
                 Case = new EditCaseRequest
                 {
@@ -247,7 +241,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
 
-            _existingHearingWithEndpointsOriginal = new HearingDetailsResponse
+            new HearingDetailsResponse
             {
                 Id = _validId,
                 Participants = new List<ParticipantResponse>
@@ -269,7 +263,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 ScheduledDateTime = DateTime.UtcNow.AddHours(3)
             };
 
-            _existingHearingWithJudge = new HearingDetailsResponse
+            new HearingDetailsResponse
             {
                 Id = _validId,
                 GroupId = _validId,

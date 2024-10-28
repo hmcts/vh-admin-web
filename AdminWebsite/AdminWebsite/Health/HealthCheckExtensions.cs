@@ -17,7 +17,7 @@ namespace AdminWebsite.Health;
 [ExcludeFromCodeCoverage]
 public static class HealthCheckExtensions
 {
-    public static IServiceCollection AddVhHealthChecks(this IServiceCollection services)
+    public static void AddVhHealthChecks(this IServiceCollection services)
     {
         var container = services.BuildServiceProvider();
         var servicesConfiguration = container.GetService<IOptions<ServiceConfiguration>>().Value;
@@ -26,42 +26,41 @@ public static class HealthCheckExtensions
             .AddUrlGroup(
                 new Uri(
                     new Uri(servicesConfiguration.VideoApiUrl),
-                    "/health/liveness"),
+                    Routes.Liveness),
                 name: "Video API",
                 failureStatus: HealthStatus.Unhealthy,
-                tags: new[] {"startup", "readiness"})
+                tags: [Tags.Startup, Tags.Readiness])
             .AddUrlGroup(
                 new Uri(
                     new Uri(servicesConfiguration.BookingsApiUrl),
-                    "/health/liveness"),
+                    Routes.Liveness),
                 name: "Bookings API",
                 failureStatus: HealthStatus.Unhealthy,
-                tags: new[] {"startup", "readiness"})
+                tags: [Tags.Startup, Tags.Readiness])
             .AddUrlGroup(
                 new Uri(
                     new Uri(servicesConfiguration.UserApiUrl),
-                    "/health/liveness"),
+                    Routes.Liveness),
                 name: "User API",
                 failureStatus: HealthStatus.Unhealthy,
-                tags: new[] {"startup", "readiness"});
-        return services;
+                tags: [Tags.Startup, Tags.Readiness]);
     }
     
     public static IEndpointRouteBuilder AddVhHealthCheckRouteMaps(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapHealthChecks("/health/liveness", new HealthCheckOptions()
+        endpoints.MapHealthChecks(Routes.Liveness, new HealthCheckOptions()
         {
             Predicate = check => check.Tags.Contains("self"),
             ResponseWriter = HealthCheckResponseWriter
         });
 
-        endpoints.MapHealthChecks("/health/startup", new HealthCheckOptions()
+        endpoints.MapHealthChecks(Routes.Startup, new HealthCheckOptions()
         {
             Predicate = check => check.Tags.Contains("startup"),
             ResponseWriter = HealthCheckResponseWriter
         });
                 
-        endpoints.MapHealthChecks("/health/readiness", new HealthCheckOptions()
+        endpoints.MapHealthChecks(Routes.Readiness, new HealthCheckOptions()
         {
             Predicate = check => check.Tags.Contains("readiness"),
             ResponseWriter = HealthCheckResponseWriter
@@ -83,5 +82,18 @@ public static class HealthCheckExtensions
         });
         context.Response.ContentType = "application/json";
         await context.Response.WriteAsync(result);
+    }
+
+    private static class Routes
+    {
+        public const string Liveness = "/health/liveness";
+        public const string Readiness = "/health/readiness";
+        public const string Startup = "/health/startup";
+    }
+
+    private static class Tags
+    {
+        public const string Readiness = "readiness";
+        public const string Startup = "startup";
     }
 }

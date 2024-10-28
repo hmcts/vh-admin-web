@@ -792,8 +792,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var errors = validationProblems.Errors;
             errors.Should().BeEquivalentTo(validationProblemDetails.Errors);
         }
-
-        private static readonly string[] value = ["Please provide a valid id"];
         
         private static HearingDetailsResponseV2 MapUpdatedHearingV2(
             HearingDetailsResponseV2 hearing, EditMultiDayHearingRequest request) =>

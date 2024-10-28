@@ -49,7 +49,7 @@ namespace AdminWebsite.Services
             }
         }
         
-        public List<EditParticipantRequest> GetAddedParticipant(List<EditParticipantRequest> originalParticipants, List<EditParticipantRequest> requestParticipants)
+        public static List<EditParticipantRequest> GetAddedParticipant(List<EditParticipantRequest> originalParticipants, List<EditParticipantRequest> requestParticipants)
         {
             return originalParticipants
                 .Except(requestParticipants, EditParticipantRequest.EditParticipantRequestComparer)
@@ -227,7 +227,7 @@ namespace AdminWebsite.Services
             return request;
         }
 
-        public void UpdateEndpointWithNewlyAddedParticipant(List<IParticipantRequest> newParticipantList, EditEndpointRequest endpoint)
+        private static void UpdateEndpointWithNewlyAddedParticipant(List<IParticipantRequest> newParticipantList, EditEndpointRequest endpoint)
         {
             var epToUpdate = newParticipantList
                 .Find(p => p.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,

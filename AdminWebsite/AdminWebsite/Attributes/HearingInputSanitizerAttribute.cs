@@ -1,10 +1,12 @@
-﻿using AdminWebsite.Models;
+﻿using System;
+using AdminWebsite.Models;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Text.RegularExpressions;
 using BookingsApi.Contract.V1.Requests;
 
 namespace AdminWebsite.Attributes
 {
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class HearingInputSanitizerAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)

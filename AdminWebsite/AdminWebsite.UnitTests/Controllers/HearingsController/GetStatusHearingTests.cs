@@ -26,7 +26,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IHearingsService> _hearingServiceMock;
         private HearingDetailsResponse _vhExistingHearing;
         private HearingDetailsResponseV2 _vhExistingHearingV2;
-        private Mock<IFeatureToggles> _featureFlag;
         private Guid _guid;
 
         [SetUp]
@@ -35,7 +34,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _conferenceDetailsServiceMock = new Mock<IConferenceDetailsService>();
             _hearingServiceMock = new Mock<IHearingsService>();
-            _featureFlag = new Mock<IFeatureToggles>();
+            new Mock<IFeatureToggles>();
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClientMock.Object, 
                 new Mock<IUserIdentity>().Object,
                 new Mock<IValidator<EditHearingRequest>>().Object,
