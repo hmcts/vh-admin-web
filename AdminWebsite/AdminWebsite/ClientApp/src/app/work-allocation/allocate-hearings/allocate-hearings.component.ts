@@ -290,4 +290,11 @@ export class AllocateHearingsComponent implements OnInit {
     clearHearingUpdatedMessage() {
         return this.hasHearingBeenUpdated() ? this.clearMessage() : null;
     }
+
+    handleSummaryKeyDown(event: KeyboardEvent) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            (event.target as HTMLElement).click();
+        }
+    }
 }

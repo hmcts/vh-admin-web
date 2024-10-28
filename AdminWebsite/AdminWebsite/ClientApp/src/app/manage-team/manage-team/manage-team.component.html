@@ -77,6 +77,7 @@
             [text]="'Edit role'"
             [colour]="'blue'"
             (click)="editUser(user)"
+            (keydown)="editUser(user)"
           ></fa-icon>
         </td>
         <td class="govuk-table__cell">
@@ -89,6 +90,7 @@
             [text]="'Delete'"
             [colour]="'red'"
             (click)="onDeleteJusticeUser(user)"
+            (keydown)="onDeleteJusticeUser(user)"
           ></fa-icon>
           <fa-icon
             *ngIf="user.deleted"
@@ -98,6 +100,7 @@
             [text]="'Restore team member'"
             [colour]="'blue'"
             (click)="restoreUser(user)"
+            (keydown)="onDeleteJusticeUser(user)"
           ></fa-icon>
         </td>
       </tr>

@@ -35,4 +35,8 @@ export class CopyJoinLinkComponent extends CopyDetailsBase implements OnInit {
         this.elem = this.conferenceJoinByLink.nativeElement as HTMLDivElement;
         this.mouseOver($event);
     }
+
+    onFocus(): void {
+        this.onMouseOver(new MouseEvent('mouseover'));
+    }
 }

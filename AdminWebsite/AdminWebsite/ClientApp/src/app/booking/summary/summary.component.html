@@ -8,10 +8,9 @@
 </div>
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
-    <div
+    <section
       *ngIf="!judgeAssigned"
       class="govuk-notification-banner red-theme"
-      role="region"
       aria-labelledby="govuk-notification-banner-title"
       data-module="govuk-notification-banner"
     >
@@ -24,7 +23,7 @@
           <a class="vhlink add-judge-link" (click)="navToAddJudge()" href="javascript:void(0)"> Add a judge</a>
         </p>
       </div>
-    </div>
+    </section>
     <h2 class="govuk-heading-m" id="hearingSummary">
       {{ isExistingBooking ? 'Booking details' : 'Hearing summary' }}
     </h2>

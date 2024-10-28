@@ -31,4 +31,8 @@ export class CopyConferencePhoneComponent extends CopyDetailsBase implements OnI
         this.elem = this.conferencePhone.nativeElement as HTMLDivElement;
         this.mouseOver($event);
     }
+
+    onFocus(): void {
+        this.onMouseOver(new MouseEvent('mouseover'));
+    }
 }
