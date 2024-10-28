@@ -1,4 +1,5 @@
-﻿using AdminWebsite.Models;
+﻿using System.Net;
+using AdminWebsite.Models;
 using AdminWebsite.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests.Enums;
 using Autofac.Extras.Moq;
+using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
 using VideoApi.Contract.Responses;
 using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
@@ -57,6 +59,89 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Value.Should().NotBeNull()
                                  .And.BeAssignableTo<UpdateBookingStatusResponse>()
                                  .Subject.Success.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task Should_return_bad_request_when_bookings_api_returns_bad_request()
+        {
+            // Arrange
+            var bookingId = Guid.NewGuid();
+            var exception = new BookingsApiException<string>("BadRequest", 
+                (int)HttpStatusCode.BadRequest,
+                "BadRequest",
+                null,
+                "BadRequest",
+                null);
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.CancelBookingAsync(bookingId, It.IsAny<CancelBookingRequest>()))
+                .ThrowsAsync(exception);
+            
+            // Act
+            var response = await _controller.CancelBooking(bookingId, "Reason");
+
+            // Assert
+            var result = response as BadRequestObjectResult;
+            result.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+        }
+        
+        [Test]
+        public async Task Should_return_not_found_when_bookings_api_returns_not_found()
+        {
+            // Arrange
+            var bookingId = Guid.NewGuid();
+            var exception = new BookingsApiException<string>("NotFound", 
+                (int)HttpStatusCode.NotFound,
+                "NotFound",
+                null,
+                "NotFound",
+                null);
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.CancelBookingAsync(bookingId, It.IsAny<CancelBookingRequest>()))
+                .ThrowsAsync(exception);
+            
+            // Act
+            var response = await _controller.CancelBooking(bookingId, "Reason");
+
+            // Assert
+            var result = response as NotFoundObjectResult;
+            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+        }
+        
+        [Test]
+        public async Task Should_return_bad_request_when_bookings_api_returns_forbidden()
+        {
+            // Arrange
+            var bookingId = Guid.NewGuid();
+            var exception = new BookingsApiException<string>("Forbidden", 
+                (int)HttpStatusCode.Forbidden,
+                "Forbidden",
+                null,
+                "Forbidden",
+                null);
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.CancelBookingAsync(bookingId, It.IsAny<CancelBookingRequest>()))
+                .ThrowsAsync(exception);
+            
+            // Act
+            var response = await _controller.CancelBooking(bookingId, "Reason");
+
+            // Assert
+            var result = response as ObjectResult;
+            result.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+        }
+
+        [Test]
+        public async Task Should_return_bad_request_when_other_exception_thrown()
+        {
+            // Arrange
+            var bookingId = Guid.NewGuid();
+            var exception = new InvalidOperationException();
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.CancelBookingAsync(bookingId, It.IsAny<CancelBookingRequest>()))
+                .ThrowsAsync(exception);
+            
+            // Act
+            var response = await _controller.CancelBooking(bookingId, "Reason");
+
+            // Assert
+            var result = response as ObjectResult;
+            result.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
         }
     }
 }

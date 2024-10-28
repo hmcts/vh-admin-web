@@ -68,4 +68,13 @@ describe('CopySipComponent', () => {
 
         expect(component._detailsToCopy).toBe('sip:pin');
     });
+
+    describe('onFocus', () => {
+        it('should invoke mouseOver', () => {
+            spyOn(component, 'mouseOver');
+            component.sipAddress = new ElementRef(sipAddress);
+            component.onFocus();
+            expect(component.mouseOver).toHaveBeenCalled();
+        });
+    });
 });

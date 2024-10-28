@@ -86,4 +86,12 @@ describe('CopyJoinLinkComponent', () => {
         component.quickLinkDetails = hearingId;
         expect(component._detailsToCopy).toBe(`${vh_video_uri}quickjoin/${hearingId}`);
     });
+
+    describe('onFocus', () => {
+        it('should invoke mouseOver', () => {
+            spyOn(component, 'mouseOver');
+            component.onFocus();
+            expect(component.mouseOver).toHaveBeenCalled();
+        });
+    });
 });
