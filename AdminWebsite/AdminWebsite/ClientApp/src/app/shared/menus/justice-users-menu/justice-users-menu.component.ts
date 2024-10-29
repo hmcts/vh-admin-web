@@ -42,5 +42,7 @@ export class JusticeUsersMenuComponent extends MenuBase implements OnInit {
         super.ngOnInit();
     }
 
-    loadItems(): void {}
+    loadItems(): void {
+        // Intentionally empty
+    }
 }

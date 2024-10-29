@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { SupportedBrowserModel } from './SupportedBrowserModel';
 import { DeviceType } from 'src/app/services/device-type';
 
@@ -7,7 +7,7 @@ import { DeviceType } from 'src/app/services/device-type';
     templateUrl: './unsupported-browser.component.html',
     styleUrls: ['./unsupported-browser.component.scss']
 })
-export class UnsupportedBrowserComponent implements OnInit {
+export class UnsupportedBrowserComponent {
     supportedBrowsers: SupportedBrowserModel[] = [];
 
     browserName: string;
@@ -16,6 +16,4 @@ export class UnsupportedBrowserComponent implements OnInit {
         this.browserName = this.deviceTypeService.getBrowserName();
         this.supportedBrowsers.push(new SupportedBrowserModel('Chrome'));
     }
-
-    ngOnInit() {}
 }
