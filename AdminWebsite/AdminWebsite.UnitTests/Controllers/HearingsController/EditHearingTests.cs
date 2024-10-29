@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
@@ -21,10 +20,7 @@ using Microsoft.Extensions.Options;
 using VideoApi.Contract.Consts;
 using VideoApi.Contract.Responses;
 using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
-using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
 using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
-using LinkedParticipantResponse = BookingsApi.Contract.V1.Responses.LinkedParticipantResponse;
-using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
 using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -56,7 +52,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity = new Mock<IUserIdentity>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _conferencesServiceMock = new Mock<IConferenceDetailsService>();
-            new Mock<IFeatureToggles>();
             _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(new ConferenceDetailsResponse
                 {
@@ -126,9 +121,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 OtherInformation = ""
             };
             var participantId1 = Guid.NewGuid();
-            var participantId2 = Guid.NewGuid();
-            var participantId3 = Guid.NewGuid();
-            var participantId4 = Guid.NewGuid();
             var endpointGuid1 = Guid.NewGuid();
             var endpointGuid2 = Guid.NewGuid();
             var endpointGuid3 = Guid.NewGuid();
@@ -137,60 +129,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var defenceAdvocate2 = "defenceAdvocate2";
             var defenceAdvocate3 = "defenceAdvocate3";
             var defenceAdvocate4 = "defenceAdvocate4";
-            new HearingDetailsResponse()
-            {
-                Id = _validId,
-                GroupId = _validId,
-                Cases = cases,
-                CaseTypeName = "case type",
-                HearingTypeName = "hearing type",
-                Participants = new List<ParticipantResponse>
-                {
-                    new ParticipantResponse
-                    {
-                        Id = participantId1, CaseRoleName = "judge", HearingRoleName = "hearingrole",
-                        ContactEmail = "judge.user@email.com", UserRoleName = "Judge", FirstName = "Judge",
-                        LinkedParticipants = new List<LinkedParticipantResponse>()
-                    },
-                    new ParticipantResponse
-                    {
-                        Id = participantId2, CaseRoleName = "caserole", HearingRoleName = "litigant in person",
-                        ContactEmail = "individual.user@email.com", UserRoleName = "Individual",
-                        FirstName = "testuser1",
-                        LinkedParticipants = new List<LinkedParticipantResponse>
-                        {
-                            new LinkedParticipantResponse
-                                {Type = LinkedParticipantType.Interpreter, LinkedId = participantId3}
-                        }
-                    },
-                    new ParticipantResponse
-                    {
-                        Id = participantId3, CaseRoleName = "caserole", HearingRoleName = "interpreter",
-                        ContactEmail = "interpreter.user@email.com", UserRoleName = "Individual",
-                        FirstName = "testuser1",
-                        LinkedParticipants = new List<LinkedParticipantResponse>
-                        {
-                            new LinkedParticipantResponse
-                                {Type = LinkedParticipantType.Interpreter, LinkedId = participantId2}
-                        }
-                    }
-                },
-                ScheduledDateTime = DateTime.UtcNow.AddHours(3),
-                OtherInformation = ""
-            };
-            new EditHearingRequest
-            {
-                Case = new EditCaseRequest { Name = "Case", Number = "123" },
-                Participants = new List<EditParticipantRequest>(),
-                Endpoints = new List<EditEndpointRequest>
-                {
-                    new EditEndpointRequest { Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@domain.net" },
-                    new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
-                    new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
-                    new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 },
-                    new EditEndpointRequest { Id = endpointGuid4, DisplayName = "data4", DefenceAdvocateContactEmail = defenceAdvocate4 }
-                }
-            };
 
             _editEndpointOnHearingRequestWithJudge = new EditHearingRequest
             {
@@ -226,65 +164,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
 
-            new EditHearingRequest
-            {
-                Case = new EditCaseRequest
-                {
-                    Name = "Case",
-                    Number = "123"
-                },
-                Endpoints = new List<EditEndpointRequest>
-                {
-                    new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
-                    new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
-                    new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 }
-                }
-            };
-
-            new HearingDetailsResponse
-            {
-                Id = _validId,
-                Participants = new List<ParticipantResponse>
-                {
-                    new ParticipantResponse { Id = participantId1, ContactEmail = defenceAdvocate1 },
-                    new ParticipantResponse { Id = participantId2, ContactEmail = defenceAdvocate2 },
-                    new ParticipantResponse { Id = participantId3, ContactEmail = defenceAdvocate3 },
-                    new ParticipantResponse { Id = participantId4, ContactEmail = defenceAdvocate4 }
-                },
-                Endpoints = new List<EndpointResponse>
-                {
-                    new EndpointResponse { Id = endpointGuid1, DisplayName = "data1", Pin = "0000", Sip = "1111111111", DefenceAdvocateId = participantId1 },
-                    new EndpointResponse { Id = endpointGuid2, DisplayName = "data2", Pin = "1111", Sip = "2222222222", DefenceAdvocateId = participantId2 },
-                    new EndpointResponse { Id = endpointGuid3, DisplayName = "data3", Pin = "2222", Sip = "5544332234", DefenceAdvocateId = participantId3 },
-                    new EndpointResponse { Id = endpointGuid4, DisplayName = "data4", Pin = "2222", Sip = "5544332234", DefenceAdvocateId = participantId4 }
-                },
-                Cases = cases,
-                CaseTypeName = "Unit Test",
-                ScheduledDateTime = DateTime.UtcNow.AddHours(3)
-            };
-
-            new HearingDetailsResponse
-            {
-                Id = _validId,
-                GroupId = _validId,
-                Participants = new List<ParticipantResponse>
-                {
-                    new ParticipantResponse
-                    {
-                        Id = Guid.NewGuid(), CaseRoleName = "judge", HearingRoleName = HearingRoleName.Judge,
-                        ContactEmail = "judge.user@email.com", UserRoleName = "Judge", FirstName = "Judge",
-                        LinkedParticipants = new List<LinkedParticipantResponse>()
-                    },
-                    new ParticipantResponse { Id = participantId1, ContactEmail = defenceAdvocate1 },
-                    new ParticipantResponse { Id = participantId2, ContactEmail = defenceAdvocate2 },
-                    new ParticipantResponse { Id = participantId3, ContactEmail = defenceAdvocate3 },
-                    new ParticipantResponse { Id = participantId4, ContactEmail = defenceAdvocate4 }
-                },
-                Cases = cases,
-                CaseTypeName = "Unit Test",
-                ScheduledDateTime = DateTime.UtcNow.AddHours(3)
-            };
-      
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal);
 

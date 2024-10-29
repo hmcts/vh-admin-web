@@ -2,7 +2,6 @@
 using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using AdminWebsite.Configuration;
 using BookingsApi.Client;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
@@ -34,7 +33,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _conferenceDetailsServiceMock = new Mock<IConferenceDetailsService>();
             _hearingServiceMock = new Mock<IHearingsService>();
-            new Mock<IFeatureToggles>();
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClientMock.Object, 
                 new Mock<IUserIdentity>().Object,
                 new Mock<IValidator<EditHearingRequest>>().Object,
