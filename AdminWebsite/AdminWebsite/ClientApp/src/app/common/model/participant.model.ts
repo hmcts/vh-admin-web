@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid';
 
 export class ParticipantModel {
     id?: string;
-    externalReferenceId?: string | undefined;
+    externalReferenceId?: string;
     title?: string;
     first_name?: string;
     last_name?: string;
