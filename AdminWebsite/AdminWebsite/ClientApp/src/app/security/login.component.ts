@@ -15,11 +15,11 @@ import { SecurityService } from './services/security.service';
 export class LoginComponent implements OnInit {
     private readonly loggerPrefix = '[Login] -';
     constructor(
-        private securityService: SecurityService,
-        private router: Router,
-        private logger: LoggerService,
-        private returnUrlService: ReturnUrlService,
-        private configService: ConfigService
+        private readonly securityService: SecurityService,
+        private readonly router: Router,
+        private readonly logger: LoggerService,
+        private readonly returnUrlService: ReturnUrlService,
+        private readonly configService: ConfigService
     ) {}
 
     ngOnInit() {

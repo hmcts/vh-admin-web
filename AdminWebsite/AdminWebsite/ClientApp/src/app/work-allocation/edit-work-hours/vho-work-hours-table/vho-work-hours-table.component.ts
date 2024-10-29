@@ -15,7 +15,7 @@ export class ValidationFailure {
     templateUrl: './vho-work-hours-table.component.html'
 })
 export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
-    constructor(private videoHearingsService: VideoHearingsService) {}
+    constructor(private readonly videoHearingsService: VideoHearingsService) {}
 
     @Input() set result(value: VhoWorkHoursResponse[]) {
         if (value) {

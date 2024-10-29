@@ -54,7 +54,7 @@ export class SearchForJudicialMemberComponent implements AfterContentChecked {
 
     private editMode = false;
 
-    constructor(private judiciaryService: JudicialService, private cdr: ChangeDetectorRef) {
+    constructor(private readonly judiciaryService: JudicialService, private readonly cdr: ChangeDetectorRef) {
         this.createForm();
     }
 

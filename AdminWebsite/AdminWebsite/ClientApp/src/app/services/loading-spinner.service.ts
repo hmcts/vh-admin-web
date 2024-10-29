@@ -8,7 +8,7 @@ export class LoadingSpinnerService {
     loading$: Observable<boolean>;
 
     private currentRequests = 0;
-    private _loading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    private readonly _loading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     public constructor() {
         this.loading$ = this._loading$.asObservable();

@@ -27,12 +27,12 @@ type RequiredField = (typeof requiredFieldNames)[number];
 })
 export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDeactiveComponent {
     constructor(
-        private datePipe: DatePipe,
-        private bhClient: BHClient,
-        private logger: Logger,
-        private fb: FormBuilder,
-        private videoHearingsService: VideoHearingsService,
-        private editWorkHoursService: EditWorkHoursService
+        private readonly datePipe: DatePipe,
+        private readonly bhClient: BHClient,
+        private readonly logger: Logger,
+        private readonly fb: FormBuilder,
+        private readonly videoHearingsService: VideoHearingsService,
+        private readonly editWorkHoursService: EditWorkHoursService
     ) {
         this.filterForm = fb.group({
             startDate: ['', Validators.required],
@@ -62,14 +62,14 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         }
     }
 
-    private static DateTimeErrors = {
+    private static readonly DateTimeErrors = {
         start_date: ErrorMessages.ErrorStartDateRequired,
         end_date: ErrorMessages.ErrorEndDateRequired,
         start_time: ErrorMessages.ErrorStartTimeRequired,
         end_time: ErrorMessages.ErrorEndTimeRequired
     };
 
-    private filterSize = 20;
+    private readonly filterSize = 20;
     loggerPrefix = '[WorkHoursNonAvailabilityTable] -';
     faTrash = faTrash;
     faCalendarPlus = faCalendarPlus;

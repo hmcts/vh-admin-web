@@ -48,14 +48,14 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     destroyed$ = new Subject<void>();
 
     constructor(
-        private fb: FormBuilder,
+        private readonly fb: FormBuilder,
         protected router: Router,
         protected hearingService: VideoHearingsService,
         protected bookingService: BookingService,
-        private pipeStringifier: PipeStringifierService,
+        private readonly pipeStringifier: PipeStringifierService,
         protected logger: Logger,
-        private emailValidationService: EmailValidationService,
-        private configService: ConfigService
+        private readonly emailValidationService: EmailValidationService,
+        private readonly configService: ConfigService
     ) {
         super(bookingService, router, hearingService, logger);
     }

@@ -21,8 +21,8 @@ export class CaseTypesMenuComponent extends MenuBase {
     @Output() selectedEmitter = new EventEmitter<string[]>();
 
     constructor(
-        private bookingPersistService: BookingPersistService,
-        private videoHearingService: VideoHearingsService,
+        private readonly bookingPersistService: BookingPersistService,
+        private readonly videoHearingService: VideoHearingsService,
         formBuilder: FormBuilder,
         logger: Logger
     ) {

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { finalize, map, startWith } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { ConnectionService } from '../services/connection/connection.service';
 import { PageTrackerService } from '../services/page-tracker.service';
 
@@ -13,7 +13,11 @@ export class ErrorComponent {
     hasConnection$ = new Observable();
     isConnecting$ = new BehaviorSubject(false);
 
-    constructor(private connection: ConnectionService, private router: Router, private pageTracker: PageTrackerService) {
+    constructor(
+        private readonly connection: ConnectionService,
+        private readonly router: Router,
+        private readonly pageTracker: PageTrackerService
+    ) {
         this.hasConnection$ = connection.hasConnection$;
     }
 

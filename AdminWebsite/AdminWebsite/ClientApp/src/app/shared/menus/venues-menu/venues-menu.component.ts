@@ -21,8 +21,8 @@ export class VenuesMenuComponent extends MenuBase {
     @Output() selectedEmitter = new EventEmitter<number[]>();
 
     constructor(
-        private bookingPersistService: BookingPersistService,
-        private refDataService: ReferenceDataService,
+        private readonly bookingPersistService: BookingPersistService,
+        private readonly refDataService: ReferenceDataService,
         formBuilder: FormBuilder,
         logger: Logger
     ) {

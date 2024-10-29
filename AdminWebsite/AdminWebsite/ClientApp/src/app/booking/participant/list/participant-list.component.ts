@@ -24,11 +24,11 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
 
     $selectedForEdit = new EventEmitter<string>();
     $selectedForRemove = new EventEmitter<string>();
-    private destroyed$ = new EventEmitter<void>();
+    private readonly destroyed$ = new EventEmitter<void>();
 
     isEditMode = false;
 
-    constructor(private videoHearingsService: VideoHearingsService, private ldService: LaunchDarklyService) {}
+    constructor(private readonly videoHearingsService: VideoHearingsService, private readonly ldService: LaunchDarklyService) {}
 
     ngOnDestroy(): void {
         this.destroyed$.unsubscribe();

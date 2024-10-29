@@ -21,12 +21,12 @@ export class DeleteParticipantSearchResultsComponent {
     accountDeleted: boolean;
 
     constructor(
-        private bookingPersistService: BookingPersistService,
-        private videoHearingService: VideoHearingsService,
-        private participantDeleteService: ParticipantDeleteService,
-        private router: Router,
-        private returnUrlService: ReturnUrlService,
-        private logger: Logger
+        private readonly bookingPersistService: BookingPersistService,
+        private readonly videoHearingService: VideoHearingsService,
+        private readonly participantDeleteService: ParticipantDeleteService,
+        private readonly router: Router,
+        private readonly returnUrlService: ReturnUrlService,
+        private readonly logger: Logger
     ) {
         this.displayConfirmPopup = false;
         this.accountDeleted = false;

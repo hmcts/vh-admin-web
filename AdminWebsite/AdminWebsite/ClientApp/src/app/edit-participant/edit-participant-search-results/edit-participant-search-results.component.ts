@@ -13,7 +13,7 @@ export class EditParticipantSearchResultsComponent {
     @Input() contactEmail: string;
     @Input() result: ParticipantEditResultModel;
     @Input() isUnauthorisedSearch: boolean;
-    constructor(private service: ParticipantEditService, private router: Router) {}
+    constructor(private readonly service: ParticipantEditService, private readonly router: Router) {}
 
     get userNotFound() {
         return this.result === null;

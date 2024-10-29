@@ -47,19 +47,19 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     showCancelBookingFailed = false;
     multiDayBookingEnhancementsEnabled: boolean;
 
-    private destroyed$ = new Subject<void>();
+    private readonly destroyed$ = new Subject<void>();
 
     constructor(
-        private videoHearingService: VideoHearingsService,
-        private bookingDetailsService: BookingDetailsService,
-        private userIdentityService: UserIdentityService,
-        private router: Router,
-        private bookingService: BookingService,
-        private bookingPersistService: BookingPersistService,
-        private logger: Logger,
-        private returnUrlService: ReturnUrlService,
-        private bookingStatusService: BookingStatusService,
-        private ldService: LaunchDarklyService
+        private readonly videoHearingService: VideoHearingsService,
+        private readonly bookingDetailsService: BookingDetailsService,
+        private readonly userIdentityService: UserIdentityService,
+        private readonly router: Router,
+        private readonly bookingService: BookingService,
+        private readonly bookingPersistService: BookingPersistService,
+        private readonly logger: Logger,
+        private readonly returnUrlService: ReturnUrlService,
+        private readonly bookingStatusService: BookingStatusService,
+        private readonly ldService: LaunchDarklyService
     ) {
         this.showCancelBooking = false;
         this.showConfirming = false;

@@ -31,12 +31,12 @@ export class AppComponent implements OnInit {
     menuItemIndex: number;
 
     constructor(
-        private securityService: SecurityService,
-        private router: Router,
+        private readonly securityService: SecurityService,
+        private readonly router: Router,
         pageTracker: PageTrackerService,
-        private videoHearingsService: VideoHearingsService,
-        private bookingService: BookingService,
-        private deviceTypeService: DeviceType,
+        private readonly videoHearingsService: VideoHearingsService,
+        private readonly bookingService: BookingService,
+        private readonly deviceTypeService: DeviceType,
         private readonly configService: ConfigService,
         private readonly dynatraceService: DynatraceService,
         connection: ConnectionService

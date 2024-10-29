@@ -10,7 +10,7 @@ import { filter } from 'rxjs/operators';
 export class FooterComponent implements OnInit {
     hideContactUsLink = false;
 
-    constructor(private router: Router) {
+    constructor(private readonly router: Router) {
         this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(x => {
             this.hideContactUs();
         });

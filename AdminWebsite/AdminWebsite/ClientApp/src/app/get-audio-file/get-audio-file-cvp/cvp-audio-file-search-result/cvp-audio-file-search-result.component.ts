@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ClipboardService } from 'ngx-clipboard';
 import { CvpAudioSearchModel } from 'src/app/common/model/cvp-audio-search-model';
-import { ICvpAudioRecordingResult } from 'src/app/services/audio-link-service';
 import { Logger } from 'src/app/services/logger';
 
 @Component({
@@ -14,7 +13,7 @@ export class CvpAudioFileSearchResultComponent {
 
     @Input() results: CvpAudioSearchModel[];
 
-    constructor(private clipboardService: ClipboardService, private logger: Logger) {}
+    constructor(private readonly clipboardService: ClipboardService, private readonly logger: Logger) {}
 
     get hasResults() {
         return this.results && this.results.length > 0;

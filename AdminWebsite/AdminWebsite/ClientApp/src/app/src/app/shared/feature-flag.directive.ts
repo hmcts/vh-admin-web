@@ -10,9 +10,9 @@ export class FeatureFlagDirective {
     private subscription: Subscription;
 
     constructor(
-        private templateRef: TemplateRef<any>,
-        private viewContainer: ViewContainerRef,
-        private launchDarklyService: LaunchDarklyService
+        private readonly templateRef: TemplateRef<any>,
+        private readonly viewContainer: ViewContainerRef,
+        private readonly launchDarklyService: LaunchDarklyService
     ) {}
 
     @Input() set appFeatureFlag(flagKey: keyof typeof FeatureFlags) {

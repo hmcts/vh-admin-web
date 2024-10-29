@@ -6,8 +6,8 @@ import { finalize } from 'rxjs/operators';
 
 @Injectable()
 export class SpinnerInterceptor implements HttpInterceptor {
-    private ignoredRoutes = ['api/feature-flag', 'conference-status'];
-    constructor(private spinnerService: LoadingSpinnerService) {}
+    private readonly ignoredRoutes = ['api/feature-flag', 'conference-status'];
+    constructor(private readonly spinnerService: LoadingSpinnerService) {}
 
     intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
         if (request.method === 'Post' && request.url.includes('api/hearing')) {

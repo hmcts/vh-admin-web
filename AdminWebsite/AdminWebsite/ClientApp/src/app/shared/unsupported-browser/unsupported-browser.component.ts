@@ -12,7 +12,7 @@ export class UnsupportedBrowserComponent implements OnInit {
 
     browserName: string;
 
-    constructor(private deviceTypeService: DeviceType) {
+    constructor(private readonly deviceTypeService: DeviceType) {
         this.browserName = this.deviceTypeService.getBrowserName();
         this.supportedBrowsers.push(new SupportedBrowserModel('Chrome'));
     }

@@ -22,10 +22,10 @@ export class ScreeningComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix: string = '[Booking] Screening (Special Measures) -';
 
     constructor(
-        private router: Router,
-        private hearingService: VideoHearingsService,
-        private bookingService: BookingService,
-        private logger: Logger
+        private readonly router: Router,
+        private readonly hearingService: VideoHearingsService,
+        private readonly bookingService: BookingService,
+        private readonly logger: Logger
     ) {}
 
     ngOnInit(): void {

@@ -18,7 +18,7 @@ export class ConfirmDeleteJusticeUserPopupComponent {
     @Input() userId: string;
     @Input() username: string;
 
-    constructor(private justiceUserService: JusticeUsersService) {}
+    constructor(private readonly justiceUserService: JusticeUsersService) {}
 
     onConfirmDelete() {
         this.failedDeleteMessage = null;

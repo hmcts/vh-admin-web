@@ -20,7 +20,11 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
     canNavigate: boolean;
     destroyed$ = new Subject<void>();
 
-    constructor(private router: Router, private videoHearingsService: VideoHearingsService, private featureService: LaunchDarklyService) {}
+    constructor(
+        private readonly router: Router,
+        private readonly videoHearingsService: VideoHearingsService,
+        private readonly featureService: LaunchDarklyService
+    ) {}
 
     ngOnInit() {
         this.currentRouter = this.router.url;

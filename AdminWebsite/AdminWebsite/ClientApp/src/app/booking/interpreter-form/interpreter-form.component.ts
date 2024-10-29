@@ -26,9 +26,13 @@ export class InterpreterFormComponent implements OnInit, OnDestroy, OnChanges {
 
     checkboxId = 'interpreter-required-' + Math.random().toString(36).substring(2, 9);
 
-    private onDestroy$ = new Subject<void>();
+    private readonly onDestroy$ = new Subject<void>();
 
-    constructor(private refDataService: ReferenceDataService, private formBuilder: FormBuilder, private cdRef: ChangeDetectorRef) {
+    constructor(
+        private readonly refDataService: ReferenceDataService,
+        private readonly formBuilder: FormBuilder,
+        private readonly cdRef: ChangeDetectorRef
+    ) {
         this.createForm();
     }
 

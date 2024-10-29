@@ -13,7 +13,7 @@ import { Constants } from 'src/app/common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { Logger } from 'src/app/services/logger';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
-import { map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { combineLatest, Subject } from 'rxjs';
 import { ServiceIds } from '../models/supplier-override';
 
@@ -44,12 +44,12 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     constructor(
         protected hearingService: VideoHearingsService,
-        private fb: FormBuilder,
+        private readonly fb: FormBuilder,
         protected router: Router,
         protected bookingService: BookingService,
         protected logger: Logger,
-        private errorService: ErrorService,
-        private launchDarklyService: LaunchDarklyService
+        private readonly errorService: ErrorService,
+        private readonly launchDarklyService: LaunchDarklyService
     ) {
         super(bookingService, router, hearingService, logger);
         this.attemptingCancellation = false;
@@ -109,7 +109,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             this.selectedCaseType = Constants.PleaseSelect;
         }
 
-        if (!!this.hearing.case_type) {
+        if (this.hearing.case_type) {
             this.selectedCaseType = this.hearing.case_type;
             this.logger.debug(`${this.loggerPrefix} Updating selected case type to current hearing case type.`, {
                 hearing: this.hearing.hearing_id

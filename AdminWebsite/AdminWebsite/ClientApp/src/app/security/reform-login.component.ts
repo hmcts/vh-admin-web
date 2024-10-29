@@ -7,7 +7,7 @@ import { PageUrls } from '../shared/page-url.constants';
     templateUrl: './login.component.html'
 })
 export class ReformLoginComponent {
-    constructor(private router: Router, private securityService: SecurityService) {
+    constructor(private readonly router: Router, private readonly securityService: SecurityService) {
         this.securityService.currentIdpConfigId = IdpProviders.reform;
         this.router.navigate([`/${PageUrls.Login}`]);
     }

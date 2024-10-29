@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 export class UserIdentityService {
     profile: UserProfileResponse;
 
-    constructor(private bhClient: BHClient) {}
+    constructor(private readonly bhClient: BHClient) {}
 
     getUserInformation(): Observable<UserProfileResponse> {
         if (this.profile) {

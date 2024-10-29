@@ -13,7 +13,7 @@ import { AddJudicialOfficeHoldersComponent } from './judicial-office-holders/add
 import { LastMinuteAmendmentsGuard } from '../security/guards/last-minute-amendments.guard';
 import { AdminGuard } from '../security/guards/admin.guard';
 import { AuthGuard } from '../security/guards/auth.guard';
-import { ScreeningComponent as ScreeningComponent } from './screening/screening.component';
+import { ScreeningComponent } from './screening/screening.component';
 
 export const routes: Routes = [
     {

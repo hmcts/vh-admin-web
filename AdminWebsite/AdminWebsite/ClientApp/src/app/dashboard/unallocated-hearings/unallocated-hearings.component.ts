@@ -9,7 +9,7 @@ import { UserIdentityService } from '../../services/user-identity.service';
     styleUrls: ['./unallocated-hearings.component.css']
 })
 export class UnallocatedHearingsComponent implements OnInit {
-    private loggerPrefix = 'UnallocatedHearingsComponent';
+    private readonly loggerPrefix = 'UnallocatedHearingsComponent';
     todayDate: any;
     tomorrowDate: any;
     next7DaysDate: any;
@@ -29,7 +29,11 @@ export class UnallocatedHearingsComponent implements OnInit {
         return this.unallocatedHearings?.next30_days?.count ?? 0;
     }
 
-    constructor(private client: BHClient, private logger: Logger, private userIdentityService: UserIdentityService) {
+    constructor(
+        private readonly client: BHClient,
+        private readonly logger: Logger,
+        private readonly userIdentityService: UserIdentityService
+    ) {
         this.userIdentityService.getUserInformation().subscribe((userProfileResponse: UserProfileResponse) => {
             this.isVhTeamLeader = userProfileResponse.is_vh_team_leader;
         });

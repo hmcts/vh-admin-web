@@ -8,7 +8,7 @@ import { Logger } from '../../services/logger';
 export class EditWorkHoursService {
     fetchNonWorkHours$ = new Subject<boolean>();
 
-    constructor(private bhClient: BHClient, private logger: Logger) {}
+    constructor(private readonly bhClient: BHClient, private readonly logger: Logger) {}
 
     async getWorkAvailabilityForVho(username: string) {
         try {

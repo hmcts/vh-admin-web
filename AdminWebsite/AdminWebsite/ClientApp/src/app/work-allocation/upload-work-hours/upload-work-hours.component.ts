@@ -25,7 +25,7 @@ export class UploadWorkHoursComponent {
     public disableNonWorkHoursButton: boolean;
     public disableWorkHoursButton: boolean;
 
-    constructor(private workHoursProcessor: WorkHoursFileProcessorService) {}
+    constructor(private readonly workHoursProcessor: WorkHoursFileProcessorService) {}
 
     handleFileInput(file: File, fileType: FileType) {
         if (!file) {

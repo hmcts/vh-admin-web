@@ -4,7 +4,7 @@ import { lastValueFrom } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ParticipantDeleteService {
-    constructor(private bhClient: BHClient) {}
+    constructor(private readonly bhClient: BHClient) {}
 
     async getHearingsForUsername(username: string): Promise<HearingsByUsernameForDeletionResponse[]> {
         try {

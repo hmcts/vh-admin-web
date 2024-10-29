@@ -13,10 +13,10 @@ import { faUsers } from '@fortawesome/free-solid-svg-icons';
 export class DashboardComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[Dashboard] -';
     constructor(
-        private launchDarklyService: LaunchDarklyService,
-        private userIdentityService: UserIdentityService,
+        private readonly launchDarklyService: LaunchDarklyService,
+        private readonly userIdentityService: UserIdentityService,
 
-        private logger: Logger
+        private readonly logger: Logger
     ) {}
 
     faUsers = faUsers;

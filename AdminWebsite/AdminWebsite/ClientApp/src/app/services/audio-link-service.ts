@@ -22,7 +22,7 @@ export interface IVhAudioRecordingResult {
 @Injectable({ providedIn: 'root' })
 export class AudioLinkService {
     private readonly loggerPrefix = '[AudioLinkService] -';
-    constructor(private bhClient: BHClient, private logger: Logger) {}
+    constructor(private readonly bhClient: BHClient, private readonly logger: Logger) {}
 
     async searchForHearingsByCaseNumberOrDate(caseNumber: string, date?: Date): Promise<IVhAudioRecordingResult> {
         try {

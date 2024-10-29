@@ -20,10 +20,10 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     $subcription: Subscription;
 
     constructor(
-        private fb: FormBuilder,
-        private userDataService: UserDataService,
-        private clipboardService: ClipboardService,
-        private logger: Logger
+        private readonly fb: FormBuilder,
+        private readonly userDataService: UserDataService,
+        private readonly clipboardService: ClipboardService,
+        private readonly logger: Logger
     ) {
         this.showUpdateSuccess = false;
         this.isValidEmail = true;

@@ -4,20 +4,20 @@ import { v4 as uuid } from 'uuid';
 
 export class EndpointModel {
     externalReferenceId: string;
-    id?: string | undefined;
+    id?: string;
 
     constructor(externalReferenceId: string) {
         this.externalReferenceId = externalReferenceId || uuid();
     }
-    displayName?: string | undefined;
-    sip?: string | undefined;
-    pin?: string | undefined;
+    displayName?: string;
+    sip?: string;
+    pin?: string;
     /**
      * Defence advocate email address, not their ID
      */
-    defenceAdvocate?: string | undefined;
-    username?: string | undefined;
-    contactEmail?: string | undefined;
+    defenceAdvocate?: string;
+    username?: string;
+    contactEmail?: string;
     interpretationLanguage: InterpreterSelectedDto;
     screening?: ScreeningDto;
 }

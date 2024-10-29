@@ -18,7 +18,7 @@ import moment from 'moment';
 export class BookingsListService {
     bookingsList: Array<BookingsListModel> = [];
 
-    constructor(private bhClient: BHClient) {}
+    constructor(private readonly bhClient: BHClient) {}
 
     getBookingsList(
         cursor: string,

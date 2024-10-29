@@ -15,8 +15,8 @@ export class VhoSearchComponent implements OnInit {
     form: FormGroup;
     error: string = null;
 
-    private loggerPrefix = 'vho-search';
-    private filterSize = 20;
+    private readonly loggerPrefix = 'vho-search';
+    private readonly filterSize = 20;
 
     @Output() hoursTypeEmitter = new EventEmitter<HoursType>();
     @Output() usernameEmitter = new EventEmitter<string>();
@@ -35,10 +35,10 @@ export class VhoSearchComponent implements OnInit {
     }
 
     constructor(
-        private formBuilder: FormBuilder,
-        private logger: Logger,
-        private service: EditWorkHoursService,
-        private videoService: VideoHearingsService
+        private readonly formBuilder: FormBuilder,
+        private readonly logger: Logger,
+        private readonly service: EditWorkHoursService,
+        private readonly videoService: VideoHearingsService
     ) {}
 
     ngOnInit(): void {

@@ -11,10 +11,10 @@ export enum IdpProviders {
     providedIn: 'root'
 })
 export class SecurityService {
-    private idpProvidersSessionStorageKey = 'IdpProviders';
+    private readonly idpProvidersSessionStorageKey = 'IdpProviders';
     private currentIdpProvider: IdpProviders;
 
-    constructor(private oidcSecurityService: OidcSecurityService) {
+    constructor(private readonly oidcSecurityService: OidcSecurityService) {
         this.currentIdpProvider = (window.sessionStorage.getItem(this.idpProvidersSessionStorageKey) as IdpProviders) ?? IdpProviders.main;
     }
 

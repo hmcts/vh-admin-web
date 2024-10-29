@@ -10,9 +10,9 @@ import { LaunchDarklyService, FeatureFlags } from 'src/app/services/launch-darkl
 })
 export class BookingEditComponent {
     constructor(
-        private bookingService: BookingService,
-        private videoHearingsService: VideoHearingsService,
-        private featureService: LaunchDarklyService
+        private readonly bookingService: BookingService,
+        private readonly videoHearingsService: VideoHearingsService,
+        private readonly featureService: LaunchDarklyService
     ) {
         this.featureService
             .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)

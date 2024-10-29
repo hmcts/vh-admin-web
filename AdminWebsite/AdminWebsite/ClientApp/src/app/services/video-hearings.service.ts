@@ -55,10 +55,10 @@ export class VideoHearingsService {
     private readonly totalHearingsCountThreshold: number = 40;
 
     private modelHearing: HearingModel;
-    private participantRoles = new Map<string, CaseAndHearingRolesResponse[]>();
-    private judiciaryRoles = Constants.JudiciaryRoles;
+    private readonly participantRoles = new Map<string, CaseAndHearingRolesResponse[]>();
+    private readonly judiciaryRoles = Constants.JudiciaryRoles;
 
-    constructor(private bhClient: BHClient) {
+    constructor(private readonly bhClient: BHClient) {
         this.newRequestKey = 'bh-newRequest';
         this.bookingHasChangesKey = 'bookingHasChangesKey';
         this.conferencePhoneNumberKey = 'conferencePhoneNumberKey';

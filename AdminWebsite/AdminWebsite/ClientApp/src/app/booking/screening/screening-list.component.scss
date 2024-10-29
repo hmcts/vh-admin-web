@@ -7,10 +7,8 @@
   border-style: solid;
   border-radius: 11px;
   padding: 15px;
-  // font-family: 'nta', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  // font-weight: 400;
   @include govuk-font(19, $weight: 'regular', $tabular: false, $line-height: false);
   color: govuk-colour('black');
 }

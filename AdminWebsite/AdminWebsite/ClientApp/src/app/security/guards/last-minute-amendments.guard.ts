@@ -6,7 +6,11 @@ import { Logger } from '../../services/logger';
 
 @Injectable()
 export class LastMinuteAmendmentsGuard {
-    constructor(private videoHearingsService: VideoHearingsService, private router: Router, private logger: Logger) {}
+    constructor(
+        private readonly videoHearingsService: VideoHearingsService,
+        private readonly router: Router,
+        private readonly logger: Logger
+    ) {}
 
     canActivate(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
         const exceptionToRuleCheck = route.data?.exceptionToRuleCheck as boolean;

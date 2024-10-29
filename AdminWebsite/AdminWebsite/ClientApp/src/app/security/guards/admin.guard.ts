@@ -10,7 +10,11 @@ import { IUserProfileResponse } from '../../services/clients/api-client';
 export class AdminGuard {
     private readonly loggerPrefix = '[AdminGuard] -';
 
-    constructor(private userIdentityService: UserIdentityService, private router: Router, private logger: Logger) {}
+    constructor(
+        private readonly userIdentityService: UserIdentityService,
+        private readonly router: Router,
+        private readonly logger: Logger
+    ) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         this.logger.debug(`${this.loggerPrefix} Checking if user is vho or case admin.`);

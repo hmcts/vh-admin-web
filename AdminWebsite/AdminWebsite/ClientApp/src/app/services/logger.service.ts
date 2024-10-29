@@ -6,7 +6,7 @@ export const LOG_ADAPTER = new InjectionToken<LogAdapter>('LogAdapter');
 
 @Injectable()
 export class LoggerService implements Logger {
-    constructor(@Inject(LOG_ADAPTER) private adapters: LogAdapter[]) {}
+    constructor(@Inject(LOG_ADAPTER) private readonly adapters: LogAdapter[]) {}
 
     debug(message: string, properties?: any): void {
         this.adapters.forEach(logger => logger.debug(message, properties));

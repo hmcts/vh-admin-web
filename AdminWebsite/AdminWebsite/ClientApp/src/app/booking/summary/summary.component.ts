@@ -54,7 +54,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     removerFullName: string;
     showWaitSaving = false;
     showErrorSaving: boolean;
-    private newHearingSessionKey = 'newHearingId';
+    private readonly newHearingSessionKey = 'newHearingId';
     isExistingBooking = false;
     $subscriptions: Subscription[] = [];
     caseType: string;
@@ -79,14 +79,14 @@ export class SummaryComponent implements OnInit, OnDestroy {
     bookingIsDegraded: boolean;
 
     constructor(
-        private hearingService: VideoHearingsService,
-        private router: Router,
-        private bookingService: BookingService,
-        private logger: Logger,
-        private recordingGuardService: RecordingGuardService,
-        private participantService: ParticipantService,
-        private featureService: LaunchDarklyService,
-        private bookingStatusService: BookingStatusService
+        private readonly hearingService: VideoHearingsService,
+        private readonly router: Router,
+        private readonly bookingService: BookingService,
+        private readonly logger: Logger,
+        private readonly recordingGuardService: RecordingGuardService,
+        private readonly participantService: ParticipantService,
+        private readonly featureService: LaunchDarklyService,
+        private readonly bookingStatusService: BookingStatusService
     ) {
         this.attemptingCancellation = false;
         this.showErrorSaving = false;

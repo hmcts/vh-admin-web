@@ -21,13 +21,13 @@ import { map, tap } from 'rxjs/operators';
 })
 export class AllocateHearingsComponent implements OnInit {
     constructor(
-        private route: ActivatedRoute,
-        private fb: FormBuilder,
-        private allocateService: AllocateHearingsService,
-        private datePipe: DatePipe,
-        private justiceUserService: JusticeUsersService,
-        private videoHearingService: VideoHearingsService,
-        private bookingPersistService: BookingPersistService
+        private readonly route: ActivatedRoute,
+        private readonly fb: FormBuilder,
+        private readonly allocateService: AllocateHearingsService,
+        private readonly datePipe: DatePipe,
+        private readonly justiceUserService: JusticeUsersService,
+        private readonly videoHearingService: VideoHearingsService,
+        private readonly bookingPersistService: BookingPersistService
     ) {
         this.form = fb.group({
             fromDate: ['', Validators.required],
@@ -56,7 +56,7 @@ export class AllocateHearingsComponent implements OnInit {
     hourGlassStart = faHourglassStart;
     faClock = faClock;
     customIconTransform: Transform = { rotate: 45 };
-    private filterSize = 20;
+    private readonly filterSize = 20;
     todayDate: Date;
     dateFormat = 'yyyy-MM-dd';
 

@@ -11,7 +11,7 @@ import { HearingRoleModel } from '../../common/model/hearing-role.model';
 })
 export class ParticipantService {
     private readonly loggerPrefix = '[ParticipantService] -';
-    constructor(private logger: Logger) {}
+    constructor(private readonly logger: Logger) {}
 
     mapParticipantsRoles(caseRoles: CaseAndHearingRolesResponse[]) {
         const participantRoles = caseRoles.map(s => {

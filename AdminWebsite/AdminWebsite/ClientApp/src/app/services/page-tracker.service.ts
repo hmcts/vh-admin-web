@@ -7,7 +7,7 @@ import { filter, pairwise } from 'rxjs/operators';
 export class PageTrackerService {
     PREVIOUS_ROUTE = 'PREVIOUS_ROUTE';
 
-    constructor(private logger: AppInsightsLogger) {}
+    constructor(private readonly logger: AppInsightsLogger) {}
 
     trackNavigation(router: Router) {
         router.events.pipe(filter(event => event instanceof ResolveEnd)).subscribe((event: ResolveEnd) => this.logPageResolved(event));

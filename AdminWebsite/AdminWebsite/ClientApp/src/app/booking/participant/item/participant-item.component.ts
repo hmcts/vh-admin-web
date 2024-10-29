@@ -32,10 +32,10 @@ export class ParticipantItemComponent implements OnInit {
     showJudicaryActions: boolean;
 
     constructor(
-        private bookingService: BookingService,
-        private logger: Logger,
-        private router: Router,
-        private videoHearingsService: VideoHearingsService
+        private readonly bookingService: BookingService,
+        private readonly logger: Logger,
+        private readonly router: Router,
+        private readonly videoHearingsService: VideoHearingsService
     ) {}
 
     ngOnInit(): void {

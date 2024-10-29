@@ -56,12 +56,12 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     public judiciaryRoles = Constants.JudiciaryRoles;
 
     constructor(
-        private searchService: SearchService,
+        private readonly searchService: SearchService,
         protected videoHearingService: VideoHearingsService,
-        private participantService: ParticipantService,
+        private readonly participantService: ParticipantService,
         protected router: Router,
         protected bookingService: BookingService,
-        private launchDarklyService: LaunchDarklyService,
+        private readonly launchDarklyService: LaunchDarklyService,
         protected logger: Logger
     ) {
         super(bookingService, router, videoHearingService, logger);
@@ -125,7 +125,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
         setTimeout(() => {
             const self = this;
-            const caseTypeIdentifier = this.hearing.case_type_service_id;
             this.logger.debug(`${this.loggerPrefix} Getting participant roles.`);
 
             this.videoHearingService

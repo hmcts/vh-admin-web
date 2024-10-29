@@ -9,7 +9,7 @@ export class ConfirmDeletePopupComponent {
     private readonly loggerPrefix = '[DeleteParticipant] -';
     @Output() deletionAnswer = new EventEmitter<boolean>();
 
-    constructor(private logger: Logger) {}
+    constructor(private readonly logger: Logger) {}
 
     confirmDelete() {
         this.logger.debug(`${this.loggerPrefix} Confirmed to delete participant`);

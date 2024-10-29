@@ -12,7 +12,7 @@ export class ScreeningFormComponent {
     isEditMode = false;
     newParticipantRemovedFromOptions = false;
 
-    constructor(private formBuilder: FormBuilder, private cdRef: ChangeDetectorRef) {}
+    constructor(private readonly formBuilder: FormBuilder, private readonly cdRef: ChangeDetectorRef) {}
 
     @Output() screeningSaved = new EventEmitter<SelectedScreeningDto>();
 

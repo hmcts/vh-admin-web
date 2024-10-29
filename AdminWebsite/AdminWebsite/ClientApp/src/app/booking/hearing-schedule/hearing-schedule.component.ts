@@ -49,21 +49,21 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     hearingsInGroupToEdit: HearingModel[];
     newDatesFormArray: FormArray;
 
-    private destroyed$ = new Subject<void>();
+    private readonly destroyed$ = new Subject<void>();
     multiDayBookingEnhancementsEnabled: boolean;
 
     @ViewChild('editHearingDates') editHearingDates: EditHearingDatesComponent;
 
     constructor(
-        private refDataService: ReferenceDataService,
+        private readonly refDataService: ReferenceDataService,
         protected hearingService: VideoHearingsService,
-        private formBuilder: FormBuilder,
+        private readonly formBuilder: FormBuilder,
         protected router: Router,
-        private datePipe: DatePipe,
+        private readonly datePipe: DatePipe,
         protected bookingService: BookingService,
-        private errorService: ErrorService,
+        private readonly errorService: ErrorService,
         protected logger: Logger,
-        private ldService: LaunchDarklyService
+        private readonly ldService: LaunchDarklyService
     ) {
         super(bookingService, router, hearingService, logger);
     }

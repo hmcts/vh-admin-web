@@ -36,13 +36,13 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     otherInformation: FormControl;
 
     constructor(
-        private fb: FormBuilder,
+        private readonly fb: FormBuilder,
         protected videoHearingService: VideoHearingsService,
         protected router: Router,
         protected bookingService: BookingService,
         protected logger: Logger,
-        private recordingGuard: RecordingGuardService,
-        private pipeStringifier: PipeStringifierService
+        private readonly recordingGuard: RecordingGuardService,
+        private readonly pipeStringifier: PipeStringifierService
     ) {
         super(bookingService, router, videoHearingService, logger);
     }

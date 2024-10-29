@@ -21,7 +21,11 @@ export class GetAudioLinkButtonComponent {
 
     @Input() hearingId: string;
 
-    constructor(private audioLinkService: AudioLinkService, private clipboardService: ClipboardService, private logger: Logger) {}
+    constructor(
+        private readonly audioLinkService: AudioLinkService,
+        private readonly clipboardService: ClipboardService,
+        private readonly logger: Logger
+    ) {}
 
     async onGetLinkClick() {
         this.logger.debug(`${this.loggerPrefix} Clicked on get audio link button`, { hearing: this.hearingId });
