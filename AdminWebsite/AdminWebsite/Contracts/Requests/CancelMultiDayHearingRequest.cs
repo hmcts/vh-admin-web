@@ -5,7 +5,7 @@ namespace AdminWebsite.Contracts.Requests
         /// <summary>
         /// When true, applies updates to future days of the multi day hearing as well
         /// </summary>
-        public bool UpdateFutureDays { get; set; } // Test
+        public bool UpdateFutureDays { get; set; }
 
         /// <summary>
         /// The reason for cancelling the video hearing

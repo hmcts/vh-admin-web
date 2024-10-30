@@ -16,7 +16,7 @@ namespace AdminWebsite.Contracts.Requests
         /// <summary>
         ///     Duration of the hearing
         /// </summary>
-        public int ScheduledDuration { get; set; } // Test
+        public int ScheduledDuration { get; set; }
         
         /// <summary>
         ///     The name of the hearing venue

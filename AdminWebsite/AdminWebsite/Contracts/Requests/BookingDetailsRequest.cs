@@ -7,7 +7,6 @@ namespace AdminWebsite.Contracts.Requests;
 
 public class BookingDetailsRequest
 {
-    // Test
     public DateTime ScheduledDateTime { get; set; }
     public int ScheduledDuration { get; set; }
     public string HearingVenueCode { get; set; }

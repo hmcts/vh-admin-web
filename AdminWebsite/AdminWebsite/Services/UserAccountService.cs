@@ -95,7 +95,7 @@ namespace AdminWebsite.Services
         public async Task<UserRole> GetUserRoleAsync(string userName)
         {
             var user = await _userApiClient.GetUserByAdUserNameAsync(userName);
-            Enum.TryParse<UserRoleType>(user.UserRole, out var userRoleResult); // Test
+            Enum.TryParse<UserRoleType>(user.UserRole, out var userRoleResult);
 
             return new UserRole { UserRoleType = userRoleResult, CaseTypes = user.CaseType };
         }
@@ -222,7 +222,7 @@ namespace AdminWebsite.Services
             try
             {
                 var person = await _userApiClient.GetUserByAdUserNameAsync(username);
-                Enum.TryParse<UserRoleType>(person.UserRole, out var userRoleResult); // Test
+                Enum.TryParse<UserRoleType>(person.UserRole, out var userRoleResult);
                 if (userRoleResult == UserRoleType.Judge || userRoleResult == UserRoleType.VhOfficer)
                 {
                     var e = new UserServiceException
