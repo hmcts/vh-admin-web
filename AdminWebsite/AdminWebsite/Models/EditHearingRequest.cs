@@ -19,7 +19,7 @@ namespace AdminWebsite.Models
         /// <summary>
         ///     The date and time for a hearing
         /// </summary>
-        public DateTime ScheduledDateTime { get; set; }
+        public DateTime ScheduledDateTime { get; set; } // Test
 
         /// <summary>
         ///     The duration of a hearing (number of minutes)
