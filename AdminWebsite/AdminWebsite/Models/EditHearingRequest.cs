@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using AdminWebsite.Contracts.Requests;
 
 namespace AdminWebsite.Models
@@ -19,11 +20,13 @@ namespace AdminWebsite.Models
         /// <summary>
         ///     The date and time for a hearing
         /// </summary>
+        [JsonRequired]
         public DateTime ScheduledDateTime { get; set; }
 
         /// <summary>
         ///     The duration of a hearing (number of minutes)
         /// </summary>
+        [JsonRequired]
         public int ScheduledDuration { get; set; }
 
         /// <summary>
@@ -64,6 +67,7 @@ namespace AdminWebsite.Models
         /// <summary>
         /// Gets or sets audio recording required flag
         /// </summary>
+        [JsonRequired]
         public bool AudioRecordingRequired { get; set; }
         
         /// <summary>

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using AdminWebsite.Models;
 
 namespace AdminWebsite.Contracts.Requests
@@ -16,6 +17,7 @@ namespace AdminWebsite.Contracts.Requests
         /// <summary>
         ///     Duration of the hearing
         /// </summary>
+        [JsonRequired]
         public int ScheduledDuration { get; set; }
         
         /// <summary>
@@ -46,6 +48,7 @@ namespace AdminWebsite.Contracts.Requests
         /// <summary>
         ///     Gets or sets the audio recording required flag, value true  is indicated that recording is required, otherwise false
         /// </summary>
+        [JsonRequired]
         public bool AudioRecordingRequired { get; set; }
         
         /// <summary>
@@ -71,6 +74,7 @@ namespace AdminWebsite.Contracts.Requests
         /// <summary>
         ///     When true, applies updates to future days of the multi day hearing as well
         /// </summary>
+        [JsonRequired]
         public bool UpdateFutureDays { get; set; }
     }
 }
