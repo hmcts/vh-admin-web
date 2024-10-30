@@ -26,6 +26,7 @@ export class ParticipantDetailsModel {
         isInterpretee: boolean,
         linkedParticipants: LinkedParticipant[]
     ) {
+        // Comment to trigger sonar checks
         this.ParticipantId = participantId;
         this.ExternalReferenceId = externalReferenceId;
         this.FirstName = firstName ?? '';
