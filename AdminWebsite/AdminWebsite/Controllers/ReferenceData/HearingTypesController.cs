@@ -44,7 +44,7 @@ public class HearingTypesController : ReferenceDataControllerBase
                 Code = hearingType.Code
             })).ToList();
 
-        result.AddRange(caseTypes.Where(ct => !ct.HearingTypes.Any())
+        result.AddRange(caseTypes.Where(ct => ct.HearingTypes.Count == 0)
             .Select(caseType => new HearingTypeResponse
             {
                 Group = caseType.Name,

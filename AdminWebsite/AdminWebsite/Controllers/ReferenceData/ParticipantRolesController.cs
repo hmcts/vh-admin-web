@@ -39,7 +39,7 @@ public class ParticipantRolesController : ReferenceDataControllerBase
         iCaseRoles = caseRoles2?.Select(e => (ICaseRoleResponse)e).ToList();
 
 
-        if (iCaseRoles != null && iCaseRoles.Any())
+        if (iCaseRoles != null && iCaseRoles.Count != 0)
         {
             foreach (var caseRoleName in iCaseRoles.Select(cr => cr.Name))
             {
