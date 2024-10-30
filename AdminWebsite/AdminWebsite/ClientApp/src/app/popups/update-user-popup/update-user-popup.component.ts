@@ -10,7 +10,7 @@ export class UpdateUserPopupComponent {
     @Input() message: string;
     @Output() okay: EventEmitter<any> = new EventEmitter<any>();
 
-    constructor(private logger: Logger) {}
+    constructor(private readonly logger: Logger) {}
 
     okayClose(): void {
         this.logger.debug(`${this.loggerPrefix} Clicked okay`);

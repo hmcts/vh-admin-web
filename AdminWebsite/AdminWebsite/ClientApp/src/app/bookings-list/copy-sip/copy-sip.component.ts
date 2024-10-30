@@ -37,4 +37,8 @@ export class CopySipComponent extends CopyDetailsBase implements OnInit {
         this.elem = this.sipAddress.nativeElement as HTMLDivElement;
         this.mouseOver($event);
     }
+
+    onFocus(): void {
+        this.onMouseOver(new MouseEvent('mouseover'));
+    }
 }

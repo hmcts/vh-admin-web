@@ -54,6 +54,7 @@
             [icon]="faCalendarPlus"
             class="pointer"
             (click)="addNewNonAvailabilityRow()"
+            (keydown)="addNewNonAvailabilityRow()"
           ></fa-icon>
         </th>
       </tr>
@@ -88,7 +89,9 @@
         <td class="govuk-table__cell">
           <input class="govuk-input" id="end-time_{{ day.id }}" [disabled]="!isEditing" type="time" [(ngModel)]="day.end_time" />
         </td>
-        <td class="govuk-table__cell table-cell-delete"><fa-icon [icon]="faTrash" (click)="delete(day)"></fa-icon></td>
+        <td class="govuk-table__cell table-cell-delete">
+          <fa-icon [icon]="faTrash" (click)="delete(day)" (keydown)="delete(day)"></fa-icon>
+        </td>
       </tr>
     </tbody>
   </table>

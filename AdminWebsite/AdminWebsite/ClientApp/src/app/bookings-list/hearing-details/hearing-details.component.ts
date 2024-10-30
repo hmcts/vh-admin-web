@@ -24,7 +24,7 @@ export class HearingDetailsComponent implements OnDestroy {
 
     destroyed$ = new Subject<void>();
 
-    constructor(private route: ActivatedRoute, private logger: Logger, private configService: ConfigService) {}
+    constructor(private readonly route: ActivatedRoute, private readonly logger: Logger, private readonly configService: ConfigService) {}
 
     ngOnDestroy(): void {
         this.destroyed$.next();

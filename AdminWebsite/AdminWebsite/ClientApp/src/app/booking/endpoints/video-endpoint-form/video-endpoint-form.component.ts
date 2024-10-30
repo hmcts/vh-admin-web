@@ -58,7 +58,7 @@ export class VideoEndpointFormComponent {
 
     private _participants: ParticipantModel[];
 
-    constructor(private formBuilder: FormBuilder) {
+    constructor(private readonly formBuilder: FormBuilder) {
         this.createForm();
     }
     createForm() {

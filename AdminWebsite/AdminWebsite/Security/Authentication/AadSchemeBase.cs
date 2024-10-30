@@ -36,7 +36,7 @@ namespace AdminWebsite.Security.Authentication
             { OnTokenValidated = context => GetClaimsPostTokenValidation(context, options) };
         }
 
-        public async Task GetClaimsPostTokenValidation(TokenValidatedContext context, JwtBearerOptions options)
+        public static async Task GetClaimsPostTokenValidation(TokenValidatedContext context, JwtBearerOptions options)
         {
             if (context.SecurityToken is JwtSecurityToken jwtToken)
             {

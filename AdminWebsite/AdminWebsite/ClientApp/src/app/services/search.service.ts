@@ -10,7 +10,7 @@ import { Constants } from '../common/constants';
     providedIn: 'root'
 })
 export class SearchService {
-    private minimumSearchLength = 3;
+    private readonly minimumSearchLength = 3;
 
     TitleList: IDropDownModel[] = [
         {
@@ -60,7 +60,7 @@ export class SearchService {
         }
     ];
 
-    constructor(private bhClient: BHClient) {}
+    constructor(private readonly bhClient: BHClient) {}
 
     participantSearch(term: string, hearingRole: string): Observable<Array<ParticipantModel>> {
         const allResults: ParticipantModel[] = [];

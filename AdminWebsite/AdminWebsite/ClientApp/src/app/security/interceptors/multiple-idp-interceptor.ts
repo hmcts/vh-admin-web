@@ -8,7 +8,7 @@ import { SecurityService } from '../services/security.service';
     providedIn: 'root'
 })
 export class MultipleIdpInterceptorService implements HttpInterceptor {
-    constructor(private securityService: SecurityService) {}
+    constructor(private readonly securityService: SecurityService) {}
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return this.securityService.getAccessToken().pipe(
             mergeMap(token => {

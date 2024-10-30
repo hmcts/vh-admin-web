@@ -7,22 +7,22 @@ import { groupBy } from 'lodash-es';
     providedIn: 'root'
 })
 export class WorkHoursFileProcessorService {
-    private csvDelimiter = ',';
-    private timeDelimiter = ':';
-    private earliestStartHour = 8;
-    private latestEndHour = 18;
-    private fileExtensionDelimiter = '.';
-    private fileExtension = 'csv';
-    private fileType = 'text/csv';
+    private readonly csvDelimiter = ',';
+    private readonly timeDelimiter = ':';
+    private readonly earliestStartHour = 8;
+    private readonly latestEndHour = 18;
+    private readonly fileExtensionDelimiter = '.';
+    private readonly fileExtension = 'csv';
+    private readonly fileType = 'text/csv';
 
     maxFileUploadSize = 200000;
 
-    private incorrectDelimiterErrorMessage = 'Incorrect delimiter used. Please use a colon to separate the hours and minutes.';
-    private duplicateUserErrorMessage = 'duplicate team member found.';
-    private invalidRow =
+    private readonly incorrectDelimiterErrorMessage = 'Incorrect delimiter used. Please use a colon to separate the hours and minutes.';
+    private readonly duplicateUserErrorMessage = 'duplicate team member found.';
+    private readonly invalidRow =
         'Invalid row detected. Please ensure that the structure of the row matches the provided template, with blank values if a user does not work on a particular day.';
 
-    constructor(private bhClient: BHClient) {}
+    constructor(private readonly bhClient: BHClient) {}
 
     processWorkHours(text: string): WorkHoursFileProcessResult {
         const userWorkAvailabilityRows = text.split('\n');

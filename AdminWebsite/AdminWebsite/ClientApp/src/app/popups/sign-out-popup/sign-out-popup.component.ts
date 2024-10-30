@@ -1,10 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
     selector: 'app-sign-out-popup',
     templateUrl: './sign-out-popup.component.html'
 })
-export class SignOutPopupComponent implements OnInit {
+export class SignOutPopupComponent {
     @Output() continue: EventEmitter<any>;
     @Output() signOut: EventEmitter<any>;
 
@@ -12,8 +12,6 @@ export class SignOutPopupComponent implements OnInit {
         this.continue = new EventEmitter<any>();
         this.signOut = new EventEmitter<any>();
     }
-
-    ngOnInit() {}
 
     continueBooking() {
         this.continue.emit();

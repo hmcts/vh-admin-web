@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
     providedIn: 'root'
 })
 export class BookingStatusService {
-    constructor(private videoHearingService: VideoHearingsService) {}
+    constructor(private readonly videoHearingService: VideoHearingsService) {}
 
     pollForStatus(hearingId: string): Observable<UpdateBookingStatusResponse> {
         const maxAttempts = 10;

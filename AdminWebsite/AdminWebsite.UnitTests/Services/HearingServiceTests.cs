@@ -60,7 +60,7 @@ namespace AdminWebsite.UnitTests.Services
             var editParticipants1 = new List<EditParticipantRequest> { participantRequest1 };
             var editParticipants2 = new List<EditParticipantRequest> { participantRequest1 };
 
-            ClassicAssert.True(_service.GetAddedParticipant(editParticipants1, editParticipants2).Count == 0);
+            ClassicAssert.True(HearingsService.GetAddedParticipant(editParticipants1, editParticipants2).Count == 0);
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace AdminWebsite.UnitTests.Services
                 } 
             };
 
-            ClassicAssert.AreEqual(1, _service.GetAddedParticipant(originalParticipants, editParticipantRequest).Count);
+            ClassicAssert.AreEqual(1, HearingsService.GetAddedParticipant(originalParticipants, editParticipantRequest).Count);
         }
 
         [Test]

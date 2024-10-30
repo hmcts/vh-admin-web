@@ -16,7 +16,7 @@ import { map, takeUntil, tap } from 'rxjs/operators';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ManageTeamComponent implements OnInit, OnDestroy {
-    private filterSize = 20;
+    private readonly filterSize = 20;
     loggerPrefix = '[ManageTeamComponent] -';
     faExclamation = faCircleExclamation;
     faError = faExclamationCircle;
@@ -46,7 +46,11 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
 
     @Input() showHeader = true;
 
-    constructor(private fb: FormBuilder, private justiceUserService: JusticeUsersService, private logger: Logger) {
+    constructor(
+        private readonly fb: FormBuilder,
+        private readonly justiceUserService: JusticeUsersService,
+        private readonly logger: Logger
+    ) {
         this.form = this.fb.group<SearchForExistingJusticeUserForm>({
             inputSearch: new FormControl('')
         });

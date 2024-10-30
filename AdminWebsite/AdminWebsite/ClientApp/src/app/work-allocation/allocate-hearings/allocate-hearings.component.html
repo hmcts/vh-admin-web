@@ -1,5 +1,5 @@
 <details class="govuk-details" data-module="govuk-details" open="{{ allocateHearingsDetailOpen }}">
-  <summary class="govuk-details__summary" tabindex="0" role="button">
+  <summary class="govuk-details__summary" tabindex="0">
     <span class="govuk-details__summary-text" id="allocate-hearings"> Allocate hearings </span>
   </summary>
   <div class="govuk-form-group govuk-!-margin-left-6" [formGroup]="form">
@@ -168,6 +168,7 @@
             [checked]="hearing.checked"
             aria-label="Select hearing"
             (click)="selectHearing(!hearing.checked, hearing.hearingId)"
+            (keydown)="selectHearing(!hearing.checked, hearing.hearingId)"
           />
         </td>
         <td class="govuk-table__cell">{{ hearing.scheduledDateTime.toLocaleDateString('en-GB') }}</td>

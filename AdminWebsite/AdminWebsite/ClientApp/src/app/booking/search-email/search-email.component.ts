@@ -31,7 +31,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     isJoh = false;
     notFoundEmailEvent = new Subject<boolean>();
     notFoundEmailEvent$ = this.notFoundEmailEvent.asObservable();
-    private cannotAddNewUsersRoles = [this.constants.Judge];
+    private readonly cannotAddNewUsersRoles = [this.constants.Judge];
 
     @Input() disabled = true;
 
@@ -47,7 +47,11 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Output() emailChanged = new EventEmitter<string>();
 
-    constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) {}
+    constructor(
+        private readonly searchService: SearchService,
+        private readonly configService: ConfigService,
+        private readonly logger: Logger
+    ) {}
 
     ngOnInit() {
         this.email = this.initialValue;

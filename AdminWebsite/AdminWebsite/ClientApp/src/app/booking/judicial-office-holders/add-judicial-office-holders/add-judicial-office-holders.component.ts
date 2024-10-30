@@ -35,10 +35,10 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
     participantToEdit: JudicialMemberDto = null;
 
     constructor(
-        private router: Router,
-        private hearingService: VideoHearingsService,
-        private bookingService: BookingService,
-        private logger: Logger
+        private readonly router: Router,
+        private readonly hearingService: VideoHearingsService,
+        private readonly bookingService: BookingService,
+        private readonly logger: Logger
     ) {}
 
     ngOnInit(): void {

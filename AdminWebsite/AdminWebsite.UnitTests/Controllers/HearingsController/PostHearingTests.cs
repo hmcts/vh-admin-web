@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
-using AdminWebsite.Contracts.Responses;
 using BookingsApi.Client;
 using Autofac.Extras.Moq;
 using BookingsApi.Contract.V1.Requests;
@@ -327,27 +326,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var startDate = new DateTime(2020, 10, 1, 0, 0, 0, DateTimeKind.Utc);
             var endDate = new DateTime(2020, 10, 6, 0, 0, 0, DateTimeKind.Utc);
             return new MultiHearingRequest { StartDate = startDate, EndDate = endDate };
-        }
-
-        private Task<ActionResult<HearingDetailsResponse>> PostNewHearing()
-        {
-            // without supplying participants
-            return PostWithParticipants();
-        }
-
-        private async Task<ActionResult<HearingDetailsResponse>> PostWithParticipants(params ParticipantRequest[] participants)
-        {
-            var hearing = new BookingDetailsRequest
-            {
-                Participants = new List<ParticipantRequest>(participants)
-            };
-            
-            var bookingRequest = new BookHearingRequest
-            {
-                BookingDetails = hearing
-            };
-
-            return await _controller.Post(bookingRequest);
         }
     }
 }

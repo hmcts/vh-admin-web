@@ -10,7 +10,7 @@ export class ScrollTriggerDirective {
 
     @Output() scrolledPast = new EventEmitter();
 
-    constructor(private element: ElementRef, private scroll: WindowScrolling) {}
+    constructor(private readonly element: ElementRef, private readonly scroll: WindowScrolling) {}
 
     private getScreenBottom(): number {
         const offset = this.scroll.getPosition();

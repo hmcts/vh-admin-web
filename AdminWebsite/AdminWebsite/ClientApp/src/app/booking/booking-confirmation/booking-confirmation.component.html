@@ -5,6 +5,7 @@
       style="cursor: pointer"
       [ngClass]="{ 'vh-booking-failed': !bookingConfirmedSuccessfully }"
       (click)="viewBookingDetails()"
+      (keydown)="viewBookingDetails()"
     >
       <h1 *ngIf="bookingConfirmedSuccessfully" class="govuk-panel__title">Your hearing booking was successful</h1>
       <h1 *ngIf="!bookingConfirmedSuccessfully" class="govuk-panel__title">Booking failed</h1>

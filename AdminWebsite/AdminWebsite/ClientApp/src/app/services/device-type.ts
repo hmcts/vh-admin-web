@@ -5,7 +5,7 @@ import { DeviceDetectorService, BROWSERS } from 'ngx-device-detector';
     providedIn: 'root'
 })
 export class DeviceType {
-    constructor(private deviceDetectorService: DeviceDetectorService) {}
+    constructor(private readonly deviceDetectorService: DeviceDetectorService) {}
 
     isMobile() {
         return this.deviceDetectorService.isMobile();

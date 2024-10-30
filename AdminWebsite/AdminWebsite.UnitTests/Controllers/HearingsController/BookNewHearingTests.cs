@@ -89,62 +89,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingWithCodeAsync(It.IsAny<BookNewHearingRequestV2>()), Times.Once);
         }
 
-        private BookingDetailsRequest InitHearingForTest()
-        {
-            // request with existing person, new user, existing user in AD but not in persons table 
-            var bookNewHearingRequest = new BookingDetailsRequest
-            {
-                Participants = new List<AdminWebsite.Contracts.Requests.ParticipantRequest>
-                {
-                    new ()
-                    {
-                        CaseRoleName = "CaseRole", ContactEmail = "contact1@hmcts.net",
-                        HearingRoleName = "HearingRole", DisplayName = "display name1",
-                        FirstName = "fname", MiddleNames = "", LastName = "lname1", Username = "username1@hmcts.net",
-                        OrganisationName = "", Representee = "", TelephoneNumber = ""
-                    },
-                    new ()
-                    {
-                        CaseRoleName = "CaseRole", ContactEmail = "contact2@hmcts.net",
-                        HearingRoleName = "HearingRole", DisplayName = "display name2",
-                        FirstName = "fname2", MiddleNames = "", LastName = "lname2", OrganisationName = "",
-                        Representee = "", TelephoneNumber = "", Username = "username2@hmcts.net"
-                    },
-                    new ()
-                    {
-                        CaseRoleName = "CaseRole", ContactEmail = "contact3@hmcts.net",
-                        HearingRoleName = "HearingRole", DisplayName = "display name3",
-                        FirstName = "fname3", MiddleNames = "", LastName = "lname3", OrganisationName = "",
-                        Representee = "", TelephoneNumber = "", Username = "username3@hmcts.net"
-                    },
-                    new ()
-                    {
-                        CaseRoleName = "Panel Member", ContactEmail = "contact4@hmcts.net",
-                        HearingRoleName = "HearingRole", DisplayName = "display name4",
-                        FirstName = "fname4", MiddleNames = "", LastName = "lname4", OrganisationName = "",
-                        Representee = "", TelephoneNumber = "", Username = "username4@hmcts.net"
-                    },
-                    new ()
-                    {
-                        CaseRoleName = "Judge", ContactEmail = "judge@hmcts.net",
-                        HearingRoleName = "Judge", DisplayName = "Judge Fudge",
-                        FirstName = "Jack", MiddleNames = "", LastName = "Fudge",
-                        Username = "judge.fudge@hmcts.net", OrganisationName = "", Representee = "",
-                        TelephoneNumber = ""
-                    }
-                },
-                Endpoints = new List<EndpointRequest>
-                {
-                    new ()
-                        {DisplayName = "displayname1", DefenceAdvocateContactEmail = "username1@hmcts.net"},
-                    new ()
-                        {DisplayName = "displayname2", DefenceAdvocateContactEmail = "fname2.lname2@hmcts.net"},
-                }
-            };
-
-            return SetUpRequest(bookNewHearingRequest);
-        }
-
         private BookingDetailsRequest InitHearingForV2Test()
         {
             // request with existing person, new user, existing user in AD but not in persons table 

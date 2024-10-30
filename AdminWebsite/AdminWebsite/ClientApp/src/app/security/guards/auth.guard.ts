@@ -9,7 +9,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 @Injectable()
 export class AuthGuard {
     private readonly loggerPrefix = '[AuthorizationGuard] -';
-    constructor(private securityService: SecurityService, private router: Router, private logger: Logger) {}
+    constructor(private readonly securityService: SecurityService, private readonly router: Router, private readonly logger: Logger) {}
     canActivate(): Observable<boolean> {
         return this.securityService.isAuthenticated().pipe(
             map(isAuthenticated => {

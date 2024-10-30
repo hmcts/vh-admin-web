@@ -18,7 +18,7 @@ public class BookingsHearingResponseMapperTests
             {
                 new ()
                 {
-                    ScheduledDate = new DateTime(),
+                    ScheduledDate = DateTime.UtcNow,
                     Hearings = new List<BookingsHearingResponse>
                     {
                         new ()
@@ -26,7 +26,7 @@ public class BookingsHearingResponseMapperTests
                             HearingId = Guid.NewGuid(),
                             HearingNumber = "hearingNumber",
                             HearingName = "hearingName",
-                            ScheduledDateTime = new DateTime(),
+                            ScheduledDateTime = DateTime.UtcNow,
                             ScheduledDuration = 1,
                             CaseTypeName = "caseTypeName",
                             HearingTypeName = "hearingTypeName",
@@ -34,11 +34,11 @@ public class BookingsHearingResponseMapperTests
                             CourtAddress = "courtAddress",
                             JudgeName = "judgeName",
                             CreatedBy = "createdBy",
-                            CreatedDate = new DateTime(),
+                            CreatedDate = DateTime.UtcNow,
                             LastEditBy = "lastEditBy",
-                            LastEditDate = new DateTime(),
+                            LastEditDate = DateTime.UtcNow,
                             ConfirmedBy = "confirmedBy",
-                            ConfirmedDate = new DateTime(),
+                            ConfirmedDate = DateTime.UtcNow,
                             Status = BookingsApi.Contract.V1.Enums.BookingStatus.Created,
                             AudioRecordingRequired = true,
                             CancelReason = "cancelReason",

@@ -6,13 +6,18 @@ namespace AdminWebsite.Testing.Common.Builders
     public class ClaimsPrincipalBuilder
     {
         private const string Username = "john@hmcts.net";
-
         private readonly List<Claim> _claims;
+        
+        private static class ClaimTypeNames
+        {
+            public const string PreferredUsername = "preferred_username";
+        }
+        
         public ClaimsPrincipalBuilder()
         {
             _claims = new List<Claim>
             { 
-                new Claim("preferred_username", Username),
+                new(ClaimTypeNames.PreferredUsername, Username),
                 new Claim(ClaimTypes.NameIdentifier, "userId"),
                 new Claim("name", "John Doe")
             };
@@ -26,9 +31,9 @@ namespace AdminWebsite.Testing.Common.Builders
 
         public ClaimsPrincipalBuilder WithUsername(string username)
         {
-            var usernameClaimIndex = _claims.FindIndex(x => x.Type == "preferred_username");
+            var usernameClaimIndex = _claims.FindIndex(x => x.Type == ClaimTypeNames.PreferredUsername);
             _claims.RemoveAt(usernameClaimIndex);
-            return WithClaim("preferred_username", username);
+            return WithClaim(ClaimTypeNames.PreferredUsername, username);
         }
 
         public ClaimsPrincipalBuilder WithClaim(string claimType, string value)
@@ -39,7 +44,7 @@ namespace AdminWebsite.Testing.Common.Builders
         
         public ClaimsPrincipal Build()
         {
-            var identity = new ClaimsIdentity(_claims, "TestAuthType", "preferred_username", ClaimTypes.Role);
+            var identity = new ClaimsIdentity(_claims, "TestAuthType", ClaimTypeNames.PreferredUsername, ClaimTypes.Role);
             var claimsPrincipal = new ClaimsPrincipal(identity);
             return claimsPrincipal;
         }

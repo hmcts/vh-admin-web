@@ -20,7 +20,7 @@ export class GetAudioFileCvpComponent implements OnInit {
         this.results = searchResult?.result?.map(x => new CvpAudioSearchModel(x)) ?? [];
     }
 
-    constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {}
+    constructor(private readonly fb: FormBuilder, private readonly audioLinkService: AudioLinkService, private readonly logger: Logger) {}
 
     ngOnInit(): void {
         const hearingDateParsed = null;

@@ -17,7 +17,12 @@ export class EditParticipantComponent implements OnInit {
     person: ParticipantEditResultModel;
     updateComplete: boolean;
     showSpinner: boolean;
-    constructor(private service: ParticipantEditService, private router: Router, private fb: FormBuilder, private logger: Logger) {}
+    constructor(
+        private readonly service: ParticipantEditService,
+        private readonly router: Router,
+        private readonly fb: FormBuilder,
+        private readonly logger: Logger
+    ) {}
 
     ngOnInit(): void {
         this.person = this.service.retrieveParticipantToEdit();

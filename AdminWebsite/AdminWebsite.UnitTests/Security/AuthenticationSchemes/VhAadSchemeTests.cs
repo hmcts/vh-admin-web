@@ -134,7 +134,7 @@ namespace AdminWebsite.UnitTests.Security.AuthenticationSchemes
                 .ReturnsAsync(new List<Claim>(){ new(ClaimTypes.Role, AppRoles.StaffMember) });
             
             // act
-            await _sut.GetClaimsPostTokenValidation(tokenValidatedContext, options);
+            await AadSchemeBase.GetClaimsPostTokenValidation(tokenValidatedContext, options);
 
             // assert
             claimsPrincipal.IsInRole(AppRoles.StaffMember).Should().BeTrue();
@@ -171,7 +171,7 @@ namespace AdminWebsite.UnitTests.Security.AuthenticationSchemes
                 .ReturnsAsync(new List<Claim>(){ new(ClaimTypes.Role, AppRoles.StaffMember) });
             
             // act
-            await _sut.GetClaimsPostTokenValidation(tokenValidatedContext, options);
+            await AadSchemeBase.GetClaimsPostTokenValidation(tokenValidatedContext, options);
 
             // assert
             claimsPrincipal.IsInRole(AppRoles.StaffMember).Should().BeTrue();

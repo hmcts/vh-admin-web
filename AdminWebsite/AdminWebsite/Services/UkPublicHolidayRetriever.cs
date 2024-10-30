@@ -28,13 +28,13 @@ namespace AdminWebsite.Services
 
         private List<PublicHoliday> GetHolidaysFromCache()
         {
-            return !_memoryCache.TryGetValue(holidayKey, out List<PublicHoliday> holidays) ? null : holidays;
+            return !_memoryCache.TryGetValue(holidayKey, out List<PublicHoliday> holidays) ? [] : holidays;
         }
         
         private async Task<List<PublicHoliday>> GetHolidaysFromApi()
         {
             var holidays = new List<PublicHoliday>();
-            var ukHolidaysUri = @"https://www.gov.uk/bank-holidays.json";
+            const string ukHolidaysUri = Uris.UkHolidays;
             
             var response = await _httpClient.GetAsync(ukHolidaysUri);
             response.EnsureSuccessStatusCode();
@@ -48,6 +48,11 @@ namespace AdminWebsite.Services
             _memoryCache.Set(holidayKey, holidays, DateTime.UtcNow.AddHours(1));
             
             return holidays;
+        }
+
+        private static class Uris
+        {
+            public const string UkHolidays = "https://www.gov.uk/bank-holidays.json";
         }
     }
 }

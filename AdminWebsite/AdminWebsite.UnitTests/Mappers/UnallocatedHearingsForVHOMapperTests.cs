@@ -5,7 +5,7 @@ namespace AdminWebsite.UnitTests.Mappers;
 
 public class UnallocatedHearingsForVhoMapperTests
 {
-    private readonly DateTime _testDate = new (2023, 01, 09);
+    private readonly DateTime _testDate = new (2023, 01, 09, 0, 0, 0, DateTimeKind.Utc);
     
     [Test]
     public void Should_map_HearingDetailsResponse_to_UnallocatedHearingsForVHOResponse()

@@ -18,7 +18,7 @@ export class ConfirmRestoreJusticeUserPopupComponent {
 
     @Input() user: JusticeUserResponse;
 
-    constructor(private justiceUserService: JusticeUsersService) {}
+    constructor(private readonly justiceUserService: JusticeUsersService) {}
 
     onConfirmRestore() {
         this.failedRestoreMessage = null;

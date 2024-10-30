@@ -9,7 +9,11 @@ import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.ser
 @Injectable()
 export class AudioSearchGuard {
     private readonly loggerPrefix = '[AudioSearchGuard] -';
-    constructor(private launchDarklyService: LaunchDarklyService, private router: Router, private logger: Logger) {}
+    constructor(
+        private readonly launchDarklyService: LaunchDarklyService,
+        private readonly router: Router,
+        private readonly logger: Logger
+    ) {}
 
     canActivate(): Observable<boolean> {
         return this.launchDarklyService.getFlag<boolean>(FeatureFlags.audioSearch).pipe(

@@ -9,7 +9,6 @@ using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace AdminWebsite.Controllers
@@ -21,12 +20,10 @@ namespace AdminWebsite.Controllers
     public class JusticeUsersController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
-        private readonly ILogger<JusticeUsersController> _logger;
 
-        public JusticeUsersController(IBookingsApiClient bookingsApiClient, ILogger<JusticeUsersController> logger)
+        public JusticeUsersController(IBookingsApiClient bookingsApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
-            _logger = logger;
         }
 
         /// <summary>
@@ -60,8 +57,7 @@ namespace AdminWebsite.Controllers
                     var typedException = e as BookingsApiException<string>;
                     return Conflict(typedException!.Result);
                 }
-
-                _logger.LogError(e, "Unexpected error trying to add a new justice user");
+                
                 throw;
             }
         }
@@ -91,8 +87,7 @@ namespace AdminWebsite.Controllers
                     var typedException = e as BookingsApiException<string>;
                     return NotFound(typedException!.Result);
                 }
-
-                _logger.LogError(e, "Unexpected error trying to edit a justice user");
+                
                 throw;
             }
         }
@@ -129,8 +124,7 @@ namespace AdminWebsite.Controllers
                     var typedException = e as BookingsApiException<ValidationProblemDetails>;
                     return ValidationProblem(typedException!.Result);
                 }
-
-                _logger.LogError(e, "Unexpected error trying to delete justice user");
+                
                 throw;
             }
         }
@@ -160,8 +154,7 @@ namespace AdminWebsite.Controllers
                     var typedException = e as BookingsApiException<string>;
                     return NotFound(typedException!.Result);
                 }
-
-                _logger.LogError(e, "Unexpected error trying to restore a justice user");
+                
                 throw;
             }
         }

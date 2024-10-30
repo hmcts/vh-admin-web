@@ -9,6 +9,9 @@
     (mousemove)="onMouseOver($event)"
     (mouseout)="onMouseOut()"
     (click)="copyToClipboard(); $event.stopPropagation()"
+    (keydown)="copyToClipboard(); $event.stopPropagation()"
+    (focus)="onFocus()"
+    (blur)="onMouseOut()"
   >
     telephone-participant-link
   </div>

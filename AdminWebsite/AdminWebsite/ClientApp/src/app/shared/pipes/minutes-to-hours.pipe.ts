@@ -5,7 +5,7 @@ import { DateAndTimeService } from '../../services/date-and-time.service';
     name: 'minutesToHours'
 })
 export class MinutesToHoursPipe implements PipeTransform {
-    constructor(private dateTimeService: DateAndTimeService) {}
+    constructor(private readonly dateTimeService: DateAndTimeService) {}
     transform(totalMinutes: number): string {
         const time = this.dateTimeService.minutesToHours(totalMinutes);
         const hours = `${time.hours}${time.hours > 1 ? 'hrs' : 'hr'}`;

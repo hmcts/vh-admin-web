@@ -6,7 +6,7 @@ import { BHClient, JudiciaryPerson } from 'src/app/services/clients/api-client';
     providedIn: 'root'
 })
 export class JudicialService {
-    constructor(private bhClient: BHClient) {}
+    constructor(private readonly bhClient: BHClient) {}
 
     getJudicialUsers(searchText: string): Observable<JudiciaryPerson[]> {
         return this.bhClient.searchForJudiciaryPerson(searchText);

@@ -13,7 +13,7 @@ export class EditHearingDatesComponent {
 
     today = new Date();
 
-    constructor(private datePipe: DatePipe) {}
+    constructor(private readonly datePipe: DatePipe) {}
 
     get newDatesInvalid() {
         return this.newDatesFormArray.invalid && (this.newDatesFormArray.dirty || this.newDatesFormArray.touched);

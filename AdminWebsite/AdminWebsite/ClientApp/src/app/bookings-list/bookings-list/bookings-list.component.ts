@@ -54,14 +54,14 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     enableUser: boolean;
 
     constructor(
-        private bookingsListService: BookingsListService,
-        private bookingPersistService: BookingPersistService,
-        private videoHearingService: VideoHearingsService,
-        private formBuilder: FormBuilder,
-        private router: Router,
-        private logger: Logger,
-        private datePipe: DatePipe,
-        private returnUrlService: ReturnUrlService
+        private readonly bookingsListService: BookingsListService,
+        private readonly bookingPersistService: BookingPersistService,
+        private readonly videoHearingService: VideoHearingsService,
+        private readonly formBuilder: FormBuilder,
+        private readonly router: Router,
+        private readonly logger: Logger,
+        private readonly datePipe: DatePipe,
+        private readonly returnUrlService: ReturnUrlService
     ) {}
 
     ngOnInit() {

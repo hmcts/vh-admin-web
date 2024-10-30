@@ -1,8 +1,6 @@
-import { Component, OnInit, EventEmitter, ViewChild, Input, HostListener, ElementRef } from '@angular/core';
+import { Component, EventEmitter, ViewChild, Input, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { startWith } from 'rxjs/operators';
-import { ConnectionService } from 'src/app/services/connection/connection.service';
 
 @Component({
     selector: 'app-header',
@@ -34,7 +32,7 @@ export class HeaderComponent {
         }
     ];
 
-    constructor(private router: Router) {
+    constructor(private readonly router: Router) {
         this.$confirmLogout = new EventEmitter();
         this.$confirmSaveBooking = new EventEmitter();
     }

@@ -21,7 +21,7 @@ export const FeatureFlags = {
 export class LaunchDarklyService implements OnDestroy {
     client: LDClient;
 
-    constructor(private configService: ConfigService) {
+    constructor(private readonly configService: ConfigService) {
         this.initialize();
     }
 

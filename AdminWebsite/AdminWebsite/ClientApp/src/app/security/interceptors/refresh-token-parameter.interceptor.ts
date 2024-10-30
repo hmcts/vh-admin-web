@@ -5,7 +5,7 @@ import { SecurityService } from '../services/security.service';
 
 @Injectable()
 export class RefreshTokenParameterInterceptor implements HttpInterceptor {
-    constructor(private securityService: SecurityService) {}
+    constructor(private readonly securityService: SecurityService) {}
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         this.securityService.getConfiguration().subscribe(configuration => {
             if (req.method === 'POST' && req.url.endsWith('/oauth2/v2.0/token') && configuration.scope && req.body) {

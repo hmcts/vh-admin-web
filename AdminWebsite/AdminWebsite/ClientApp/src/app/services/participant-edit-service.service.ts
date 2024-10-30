@@ -7,7 +7,7 @@ import { lastValueFrom } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class ParticipantEditService {
     participant: ParticipantEditResultModel;
-    constructor(private bhClient: BHClient, private logger: Logger) {}
+    constructor(private readonly bhClient: BHClient, private readonly logger: Logger) {}
 
     async searchForPerson(contactEmail: string): Promise<ParticipantEditResultModel> {
         try {

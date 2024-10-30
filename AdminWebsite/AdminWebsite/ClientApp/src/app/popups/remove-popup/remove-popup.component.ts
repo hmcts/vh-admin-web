@@ -1,10 +1,10 @@
-import { Component, EventEmitter, OnInit, Output, Input } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 
 @Component({
     selector: 'app-remove-popup',
     templateUrl: './remove-popup.component.html'
 })
-export class RemovePopupComponent implements OnInit {
+export class RemovePopupComponent {
     @Output() continueRemove: EventEmitter<any> = new EventEmitter<any>();
 
     @Output() cancelRemove: EventEmitter<any> = new EventEmitter<any>();
@@ -12,8 +12,6 @@ export class RemovePopupComponent implements OnInit {
     @Input() fullName: string;
 
     constructor() {}
-
-    ngOnInit() {}
 
     continueRemoveParticipant() {
         this.continueRemove.emit();

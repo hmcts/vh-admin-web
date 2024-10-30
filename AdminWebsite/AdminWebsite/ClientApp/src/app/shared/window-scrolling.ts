@@ -3,7 +3,7 @@ import { DOCUMENT } from '@angular/common';
 
 @Injectable()
 export class WindowScrolling {
-    constructor(@Inject(DOCUMENT) private document: Document) {}
+    constructor(@Inject(DOCUMENT) private readonly document: Document) {}
 
     getPosition(): number {
         return window.pageYOffset;

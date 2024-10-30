@@ -38,7 +38,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         protected router: Router,
         protected videoHearingService: VideoHearingsService,
         protected logger: Logger,
-        private featureService: LaunchDarklyService
+        private readonly featureService: LaunchDarklyService
     ) {
         super(bookingService, router, videoHearingService, logger);
     }

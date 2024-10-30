@@ -1,11 +1,11 @@
-import { Component, EventEmitter, OnInit, Output, Input } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 
 @Component({
     selector: 'app-cancel-popup',
     templateUrl: './cancel-popup.component.html',
     styleUrls: ['./cancel-popup.component.css']
 })
-export class CancelPopupComponent implements OnInit {
+export class CancelPopupComponent {
     @Output() continueBooking: EventEmitter<any> = new EventEmitter<any>();
     @Output() cancelBooking: EventEmitter<any> = new EventEmitter<any>();
 
@@ -13,8 +13,6 @@ export class CancelPopupComponent implements OnInit {
     message = 'Are you sure you want to discard them?';
 
     constructor() {}
-
-    ngOnInit() {}
 
     continueAddParticipant() {
         this.continueBooking.emit();

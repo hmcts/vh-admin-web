@@ -14,7 +14,7 @@ export abstract class MenuBase implements OnInit {
     error = false;
     selectedLabel: any;
     items: any;
-    private formBuilder: FormBuilder;
+    private readonly formBuilder: FormBuilder;
 
     abstract loggerPrefix: string;
     abstract formGroupName: string;

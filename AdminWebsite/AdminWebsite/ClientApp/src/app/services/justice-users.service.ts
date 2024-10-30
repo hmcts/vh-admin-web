@@ -17,8 +17,8 @@ import { Logger } from './logger';
 })
 export class JusticeUsersService {
     loggerPrefix = '[JusticeUsersService] -';
-    private refresh$: BehaviorSubject<void> = new BehaviorSubject(null);
-    private searchTerm$: BehaviorSubject<string> = new BehaviorSubject(null);
+    private readonly refresh$: BehaviorSubject<void> = new BehaviorSubject(null);
+    private readonly searchTerm$: BehaviorSubject<string> = new BehaviorSubject(null);
 
     allUsers$ = this.refresh$.pipe(
         mergeMap(() => this.getJusticeUsers(null)),
@@ -34,7 +34,7 @@ export class JusticeUsersService {
         )
     );
 
-    constructor(private apiClient: BHClient, private logger: Logger) {}
+    constructor(private readonly apiClient: BHClient, private readonly logger: Logger) {}
 
     refresh() {
         this.refresh$.next();

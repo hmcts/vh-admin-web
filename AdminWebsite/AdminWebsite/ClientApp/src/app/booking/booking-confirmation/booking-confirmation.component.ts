@@ -20,14 +20,14 @@ export class BookingConfirmationComponent implements OnInit {
     caseName: string;
     hearingDate: Date;
     retrievedHearingResolver: Promise<boolean>;
-    private newHearingSessionKey = 'newHearingId';
+    private readonly newHearingSessionKey = 'newHearingId';
     private status: BookingStatus;
 
     constructor(
-        private hearingService: VideoHearingsService,
-        private bookingPersistService: BookingPersistService,
-        private router: Router,
-        private logger: Logger
+        private readonly hearingService: VideoHearingsService,
+        private readonly bookingPersistService: BookingPersistService,
+        private readonly router: Router,
+        private readonly logger: Logger
     ) {}
 
     get bookingConfirmedSuccessfully(): boolean {

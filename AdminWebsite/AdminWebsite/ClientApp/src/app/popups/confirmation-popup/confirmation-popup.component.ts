@@ -1,16 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
     selector: 'app-confirmation-popup',
     templateUrl: './confirmation-popup.component.html'
 })
-export class ConfirmationPopupComponent implements OnInit {
+export class ConfirmationPopupComponent {
     @Input() message: string;
     @Output() ok: EventEmitter<any> = new EventEmitter<any>();
 
     constructor() {}
-
-    ngOnInit() {}
 
     confirm() {
         this.ok.emit();

@@ -8,7 +8,7 @@
   ></app-edit-work-hours>
 
   <details *ngIf="!dom1FeatureEnabled && isVhTeamLeader" class="govuk-details" data-module="govuk-details">
-    <summary class="govuk-details__summary govuk-!-margin-bottom-2" tabindex="0" role="button">
+    <summary class="govuk-details__summary govuk-!-margin-bottom-2" tabindex="0">
       <span class="govuk-details__summary-text" id="manage-team"> Manage team </span>
     </summary>
     <app-manage-team [showHeader]="false"></app-manage-team>

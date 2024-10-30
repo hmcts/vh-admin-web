@@ -66,4 +66,12 @@ describe('CopyConferencePhoneComponent', () => {
         expect(component.displayTooltip).toBe(false);
         expect(component.tooltip).toBe(component.tooltipTextCopied);
     });
+
+    describe('onFocus', () => {
+        it('should invoke mouseOver', () => {
+            spyOn(component, 'mouseOver');
+            component.onFocus();
+            expect(component.mouseOver).toHaveBeenCalled();
+        });
+    });
 });

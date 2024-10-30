@@ -18,10 +18,10 @@ export class DeleteParticipantSearchComponent implements OnInit, OnDestroy {
     results: ParticipantHearingDeleteResultModel[] = [];
     subscriptions$ = new Subscription();
     constructor(
-        private fb: FormBuilder,
-        private service: ParticipantDeleteService,
-        private route: ActivatedRoute,
-        private logger: Logger
+        private readonly fb: FormBuilder,
+        private readonly service: ParticipantDeleteService,
+        private readonly route: ActivatedRoute,
+        private readonly logger: Logger
     ) {}
 
     ngOnInit(): void {

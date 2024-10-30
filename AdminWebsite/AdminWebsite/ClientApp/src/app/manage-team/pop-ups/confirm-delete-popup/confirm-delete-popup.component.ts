@@ -16,7 +16,7 @@ export class ConfirmDeleteHoursPopupComponent implements OnInit {
     startDate: string;
     endDate: string;
 
-    constructor(private logger: Logger) {}
+    constructor(private readonly logger: Logger) {}
 
     ngOnInit(): void {
         this.startDate = CombineDateAndTime(this.slotToDelete.start_date, this.slotToDelete.start_time).toDateString();

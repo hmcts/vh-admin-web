@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
 import { ParticipantEditResultModel } from 'src/app/common/model/participant-edit-result.model';
 import { Logger } from 'src/app/services/logger';
 import { ParticipantEditService } from '../../services/participant-edit-service.service';
@@ -16,8 +15,7 @@ export class EditParticipantSearchComponent implements OnInit {
     unauthorisedParticipant: boolean;
     loadingData: boolean;
     result: ParticipantEditResultModel;
-    subscriptions$ = new Subscription();
-    constructor(private fb: FormBuilder, private service: ParticipantEditService, private logger: Logger) {}
+    constructor(private readonly fb: FormBuilder, private readonly service: ParticipantEditService, private readonly logger: Logger) {}
 
     ngOnInit(): void {
         this.form = this.fb.group({

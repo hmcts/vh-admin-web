@@ -22,8 +22,8 @@ export class JusticeUsersMenuComponent extends MenuBase implements OnInit {
     @Input() dropDownLabel = 'Allocated CSO';
     @Input() multiSelect = true;
     constructor(
-        private bookingPersistService: BookingPersistService,
-        private justiceUserService: JusticeUsersService,
+        private readonly bookingPersistService: BookingPersistService,
+        private readonly justiceUserService: JusticeUsersService,
         formBuilder: FormBuilder,
         logger: Logger
     ) {
@@ -42,5 +42,7 @@ export class JusticeUsersMenuComponent extends MenuBase implements OnInit {
         super.ngOnInit();
     }
 
-    loadItems(): void {}
+    loadItems(): void {
+        // Intentionally empty
+    }
 }

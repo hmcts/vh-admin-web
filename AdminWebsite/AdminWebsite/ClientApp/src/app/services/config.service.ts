@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ClientSettingsResponse, IAzureConfiguration } from '../services/clients/api-client';
+import { ClientSettingsResponse } from '../services/clients/api-client';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpBackend, HttpClient, HttpHeaders } from '@angular/common/http';
 import { Config } from '../common/model/config';
@@ -11,9 +11,9 @@ export const ENVIRONMENT_CONFIG: Config = new Config();
 @Injectable()
 export class ConfigService {
     clientSettingsLoaded$ = new BehaviorSubject(false);
-    private SETTINGS_KEY = 'vh.client.settings';
+    private readonly SETTINGS_KEY = 'vh.client.settings';
     private readonly clientSettingCache: SessionStorage<ClientSettingsResponse>;
-    private httpClient: HttpClient;
+    private readonly httpClient: HttpClient;
 
     constructor(handler: HttpBackend) {
         this.httpClient = new HttpClient(handler);

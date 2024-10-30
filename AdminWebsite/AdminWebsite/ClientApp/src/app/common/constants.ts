@@ -12,7 +12,7 @@ export const Constants = {
     TextInputPattern: /^[^%{}~|]+$/,
     TextInputPatternDisplayName: /^[\p{L}\p{N}\s',._-]+$/u,
     TextInputPatternName: /^(?!.*[^\w\s'.-]{2})\w+(?:[\s'._-]\w+)*$/,
-    PostCodePattern: /^([a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2})$/,
+    PostCodePattern: /^([a-zA-Z]{1,2}(\d{1,2}|\d[a-zA-Z])\s*\d[a-zA-Z]{2})$/,
     EmailPattern: /^[!#$%'*/-9=?A-Z^-~-]+(?:\.[!#$%'*/-9=?A-Z^-~-]+)*@[a-zA-Z0-9]+([a-zA-Z0-9-]+)*(?:\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/,
     PhonePattern: /^([0-9() +-.])*$/,
     EndpointDisplayNamePattern: /^[\p{L}\p{N}\s',._-]+$/u,

@@ -54,10 +54,10 @@ export class JusticeUserFormComponent implements OnChanges {
     @Output() cancelFormEvent = new EventEmitter();
 
     constructor(
-        private formBuilder: FormBuilder,
-        private justiceUserService: JusticeUsersService,
-        private cdRef: ChangeDetectorRef,
-        private ldService: LaunchDarklyService
+        private readonly formBuilder: FormBuilder,
+        private readonly justiceUserService: JusticeUsersService,
+        private readonly cdRef: ChangeDetectorRef,
+        private readonly ldService: LaunchDarklyService
     ) {
         this.createForm(false);
         this.ldService.getFlag<boolean>(FeatureFlags.dom1Integration).subscribe(dom1Enabled => {

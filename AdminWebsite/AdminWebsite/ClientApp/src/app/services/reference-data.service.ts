@@ -7,7 +7,7 @@ import { Observable, shareReplay } from 'rxjs';
 })
 export class ReferenceDataService {
     private interpreterLanguages$: Observable<AvailableLanguageResponse[]>;
-    constructor(private bhClient: BHClient) {}
+    constructor(private readonly bhClient: BHClient) {}
 
     getCourts(): Observable<HearingVenueResponse[]> {
         return this.bhClient.getCourts();

@@ -8,18 +8,18 @@ import { ConnectionServiceConfigToken, ConnectionServiceConfig } from './connect
     providedIn: 'root'
 })
 export class ConnectionService implements OnDestroy {
-    private defaults: ConnectionServiceConfig = {
+    private readonly defaults: ConnectionServiceConfig = {
         url: '/assets/images/favicons/favicon.ico?_:' + new Date().getTime(),
         interval: 10000,
         retryInterval: 1000,
         maxRetryAttempts: 3
     };
-    private config: ConnectionServiceConfig;
+    private readonly config: ConnectionServiceConfig;
     private unsubscribe$: Subject<boolean> = null;
 
     hasConnection$ = new ReplaySubject<boolean>();
 
-    constructor(private http: HttpClient, @Inject(ConnectionServiceConfigToken) @Optional() config: ConnectionServiceConfig) {
+    constructor(private readonly http: HttpClient, @Inject(ConnectionServiceConfigToken) @Optional() config: ConnectionServiceConfig) {
         this.config = { ...this.defaults, ...config };
         this.startTimer();
     }
