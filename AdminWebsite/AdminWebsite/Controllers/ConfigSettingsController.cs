@@ -11,7 +11,7 @@ namespace AdminWebsite.Controllers
     [Produces("application/json")]
     [ApiController]
     [Route("api/config")]
-    public class ConfigSettingsController : ControllerBase 
+    public class ConfigSettingsController : ControllerBase
     {
         private readonly ApplicationInsightsConfiguration _applicationInsightsConfiguration;
         private readonly AzureAdConfiguration _azureAdConfiguration;
