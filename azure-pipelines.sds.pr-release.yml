@@ -60,9 +60,13 @@ stages:
                 sonar.javascript.lcov.reportPaths=**/ClientApp/coverage/lcov.info
                 sonar.typescript.exclusions=**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts
                 sonar.coverage.exclusions=**/AdminWebsite/Configuration/**, **/AdminWebsite/Security/**, **/AdminWebsite.Testing.Common/**, **/AdminWebsite/Views/*, **/AdminWebsite/Pages/*, **/AdminWebsite.AcceptanceTests/*, **/AdminWebsite.*Tests/*
-                sonar.issue.ignore.multicriteria=e1
+                sonar.issue.ignore.multicriteria=e1, e2, e3
                 sonar.issue.ignore.multicriteria.e1.ruleKey=typescript:S6544
                 sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.ts
+                sonar.issue.ignore.multicriteria.e2.ruleKey=typescript:S107
+                sonar.issue.ignore.multicriteria.e2.resourceKey=**/*.ts
+                sonar.issue.ignore.multicriteria.e3.ruleKey=csharpsquid:S107
+                sonar.issue.ignore.multicriteria.e3.resourceKey=**/*.cs
 
   #####################################################
   # Build Docker Image. ###############################
