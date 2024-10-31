@@ -125,12 +125,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.hearing.hearing_venue_id = -1;
         }
 
-        if (this.hearing.scheduled_date_time) {
-            const date = new Date(this.hearing.scheduled_date_time);
-            this.hearingDateParsed = this.datePipe.transform(date, 'yyyy-MM-dd');
-            this.startTimeHour = (date.getHours() < 10 ? '0' : '') + date.getHours();
-            this.startTimeMinute = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
-        }
+        this.setStartTime();
 
         if (this.hearing.end_hearing_date_time) {
             const date = new Date(this.hearing.end_hearing_date_time);
@@ -142,13 +137,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.multiDaysRange = false;
         }
 
-        if (this.hearing.scheduled_duration) {
-            const duration = new Date();
-            duration.setHours(0, 0, 0, 0);
-            duration.setMinutes(this.hearing.scheduled_duration);
-            this.durationHour = (duration.getHours() < 10 ? '0' : '') + duration.getHours();
-            this.durationMinute = (duration.getMinutes() < 10 ? '0' : '') + duration.getMinutes();
-        }
+        this.setDuration();
 
         if (this.hearing.scheduled_date_time && this.hearing.scheduled_duration && this.hearing.hearing_venue_id) {
             this.hasSaved = true;
@@ -167,6 +156,27 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
         this.selectedCourtName = this.hearing.court_name;
         this.selectedCourtCode = this.hearing.court_code;
+    }
+
+    private setStartTime() {
+        if (!this.hearing.scheduled_date_time) {
+            return;
+        }
+        const date = new Date(this.hearing.scheduled_date_time);
+        this.hearingDateParsed = this.datePipe.transform(date, 'yyyy-MM-dd');
+        this.startTimeHour = (date.getHours() < 10 ? '0' : '') + date.getHours();
+        this.startTimeMinute = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+    }
+
+    private setDuration() {
+        if (!this.hearing.scheduled_duration) {
+            return;
+        }
+        const duration = new Date();
+        duration.setHours(0, 0, 0, 0);
+        duration.setMinutes(this.hearing.scheduled_duration);
+        this.durationHour = (duration.getHours() < 10 ? '0' : '') + duration.getHours();
+        this.durationMinute = (duration.getMinutes() < 10 ? '0' : '') + duration.getMinutes();
     }
 
     private setUpDurationControls() {
