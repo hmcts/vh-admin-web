@@ -11,7 +11,8 @@ describe('VhoWorkHoursTableComponent', () => {
     let fixture: ComponentFixture<VhoWorkHoursTableComponent>;
     const videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
         'cancelVhoNonAvailabiltiesRequest',
-        'setVhoNonAvailabiltiesHaveChanged'
+        'setVhoNonAvailabiltiesHaveChanged',
+        'unsetVhoNonAvailabiltiesHaveChanged'
     ]);
 
     beforeEach(async () => {

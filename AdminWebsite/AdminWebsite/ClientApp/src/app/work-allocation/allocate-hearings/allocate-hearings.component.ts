@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { AllocateHearingsService } from '../services/allocate-hearings.service';
 import { AllocationHearingsResponse, JusticeUserResponse } from '../../services/clients/api-client';
 import { faCircleExclamation, faHourglassStart, faTriangleExclamation, faClock } from '@fortawesome/free-solid-svg-icons';
-import { AllocateHearingModel } from './models/allocate-hearing.model';
+import { AllocateHearingItemModel, AllocateHearingModel } from './models/allocate-hearing.model';
 import { Transform } from '@fortawesome/fontawesome-svg-core';
 import { Constants } from 'src/app/common/constants';
 import { DatePipe } from '@angular/common';
@@ -84,7 +84,11 @@ export class AllocateHearingsComponent implements OnInit {
         });
 
         this.form.get('isUnallocated').valueChanges.subscribe(val => {
-            this.onIsAllocatedCheckboxChanged(val);
+            if (val) {
+                this.onIsAllocatedCheckboxChecked();
+            } else {
+                this.onIsAllocatedCheckboxUnchecked();
+            }
         });
 
         this.selectedJusticeUserIds = this.bookingPersistService.selectedUsers;
@@ -176,13 +180,13 @@ export class AllocateHearingsComponent implements OnInit {
         }
     }
 
-    onIsAllocatedCheckboxChanged(checked: boolean) {
-        if (checked) {
-            this.selectFilterCso.clear();
-            this.selectFilterCso.disable();
-        } else {
-            this.selectFilterCso.enable();
-        }
+    onIsAllocatedCheckboxChecked() {
+        this.selectFilterCso.clear();
+        this.selectFilterCso.disable();
+    }
+
+    onIsAllocatedCheckboxUnchecked() {
+        this.selectFilterCso.enable();
     }
 
     onJusticeUserForAllocationSelected(selectedItem?: SelectOption) {
@@ -193,7 +197,7 @@ export class AllocateHearingsComponent implements OnInit {
         } else {
             // without a selected CSO, unset selection
             this.clearMessage();
-            this.toggleAll(false);
+            this.deselectAll();
         }
     }
 
@@ -223,7 +227,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     cancelAllocation() {
-        this.toggleAll(false);
+        this.deselectAll();
         this.selectAllocateCso.clear();
         this.clearMessage();
         this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
@@ -241,18 +245,26 @@ export class AllocateHearingsComponent implements OnInit {
         });
     }
 
-    toggleAll(checkAll: boolean) {
-        if (checkAll) {
-            this.allocationHearingViewModel.checkAllHearings();
-            const selectedCso = this.selectAllocateCso?.selected as SelectOption;
-            if (selectedCso) {
-                const csoId = selectedCso.entityId;
-                const csoUsername = selectedCso.data;
-                this.attemptToAssignCsoToSelectedHearings(csoId, csoUsername);
-            }
+    toggleAll() {
+        if (this.allocationHearingViewModel.areAllChecked) {
+            this.deselectAll();
         } else {
-            this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
+            this.selectAll();
         }
+    }
+
+    selectAll() {
+        this.allocationHearingViewModel.checkAllHearings();
+        const selectedCso = this.selectAllocateCso?.selected as SelectOption;
+        if (selectedCso) {
+            const csoId = selectedCso.entityId;
+            const csoUsername = selectedCso.data;
+            this.attemptToAssignCsoToSelectedHearings(csoId, csoUsername);
+        }
+    }
+
+    deselectAll() {
+        this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
     }
 
     private updateTableWithAllocatedCso(updatedHearings: AllocationHearingsResponse[]) {
@@ -262,21 +274,29 @@ export class AllocateHearingsComponent implements OnInit {
         this.updateMessageAndDisplay(Constants.AllocateHearings.ConfirmationMessage);
     }
 
-    selectHearing(checked: boolean, hearing_id: string) {
-        if (checked) {
-            this.clearHearingUpdatedMessage();
-            this.allocationHearingViewModel.checkHearing(hearing_id);
-
-            const selectedCso = this.selectAllocateCso?.selected as SelectOption;
-            if (selectedCso) {
-                const csoId = selectedCso.entityId;
-                const csoUsername = selectedCso.data;
-
-                this.attemptToAssignCsoToSelectedHearings(csoId, csoUsername);
-            }
+    toggleSelectHearing(hearing: AllocateHearingItemModel) {
+        if (hearing.checked) {
+            this.deselectHearing(hearing.hearingId);
         } else {
-            this.allocationHearingViewModel.uncheckHearingAndRevert(hearing_id);
+            this.selectHearing(hearing.hearingId);
         }
+    }
+
+    selectHearing(hearing_id: string) {
+        this.clearHearingUpdatedMessage();
+        this.allocationHearingViewModel.checkHearing(hearing_id);
+
+        const selectedCso = this.selectAllocateCso?.selected as SelectOption;
+        if (selectedCso) {
+            const csoId = selectedCso.entityId;
+            const csoUsername = selectedCso.data;
+
+            this.attemptToAssignCsoToSelectedHearings(csoId, csoUsername);
+        }
+    }
+
+    deselectHearing(hearing_id: string) {
+        this.allocationHearingViewModel.uncheckHearingAndRevert(hearing_id);
     }
 
     getConcurrentCountText(count: number): string {

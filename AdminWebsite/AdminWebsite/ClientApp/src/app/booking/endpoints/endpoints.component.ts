@@ -151,7 +151,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         // If no such endpoint exists, push the new endpoint to the videoEndpoints array
         if (!existingEndpoint) {
             this.videoEndpoints.push($event);
-            this.videoHearingService.setBookingHasChanged(true);
+            this.videoHearingService.setBookingHasChanged();
         }
         this.upsertEndpointsToBooking();
     }
@@ -164,14 +164,14 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         if (index !== -1) {
             this.videoEndpoints[index] = $event.updated;
             this.videoEndpointToEdit = null;
-            this.videoHearingService.setBookingHasChanged(true);
+            this.videoHearingService.setBookingHasChanged();
         }
         this.upsertEndpointsToBooking();
     }
 
     onEndpointSelectedForDeletion(existingEndpoint: VideoAccessPointDto) {
         this.videoEndpoints = this.videoEndpoints.filter(endpoint => endpoint.displayName !== existingEndpoint.displayName);
-        this.videoHearingService.setBookingHasChanged(true);
+        this.videoHearingService.setBookingHasChanged();
         this.upsertEndpointsToBooking();
     }
 

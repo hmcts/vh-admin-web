@@ -87,7 +87,8 @@ describe('HearingScheduleComponent first visit', () => {
             'getCurrentRequest',
             'updateHearingRequest',
             'cancelRequest',
-            'setBookingHasChanged'
+            'setBookingHasChanged',
+            'unsetBookingHasChanged'
         ]);
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
@@ -416,7 +417,8 @@ describe('HearingScheduleComponent returning to page', () => {
             'getCurrentRequest',
             'updateHearingRequest',
             'cancelRequest',
-            'setBookingHasChanged'
+            'setBookingHasChanged',
+            'unsetBookingHasChanged'
         ]);
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
@@ -580,7 +582,8 @@ describe('HearingScheduleComponent multi days hearing', () => {
             'getCurrentRequest',
             'updateHearingRequest',
             'cancelRequest',
-            'setBookingHasChanged'
+            'setBookingHasChanged',
+            'unsetBookingHasChanged'
         ]);
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);

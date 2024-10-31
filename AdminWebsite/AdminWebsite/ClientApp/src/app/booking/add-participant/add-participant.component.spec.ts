@@ -261,6 +261,7 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
     'getParticipantRoles',
     'getCurrentRequest',
     'setBookingHasChanged',
+    'unsetBookingHasChanged',
     'updateHearingRequest',
     'cancelRequest',
     'isConferenceClosed',
@@ -975,18 +976,18 @@ describe('AddParticipantComponent', () => {
     });
 
     describe('subcribeForSeachEmailEvents', () => {
-        it('should return errorAlternativeEmail & errorJohAccountNotFound as false if called with notFoundEmailEvent as false', () => {
+        it('should return errorAlternativeEmail & errorJohAccountNotFound as false if called with emailFoundEvent', () => {
             component.errorAlternativeEmail = true;
             component.errorJohAccountNotFound = true;
             component.subscribeForSearchEmailEvents();
-            component.searchEmail.notFoundEmailEvent.next(false);
+            component.searchEmail.emailFoundEvent.next();
             expect(component.errorAlternativeEmail).toBeFalsy();
             expect(component.errorJohAccountNotFound).toBeFalsy();
         });
         it('should have called Not Found Participant if Not Found Email Event has been called', () => {
             spyOn(component, 'notFoundParticipant');
             component.subscribeForSearchEmailEvents();
-            component.searchEmail.notFoundEmailEvent.next(true);
+            component.searchEmail.emailNotFoundEvent.next();
             expect(component.notFoundParticipant).toHaveBeenCalledTimes(1);
         });
     });
@@ -1026,6 +1027,7 @@ describe('AddParticipantComponent edit mode', () => {
             'getCurrentRequest',
             'getParticipantRoles',
             'setBookingHasChanged',
+            'unsetBookingHasChanged',
             'updateHearingRequest',
             'cancelRequest',
             'isConferenceClosed',
@@ -1452,6 +1454,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             'getParticipantRoles',
             'getCurrentRequest',
             'setBookingHasChanged',
+            'unsetBookingHasChanged',
             'updateHearingRequest',
             'cancelRequest',
             'isConferenceClosed',

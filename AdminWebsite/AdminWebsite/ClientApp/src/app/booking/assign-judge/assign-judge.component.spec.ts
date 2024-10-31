@@ -93,6 +93,7 @@ describe('AssignJudgeComponent', () => {
             'updateHearingRequest',
             'cancelRequest',
             'setBookingHasChanged',
+            'unsetBookingHasChanged',
             'canAddUser',
             'canAddJudge'
         ]);

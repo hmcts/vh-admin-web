@@ -96,20 +96,20 @@ export class VideoHearingsService {
         return !!request;
     }
 
-    setBookingHasChanged(isChanged: boolean) {
-        if (isChanged) {
-            sessionStorage.setItem(this.bookingHasChangesKey, 'true');
-        } else {
-            sessionStorage.removeItem(this.bookingHasChangesKey);
-        }
+    setBookingHasChanged() {
+        sessionStorage.setItem(this.bookingHasChangesKey, 'true');
     }
 
-    setVhoNonAvailabiltiesHaveChanged(isChanged: boolean) {
-        if (isChanged) {
-            sessionStorage.setItem(this.vhoNonAvailabiltiesHaveChangesKey, 'true');
-        } else {
-            sessionStorage.removeItem(this.vhoNonAvailabiltiesHaveChangesKey);
-        }
+    unsetBookingHasChanged() {
+        sessionStorage.removeItem(this.bookingHasChangesKey);
+    }
+
+    setVhoNonAvailabiltiesHaveChanged() {
+        sessionStorage.setItem(this.vhoNonAvailabiltiesHaveChangesKey, 'true');
+    }
+
+    unsetVhoNonAvailabiltiesHaveChanged() {
+        sessionStorage.removeItem(this.vhoNonAvailabiltiesHaveChangesKey);
     }
 
     cancelVhoNonAvailabiltiesRequest() {

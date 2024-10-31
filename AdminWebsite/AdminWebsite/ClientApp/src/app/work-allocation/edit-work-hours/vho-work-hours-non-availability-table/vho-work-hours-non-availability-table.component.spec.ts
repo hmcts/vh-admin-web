@@ -20,7 +20,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     let loggerSpy: jasmine.SpyObj<Logger>;
     const videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
         'cancelVhoNonAvailabiltiesRequest',
-        'setVhoNonAvailabiltiesHaveChanged'
+        'setVhoNonAvailabiltiesHaveChanged',
+        'unsetVhoNonAvailabiltiesHaveChanged'
     ]);
 
     beforeEach(async () => {

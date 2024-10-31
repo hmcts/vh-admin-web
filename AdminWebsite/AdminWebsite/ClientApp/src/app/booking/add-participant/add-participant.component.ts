@@ -165,13 +165,12 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     subscribeForSearchEmailEvents() {
-        this.searchEmail.notFoundEmailEvent$.subscribe(notFound => {
-            if (notFound) {
-                this.notFoundParticipant();
-            } else {
-                this.errorAlternativeEmail = false;
-                this.errorJohAccountNotFound = false;
-            }
+        this.searchEmail.emailFoundEvent$.subscribe(() => {
+            this.errorAlternativeEmail = false;
+            this.errorJohAccountNotFound = false;
+        });
+        this.searchEmail.emailNotFoundEvent$.subscribe(() => {
+            this.notFoundParticipant();
         });
     }
 
@@ -472,7 +471,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         this.removeLinkedParticipant(this.selectedParticipantEmail);
         this.hearing = { ...this.hearing };
         this.videoHearingService.updateHearingRequest(this.hearing);
-        this.videoHearingService.setBookingHasChanged(true);
+        this.videoHearingService.setBookingHasChanged();
     }
 
     mapParticipant(newParticipant: ParticipantModel) {
@@ -792,7 +791,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         this.removeLinkedParticipant(this.selectedParticipantEmail);
         this.hearing = { ...this.hearing };
         this.videoHearingService.updateHearingRequest(this.hearing);
-        this.videoHearingService.setBookingHasChanged(true);
+        this.videoHearingService.setBookingHasChanged();
     }
 
     private addLinkedParticipant(newParticipant: ParticipantModel): void {

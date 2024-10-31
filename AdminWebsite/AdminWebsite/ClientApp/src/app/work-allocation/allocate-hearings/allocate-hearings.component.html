@@ -144,7 +144,7 @@
             type="checkbox"
             [checked]="allocationHearingViewModel.areAllChecked"
             aria-label="Select all hearings"
-            (change)="toggleAll(!allocationHearingViewModel.areAllChecked)"
+            (change)="toggleAll()"
           />
         </th>
         <th scope="col" class="govuk-table__header">Hearing date</th>
@@ -167,8 +167,8 @@
             type="checkbox"
             [checked]="hearing.checked"
             aria-label="Select hearing"
-            (click)="selectHearing(!hearing.checked, hearing.hearingId)"
-            (keydown)="selectHearing(!hearing.checked, hearing.hearingId)"
+            (click)="toggleSelectHearing(hearing)"
+            (keydown)="toggleSelectHearing(hearing)"
           />
         </td>
         <td class="govuk-table__cell">{{ hearing.scheduledDateTime.toLocaleDateString('en-GB') }}</td>

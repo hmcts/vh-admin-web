@@ -336,7 +336,7 @@ describe('AllocateHearingsComponent', () => {
             const username = 'test@cso.com';
 
             // act
-            component.selectHearing(true, hearingId);
+            component.selectHearing(hearingId);
 
             // mimic cso selection
             component.onJusticeUserForAllocationSelected({ entityId: csoId, data: username, label: '' });
@@ -365,7 +365,7 @@ describe('AllocateHearingsComponent', () => {
 
             // act
             // first allocate all hearings
-            component.toggleAll(true);
+            component.selectAll();
             fixture.detectChanges();
 
             const postUpdateHearing = component.allocationHearingViewModel.hearings.find(x => x.hearingId === hearingId);
@@ -375,14 +375,14 @@ describe('AllocateHearingsComponent', () => {
             expect(matchingElements.every(x => (<HTMLTableCellElement>x.nativeElement).innerText === username)).toBeTruthy();
 
             // then uncheck one
-            component.selectHearing(false, hearingId);
+            component.deselectHearing(hearingId);
             fixture.detectChanges();
 
             const postRevertedHearing = component.allocationHearingViewModel.hearings.find(x => x.hearingId === hearingId);
             expect(postRevertedHearing.allocatedOfficerUsername).toBe(originalUsername);
 
             // then toggle all off
-            component.toggleAll(false);
+            component.deselectAll();
             fixture.detectChanges();
             expect(component.allocationHearingViewModel.originalState).toEqual(testData);
             const revertedMatchingElements = fixture.debugElement.queryAll(By.css('[id^=cso_]'));
@@ -411,7 +411,7 @@ describe('AllocateHearingsComponent', () => {
             allocateServiceSpy.allocateCsoToHearings.and.returnValue(of([updatedAllocation]));
 
             // act
-            component.selectHearing(true, hearingId);
+            component.selectHearing(hearingId);
 
             // mimic cso selection
             component.onJusticeUserForAllocationSelected({ entityId: csoId, label: '' });
@@ -449,7 +449,7 @@ describe('AllocateHearingsComponent', () => {
             const spy = spyOn(component, 'clearHearingUpdatedMessage');
 
             // act
-            component.selectHearing(true, hearingId);
+            component.selectHearing(hearingId);
             component.onJusticeUserForAllocationSelected({ entityId: csoId, label: '' });
             component.confirmAllocation();
             tick();
@@ -487,7 +487,7 @@ describe('AllocateHearingsComponent', () => {
             const csoId = newGuid();
 
             // act
-            component.selectHearing(true, hearingId);
+            component.selectHearing(hearingId);
 
             component.cancelAllocation();
 
@@ -502,7 +502,7 @@ describe('AllocateHearingsComponent', () => {
             const hearingId = testData[0].hearing_id;
 
             // act
-            component.selectHearing(true, hearingId);
+            component.selectHearing(hearingId);
 
             // mimic cso selection clear
             component.onJusticeUserForAllocationSelected();

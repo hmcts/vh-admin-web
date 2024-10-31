@@ -65,7 +65,8 @@ describe('OtherInformationComponent', () => {
         'getCurrentRequest',
         'cancelRequest',
         'updateHearingRequest',
-        'setBookingHasChanged'
+        'setBookingHasChanged',
+        'unsetBookingHasChanged'
     ]);
 
     beforeEach(waitForAsync(() => {

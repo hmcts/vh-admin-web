@@ -69,7 +69,8 @@ describe('CreateHearingComponent with multiple case types', () => {
             'getHearingTypes',
             'getCurrentRequest',
             'updateHearingRequest',
-            'setBookingHasChanged'
+            'setBookingHasChanged',
+            'unsetBookingHasChanged'
         ]);
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
@@ -212,7 +213,8 @@ describe('CreateHearingComponent with single case type', () => {
             'getCurrentRequest',
             'updateHearingRequest',
             'cancelRequest',
-            'setBookingHasChanged'
+            'setBookingHasChanged',
+            'unsetBookingHasChanged'
         ]);
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
@@ -278,7 +280,8 @@ describe('CreateHearingComponent with existing request in session', () => {
             'getCurrentRequest',
             'updateHearingRequest',
             'cancelRequest',
-            'setBookingHasChanged'
+            'setBookingHasChanged',
+            'unsetBookingHasChanged'
         ]);
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);

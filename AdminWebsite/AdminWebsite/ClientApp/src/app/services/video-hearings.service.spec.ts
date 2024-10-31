@@ -76,9 +76,9 @@ describe('Video hearing service', () => {
     });
 
     it('should not have changes if we set it to false', () => {
-        service.setBookingHasChanged(true);
+        service.setBookingHasChanged();
         expect(service.hasUnsavedChanges()).toBe(true);
-        service.setBookingHasChanged(false);
+        service.unsetBookingHasChanged();
         expect(service.hasUnsavedChanges()).toBe(false);
     });
 
@@ -689,9 +689,9 @@ describe('Video hearing service', () => {
         });
 
         it('should not have changes if we set it to false', () => {
-            service.setVhoNonAvailabiltiesHaveChanged(true);
+            service.setVhoNonAvailabiltiesHaveChanged();
             expect(service.hasUnsavedVhoNonAvailabilityChanges()).toBe(true);
-            service.setVhoNonAvailabiltiesHaveChanged(false);
+            service.unsetVhoNonAvailabiltiesHaveChanged();
             expect(service.hasUnsavedVhoNonAvailabilityChanges()).toBe(false);
         });
     });

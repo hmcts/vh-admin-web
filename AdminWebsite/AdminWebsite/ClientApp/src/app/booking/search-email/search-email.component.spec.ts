@@ -344,11 +344,11 @@ describe('SearchEmailComponent', () => {
         expect(component.notFoundParticipant).toBeFalsy();
     });
     it('should set notFoundParticipant to true', () => {
-        spyOn(component.notFoundEmailEvent, 'next');
+        spyOn(component.emailNotFoundEvent, 'next');
         component.noDataFound();
         expect(component.isShowResult).toBeFalsy();
         expect(component.notFoundParticipant).toBeTruthy();
-        expect(component.notFoundEmailEvent.next).toHaveBeenCalled();
+        expect(component.emailNotFoundEvent.next).toHaveBeenCalled();
     });
     it('should set notFoundParticipant to false if less that 3 letters input', () => {
         component.lessThanThreeLetters();
@@ -370,10 +370,9 @@ describe('SearchEmailComponent', () => {
         it('should set correct errors when too few characters', fakeAsync(() => {
             component.isShowResult = true;
             component.notFoundParticipant = true;
-            component.notFoundEmailEvent.next(true);
+            component.emailNotFoundEvent.next();
 
-            const subscription = component.notFoundEmailEvent.subscribe(emailEvent => {
-                expect(emailEvent).toBe(false);
+            const subscription = component.emailFoundEvent.subscribe(() => {
                 expect(component.isShowResult).toBe(false);
                 expect(component.notFoundParticipant).toBe(false);
 
