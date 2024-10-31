@@ -32,11 +32,13 @@ export abstract class BookingBaseComponentDirective implements OnInit {
         this.logger.debug(`${this.loggerPrefix} On step ${this.componentName}`, { step: this.componentName, editMode: this.editMode });
         this.buttonAction = this.editMode ? 'Save' : 'Next';
 
-        if (this.form.dirty) {
-            this.videoHearingService.setBookingHasChanged();
-        } else {
-            this.videoHearingService.unsetBookingHasChanged();
-        }
+        this.form.valueChanges.subscribe(() => {
+            if (this.form.dirty) {
+                this.videoHearingService.setBookingHasChanged();
+            } else {
+                this.videoHearingService.unsetBookingHasChanged();
+            }
+        });
     }
 
     navigateToSummary() {
