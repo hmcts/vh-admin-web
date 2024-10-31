@@ -153,7 +153,7 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
             return linkedParticipantChanges;
         }
 
-        private static IEnumerable<ParticipantResponse> GetRemovedParticipants(List<EditParticipantRequest> participants, HearingDetailsResponse originalHearing)
+        private static List<ParticipantResponse> GetRemovedParticipants(List<EditParticipantRequest> participants, HearingDetailsResponse originalHearing)
         {
             return originalHearing.Participants
                 .Where(p => participants.TrueForAll(rp => rp.Id != p.Id))
@@ -186,7 +186,7 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
             return endpointChanges;
         }
 
-        private static IEnumerable<EndpointResponse> GetRemovedEndpoints(List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
+        private static List<EndpointResponse> GetRemovedEndpoints(List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
         {
             return originalHearing.Endpoints
                 .Where(p => endpoints.TrueForAll(rp => rp.Id != p.Id))
@@ -194,14 +194,14 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
                 .ToList();
         }
 
-        private static IEnumerable<JudiciaryParticipantRequest> GetNewJudiciaryParticipants(HearingDetailsResponseV2 hearing, EditMultiDayHearingRequest request)
+        private static List<JudiciaryParticipantRequest> GetNewJudiciaryParticipants(HearingDetailsResponseV2 hearing, EditMultiDayHearingRequest request)
         {
             return request.JudiciaryParticipants
                 .Where(rjp => !hearing.JudiciaryParticipants.Exists(jp => jp.PersonalCode == rjp.PersonalCode))
                 .ToList();
         }
         
-        private static IEnumerable<JudiciaryParticipantResponse> GetRemovedJudiciaryParticipants(
+        private static List<JudiciaryParticipantResponse> GetRemovedJudiciaryParticipants(
             List<JudiciaryParticipantRequest> judiciaryParticipants, 
             HearingDetailsResponse originalHearing)
         {

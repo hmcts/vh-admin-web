@@ -43,8 +43,8 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
         private static void CreateParticipantMappings(
             HearingDetailsResponse multiDayHearingFutureDay,
             List<EditParticipantRequest> participants,
-            IDictionary<Guid, Guid> participantIdMappings,
-            IDictionary<string, Guid> participantsNewToEditedHearingButExistOnFutureDayHearing)
+            Dictionary<Guid, Guid> participantIdMappings,
+            Dictionary<string, Guid> participantsNewToEditedHearingButExistOnFutureDayHearing)
         {
             foreach (var participant in participants)
             {
@@ -67,8 +67,8 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
         
         private static void MapParticipantId(
             EditParticipantRequest participant,
-            IReadOnlyDictionary<Guid, Guid> participantIdMappings,
-            IReadOnlyDictionary<string, Guid> participantsNewToEditedHearingButExistOnFutureDayHearing)
+            Dictionary<Guid, Guid> participantIdMappings,
+            Dictionary<string, Guid> participantsNewToEditedHearingButExistOnFutureDayHearing)
         {
             if (participant.Id.HasValue)
             {

@@ -87,6 +87,7 @@
     <EmbeddedResource Remove="ClientApp\jasmine-tests\**" />
     <Content Remove="ClientApp\jasmine-tests\**" />
     <None Remove="ClientApp\jasmine-tests\**" />
+    <None Remove="Properties\ServiceDependencies\vh-admin-web-demo - Web Deploy\profile.arm.json" />
   </ItemGroup>
 
   <ItemGroup>

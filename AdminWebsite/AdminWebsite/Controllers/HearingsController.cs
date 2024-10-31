@@ -85,7 +85,7 @@ namespace AdminWebsite.Controllers
             newBookingRequest.IsMultiDayHearing = request.IsMultiDay;
             try
             {
-                if (newBookingRequest.Endpoints != null && newBookingRequest.Endpoints.Any())
+                if (newBookingRequest.Endpoints != null && newBookingRequest.Endpoints.Count != 0)
                 {
                     var endpointsWithDa = newBookingRequest.Endpoints
                         .Where(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocateContactEmail))
@@ -174,7 +174,7 @@ namespace AdminWebsite.Controllers
 
             var hearingDates = GetDatesForClonedHearings(hearingRequest);
             
-            if (!hearingDates.Any())
+            if (hearingDates.Count == 0)
             {
                 _logger.LogWarning("No working dates provided to clone to");
                 return BadRequest();
@@ -547,7 +547,7 @@ namespace AdminWebsite.Controllers
         {
             var request = await MapUpdateHearingParticipantsRequestV2(hearingId, participants, originalHearing);
 
-            if (participants.Any() || request.RemovedParticipantIds.Any())
+            if (participants.Count != 0 || request.RemovedParticipantIds.Count != 0)
                 await _hearingsService.ProcessParticipantsV2(hearingId, request.ExistingParticipants, request.NewParticipants, request.RemovedParticipantIds, request.LinkedParticipants);
             
             await _hearingsService.ProcessEndpoints(hearingId, endpoints, originalHearing, new List<IParticipantRequest>(request.NewParticipants));
@@ -590,7 +590,7 @@ namespace AdminWebsite.Controllers
                 .Select(x => x.Id).ToList();
         }
 
-        private static IEnumerable<ParticipantResponse> GetRemovedParticipants(List<EditParticipantRequest> participants, HearingDetailsResponse originalHearing)
+        private static List<ParticipantResponse> GetRemovedParticipants(List<EditParticipantRequest> participants, HearingDetailsResponse originalHearing)
         {
             return originalHearing.Participants.Where(p => participants.TrueForAll(rp => rp.Id != p.Id))
                 .Select(x => x).ToList();
@@ -640,7 +640,7 @@ namespace AdminWebsite.Controllers
                 .Where(jp => jp.HearingRoleCode != JudiciaryParticipantHearingRoleCode.Judge)
                 .ToList();
          
-            if (johsToAdd.Any())
+            if (johsToAdd.Count != 0)
             {
                 await _bookingsApiClient.AddJudiciaryParticipantsToHearingAsync(hearingId, johsToAdd);
             }
@@ -712,12 +712,12 @@ namespace AdminWebsite.Controllers
                     InterpreterLanguageCode = jp.InterpreterLanguageCode
                 };
             }).ToList();
-            if (newJohRequest.Any())
+            if (newJohRequest.Count != 0)
             {
                 var johsToAdd = newJohRequest
                     .ToList();
 
-                if (johsToAdd.Any())
+                if (johsToAdd.Count != 0)
                 {
                     var newParticipants = johsToAdd
                         .Select(x => new BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest
@@ -940,7 +940,7 @@ namespace AdminWebsite.Controllers
             var errorMessage = $"Failed to get the booking created status, possibly the conference was not created - hearingId: {hearingId}";
             try
             {
-                _logger.LogDebug("Hearing {1} is booked. Polling for the status in BookingsApi", hearingId);
+                _logger.LogDebug("Hearing {HearingId} is booked. Polling for the status in BookingsApi", hearingId);
                 var response = await GetHearing(hearingId);
                 var participantsNeedVhAccounts = ParticipantsNeedVhAccounts(response.Participants);
                 var accountsStillNeedCreating = participantsNeedVhAccounts.Any(x => x.ContactEmail == x.Username);
@@ -1043,14 +1043,13 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateFailedBookingStatus(Guid hearingId)
         {
-            var errorMessage = $"Failed to update the failed status for a hearing - hearingId: {hearingId}";
             try
             {
                 await _bookingsApiClient.FailBookingAsync(hearingId);
             }
             catch (VideoApiException e)
             {
-                _logger.LogError(e, errorMessage);
+                _logger.LogError(e, "Failed to update the failed status for a hearing - hearingId: {HearingId}", hearingId);
                 if (e.StatusCode == (int) HttpStatusCode.NotFound) return NotFound();
                 if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
             }

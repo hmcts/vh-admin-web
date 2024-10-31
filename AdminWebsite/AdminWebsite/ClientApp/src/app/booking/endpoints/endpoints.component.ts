@@ -79,14 +79,12 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         if (this.editMode || !canEditOtherInformation) {
             this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary.`);
             this.router.navigate([PageUrls.Summary]);
+        } else if (this.specialMeasureEnabled) {
+            this.logger.debug(`${this.loggerPrefix} Proceeding to screening.`);
+            this.router.navigate([PageUrls.Screening]);
         } else {
-            if (this.specialMeasureEnabled) {
-                this.logger.debug(`${this.loggerPrefix} Proceeding to screening.`);
-                this.router.navigate([PageUrls.Screening]);
-            } else {
-                this.logger.debug(`${this.loggerPrefix} Proceeding to other information.`);
-                this.router.navigate([PageUrls.OtherInformation]);
-            }
+            this.logger.debug(`${this.loggerPrefix} Proceeding to other information.`);
+            this.router.navigate([PageUrls.OtherInformation]);
         }
     }
 

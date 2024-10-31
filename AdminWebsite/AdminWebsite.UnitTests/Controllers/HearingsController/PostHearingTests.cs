@@ -1,21 +1,16 @@
 using AdminWebsite.Models;
-using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
-using FizzWare.NBuilder;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.Configuration;
-using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
 using BookingsApi.Client;
 using Autofac.Extras.Moq;
 using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V2.Requests;
 using VideoApi.Contract.Responses;
-using EndpointRequest = AdminWebsite.Contracts.Requests.EndpointRequest;
-using LinkedParticipantRequest = AdminWebsite.Contracts.Requests.LinkedParticipantRequest;
 using ParticipantRequest = AdminWebsite.Contracts.Requests.ParticipantRequest;
 using V1 = BookingsApi.Contract.V1;
 
@@ -69,7 +64,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 BookingDetails = hearing
             };
             
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingWithCodeAsync(It.IsAny<BookNewHearingRequestV2>()))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
 
             var response = _controller.Post(bookingRequest);
@@ -90,7 +85,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 BookingDetails = hearing
             };
 
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingWithCodeAsync(It.IsAny<BookNewHearingRequestV2>()))
                 .Throws(new Exception("Some internal error"));
             
             var response = _controller.Post(bookingRequest);

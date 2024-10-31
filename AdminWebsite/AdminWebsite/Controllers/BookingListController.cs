@@ -106,7 +106,7 @@ namespace AdminWebsite.Controllers
         {
             var typeIds = new List<int>();
             var types = await _bookingsApiClient.GetCaseTypesAsync(includeDeleted:true);
-            if (types != null && types.Any())
+            if (types != null && types.Count != 0)
                 foreach (var item in caseTypes)
                 {
                     var caseType = types.FirstOrDefault(s => s.Name == item);

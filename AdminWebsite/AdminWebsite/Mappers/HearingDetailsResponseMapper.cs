@@ -50,13 +50,13 @@ public static class HearingDetailsResponseMapper
     public static HearingDetailsResponse Map(this V2.HearingDetailsResponseV2 hearingDetails, ICollection<V2.HearingDetailsResponseV2> hearingsInGroup)
     {
         var response = hearingDetails.Map();
-        if (hearingsInGroup == null || !hearingsInGroup.Any()) return response;
+        if (hearingsInGroup == null || hearingsInGroup.Count == 0) return response;
         var activeHearings = hearingsInGroup
             .Where(h => 
                 h.Status != BookingStatusV2.Cancelled && 
                 h.Status != BookingStatusV2.Failed)
             .ToList();
-        if (activeHearings.Any())
+        if (activeHearings.Count != 0)
         {
             response.MultiDayHearingLastDayScheduledDateTime = activeHearings.ScheduledDateTimeOfLastHearing();
         }

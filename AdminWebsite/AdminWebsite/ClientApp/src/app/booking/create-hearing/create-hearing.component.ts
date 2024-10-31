@@ -75,7 +75,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
                 if (this.isExistingHearingOrParticipantsAdded()) {
                     this.form.get('supplier').disable();
                 }
-            } else if (this.form && this.form.contains('supplier')) {
+            } else if (this.form?.contains('supplier')) {
                 this.form.removeControl('supplier');
                 this.hearing.supplier = this.retrieveDefaultSupplier();
             }

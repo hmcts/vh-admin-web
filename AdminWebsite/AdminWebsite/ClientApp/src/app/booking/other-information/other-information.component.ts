@@ -85,7 +85,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
             return true;
         }
 
-        return this.hearing && this.hearing.audio_recording_required !== null && this.hearing.audio_recording_required !== undefined
+        return this.hearing?.audio_recording_required !== null && this.hearing?.audio_recording_required !== undefined
             ? this.hearing.audio_recording_required
             : true;
     }

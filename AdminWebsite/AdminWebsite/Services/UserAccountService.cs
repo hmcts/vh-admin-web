@@ -95,7 +95,10 @@ namespace AdminWebsite.Services
         public async Task<UserRole> GetUserRoleAsync(string userName)
         {
             var user = await _userApiClient.GetUserByAdUserNameAsync(userName);
-            Enum.TryParse<UserRoleType>(user.UserRole, out var userRoleResult);
+            if (!Enum.TryParse<UserRoleType>(user.UserRole, out var userRoleResult))
+            {
+                throw new InvalidOperationException($"Invalid user role: {user.UserRole}");
+            }
 
             return new UserRole { UserRoleType = userRoleResult, CaseTypes = user.CaseType };
         }
@@ -222,7 +225,10 @@ namespace AdminWebsite.Services
             try
             {
                 var person = await _userApiClient.GetUserByAdUserNameAsync(username);
-                Enum.TryParse<UserRoleType>(person.UserRole, out var userRoleResult);
+                if (!Enum.TryParse<UserRoleType>(person.UserRole, out var userRoleResult))
+                {
+                    throw new InvalidOperationException($"Invalid user role: {person.UserRole}");
+                }
                 if (userRoleResult == UserRoleType.Judge || userRoleResult == UserRoleType.VhOfficer)
                 {
                     var e = new UserServiceException

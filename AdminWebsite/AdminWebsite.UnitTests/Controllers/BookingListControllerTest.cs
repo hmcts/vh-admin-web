@@ -452,7 +452,7 @@ namespace AdminWebsite.UnitTests.Controllers
             okResult.StatusCode.Should().Be(200);
         }
 
-        private List<CaseTypeResponse> GetCaseTypesList()
+        private static List<CaseTypeResponse> GetCaseTypesList()
         {
             return new List<CaseTypeResponse>
             {
