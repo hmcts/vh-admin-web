@@ -179,7 +179,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     registerUnsavedChanges() {
-        this.videoHearingsService.setVhoNonAvailabiltiesHaveChanged(true);
+        this.videoHearingsService.setVhoNonAvailabiltiesHaveChanged();
     }
 
     validateNonWorkHour(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {

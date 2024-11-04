@@ -116,7 +116,7 @@ namespace AdminWebsite.UnitTests.Services
                         && x.LinkedParticipants == linkedParticipants)), Times.Once);
         }
 
-        private HearingDetailsResponse InitHearing()
+        private static HearingDetailsResponse InitHearing()
         {
             var cases = new List<CaseResponse> { new CaseResponse { Name = "Test", Number = "123456" } };
             var rep = Builder<ParticipantResponse>.CreateNew()

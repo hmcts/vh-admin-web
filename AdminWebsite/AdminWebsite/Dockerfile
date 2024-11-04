@@ -8,8 +8,11 @@ FROM node:18.13-alpine AS client
 ARG skip_client_build=false 
 WORKDIR /app 
 COPY AdminWebsite/ClientApp . 
-RUN [[ ${skip_client_build} = true ]] && echo "Skipping npm install" || npm install
-RUN [[ ${skip_client_build} = true ]] && mkdir dist || npm run-script build-prod
+RUN if [ "$skip_client_build" = "true" ]; then \
+        echo "Skipping npm install" && mkdir dist; \
+    else \
+        npm install && npm run-script build-prod; \
+    fi
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src

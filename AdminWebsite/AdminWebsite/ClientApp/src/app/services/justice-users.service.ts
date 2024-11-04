@@ -95,7 +95,7 @@ export class JusticeUsersService {
         return this.apiClient.getUserList(cleanQuery(term)).pipe(
             catchError(error => {
                 this.logger.error(`${this.loggerPrefix} There was an unexpected error getting justice users`, new Error(error));
-                return throwError(error);
+                return throwError(() => error);
             })
         );
     }

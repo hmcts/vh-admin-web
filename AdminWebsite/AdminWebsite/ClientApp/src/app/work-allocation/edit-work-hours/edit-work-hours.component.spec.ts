@@ -31,7 +31,8 @@ describe('EditWorkHoursComponent', () => {
     beforeEach(async () => {
         videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
             'cancelVhoNonAvailabiltiesRequest',
-            'setVhoNonAvailabiltiesHaveChanged'
+            'setVhoNonAvailabiltiesHaveChanged',
+            'unsetVhoNonAvailabiltiesHaveChanged'
         ]);
         bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours', 'uploadNonWorkingHours', 'updateNonAvailabilityWorkHours']);
         bHClientSpy.uploadWorkHours.and.returnValue(of(new UploadWorkHoursResponse({ failed_usernames: [] })));

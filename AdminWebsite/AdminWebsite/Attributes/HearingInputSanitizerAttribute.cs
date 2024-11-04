@@ -7,13 +7,13 @@ using BookingsApi.Contract.V1.Requests;
 namespace AdminWebsite.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class HearingInputSanitizerAttribute : ActionFilterAttribute
+    public partial class HearingInputSanitizerAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (context.ActionArguments != null && context.ActionArguments.ContainsKey("request"))
+            if (context.ActionArguments.TryGetValue("request", out var argument))
             {
-                switch (context.ActionArguments["request"])
+                switch (argument)
                 {
                     case BookNewHearingRequest newHearingRequest:
                         newHearingRequest.HearingRoomName = Sanitize(newHearingRequest.HearingRoomName);
@@ -74,9 +74,12 @@ namespace AdminWebsite.Attributes
                 return input;
             }
 
-            var regex = new Regex(@"<(.*?)>", RegexOptions.Compiled);
+            var regex = InputRegex();
 
             return regex.Replace(input, string.Empty);
         }
+
+        [GeneratedRegex(@"<(.*?)>", RegexOptions.Compiled)]
+        private static partial Regex InputRegex();
     }
 }

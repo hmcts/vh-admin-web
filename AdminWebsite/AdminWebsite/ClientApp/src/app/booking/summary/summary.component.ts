@@ -215,7 +215,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         }
 
         this.hearingService.updateHearingRequest(this.hearing);
-        this.hearingService.setBookingHasChanged(true);
+        this.hearingService.setBookingHasChanged();
         this.bookingService.removeParticipantEmail();
     }
 
@@ -424,7 +424,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         const noJudgePrior =
             this.hearing.status === BookingStatus.BookedWithoutJudge || this.hearing.status === BookingStatus.ConfirmedWithoutJudge;
         this.showWaitSaving = false;
-        this.hearingService.setBookingHasChanged(false);
+        this.hearingService.unsetBookingHasChanged();
         this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
             hearingId: hearingDetailsResponse.id
         });
@@ -539,7 +539,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.removeLinkedParticipant(this.selectedParticipantEmail);
         this.hearing = { ...this.hearing };
         this.hearingService.updateHearingRequest(this.hearing);
-        this.hearingService.setBookingHasChanged(true);
+        this.hearingService.setBookingHasChanged();
         this.bookingService.removeParticipantEmail();
     }
 

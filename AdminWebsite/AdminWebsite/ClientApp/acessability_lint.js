@@ -32,26 +32,28 @@ async function runPa11y(filename) {
 }
 
 const run = () => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const result = [];
-            const files = await getHtmlFiles();
-            output(`detected ${files.length} html files to parse`);
-            for (let index = 0; index < files.length; index += 1) {
-                const lintErrors = await runPa11y(files[index]);
-                if (lintErrors.issues.length > 0) {
-                    result.push({
-                        file: lintErrors.pageUrl,
-                        issues: lintErrors.issues
-                    });
+    return new Promise((resolve, reject) => {
+        (async () => {
+            try {
+                const result = [];
+                const files = await getHtmlFiles();
+                output(`detected ${files.length} html files to parse`);
+                for (let index = 0; index < files.length; index += 1) {
+                    const lintErrors = await runPa11y(files[index]);
+                    if (lintErrors.issues.length > 0) {
+                        result.push({
+                            file: lintErrors.pageUrl,
+                            issues: lintErrors.issues
+                        });
+                    }
+                    const doneDegree = Math.round((index / files.length) * 100);
+                    output(`${doneDegree}% done, completed ${files[index]}`);
                 }
-                const doneDegree = Math.round((index / files.length) * 100);
-                output(`${doneDegree}% done, completed ${files[index]}`);
+                resolve(result);
+            } catch (err) {
+                reject(err);
             }
-            resolve(result);
-        } catch (err) {
-            reject(err);
-        }
+        })();
     });
 };
 

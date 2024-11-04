@@ -81,7 +81,8 @@ describe('EndpointsComponent', () => {
             'isHearingAboutToStart',
             'updateHearingRequest',
             'cancelRequest',
-            'setBookingHasChanged'
+            'setBookingHasChanged',
+            'unsetBookingHasChanged'
         ]);
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);

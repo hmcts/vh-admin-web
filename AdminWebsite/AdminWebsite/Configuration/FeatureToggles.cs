@@ -13,7 +13,7 @@ namespace AdminWebsite.Configuration
 
     public class FeatureToggles : IFeatureToggles
     {
-        private readonly ILdClient _ldClient;
+        private readonly LdClient _ldClient;
         private readonly Context _context;
         private const string LdUser = "vh-admin-web";
         private const string Dom1EnabledToggleKey = "dom1";

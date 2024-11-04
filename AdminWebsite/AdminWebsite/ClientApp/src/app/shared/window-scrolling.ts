@@ -6,7 +6,7 @@ export class WindowScrolling {
     constructor(@Inject(DOCUMENT) private readonly document: Document) {}
 
     getPosition(): number {
-        return window.pageYOffset;
+        return window.scrollY;
     }
 
     getWindowHeight(): number {

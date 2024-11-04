@@ -48,11 +48,11 @@ describe('VenuesMenuComponent', () => {
 
     describe('enable', () => {
         it('should call base enable function, to enable this component', () => {
-            component.enabled(true);
+            component.enabled();
             expect(component.form.controls[component.formGroupName].enabled).toEqual(true);
         });
         it('should call base enable function, to disable this component', () => {
-            component.enabled(false);
+            component.disabled();
             expect(component.form.controls[component.formGroupName].enabled).toEqual(false);
         });
     });

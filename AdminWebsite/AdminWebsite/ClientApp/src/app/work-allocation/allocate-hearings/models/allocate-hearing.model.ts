@@ -84,8 +84,8 @@ export class AllocateHearingModel {
     }
 
     get hasPendingChanges(): boolean {
-        const original = this.originalState.map(h => <any>{ id: h.hearing_id, cso: h.allocated_cso }).sort();
-        const current = this.hearings.map(h => <any>{ id: h.hearingId, cso: h.allocatedOfficerUsername }).sort();
+        const original = this.originalState.map(h => <any>{ id: h.hearing_id, cso: h.allocated_cso }).sort((a, b) => a - b);
+        const current = this.hearings.map(h => <any>{ id: h.hearingId, cso: h.allocatedOfficerUsername }).sort((a, b) => a - b);
 
         const stringMatch = JSON.stringify(original) === JSON.stringify(current);
         return !stringMatch;

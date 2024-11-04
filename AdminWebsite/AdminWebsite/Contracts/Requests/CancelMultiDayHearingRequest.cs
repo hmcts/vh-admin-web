@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace AdminWebsite.Contracts.Requests
 {
     public class CancelMultiDayHearingRequest
@@ -5,6 +7,7 @@ namespace AdminWebsite.Contracts.Requests
         /// <summary>
         /// When true, applies updates to future days of the multi day hearing as well
         /// </summary>
+        [JsonRequired]
         public bool UpdateFutureDays { get; set; }
 
         /// <summary>

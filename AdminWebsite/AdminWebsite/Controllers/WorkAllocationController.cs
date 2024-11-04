@@ -39,7 +39,7 @@ namespace AdminWebsite.Controllers
         {
             var unallocatedHearings = await _bookingsApiClient.GetUnallocatedHearingsAsync();
 
-            if (unallocatedHearings == null || !unallocatedHearings.Any())
+            if (unallocatedHearings == null || unallocatedHearings.Count == 0)
                 return Ok(UnallocatedHearingsForVhoMapper.MapFrom(new List<HearingDetailsResponse>(), DateTime.Today));
 
             return Ok(UnallocatedHearingsForVhoMapper.MapFrom(unallocatedHearings.ToList(), DateTime.Today));
@@ -59,7 +59,7 @@ namespace AdminWebsite.Controllers
                 cso: searchRequest.Cso,
                 isUnallocated: searchRequest.IsUnallocated);
 
-            if (hearings == null || !hearings.Any())
+            if (hearings == null || hearings.Count == 0)
                 return Ok(new List<AllocationHearingsResponse>());
 
             return Ok(hearings.Select(AllocationHearingsResponseMapper.Map));
@@ -79,7 +79,7 @@ namespace AdminWebsite.Controllers
         {
             var hearings = await _bookingsApiClient.AllocateHearingsToCsoAsync(request);
 
-            if (hearings == null || !hearings.Any())
+            if (hearings == null || hearings.Count == 0)
                 return Ok(new List<AllocationHearingsResponse>());
 
             return Ok(hearings.Select(AllocationHearingsResponseMapper.Map).ToList());

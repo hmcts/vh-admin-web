@@ -165,7 +165,7 @@ export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
     }
 
     registerUnsavedChanges() {
-        this.videoHearingsService.setVhoNonAvailabiltiesHaveChanged(true);
+        this.videoHearingsService.setVhoNonAvailabiltiesHaveChanged();
     }
 
     get checkVhoHasWorkHours(): boolean {

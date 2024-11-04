@@ -26,7 +26,7 @@ export class ParticipantEditService {
         } catch (error) {
             this.logger.error(`Failed to find person ${contactEmail}. ${error.response}`, error);
             if (BookHearingException.isBookHearingException(error)) {
-                throw error as BookHearingException;
+                throw error;
             }
             return null;
         }

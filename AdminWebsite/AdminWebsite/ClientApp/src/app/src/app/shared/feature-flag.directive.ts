@@ -18,12 +18,16 @@ export class FeatureFlagDirective {
     @Input() set appFeatureFlag(flagKey: keyof typeof FeatureFlags) {
         this.subscription?.unsubscribe();
 
-        this.subscription = this.launchDarklyService.getFlag<boolean>(flagKey).subscribe(flagValue => {
-            if (flagValue) {
-                this.viewContainer.createEmbeddedView(this.templateRef);
-            } else {
-                this.viewContainer.clear();
-            }
+        this.subscription = this.launchDarklyService.getFlag<boolean>(flagKey).subscribe({
+            next: flagValue => (flagValue ? this.showContent() : this.hideContent())
         });
+    }
+
+    private showContent(): void {
+        this.viewContainer.createEmbeddedView(this.templateRef);
+    }
+
+    private hideContent(): void {
+        this.viewContainer.clear();
     }
 }

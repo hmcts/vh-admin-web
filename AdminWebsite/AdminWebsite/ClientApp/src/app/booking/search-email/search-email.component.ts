@@ -29,8 +29,10 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     invalidPattern: string;
     isErrorEmailAssignedToJudge = false;
     isJoh = false;
-    notFoundEmailEvent = new Subject<boolean>();
-    notFoundEmailEvent$ = this.notFoundEmailEvent.asObservable();
+    emailFoundEvent = new Subject<void>();
+    emailFoundEvent$ = this.emailFoundEvent.asObservable();
+    emailNotFoundEvent = new Subject<void>();
+    emailNotFoundEvent$ = this.emailNotFoundEvent.asObservable();
     private readonly cannotAddNewUsersRoles = [this.constants.Judge];
 
     @Input() disabled = true;
@@ -107,19 +109,19 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         this.isShowResult = true;
         this.isValidEmail = true;
         this.notFoundParticipant = false;
-        this.notFoundEmailEvent.next(false);
+        this.emailFoundEvent.next();
     }
 
     noDataFound() {
         this.isShowResult = false;
         this.notFoundParticipant = !this.isErrorEmailAssignedToJudge;
-        this.notFoundEmailEvent.next(true);
+        this.emailNotFoundEvent.next();
     }
 
     lessThanThreeLetters() {
         this.isShowResult = false;
         this.notFoundParticipant = false;
-        this.notFoundEmailEvent.next(false);
+        this.emailFoundEvent.next();
     }
 
     selectItemClick(result: ParticipantModel) {

@@ -250,4 +250,24 @@ describe('VhoSearchComponent', () => {
             expect(component.dataChange.emit).toHaveBeenCalledTimes(0);
         });
     });
+
+    describe('dataChangedBroadcast events received', () => {
+        beforeEach(() => {
+            spyOn(component, 'cancelEditing');
+            spyOn(component, 'handleContinue');
+            component.ngOnInit();
+        });
+
+        it('should call cancelEditing when dataChangedBroadcast emits true', () => {
+            component.dataChangedBroadcast.next(true);
+            expect(component.cancelEditing).toHaveBeenCalled();
+            expect(component.handleContinue).not.toHaveBeenCalled();
+        });
+
+        it('should call handleContinue when dataChangedBroadcast emits false', () => {
+            component.dataChangedBroadcast.next(false);
+            expect(component.handleContinue).toHaveBeenCalled();
+            expect(component.cancelEditing).not.toHaveBeenCalled();
+        });
+    });
 });

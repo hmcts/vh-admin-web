@@ -40,13 +40,15 @@ export class UnallocatedHearingsComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.client.getUnallocatedHearings().subscribe(
-            result => {
+        this.client.getUnallocatedHearings().subscribe({
+            next: result => {
                 this.unallocatedHearings = result;
                 this.setRouterParameters();
             },
-            error => this.logger.error(`${this.loggerPrefix} Could not get unallocated hearings`, error)
-        );
+            error: error => {
+                this.logger.error(`${this.loggerPrefix} Could not get unallocated hearings`, error);
+            }
+        });
     }
     private setRouterParameters() {
         const format = (dt: Date) => dt.toISOString().split('T')[0];

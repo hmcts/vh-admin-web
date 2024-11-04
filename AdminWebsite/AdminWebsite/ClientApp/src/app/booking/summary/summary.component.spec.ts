@@ -115,6 +115,7 @@ const videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService> = jasmine.cr
     'cancelRequest',
     'updateHearing',
     'setBookingHasChanged',
+    'unsetBookingHasChanged',
     'cloneMultiHearings',
     'isConferenceClosed',
     'isHearingAboutToStart',

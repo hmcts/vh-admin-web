@@ -49,6 +49,15 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     hearingsInGroupToEdit: HearingModel[];
     newDatesFormArray: FormArray;
 
+    hearingDateParsed: string = null;
+    startTimeHour: string = null;
+    startTimeMinute: string = null;
+    durationHour: string = null;
+    durationMinute: string = null;
+    room = '';
+    endHearingDateParsed: string = null;
+    multiDaysRange = true;
+
     private readonly destroyed$ = new Subject<void>();
     multiDayBookingEnhancementsEnabled: boolean;
 
@@ -94,97 +103,111 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     private initForm() {
-        let hearingDateParsed = null;
-        let startTimeHour = null;
-        let startTimeMinute = null;
-        let durationHour = null;
-        let durationMinute = null;
-        let room = '';
         this.multiDaysHearing = null;
-        let endHearingDateParsed = null;
 
-        let multiDaysRange = true;
+        this.initialiseHearingDetails();
+        this.setUpDurationControls();
+        this.buildFormGroup();
+        if (this.hearing?.isMultiDayEdit) {
+            this.setUpNewDateControls();
+        }
+        this.subscribeToFormChanges();
+    }
 
-        if (this.hearing) {
-            this.logger.debug(`${this.loggerPrefix} Populating form with existing hearing details`, {
-                hearing: this.hearing?.hearing_id
-            });
-            if (this.hearing.hearing_venue_id === undefined) {
-                this.hearing.hearing_venue_id = -1;
-            }
-
-            if (this.hearing.scheduled_date_time) {
-                const date = new Date(this.hearing.scheduled_date_time);
-                hearingDateParsed = this.datePipe.transform(date, 'yyyy-MM-dd');
-                startTimeHour = (date.getHours() < 10 ? '0' : '') + date.getHours();
-                startTimeMinute = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
-            }
-
-            if (this.hearing.end_hearing_date_time) {
-                const date = new Date(this.hearing.end_hearing_date_time);
-                endHearingDateParsed = this.datePipe.transform(date, 'yyyy-MM-dd');
-            }
-
-            if (this.hearing.hearing_dates.length > 0) {
-                this.hearingDates = this.hearing.hearing_dates.map(x => new Date(x));
-                multiDaysRange = false;
-            }
-
-            if (this.hearing.scheduled_duration) {
-                const duration = new Date();
-                duration.setHours(0, 0, 0, 0);
-                duration.setMinutes(this.hearing.scheduled_duration);
-                durationHour = (duration.getHours() < 10 ? '0' : '') + duration.getHours();
-                durationMinute = (duration.getMinutes() < 10 ? '0' : '') + duration.getMinutes();
-            }
-
-            if (this.hearing.scheduled_date_time && this.hearing.scheduled_duration && this.hearing.hearing_venue_id) {
-                this.hasSaved = true;
-            }
-
-            if (this.hearing.court_room) {
-                room = this.hearing.court_room;
-            }
-
-            this.multiDaysHearing = this.hearing.isMultiDayEdit;
-
-            if (this.hearing.isMultiDayEdit && this.hearing.multiDayHearingLastDayScheduledDateTime) {
-                const date = new Date(this.hearing.multiDayHearingLastDayScheduledDateTime);
-                endHearingDateParsed = this.datePipe.transform(date, 'yyyy-MM-dd');
-            }
+    private initialiseHearingDetails() {
+        if (!this.hearing) {
+            return;
+        }
+        this.logger.debug(`${this.loggerPrefix} Populating form with existing hearing details`, {
+            hearing: this.hearing?.hearing_id
+        });
+        if (this.hearing.hearing_venue_id === undefined) {
+            this.hearing.hearing_venue_id = -1;
         }
 
-        if (!this.showDurationControls) {
-            this.durationHourControl = new FormControl(durationHour);
-            this.durationMinuteControl = new FormControl(durationMinute);
-        } else {
-            this.durationHourControl = new FormControl(durationHour, [Validators.required, Validators.min(0), Validators.max(23)]);
-            this.durationMinuteControl = new FormControl(durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]);
+        this.setStartTime();
+
+        if (this.hearing.end_hearing_date_time) {
+            const date = new Date(this.hearing.end_hearing_date_time);
+            this.endHearingDateParsed = this.datePipe.transform(date, 'yyyy-MM-dd');
+        }
+
+        if (this.hearing.hearing_dates.length > 0) {
+            this.hearingDates = this.hearing.hearing_dates.map(x => new Date(x));
+            this.multiDaysRange = false;
+        }
+
+        this.setDuration();
+
+        if (this.hearing.scheduled_date_time && this.hearing.scheduled_duration && this.hearing.hearing_venue_id) {
+            this.hasSaved = true;
+        }
+
+        if (this.hearing.court_room) {
+            this.room = this.hearing.court_room;
+        }
+
+        this.multiDaysHearing = this.hearing.isMultiDayEdit;
+
+        if (this.hearing.isMultiDayEdit && this.hearing.multiDayHearingLastDayScheduledDateTime) {
+            const date = new Date(this.hearing.multiDayHearingLastDayScheduledDateTime);
+            this.endHearingDateParsed = this.datePipe.transform(date, 'yyyy-MM-dd');
         }
 
         this.selectedCourtName = this.hearing.court_name;
         this.selectedCourtCode = this.hearing.court_code;
+    }
 
+    private setStartTime() {
+        if (!this.hearing.scheduled_date_time) {
+            return;
+        }
+        const date = new Date(this.hearing.scheduled_date_time);
+        this.hearingDateParsed = this.datePipe.transform(date, 'yyyy-MM-dd');
+        this.startTimeHour = (date.getHours() < 10 ? '0' : '') + date.getHours();
+        this.startTimeMinute = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+    }
+
+    private setDuration() {
+        if (!this.hearing.scheduled_duration) {
+            return;
+        }
+        const duration = new Date();
+        duration.setHours(0, 0, 0, 0);
+        duration.setMinutes(this.hearing.scheduled_duration);
+        this.durationHour = (duration.getHours() < 10 ? '0' : '') + duration.getHours();
+        this.durationMinute = (duration.getMinutes() < 10 ? '0' : '') + duration.getMinutes();
+    }
+
+    private setUpDurationControls() {
+        if (!this.showDurationControls) {
+            this.durationHourControl = new FormControl(this.durationHour);
+            this.durationMinuteControl = new FormControl(this.durationMinute);
+        } else {
+            this.durationHourControl = new FormControl(this.durationHour, [Validators.required, Validators.min(0), Validators.max(23)]);
+            this.durationMinuteControl = new FormControl(this.durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]);
+        }
+    }
+
+    private buildFormGroup() {
         this.newDatesFormArray = this.formBuilder.array([]);
 
         this.form = this.formBuilder.group({
-            hearingDate: [hearingDateParsed, [Validators.required, pastDateValidator()]],
-            hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
-            hearingStartTimeMinute: [startTimeMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
+            hearingDate: [this.hearingDateParsed, [Validators.required, pastDateValidator()]],
+            hearingStartTimeHour: [this.startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
+            hearingStartTimeMinute: [this.startTimeMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
             hearingDurationHour: this.durationHourControl,
             hearingDurationMinute: this.durationMinuteControl,
             courtAddress: [this.hearing.hearing_venue_id, [Validators.required, Validators.min(1)]],
-            courtRoom: [room, [Validators.pattern(Constants.TextInputPatternDisplayName), Validators.maxLength(255)]],
+            courtRoom: [this.room, [Validators.pattern(Constants.TextInputPatternDisplayName), Validators.maxLength(255)]],
             multiDays: [this.multiDaysHearing],
-            endHearingDate: [endHearingDateParsed],
-            multiDaysRange: [multiDaysRange],
+            endHearingDate: [this.endHearingDateParsed],
+            multiDaysRange: [this.multiDaysRange],
             newDates: this.newDatesFormArray
         });
+    }
 
-        if (this.hearing?.isMultiDayEdit) {
-            this.setUpNewDateControls();
-        }
-
+    private subscribeToFormChanges() {
         ['multiDays', 'multiDaysRange'].forEach(k => {
             this.form.get(k).valueChanges.subscribe(() => {
                 this.multiDaysChanged();

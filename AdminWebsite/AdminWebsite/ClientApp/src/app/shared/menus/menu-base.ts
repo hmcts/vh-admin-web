@@ -22,12 +22,11 @@ export abstract class MenuBase implements OnInit {
     abstract formConfiguration: any;
 
     @Output() selectedEmitter = new EventEmitter<any>();
-    enabled(value: boolean) {
-        if (value !== false) {
-            this.form.controls[this.formGroupName].enable();
-        } else {
-            this.form.controls[this.formGroupName].disable();
-        }
+    enabled() {
+        this.form.controls[this.formGroupName].enable();
+    }
+    disabled() {
+        this.form.controls[this.formGroupName].disable();
     }
     abstract loadItems(): void;
 

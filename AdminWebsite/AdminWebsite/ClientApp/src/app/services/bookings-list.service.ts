@@ -33,6 +33,12 @@ export class BookingsListService {
         noJudge?: boolean,
         noAllocated?: boolean
     ): Observable<BookingsResponse> {
+        if (noJudge == null || undefined) {
+            noJudge = false;
+        }
+        if (noAllocated == null || undefined) {
+            noAllocated = false;
+        }
         const searchRequest = {
             cursor,
             limit,

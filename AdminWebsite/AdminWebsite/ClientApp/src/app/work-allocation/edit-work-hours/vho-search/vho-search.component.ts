@@ -46,16 +46,20 @@ export class VhoSearchComponent implements OnInit {
             username: ['', Validators.required],
             hoursType: ['', Validators.required]
         });
-        this.dataChangedBroadcast.subscribe(x => {
-            if (!x) {
-                this.handleContinue();
-            } else {
-                this.cancelEditing();
-            }
+        this.dataChangedBroadcast.subscribe({
+            next: (x: boolean) => (x ? this.handleDataChanged() : this.handleDataUnchanged())
         });
         this.service.fetchNonWorkHours$.subscribe(async refresh => {
             await this.search(refresh);
         });
+    }
+
+    handleDataChanged() {
+        this.cancelEditing();
+    }
+
+    handleDataUnchanged() {
+        this.handleContinue();
     }
 
     async search(refresh: boolean = false): Promise<void> {

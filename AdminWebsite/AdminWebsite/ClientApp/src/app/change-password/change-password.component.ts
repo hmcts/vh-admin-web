@@ -62,20 +62,20 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
             this.saveSuccess = false;
 
             this.logger.debug(`${this.loggerPrefix} Attempting to reset password for user.`, { username: this.userName.value });
-            this.$subcription = this.userDataService.updateUser(this.userName.value).subscribe(
-                () => {
+            this.$subcription = this.userDataService.updateUser(this.userName.value).subscribe({
+                next: () => {
                     // tslint:disable-next-line: quotemark
                     this.popupMessage = "User's password has been changed";
                     this.showUpdateSuccess = true;
                     this.logger.info(`${this.loggerPrefix} User password has been reset.`, { username: this.userName.value });
                     this.saveSuccess = true;
                 },
-                error => {
+                error: error => {
                     this.popupMessage = 'User does not exist - please try again';
                     this.showUpdateSuccess = true;
                     this.logger.error(`${this.loggerPrefix} User does not exist.`, error, { username: this.userName.value });
                 }
-            );
+            });
         } else {
             this.failedSubmission = true;
         }
