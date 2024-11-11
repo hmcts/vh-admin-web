@@ -1,4 +1,4 @@
-import { fakeAsync, flush, flushMicrotasks, tick } from '@angular/core/testing';
+import { fakeAsync, flush } from '@angular/core/testing';
 import { Observable, of, throwError } from 'rxjs';
 import { MockLogger } from '../shared/testing/mock-logger';
 import { AudioLinkService, InvalidParametersError } from './audio-link-service';

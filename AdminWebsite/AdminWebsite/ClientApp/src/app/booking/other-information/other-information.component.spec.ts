@@ -11,10 +11,9 @@ import { ConfirmationPopupStubComponent } from '../../testing/stubs/confirmation
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { OtherInformationComponent } from './other-information.component';
 import { ParticipantModel } from '../../common/model/participant.model';
-import { of } from 'rxjs';
 import { CaseModel } from 'src/app/common/model/case.model';
 import { HearingModel } from 'src/app/common/model/hearing.model';
-import { LaunchDarklyService, FeatureFlags } from 'src/app/services/launch-darkly.service';
+import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 
 function initHearingRequest(): HearingModel {

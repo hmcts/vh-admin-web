@@ -1,4 +1,3 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Logger } from 'src/app/services/logger';
 
 import { ConfirmDeletePopupComponent } from './confirm-delete-popup.component';

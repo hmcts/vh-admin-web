@@ -1,4 +1,4 @@
-import { OpenIdConfiguration, LoginResponse, AuthenticatedResult, ConfigAuthenticatedResult } from 'angular-auth-oidc-client';
+import { LoginResponse } from 'angular-auth-oidc-client';
 import { LDFlagValue } from 'launchdarkly-js-client-sdk';
 import { Observable, of } from 'rxjs';
 

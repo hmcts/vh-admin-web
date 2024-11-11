@@ -1,6 +1,5 @@
 import { fakeAsync, flush } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
-import { CvpAudioSearchModel } from 'src/app/common/model/cvp-audio-search-model';
 import { AudioLinkService, ICvpAudioRecordingResult } from 'src/app/services/audio-link-service';
 import { CvpForAudioFileResponse } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';

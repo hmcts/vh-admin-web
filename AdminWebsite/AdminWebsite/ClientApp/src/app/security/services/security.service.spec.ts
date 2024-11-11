@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { SecurityService, IdpProviders } from './security.service';
-import { OidcSecurityService, OpenIdConfiguration, LoginResponse } from 'angular-auth-oidc-client';
+import { OidcSecurityService, OpenIdConfiguration } from 'angular-auth-oidc-client';
 import { of } from 'rxjs';
 
 describe('SecurityService', () => {

@@ -9,7 +9,7 @@ import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { SearchEmailComponent } from './search-email.component';
 import { DebugElement, ElementRef } from '@angular/core';
-import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 describe('SearchEmailComponent', () => {
     let component: SearchEmailComponent;
