@@ -1,6 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { Component, Directive, EventEmitter, Output } from '@angular/core';
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -9,7 +9,7 @@ import * as moment from 'moment';
 import { MomentModule } from 'ngx-moment';
 import { of } from 'rxjs';
 import { ConfigService } from 'src/app/services/config.service';
-import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { Logger } from 'src/app/services/logger';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import { ReturnUrlService } from 'src/app/services/return-url.service';

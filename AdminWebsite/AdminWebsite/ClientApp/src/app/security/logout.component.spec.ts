@@ -1,10 +1,8 @@
 import { fakeAsync } from '@angular/core/testing';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { Observable, of, Subject } from 'rxjs';
 import { UserIdentityService } from '../services/user-identity.service';
 import { LogoutComponent } from './logout.component';
-import { MockAuthenticatedResult, MockSecurityService } from '../testing/mocks/MockOidcSecurityService';
-import { IdpProviders, SecurityService } from './services/security.service';
+import { MockSecurityService } from '../testing/mocks/MockOidcSecurityService';
+import { IdpProviders } from './services/security.service';
 
 describe('LogoutComponent', () => {
     let component: LogoutComponent;

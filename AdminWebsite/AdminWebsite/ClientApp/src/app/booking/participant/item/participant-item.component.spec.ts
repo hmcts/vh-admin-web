@@ -9,7 +9,6 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Constants } from 'src/app/common/constants';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { PageUrls } from 'src/app/shared/page-url.constants';
-import { of } from 'rxjs';
 import { VideoSupplier } from 'src/app/services/clients/api-client';
 
 const router = {

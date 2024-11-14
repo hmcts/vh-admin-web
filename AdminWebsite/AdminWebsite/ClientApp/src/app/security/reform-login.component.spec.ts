@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReformLoginComponent } from './reform-login.component';
 import { IdpProviders, SecurityService } from './services/security.service';
 import { Router } from '@angular/router';
-import { ConfigService } from '../services/config.service';
 
 describe('LoginReformComponent', () => {
     let component: ReformLoginComponent;

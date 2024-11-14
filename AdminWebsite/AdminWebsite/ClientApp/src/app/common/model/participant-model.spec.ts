@@ -1,4 +1,3 @@
-import { TestBed } from '@angular/core/testing';
 import { JudgeAccountType, JudgeResponse, PersonResponse } from 'src/app/services/clients/api-client';
 import { ParticipantModel } from './participant.model';
 

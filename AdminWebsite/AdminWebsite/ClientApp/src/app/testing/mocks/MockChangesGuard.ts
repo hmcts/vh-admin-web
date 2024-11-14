@@ -1,4 +1,3 @@
-import { CanDeactiveComponent } from 'src/app/common/guards/changes.guard';
 export class MockChangesGuard {
     private _flag: boolean;
     canDeactivate() {

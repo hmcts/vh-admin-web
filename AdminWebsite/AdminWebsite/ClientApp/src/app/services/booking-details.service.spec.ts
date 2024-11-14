@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { LinkedParticipantModel } from '../common/model/linked-participant.model';
 import { BookingDetailsService } from './booking-details.service';
 import {
     HearingDetailsResponse,

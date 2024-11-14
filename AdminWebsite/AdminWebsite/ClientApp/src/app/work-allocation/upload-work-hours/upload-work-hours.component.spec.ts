@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 import { of } from 'rxjs';
 import { FileType } from 'src/app/common/model/file-type';
