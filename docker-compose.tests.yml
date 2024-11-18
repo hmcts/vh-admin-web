@@ -5,6 +5,14 @@ networks:
     driver: bridge
 
 services:
+  vh-admin-web-osv:
+    image: ghcr.io/google/osv-scanner:latest
+    container_name: admin-web-osv-scanner
+    command: -r --format sarif --output scan-results.txt app
+    volumes:
+      - ./:/app:rw
+    networks:
+      - integration-tests
 
   vh-admin-web-tests:
     image: admin-web-tests

@@ -1,5 +1,6 @@
-@import '../node_modules/govuk-frontend/govuk/all';
-@import '../node_modules/@hmcts/frontend/all';
+$govuk-global-styles: true;
+
+@import 'govuk-frontend/dist/govuk/all';
 @import '~@ng-select/ng-select/themes/default.theme.css';
 
 body {
@@ -11,7 +12,7 @@ body {
 }
 
 .vh-tooltip {
-  @include govuk-font(14, $weight: 'regular', $tabular: false, $line-height: false);
+  @include govuk-font(16, $weight: 'regular', $tabular: false, $line-height: false);
   color: govuk-colour('white');
   width: auto;
   height: auto;
