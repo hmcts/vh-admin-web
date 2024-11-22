@@ -4,13 +4,11 @@ using AdminWebsite.Models;
 using AdminWebsite.Services;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Requests;
+using BookingsApi.Contract.V2.Responses;
 using FizzWare.NBuilder;
 using Microsoft.Extensions.Options;
 using VideoApi.Contract.Responses;
-using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
-using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Services
 {
@@ -18,7 +16,7 @@ namespace AdminWebsite.UnitTests.Services
     {
         private const string ExpectedTeleConferencePhoneNumber = "expected_conference_phone_number";
         private const string ExpectedTeleConferenceId = "expected_conference_phone_id";
-        private HearingDetailsResponse _hearing;
+        private HearingDetailsResponseV2 _hearing;
         private AutoMock _mocker;
         private HearingsService _service;
 
@@ -46,8 +44,8 @@ namespace AdminWebsite.UnitTests.Services
                     }
                 });
             _mocker.Mock<IBookingsApiClient>()
-                .Setup(c => c.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new List<HearingDetailsResponse> { _hearing });
+                .Setup(c => c.GetHearingsByGroupIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(new List<HearingDetailsResponseV2> { _hearing });
             
             _service = _mocker.Create<HearingsService>();
             _hearing = InitHearing();
@@ -96,54 +94,54 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task Should_process_participants()
         {
-            var existingParticipants = new List<UpdateParticipantRequest>();
-            var newParticipants = new List<ParticipantRequest>();
+            var existingParticipants = new List<UpdateParticipantRequestV2>();
+            var newParticipants = new List<ParticipantRequestV2>();
             var removedParticipantIds = new List<Guid>();
-            var linkedParticipants = new List<LinkedParticipantRequest>();
+            var linkedParticipants = new List<LinkedParticipantRequestV2>();
 
             _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.GetHearingsByGroupIdAsync(_hearing.GroupId.Value))
-                .ReturnsAsync(new List<HearingDetailsResponse> { _hearing });
+                .Setup(x => x.GetHearingsByGroupIdV2Async(_hearing.GroupId.Value))
+                .ReturnsAsync(new List<HearingDetailsResponseV2> { _hearing });
 
-            await _service.ProcessParticipants(_hearing.Id, existingParticipants, newParticipants, removedParticipantIds, linkedParticipants);
+            await _service.ProcessParticipantsV2(_hearing.Id, existingParticipants, newParticipants, removedParticipantIds, linkedParticipants);
 
             _mocker.Mock<IBookingsApiClient>()
                 .Verify(
-                    x => x.UpdateHearingParticipantsAsync(_hearing.Id, It.Is<UpdateHearingParticipantsRequest>(x =>
-                        x.ExistingParticipants == existingParticipants
-                        && x.NewParticipants == newParticipants
-                        && x.RemovedParticipantIds == removedParticipantIds
-                        && x.LinkedParticipants == linkedParticipants)), Times.Once);
+                    x => x.UpdateHearingParticipantsV2Async(_hearing.Id, It.Is<UpdateHearingParticipantsRequestV2>(requestV2 =>
+                        requestV2.ExistingParticipants == existingParticipants
+                        && requestV2.NewParticipants == newParticipants
+                        && requestV2.RemovedParticipantIds == removedParticipantIds
+                        && requestV2.LinkedParticipants == linkedParticipants)), Times.Once);
         }
 
-        private static HearingDetailsResponse InitHearing()
+        private static HearingDetailsResponseV2 InitHearing()
         {
-            var cases = new List<CaseResponse> { new CaseResponse { Name = "Test", Number = "123456" } };
-            var rep = Builder<ParticipantResponse>.CreateNew()
+            var cases = new List<CaseResponseV2> { new() { Name = "Test", Number = "123456" } };
+            var rep = Builder<ParticipantResponseV2>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = "Representative")
                 .Build();
-            var ind = Builder<ParticipantResponse>.CreateNew()
+            var ind = Builder<ParticipantResponseV2>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = "Individual")
                 .Build();
-            var joh = Builder<ParticipantResponse>.CreateNew()
+            var joh = Builder<ParticipantResponseV2>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = "Judicial Office Holder")
                 .Build();
-            var judge = Builder<ParticipantResponse>.CreateNew()
+            var judge = Builder<ParticipantResponseV2>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = "Judge")
                 .With(x => x.ContactEmail = "Judge@court.com")
                 .With(x => x.HearingRoleName = "Judge")
                 .Build();
-            var staffMember = Builder<ParticipantResponse>.CreateNew()
+            var staffMember = Builder<ParticipantResponseV2>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = "Staff Member")
                 .Build();
 
-            return Builder<HearingDetailsResponse>.CreateNew()
-                .With(h => h.Participants = new List<ParticipantResponse> { rep, ind, joh, judge, staffMember })
+            return Builder<HearingDetailsResponseV2>.CreateNew()
+                .With(h => h.Participants = new List<ParticipantResponseV2> { rep, ind, joh, judge, staffMember })
                 .With(x => x.Cases = cases)
                 .With(x => x.Id = Guid.NewGuid())
                 .Build();

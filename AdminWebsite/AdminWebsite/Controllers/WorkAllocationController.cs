@@ -8,11 +8,10 @@ using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using HearingDetailsResponse = BookingsApi.Contract.V1.Responses.HearingDetailsResponse;
 
 namespace AdminWebsite.Controllers
 {
@@ -40,7 +39,7 @@ namespace AdminWebsite.Controllers
             var unallocatedHearings = await _bookingsApiClient.GetUnallocatedHearingsAsync();
 
             if (unallocatedHearings == null || unallocatedHearings.Count == 0)
-                return Ok(UnallocatedHearingsForVhoMapper.MapFrom(new List<HearingDetailsResponse>(), DateTime.Today));
+                return Ok(UnallocatedHearingsForVhoMapper.MapFrom(new List<HearingDetailsResponseV2>(), DateTime.Today));
 
             return Ok(UnallocatedHearingsForVhoMapper.MapFrom(unallocatedHearings.ToList(), DateTime.Today));
         }

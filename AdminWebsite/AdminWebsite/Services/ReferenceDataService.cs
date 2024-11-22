@@ -13,7 +13,7 @@ namespace AdminWebsite.Services;
 public interface IReferenceDataService
 {
     Task InitialiseCache();
-    Task<List<CaseTypeResponse>> GetNonDeletedCaseTypesAsync(CancellationToken cancellationToken = default);
+    Task<List<CaseTypeResponseV2>> GetNonDeletedCaseTypesAsync(CancellationToken cancellationToken = default);
     Task<List<InterpreterLanguagesResponse>> GetInterpreterLanguagesAsync(CancellationToken cancellationToken = default);
     Task<List<HearingVenueResponse>> GetHearingVenuesAsync(CancellationToken cancellationToken = default);
     Task<List<HearingRoleResponseV2>> GetHearingRolesAsync(CancellationToken cancellationToken = default);
@@ -33,11 +33,12 @@ public class ReferenceDataService(IBookingsApiClient bookingsApiClient, IMemoryC
         await GetHearingRolesAsync();
     }
 
-    public async Task<List<CaseTypeResponse>> GetNonDeletedCaseTypesAsync(CancellationToken cancellationToken = default)
+    public async Task<List<CaseTypeResponseV2>> GetNonDeletedCaseTypesAsync(
+        CancellationToken cancellationToken = default)
     {
         return await GetOrCreateCacheAsync(CaseTypesKey, async token =>
         {
-            var caseTypes = await bookingsApiClient.GetCaseTypesAsync(includeDeleted: false, token);
+            var caseTypes = await bookingsApiClient.GetCaseTypesV2Async(includeDeleted: false, token);
             return caseTypes.ToList();
         }, cancellationToken);
     }

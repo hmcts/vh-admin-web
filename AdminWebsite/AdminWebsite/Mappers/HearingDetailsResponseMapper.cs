@@ -4,7 +4,6 @@ using System.Linq;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Responses;
 using BookingsApi.Contract.V2.Enums;
-using V1 = BookingsApi.Contract.V1.Responses;
 using V2 = BookingsApi.Contract.V2.Responses;
 namespace AdminWebsite.Mappers;
 
@@ -40,7 +39,7 @@ public static class HearingDetailsResponseMapper
             AudioRecordingRequired = hearingDetails.AudioRecordingRequired,
             CancelReason = hearingDetails.CancelReason,
             Endpoints = hearingDetails.Endpoints?.Select(e => e.Map(hearingDetails)).ToList(),
-            JudiciaryParticipants = hearingDetails.JudiciaryParticipants?.Select(j => j.Map()).ToList(),
+            JudiciaryParticipants = hearingDetails.JudicialOfficeHolders?.Select(j => j.Map()).ToList(),
             GroupId = hearingDetails.GroupId,
             ConferenceSupplier = Enum.TryParse<VideoSupplier>(hearingDetails.BookingSupplier.ToString(), out var supplier) ? supplier : VideoSupplier.Kinly,
             AllocatedToUsername = hearingDetails.AllocatedToUsername

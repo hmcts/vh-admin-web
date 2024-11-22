@@ -1,6 +1,6 @@
 ﻿using AdminWebsite.Mappers;
 using AdminWebsite.Models;
-using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V2.Requests;
 
 namespace AdminWebsite.UnitTests.Mappers
 {
@@ -9,7 +9,7 @@ namespace AdminWebsite.UnitTests.Mappers
         private EditHearingRequest _newParticipantRequest;
         private readonly string _username = "username";
         private readonly DateTime _scheduledDateTime = new(2020, 12, 12, 8, 0, 0, DateTimeKind.Utc);
-        private readonly CaseRequest _caseRequest = new() {Name = "casename", Number = "casenumber"};
+        private readonly CaseRequestV2 _caseRequest = new() {Name = "casename", Number = "casenumber"};
 
         [SetUp]
         public void Setup()
@@ -38,7 +38,7 @@ namespace AdminWebsite.UnitTests.Mappers
             result.OtherInformation.Should().Be(_newParticipantRequest.OtherInformation);
             
             // Create a collection for the expected cases
-            var expectedCases = new List<CaseRequest> { _caseRequest };
+            var expectedCases = new List<CaseRequestV2> { _caseRequest };
             result.Cases.Should().BeEquivalentTo(expectedCases);
             
             result.AudioRecordingRequired.Should().Be(_newParticipantRequest.AudioRecordingRequired);

@@ -3,9 +3,6 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Enums;
-using BookingsApi.Contract.V1.Requests.Enums;
-using BookingsApi.Contract.V1.Responses;
 using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Responses;
 using FizzWare.NBuilder;
@@ -13,8 +10,6 @@ using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VideoApi.Contract.Responses;
-using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
-using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -69,81 +64,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _conferencesServiceMock.Object);
         }
 
-        protected static List<HearingDetailsResponse> CreateListOfV1HearingsInMultiDayGroup(
-            Guid groupId, Guid initialHearingId)
-        {
-            var hearingDates = new List<DateTime>
-            {
-                DateTime.Today.AddDays(1).AddHours(10),
-                DateTime.UtcNow.AddDays(2).AddHours(10),
-                DateTime.UtcNow.AddDays(3).AddHours(10)
-            };
-
-            return CreateListOfV1HearingsInMultiDayGroup(groupId, initialHearingId, hearingDates);
-        }
-
-        protected static List<HearingDetailsResponse> CreateListOfV1HearingsInMultiDayGroup(
-            Guid groupId, Guid initialHearingId, List<DateTime> scheduledDates)
-        {
-            var hearingsInMultiDay = new List<HearingDetailsResponse>();
-            var i = 0;
-            foreach (var date in scheduledDates)
-            {
-                var hearing = Builder<HearingDetailsResponse>.CreateNew().Build();
-
-                hearing.Participants = new List<ParticipantResponse>
-                {
-                    new()
-                    {
-                        Id = Guid.NewGuid(),
-                        FirstName = "Judge",
-                        LastName = "Test",
-                        ContactEmail = "judge@email.com",
-                        Username = "judge@hearings.reform.hmcts.net",
-                        HearingRoleName = "Judge",
-                        UserRoleName = "Judge"
-                    },
-                    new()
-                    {
-                        Id = Guid.NewGuid(),
-                        FirstName = "Applicant",
-                        LastName = "Test",
-                        ContactEmail = "applicant@email.com",
-                        Username = "applicant@hearings.reform.hmcts.net",
-                        HearingRoleName = "Applicant",
-                        UserRoleName = "Individual"
-                    }
-                };
-        
-                hearing.Endpoints =
-                [
-                    new EndpointResponse
-                    {
-                        Id = Guid.NewGuid(),
-                        DisplayName = "Endpoint A"
-                    },
-
-                    new EndpointResponse
-                    {
-                        Id = Guid.NewGuid(),
-                        DisplayName = "Endpoint B"
-                    }
-                ];
-                
-                hearing.GroupId = groupId;
-                hearing.ScheduledDateTime = date;
-                hearing.ScheduledDuration = 45;
-                hearing.Status = BookingStatus.Created;
-                hearing.Id = i == 0 ? initialHearingId : Guid.NewGuid();
-                
-                hearingsInMultiDay.Add(hearing);
-                
-                i++;
-            }
-
-            return hearingsInMultiDay;
-        }
-
         protected static List<HearingDetailsResponseV2> CreateListOfV2HearingsInMultiDayGroup(
             Guid groupId, Guid initialHearingId)
         {
@@ -157,16 +77,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             return CreateListOfV2HearingsInMultiDayGroupAsV2(groupId, initialHearingId, hearingDates);
         }
 
-        protected static List<HearingDetailsResponse> CreateListOfV2HearingsInMultiDayGroup(
+        protected static List<HearingDetailsResponseV2> CreateListOfV2HearingsInMultiDayGroup(
             Guid groupId, Guid initialHearingId, List<DateTime> scheduledDates)
         {
-            var hearingsInMultiDay = new List<HearingDetailsResponse>();
+            var hearingsInMultiDay = new List<HearingDetailsResponseV2>();
             var i = 0;
             foreach (var date in scheduledDates)
             {
-                var hearing = Builder<HearingDetailsResponse>.CreateNew().Build();
+                var hearing = Builder<HearingDetailsResponseV2>.CreateNew().Build();
 
-                hearing.Participants = new List<ParticipantResponse>
+                hearing.Participants = new List<ParticipantResponseV2>
                 {
                     new()
                     {
@@ -180,7 +100,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 };
                 
-                hearing.JudiciaryParticipants = new List<JudiciaryParticipantResponse>
+                hearing.JudicialOfficeHolders = new List<JudiciaryParticipantResponse>
                 {
                     new()
                     {
@@ -193,7 +113,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 };
                 
-                hearing.Endpoints = new List<EndpointResponse>
+                hearing.Endpoints = new List<EndpointResponseV2>
                 {
                     new()
                     {
@@ -210,7 +130,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 hearing.GroupId = groupId;
                 hearing.ScheduledDateTime = date;
                 hearing.ScheduledDuration = 45;
-                hearing.Status = BookingStatus.Created;
+                hearing.Status = BookingStatusV2.Created;
                 hearing.Id = i == 0 ? initialHearingId : Guid.NewGuid();
                 
                 hearingsInMultiDay.Add(hearing);
@@ -287,7 +207,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 };
                 
-                hearing.JudiciaryParticipants = new List<JudiciaryParticipantResponse>
+                hearing.JudicialOfficeHolders = new List<JudiciaryParticipantResponse>
                 {
                     new()
                     {

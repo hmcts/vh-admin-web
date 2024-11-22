@@ -1,7 +1,4 @@
 using System.Linq;
-using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V1.Requests.Enums;
-using BookingsApi.Contract.V1.Responses;
 using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Responses;
 using FizzWare.NBuilder;
@@ -14,7 +11,7 @@ namespace AdminWebsite.UnitTests.Helper
         {
             return Builder<HearingDetailsResponseV2>.CreateNew()
                 .With(x => x.Participants = new List<ParticipantResponseV2>())
-                .With(x => x.JudiciaryParticipants = new List<JudiciaryParticipantResponse>())
+                .With(x => x.JudicialOfficeHolders = new List<JudiciaryParticipantResponse>())
                 .With(x => x.Cases = new List<CaseResponseV2> { Builder<CaseResponseV2>.CreateNew().Build() })
                 .Build(); 
         }
@@ -45,7 +42,7 @@ namespace AdminWebsite.UnitTests.Helper
 
         public static HearingDetailsResponseV2 WithParticipant(this HearingDetailsResponseV2 hearingDetailsResponse, string userRoleName, string contactEmail =null)
         {
-            var judicialRoles = new string[] {"Judicial Office Holder", "Panel Member"};
+            var judicialRoles = new[] {"Judicial Office Holder", "Panel Member"};
             if (userRoleName == "Judge")
             {
                 var joh = Builder<JudiciaryParticipantResponse>.CreateNew()
@@ -62,7 +59,7 @@ namespace AdminWebsite.UnitTests.Helper
                     })
                     .Build();
                 
-                hearingDetailsResponse.JudiciaryParticipants.Add(joh);
+                hearingDetailsResponse.JudicialOfficeHolders.Add(joh);
             }
             else if (judicialRoles.Contains(userRoleName))
             {
@@ -79,7 +76,7 @@ namespace AdminWebsite.UnitTests.Helper
                         Value = "Spanish"
                     })
                     .Build();
-                hearingDetailsResponse.JudiciaryParticipants.Add(joh);
+                hearingDetailsResponse.JudicialOfficeHolders.Add(joh);
             }
             else
             {

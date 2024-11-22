@@ -1,5 +1,5 @@
 using AdminWebsite.Mappers;
-using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Responses;
 
 namespace AdminWebsite.UnitTests.Mappers;
 
@@ -10,7 +10,7 @@ public class UnallocatedHearingsForVhoMapperTests
     [Test]
     public void Should_map_HearingDetailsResponse_to_UnallocatedHearingsForVHOResponse()
     {
-        var hearingDetailsResponse = new List<HearingDetailsResponse>
+        var hearingDetailsResponse = new List<HearingDetailsResponseV2>
         {
             new(){
                 ScheduledDateTime = _testDate //today
@@ -49,7 +49,7 @@ public class UnallocatedHearingsForVhoMapperTests
     [Test]
     public void Should_map_empty_HearingDetailsResponse_to_UnallocatedHearingsForVHOResponse()
     {
-        var hearingDetailsResponse = new List<HearingDetailsResponse>();
+        var hearingDetailsResponse = new List<HearingDetailsResponseV2>();
 
         var response = UnallocatedHearingsForVhoMapper.MapFrom(hearingDetailsResponse, _testDate);
 

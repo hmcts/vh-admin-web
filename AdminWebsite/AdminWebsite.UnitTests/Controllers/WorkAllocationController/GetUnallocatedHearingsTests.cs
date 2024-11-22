@@ -2,10 +2,9 @@
 using AdminWebsite.Contracts.Responses;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using HearingDetailsResponse = BookingsApi.Contract.V1.Responses.HearingDetailsResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.WorkAllocationController;
 
@@ -26,7 +25,7 @@ public class GetUnallocatedHearingsTests
     {
         // Arrange
         _mocker.Mock<IBookingsApiClient>().Setup(client => client.GetUnallocatedHearingsAsync())
-            .ReturnsAsync(new List<HearingDetailsResponse> {new ()});
+            .ReturnsAsync(new List<HearingDetailsResponseV2> {new ()});
         // Act
         var response = await _controller.GetUnallocatedHearings();
         
@@ -42,7 +41,7 @@ public class GetUnallocatedHearingsTests
     {
         // Arrange
         _mocker.Mock<IBookingsApiClient>().Setup(client => client.GetUnallocatedHearingsAsync())
-            .ReturnsAsync(new List<HearingDetailsResponse>());
+            .ReturnsAsync(new List<HearingDetailsResponseV2>());
             
         // Act
         var response = await _controller.GetUnallocatedHearings();

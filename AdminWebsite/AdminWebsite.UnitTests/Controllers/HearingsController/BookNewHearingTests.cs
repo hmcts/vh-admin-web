@@ -12,6 +12,7 @@ using BookingsApi.Client;
 using BookingsApi.Contract.V2.Requests;
 using Microsoft.AspNetCore.Mvc;
 using VideoApi.Contract.Responses;
+using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
 using LinkedParticipantType = AdminWebsite.Contracts.Enums.LinkedParticipantType;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController

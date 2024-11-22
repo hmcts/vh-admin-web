@@ -1,7 +1,6 @@
 using AdminWebsite.Mappers;
-using BookingsApi.Contract.V1.Enums;
-using BookingsApi.Contract.V1.Requests.Enums;
-using V1 = BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Enums;
+using V2 = BookingsApi.Contract.V2.Responses;
 
 namespace AdminWebsite.UnitTests.Mappers
 {
@@ -11,7 +10,7 @@ namespace AdminWebsite.UnitTests.Mappers
         public void Should_map_response()
         {
             // Arrange
-            var response = new V1.JudiciaryParticipantResponse
+            var response = new V2.JudiciaryParticipantResponse
             {
                 Email = "email@email.com",
                 Title = "Title",
@@ -22,7 +21,7 @@ namespace AdminWebsite.UnitTests.Mappers
                 HearingRoleCode = JudiciaryParticipantHearingRoleCode.Judge,
                 WorkPhone = "1234",
                 DisplayName = "DisplayName",
-                InterpreterLanguage = new V1.InterpreterLanguagesResponse
+                InterpreterLanguage = new V2.InterpreterLanguagesResponse
                 {
                     Code = "spa",
                     Value = "Spanish",
@@ -52,7 +51,7 @@ namespace AdminWebsite.UnitTests.Mappers
         public void Should_map_response_without_interpreter_language()
         {
             // Arrange
-            var response = new V1.JudiciaryParticipantResponse
+            var response = new V2.JudiciaryParticipantResponse
             {
                 Email = "email@email.com",
                 Title = "Title",

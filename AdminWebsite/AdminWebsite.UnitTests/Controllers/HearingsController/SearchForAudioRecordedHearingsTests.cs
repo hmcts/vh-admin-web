@@ -6,12 +6,11 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Enums;
-using BookingsApi.Contract.V1.Responses;
 using Autofac.Extras.Moq;
+using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Enums;
+using BookingsApi.Contract.V2.Responses;
 using VideoApi.Contract.Responses;
-using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
-using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -21,7 +20,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private AdminWebsite.Controllers.HearingsController _controller;
         
         private Guid _guid;
-        private HearingDetailsResponse _vhExistingHearing;
+        private HearingDetailsResponseV2 _vhExistingHearing;
 
 
         [SetUp]
@@ -50,41 +49,32 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public void InitialiseHearing()
         {
             _guid = Guid.NewGuid();
-            _vhExistingHearing = new HearingDetailsResponse
+            _vhExistingHearing = new HearingDetailsResponseV2()
             {
-                Cases = new List<CaseResponse>
+                Cases = new List<CaseResponseV2>
                 {
-                    new CaseResponse {Name = "BBC vs ITV", Number = "TX/12345/2019", IsLeadCase = false}
+                    new CaseResponseV2 {Name = "BBC vs ITV", Number = "TX/12345/2019", IsLeadCase = false}
                 },
-                CaseTypeName = "Generic",
+                ServiceId = "Generic",
                 CreatedBy = "CaseAdministrator",
                 CreatedDate = DateTime.UtcNow,
                 HearingRoomName = "Room 6.41D",
-                HearingTypeName = "Automated Test",
                 HearingVenueName = "Manchester Civil and Family Justice Centre",
                 Id = _guid,
                 OtherInformation = "Any other information about the hearing",
                 Participants =
                 [
-                    new ParticipantResponse
+                    new ParticipantResponseV2
                     {
-                        CaseRoleName = "Judge", ContactEmail = "Judge.Lumb@hmcts.net",
-                        DisplayName = "Judge Lumb", FirstName = "Judge", HearingRoleName = "Judge",
-                        LastName = "Lumb", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
-                        Title = "Judge", Username = "Judge.Lumb@hmcts.net"
-                    },
-
-                    new ParticipantResponse
-                    {
-                        CaseRoleName = "Applicant", ContactEmail = "test.Applicant@hmcts.net",
+                        ContactEmail = "test.Applicant@hmcts.net",
                         DisplayName = "Test Applicant", FirstName = "Test", HearingRoleName = "Litigant in person",
                         LastName = "Applicant", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
                         Title = "Mr", Username = "Test.Applicant@hmcts.net"
                     },
 
-                    new ParticipantResponse
+                    new ParticipantResponseV2
                     {
-                        CaseRoleName = "Respondent", ContactEmail = "test.respondent@hmcts.net",
+                        ContactEmail = "test.respondent@hmcts.net",
                         DisplayName = "Test Respondent", FirstName = "Test", HearingRoleName = "Representative",
                         LastName = "Respondent", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
                         Title = "Mr", Username = "Test.Respondent@hmcts.net"
@@ -93,12 +83,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 ],
                 ScheduledDateTime = DateTime.UtcNow.AddDays(10),
                 ScheduledDuration = 60,
-                Status = BookingStatus.Booked,
+                Status = BookingStatusV2.Booked,
                 UpdatedBy = string.Empty,
                 UpdatedDate = DateTime.UtcNow
             };
 
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
                 .ReturnsAsync(_vhExistingHearing);
         }
 

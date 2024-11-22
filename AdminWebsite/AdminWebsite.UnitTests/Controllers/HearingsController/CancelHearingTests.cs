@@ -5,12 +5,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Requests.Enums;
 using Autofac.Extras.Moq;
 using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Responses;
+using VideoApi.Contract.Consts;
 using VideoApi.Contract.Responses;
-using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -36,10 +35,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         TelephoneConferenceId = "expected_conference_phone_id"
                     }
                 });
-            _mocker.Mock<IBookingsApiClient>().Setup(bs => bs.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new HearingDetailsResponse
+            _mocker.Mock<IBookingsApiClient>().Setup(bs => bs.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(new HearingDetailsResponseV2()
                 {
-                    Participants = [new ParticipantResponse { HearingRoleName = "Judge" }]
+                    Participants = [new ParticipantResponseV2 { HearingRoleName = HearingRoleName.Representative }]
                 });
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
         }

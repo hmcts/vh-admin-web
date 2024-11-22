@@ -7,6 +7,7 @@ using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Models;
 using AdminWebsite.Models.EditMultiDayHearing;
 using BookingsApi.Contract.V2.Responses;
+using JudiciaryParticipantResponse = AdminWebsite.Contracts.Responses.JudiciaryParticipantResponse;
 using LinkedParticipant = AdminWebsite.Models.EditMultiDayHearing.LinkedParticipant;
 
 namespace AdminWebsite.Mappers.EditMultiDayHearing
@@ -197,7 +198,7 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
         private static List<JudiciaryParticipantRequest> GetNewJudiciaryParticipants(HearingDetailsResponseV2 hearing, EditMultiDayHearingRequest request)
         {
             return request.JudiciaryParticipants
-                .Where(rjp => !hearing.JudiciaryParticipants.Exists(jp => jp.PersonalCode == rjp.PersonalCode))
+                .Where(rjp => !hearing.JudicialOfficeHolders.Exists(jp => jp.PersonalCode == rjp.PersonalCode))
                 .ToList();
         }
         

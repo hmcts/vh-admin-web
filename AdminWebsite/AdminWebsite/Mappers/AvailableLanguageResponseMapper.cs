@@ -5,7 +5,7 @@ namespace AdminWebsite.Mappers;
 
 public static class AvailableLanguageResponseMapper
 {
-    public static AvailableLanguageResponse Map(this BookingsApi.Contract.V1.Responses.InterpreterLanguagesResponse languagesResponse)
+    public static AvailableLanguageResponse Map(this BookingsApi.Contract.V2.Responses.InterpreterLanguagesResponse languagesResponse)
     {
         return new AvailableLanguageResponse()
         {

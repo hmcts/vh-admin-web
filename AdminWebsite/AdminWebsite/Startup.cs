@@ -129,7 +129,7 @@ namespace AdminWebsite
             // reference from https://github.com/dotnet/dotnet-docker/issues/2268#issuecomment-714613811
             app.Use(async (context, next) =>
             {
-                context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000");
+                context.Response.Headers["Strict-Transport-Security"] = "max-age=31536000";
                 await next.Invoke();
             });
             app.UseXfo(options => options.SameOrigin());

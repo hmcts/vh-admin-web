@@ -1,64 +1,13 @@
 ﻿using System.Diagnostics;
-using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Mappers;
 using AdminWebsite.UnitTests.Helper;
-using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Responses;
-using V1 = BookingsApi.Contract.V1.Responses;
 
 namespace AdminWebsite.UnitTests.Mappers
 {
     public class ParticipantResponseMapperTest
     {
-        [Test]
-        public void Should_map_participant_response_V1()
-        {
-            var id = Guid.NewGuid();
-            var participants = new List<V1.ParticipantResponse>();
-            var participant = new V1.ParticipantResponse
-            {
-                FirstName = "Sam",
-                LastName = "Smith",
-                ContactEmail = "judge@personal.com",
-                HearingRoleName = "Judge",
-                DisplayName = "Display Name",
-                Id = id,
-                CaseRoleName = "Case Role Name",
-                UserRoleName = "Judge",
-                Title = "Title",
-                MiddleNames = "Middle Names",
-                TelephoneNumber = "01223445532",
-                Username = "UserName",
-                Organisation = "Pluto",
-                Representee = "Representee",
-                LinkedParticipants = new List<V1.LinkedParticipantResponse>(),
-            };
-            participants.Add(participant);
-
-            var participantsResponse = participants.Map();
-
-            foreach (var participantResponse in participantsResponse)
-            {
-                participantResponse.FirstName.Should().Be(participant.FirstName);
-                participantResponse.LastName.Should().Be(participant.LastName);
-                participantResponse.ContactEmail.Should().Be(participant.ContactEmail);
-                participantResponse.HearingRoleName.Should().Be(participant.HearingRoleName);
-                participantResponse.DisplayName.Should().Be(participant.DisplayName);
-                participantResponse.Id.Should().Be(participant.Id);
-                participantResponse.CaseRoleName.Should().Be(participant.CaseRoleName);
-                participantResponse.HearingRoleName.Should().Be(participant.HearingRoleName);
-                participantResponse.UserRoleName.Should().Be(participant.UserRoleName);
-                participantResponse.Title.Should().Be(participant.Title);
-                participantResponse.MiddleNames.Should().Be(participant.MiddleNames);
-                participantResponse.TelephoneNumber.Should().Be(participant.TelephoneNumber);
-                participantResponse.Username.Should().Be(participant.Username);
-                participantResponse.Organisation.Should().Be(participant.Organisation);
-                participantResponse.Representee.Should().Be(participant.Representee);
-                participantResponse.LinkedParticipants.Should().AllBeEquivalentTo(participant.LinkedParticipants);
-            }
-        }
-        
         [Test]
         public void Should_map_participant_response_V2()
         {
@@ -94,7 +43,7 @@ namespace AdminWebsite.UnitTests.Mappers
                 Username = "UserName",
                 Organisation = "Pluto",
                 Representee = "Representee",
-                InterpreterLanguage = new V1.InterpreterLanguagesResponse
+                InterpreterLanguage = new InterpreterLanguagesResponse
                 {
                     Code = "spa",
                     Value = "Spanish",

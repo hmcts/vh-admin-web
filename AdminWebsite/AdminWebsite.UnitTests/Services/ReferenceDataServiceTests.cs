@@ -4,8 +4,8 @@ using AdminWebsite.Services;
 using Autofac;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Responses;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -33,8 +33,8 @@ public class ReferenceDataServiceTests
             .ReturnsAsync(new List<InterpreterLanguagesResponse>());
         _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingVenuesAsync(true, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<HearingVenueResponse>());
-        _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetCaseTypesAsync(false, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<CaseTypeResponse>());
+        _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetCaseTypesV2Async(false, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<CaseTypeResponseV2>());
         _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingRolesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<HearingRoleResponseV2>());
 
@@ -44,48 +44,34 @@ public class ReferenceDataServiceTests
         // assert
         _mocker.Mock<IBookingsApiClient>().Verify(x => x.GetAvailableInterpreterLanguagesAsync(It.IsAny<CancellationToken>()), Times.Once);
         _mocker.Mock<IBookingsApiClient>().Verify(x => x.GetHearingVenuesAsync(true, It.IsAny<CancellationToken>()), Times.Once);
-        _mocker.Mock<IBookingsApiClient>().Verify(x => x.GetCaseTypesAsync(false, It.IsAny<CancellationToken>()), Times.Once);
+        _mocker.Mock<IBookingsApiClient>().Verify(x => x.GetCaseTypesV2Async(false, It.IsAny<CancellationToken>()), Times.Once);
         _mocker.Mock<IBookingsApiClient>().Verify(x => x.GetHearingRolesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Test] 
     public async Task should_return_non_deleted_case_types()
     {
-        var caseTypes = new List<CaseTypeResponse>
+        var caseTypes = new List<CaseTypeResponseV2>
         {
             new ()
             {
-                Id = 1, Name = "type1", ServiceId = "AA1",
-                HearingTypes =
-                [
-                    new() { Id = 10, Name = "HType10", Code = "Code10" }
-                ]
+                Id = 1, Name = "type1", ServiceId = "AA1"
             },
             new()
             {
                 Id = 2, Name = "type2", ServiceId = "AA2",
-                HearingTypes =
-                [
-                    new() { Id = 20, Name = "HType20", Code = "Code20" }
-                ]
             },
             new()
             {
                 Id = 3, Name = "type3", ServiceId = "AA3",
-                HearingTypes =
-                [
-                    new() { Id = 25, Name = "HType25", Code = "Code25" },
-                    new() { Id = 29, Name = "HType29", Code = "Code29" }
-                ]
             },
             new()
             {
-                Id = 4, Name = "type4", ServiceId = "AA4",
-                HearingTypes = new List<HearingTypeResponse>()
+                Id = 4, Name = "type4", ServiceId = "AA4"
             }
         };
         
-        _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetCaseTypesAsync(false, It.IsAny<CancellationToken>()))
+        _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetCaseTypesV2Async(false, It.IsAny<CancellationToken>()))
             .ReturnsAsync(caseTypes);
         
         // act

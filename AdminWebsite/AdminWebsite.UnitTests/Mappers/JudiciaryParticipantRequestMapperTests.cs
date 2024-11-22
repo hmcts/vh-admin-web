@@ -1,6 +1,6 @@
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Mappers;
-using BookingsApi.Contract.V1.Requests.Enums;
+using BookingsApi.Contract.V2.Enums;
 
 namespace AdminWebsite.UnitTests.Mappers
 {
@@ -21,7 +21,7 @@ namespace AdminWebsite.UnitTests.Mappers
             };
 
             // Act
-            var result = request.MapToV1();
+            var result = request.MapToV2();
 
             // Assert
             result.DisplayName.Should().Be(request.DisplayName);
