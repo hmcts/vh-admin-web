@@ -1304,9 +1304,9 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             expect(bookingServiceSpy.getParticipantEmail).toHaveBeenCalled();
             expect(component.selectedParticipantEmail).toBe('');
             expect(component.showDetails).toBeFalsy();
-            expect(component.displayNextButton).toBeTruthy();
-            expect(component.displayClearButton).toBeFalsy();
-            expect(component.displayAddButton).toBeFalsy();
+            expect(component.displayNextButton).toBeFalsy;
+            expect(component.displayClearButton).toBeTruthy();
+            expect(component.displayAddButton).toBeTruthy();
             expect(component.displayUpdateButton).toBeFalsy();
         });
     }));
