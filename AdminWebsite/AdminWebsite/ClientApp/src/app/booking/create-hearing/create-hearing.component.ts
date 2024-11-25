@@ -30,7 +30,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     availableHearingTypes: HearingTypeResponse[];
     availableCaseTypes: string[];
     selectedCaseType: string;
-    filteredHearingTypes: HearingTypeResponse[] = [];
+    selectedCaseTypeServiceId: string;
     hasSaved: boolean;
     isExistingHearing: boolean;
     destroyed$ = new Subject<void>();
@@ -102,6 +102,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.logger.debug(`${this.loggerPrefix} Checking for existing hearing.`);
 
         this.selectedCaseType = this.hearing.case_type;
+        this.selectedCaseTypeServiceId = this.hearing.case_type_service_id;
         if (this.hearing.case_type) {
             this.selectedCaseType = this.hearing.case_type;
             return;
@@ -120,12 +121,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         }
     }
 
-    private setHearingTypeForExistingHearing() {
-        if (this.hasSaved && this.filteredHearingTypes.length > 0) {
-            this.form.get('hearingType').setValue(this.hearing.hearing_type_id);
-        }
-    }
-
     private initForm() {
         let firstCase = this.hearing.cases[0];
         if (!firstCase) {
@@ -137,12 +132,11 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
                 firstCase.number,
                 [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]
             ],
-            caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please select).)*$')]],
-            hearingType: [this.hearing.hearing_type_id, []]
+            caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please select).)*$')]]
         });
 
         if (this.isExistingHearingOrParticipantsAdded()) {
-            ['caseType', 'hearingType'].forEach(k => {
+            ['caseType'].forEach(k => {
                 this.form.get(k).disable();
             });
         }
@@ -161,9 +155,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     get caseType() {
         return this.form.get('caseType');
     }
-    get hearingType() {
-        return this.form.get('hearingType');
-    }
 
     get caseNameInvalid() {
         return this.caseName.invalid && (this.caseName.dirty || this.caseName.touched || this.failedSubmission);
@@ -175,10 +166,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     get caseTypeInvalid() {
         return this.caseType.invalid && (this.caseType.dirty || this.caseType.touched || this.failedSubmission);
-    }
-
-    get hearingTypeInvalid() {
-        return this.hearingType.invalid && (this.hearingType.dirty || this.hearingType.touched || this.failedSubmission);
     }
 
     get canEditCaseName() {
@@ -264,14 +251,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         hearingCase.number = this.form.value.caseNumber;
         this.hearing.cases[0] = hearingCase;
         this.hearing.case_type_id = this.isExistingHearing ? this.hearing.case_type_id : this.form.getRawValue().caseType;
-        this.hearing.hearing_type_id = this.isExistingHearing ? this.hearing.hearing_type_id : this.form.getRawValue().hearingType;
-        const hearingType = this.availableHearingTypes.find(c => c.id === this.hearing.hearing_type_id);
-        // hearing type will be null if editing an expired hearing type
-        this.hearing.hearing_type_name = hearingType?.name ?? this.hearing.hearing_type_name;
-        this.hearing.hearing_type_code = hearingType?.code ?? this.hearing.hearing_type_code;
-        const hearingTypeGroup = this.availableHearingTypes.find(c => c.group === this.hearing.case_type);
-        // hearing type group will be null if editing an expired Service
-        this.hearing.case_type_service_id = hearingTypeGroup?.service_id ?? this.hearing.case_type_service_id;
+        this.hearing.case_type_service_id = this.selectedCaseTypeServiceId;
         this.hearing.supplier = this.form.getRawValue().supplier ?? this.retrieveDefaultSupplier();
         this.hearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Updated hearing request details`, { hearing: this.hearing });
@@ -282,8 +262,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.hearingService.getHearingTypes().subscribe({
             next: (data: HearingTypeResponse[]) => {
                 this.setupCaseTypeAndHearingTypes(data);
-                this.filterHearingTypes();
-                this.setHearingTypeForExistingHearing();
             },
             error: error => this.errorService.handleError(error)
         });
@@ -299,11 +277,10 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             this.logger.debug(`${this.loggerPrefix} Updating selected Service`, {
                 caseType: this.selectedCaseType
             });
-            const serviceId = hearingTypes.find(h => h.group === this.selectedCaseType)?.service_id;
-            if (this.supportedSupplierOverrides.serviceIds.includes(serviceId)) {
+            this.selectedCaseTypeServiceId = hearingTypes.find(h => h.group === this.selectedCaseType)?.service_id;
+            if (this.supportedSupplierOverrides.serviceIds.includes(this.selectedCaseTypeServiceId)) {
                 this.displayOverrideSupplier = true;
             }
-            this.filterHearingTypes();
             this.displaySupplierOverrideIfSupported();
         });
 
@@ -335,22 +312,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             this.displayOverrideSupplier = false;
             this.form.get('supplier')?.setValue(this.retrieveDefaultSupplier(), { emitEvent: false });
         }
-    }
-
-    private filterHearingTypes() {
-        this.filteredHearingTypes = [];
-        if (this.selectedCaseType) {
-            this.filteredHearingTypes = this.availableHearingTypes.filter(h => h.group === this.selectedCaseType);
-        }
-        this.logger.debug(`${this.loggerPrefix} Filtering hearing types for Service`, {
-            caseType: this.selectedCaseType,
-            hearingTypes: this.filteredHearingTypes.length
-        });
-        const pleaseSelect = new HearingTypeResponse();
-        pleaseSelect.name = Constants.PleaseSelect;
-        pleaseSelect.id = null;
-        this.filteredHearingTypes.unshift(pleaseSelect);
-        this.hearingType.setValue(null);
     }
 
     private cancelBookingInCreateMode() {

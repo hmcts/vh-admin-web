@@ -51,10 +51,6 @@
             </div>
           </ng-container>
 
-          <div id="participant-{{ participant?.ParticipantId }}-case-role-name" *ngIf="participant.showCaseRole()">
-            {{ participant?.CaseRoleName }}
-          </div>
-
           <ng-container *ngIf="participant?.InterpretationLanguage?.interpreterRequired">
             <div class="participant-row__lang">
               {{

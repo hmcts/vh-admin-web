@@ -6,7 +6,6 @@ import {
     BookingDetailsRequest,
     BookingStatus,
     CancelMultiDayHearingRequest,
-    CaseAndHearingRolesResponse,
     CaseRequest,
     CaseResponse,
     EditCaseRequest,
@@ -55,7 +54,6 @@ export class VideoHearingsService {
     private readonly totalHearingsCountThreshold: number = 40;
 
     private modelHearing: HearingModel;
-    private readonly participantRoles = new Map<string, CaseAndHearingRolesResponse[]>();
     private readonly judiciaryRoles = Constants.JudiciaryRoles;
 
     constructor(private readonly bhClient: BHClient) {
@@ -116,8 +114,8 @@ export class VideoHearingsService {
         sessionStorage.removeItem(this.vhoNonAvailabiltiesHaveChangesKey);
     }
 
-    getHearingTypes(includeDeleted: boolean = false): Observable<HearingTypeResponse[]> {
-        return this.bhClient.getHearingTypes(includeDeleted);
+    getHearingTypes(): Observable<HearingTypeResponse[]> {
+        return this.bhClient.getHearingTypes();
     }
 
     getCurrentRequest(): HearingModel {
@@ -139,15 +137,6 @@ export class VideoHearingsService {
         this.modelHearing = updatedRequest;
         const localRequest = JSON.stringify(this.modelHearing);
         sessionStorage.setItem(this.newRequestKey, localRequest);
-    }
-
-    async getParticipantRoles(caseTypeName: string): Promise<CaseAndHearingRolesResponse[]> {
-        if (this.participantRoles.has(caseTypeName)) {
-            return this.participantRoles.get(caseTypeName);
-        }
-        const roles = await firstValueFrom(this.bhClient.getParticipantRoles(caseTypeName));
-        this.participantRoles.set(caseTypeName, roles);
-        return roles;
     }
 
     async getHearingRoles(): Promise<HearingRoleResponse[]> {
@@ -281,7 +270,6 @@ export class VideoHearingsService {
         const editParticipant = new EditParticipantRequest();
         editParticipant.id = participant.id;
         editParticipant.external_reference_id = participant.externalReferenceId;
-        editParticipant.case_role_name = participant.case_role_name;
         editParticipant.contact_email = participant.email;
         editParticipant.display_name = participant.display_name;
         editParticipant.first_name = participant.first_name;
@@ -330,7 +318,6 @@ export class VideoHearingsService {
     mapHearing(newRequest: HearingModel): BookingDetailsRequest {
         const newHearingRequest = new BookingDetailsRequest();
         newHearingRequest.cases = this.mapCases(newRequest);
-        newHearingRequest.case_type_name = newRequest.case_type;
         newHearingRequest.case_type_service_id = newRequest.case_type_service_id;
         newHearingRequest.scheduled_date_time = new Date(newRequest.scheduled_date_time);
         newHearingRequest.scheduled_duration = newRequest.scheduled_duration;
@@ -351,10 +338,8 @@ export class VideoHearingsService {
         const hearing = new HearingModel();
         hearing.hearing_id = response.id;
         hearing.cases = this.mapCaseResponseToCaseModel(response.cases);
-        hearing.case_type = response.case_type_name;
         hearing.scheduled_date_time = new Date(response.scheduled_date_time);
         hearing.scheduled_duration = response.scheduled_duration;
-        hearing.court_name = response.hearing_venue_name;
         hearing.court_code = response.hearing_venue_code;
         hearing.court_room = response.hearing_room_name;
         hearing.participants = this.mapParticipantResponseToParticipantModel(response.participants);
@@ -436,8 +421,6 @@ export class VideoHearingsService {
                 participant.display_name = p.display_name;
                 participant.contact_email = p.email;
                 participant.telephone_number = p.phone;
-                participant.case_role_name = p.case_role_name;
-                participant.hearing_role_name = p.hearing_role_name;
                 participant.hearing_role_code = p.hearing_role_code;
                 participant.representee = p.representee;
                 participant.organisation_name = p.company;
@@ -494,7 +477,6 @@ export class VideoHearingsService {
                 participant.display_name = p.display_name;
                 participant.email = p.contact_email;
                 participant.phone = p.telephone_number;
-                participant.case_role_name = p.case_role_name;
                 participant.hearing_role_name = p.hearing_role_name;
                 participant.hearing_role_code = p.hearing_role_code;
                 participant.representee = p.representee;

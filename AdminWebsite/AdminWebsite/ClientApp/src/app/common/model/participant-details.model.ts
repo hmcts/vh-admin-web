@@ -1,4 +1,3 @@
-import { CaseRoles } from './case-roles';
 import { HearingRoleCodes, HearingRoles } from './hearing-roles.model';
 import { LinkedParticipant } from '../../services/clients/api-client';
 import { InterpreterSelectedDto } from 'src/app/booking/interpreter-form/interpreter-selected.model';
@@ -14,7 +13,6 @@ export class ParticipantDetailsModel {
         role: string,
         userName: string,
         email: string,
-        caseRoleName: string,
         hearingRoleName: string,
         hearingRoleCode: string,
         displayName: string,
@@ -35,7 +33,6 @@ export class ParticipantDetailsModel {
         this.UserName = userName;
         this.Flag = false;
         this.Email = email;
-        this.CaseRoleName = caseRoleName;
         this.HearingRoleName = hearingRoleName;
         this.HearingRoleCode = hearingRoleCode;
         this.DisplayName = displayName;
@@ -56,7 +53,6 @@ export class ParticipantDetailsModel {
     UserRoleName: string;
     UserName: string;
     Email: string;
-    CaseRoleName: string;
     HearingRoleName: string;
     HearingRoleCode: string;
     DisplayName: string;
@@ -85,19 +81,6 @@ export class ParticipantDetailsModel {
 
     get isRepresenting() {
         return this.UserRoleName && this.UserRoleName.indexOf('Representative') > -1 && !!this.Representee;
-    }
-
-    showCaseRole(): boolean {
-        if (!this.CaseRoleName) {
-            return false;
-        }
-
-        return !(
-            this.CaseRoleName.toLowerCase() === CaseRoles.NONE.toLowerCase() ||
-            this.CaseRoleName.toLowerCase() === CaseRoles.OBSERVER.toLowerCase() ||
-            this.CaseRoleName.toLowerCase() === CaseRoles.PANEL_MEMBER.toLowerCase() ||
-            this.CaseRoleName.toLowerCase() === CaseRoles.STAFF_MEMBER.toLowerCase()
-        );
     }
 
     get isInterpreter(): boolean {

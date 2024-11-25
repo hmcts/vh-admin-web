@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Models;
@@ -9,8 +8,6 @@ using BookingsApi.Client;
 using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Requests;
 using BookingsApi.Contract.V2.Responses;
-using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -28,7 +25,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
         private AdminWebsite.Controllers.HearingsController _controller;
         private EditHearingRequest _editEndpointOnHearingRequestWithJudge;
-        private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private IHearingsService _hearingsService;
 
         private Mock<ILogger<HearingsService>> _participantGroupLogger;
@@ -45,7 +41,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
-            _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _conferencesServiceMock = new Mock<IConferenceDetailsService>();
             _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(new ConferenceDetailsResponse
@@ -69,7 +64,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _hearingsService = new HearingsService(_bookingsApiClient.Object, _participantGroupLogger.Object);
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
-                _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
                 _conferencesServiceMock.Object);
@@ -160,9 +154,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal);
-
-            _editHearingRequestValidator.Setup(x => x.ValidateAsync(It.IsAny<EditHearingRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ValidationResult());
 
             _v2HearingDetailsResponse = new HearingDetailsResponseV2
             {

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
-import { PartyModel } from '../../common/model/party.model';
-import { CaseAndHearingRolesResponse, HearingRoleResponse } from '../../services/clients/api-client';
+import { HearingRoleResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { HearingRoleModel } from '../../common/model/hearing-role.model';
 
@@ -13,18 +12,8 @@ export class ParticipantService {
     private readonly loggerPrefix = '[ParticipantService] -';
     constructor(private readonly logger: Logger) {}
 
-    mapParticipantsRoles(caseRoles: CaseAndHearingRolesResponse[]) {
-        const participantRoles = caseRoles.map(s => {
-            const item = new PartyModel(s.name);
-            item.hearingRoles = s.hearing_roles.map(x => new HearingRoleModel(x.name, x.user_role));
-            return item;
-        });
-        return participantRoles;
-    }
-
     mapParticipantHearingRoles(hearingRoles: HearingRoleResponse[]) {
-        const participantRoles = hearingRoles.map(x => new HearingRoleModel(x.name, x.user_role, x.code));
-        return participantRoles;
+        return hearingRoles.map(x => new HearingRoleModel(x.name, x.user_role, x.code));
     }
 
     public checkDuplication(email: string, participants: ParticipantModel[]): boolean {

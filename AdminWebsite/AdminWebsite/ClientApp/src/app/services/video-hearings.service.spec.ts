@@ -4,13 +4,11 @@ import {
     BHClient,
     BookingStatus,
     CancelMultiDayHearingRequest,
-    CaseAndHearingRolesResponse,
     CaseResponse,
     ClientSettingsResponse,
     EditMultiDayHearingRequest,
     EndpointResponse,
     HearingDetailsResponse,
-    HearingRole,
     JudiciaryParticipantResponse,
     LinkedParticipantResponse,
     MultiHearingRequest,
@@ -37,7 +35,6 @@ describe('Video hearing service', () => {
     beforeEach(() => {
         clientApiSpy = jasmine.createSpyObj<BHClient>([
             'getHearingTypes',
-            'getParticipantRoles',
             'bookNewHearing',
             'cloneHearing',
             'getTelephoneConferenceIdById',
@@ -112,26 +109,6 @@ describe('Video hearing service', () => {
         expect(service.getCurrentRequest().hearing_id).toBe('hearingId');
     });
 
-    it('should cache participant roles', async () => {
-        // given the api responds with
-        const serverResponse = new CaseAndHearingRolesResponse({
-            name: 'Respondent',
-            hearing_roles: [
-                new HearingRole({ name: 'Representative', user_role: 'Representative' }),
-                new HearingRole({ name: 'Litigant in person', user_role: 'Individual' })
-            ]
-        });
-        clientApiSpy.getParticipantRoles.and.returnValue(of([serverResponse]));
-
-        // we get the response the first time
-        const response = await service.getParticipantRoles('Respondent');
-        expect(response).toEqual([serverResponse]);
-
-        // second time we get a cached value
-        await service.getParticipantRoles('Respondent');
-        expect(clientApiSpy.getParticipantRoles).toHaveBeenCalledTimes(1);
-    });
-
     it('should remove currently cached hearing when cancelling', () => {
         const model = new HearingModel();
         model.hearing_id = 'hearingId';
@@ -180,7 +157,6 @@ describe('Video hearing service', () => {
         model.supplier = VideoSupplier.Vodafone;
         const request = service.mapHearing(model);
 
-        expect(request.case_type_name).toBe('Tax');
         expect(request.hearing_room_name).toBe('room 09');
         expect(request.other_information).toBe('note');
         expect(request.cases).toBeTruthy();
@@ -198,9 +174,7 @@ describe('Video hearing service', () => {
 
             const request = service.mapHearingDetailsResponseToHearingModel(model);
             expect(request.hearing_id).toEqual(model.id);
-            expect(request.case_type).toBe('Tax');
             expect(request.court_room).toBe('room 09');
-            expect(request.court_name).toBe('court address');
             expect(request.other_information).toBe('note');
             expect(request.cases).toBeTruthy();
             expect(request.cases[0].name).toBe('case1');
@@ -243,11 +217,8 @@ describe('Video hearing service', () => {
             caseModel.number = 'Number 1';
             const model = new HearingDetailsResponse();
             model.id = '232423423jsn';
-            model.case_type_name = 'Tax';
-            model.hearing_type_name = 'hearing type';
             model.scheduled_date_time = new Date(date);
             model.scheduled_duration = 30;
-            model.hearing_venue_name = 'court address';
             model.hearing_room_name = 'room 09';
             model.other_information = 'note';
             model.cases = [caseModel];
@@ -268,7 +239,6 @@ describe('Video hearing service', () => {
             model.audio_recording_required = true;
             model.group_id = null;
             model.multi_day_hearing_last_day_scheduled_date_time = new Date(date);
-
             return model;
         }
     });
@@ -284,7 +254,6 @@ describe('Video hearing service', () => {
         participant.display_name = 'Dan Smith';
         participant.contact_email = 'dan@hmcts.net';
         participant.telephone_number = '123123123';
-        participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
         participant.user_role_name = 'Individual';
         participant.interpreter_language = null;
@@ -299,7 +268,6 @@ describe('Video hearing service', () => {
         judgeParticipant.display_name = 'Judge Test';
         judgeParticipant.contact_email = 'judge@hmcts.net';
         judgeParticipant.telephone_number = '123123123';
-        judgeParticipant.case_role_name = null;
         judgeParticipant.hearing_role_name = null;
         judgeParticipant.user_role_name = 'Judge';
         judgeParticipant.interpreter_language = null;
@@ -315,7 +283,6 @@ describe('Video hearing service', () => {
         expect(model[0].display_name).toEqual(participant.display_name);
         expect(model[0].email).toEqual(participant.contact_email);
         expect(model[0].phone).toEqual(participant.telephone_number);
-        expect(model[0].case_role_name).toEqual(participant.case_role_name);
         expect(model[0].hearing_role_name).toEqual(participant.hearing_role_name);
         expect(model[0].is_judge).toBeFalse();
         expect(model[0].interpretation_language).toBeNull();
@@ -328,7 +295,6 @@ describe('Video hearing service', () => {
         expect(model[1].display_name).toEqual(judgeParticipant.display_name);
         expect(model[1].email).toEqual(judgeParticipant.contact_email);
         expect(model[1].phone).toEqual(judgeParticipant.telephone_number);
-        expect(model[1].case_role_name).toEqual(judgeParticipant.case_role_name);
         expect(model[1].hearing_role_name).toEqual(judgeParticipant.hearing_role_name);
         expect(model[1].is_judge).toBeTrue();
         expect(model[1].interpretation_language).toBeNull();
@@ -345,7 +311,6 @@ describe('Video hearing service', () => {
         participant.display_name = 'Dan Smith';
         participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
-        participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
         participants.push(participant);
 
@@ -359,8 +324,6 @@ describe('Video hearing service', () => {
         expect(model[0].display_name).toEqual(participant.display_name);
         expect(model[0].contact_email).toEqual(participant.email);
         expect(model[0].telephone_number).toEqual(participant.phone);
-        expect(model[0].case_role_name).toEqual(participant.case_role_name);
-        expect(model[0].hearing_role_name).toEqual(participant.hearing_role_name);
     });
 
     it('should map Existing hearing', () => {
@@ -374,7 +337,6 @@ describe('Video hearing service', () => {
         participant.display_name = 'Dan Smith';
         participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
-        participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
         const interpretationLanguage: InterpreterSelectedDto = {
             signLanguageCode: null,
@@ -430,7 +392,6 @@ describe('Video hearing service', () => {
         expect(actualParticipant.last_name).toEqual(expectedParticipant.last_name);
         expect(actualParticipant.middle_names).toEqual(expectedParticipant.middle_names);
         expect(actualParticipant.hearing_role_name).toEqual(expectedParticipant.hearing_role_name);
-        expect(actualParticipant.case_role_name).toEqual(expectedParticipant.case_role_name);
         expect(actualCase.name).toEqual(expectedCase.name);
         expect(actualCase.number).toEqual(expectedCase.number);
         expect(actualEndpoint).toEqual(expectedEndpoint);
@@ -450,7 +411,6 @@ describe('Video hearing service', () => {
         participant.display_name = 'Dan Smith';
         participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
-        participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
         const linkedParticipants: LinkedParticipantModel[] = [];
         const linkedParticipantModel = new LinkedParticipantModel();
@@ -491,7 +451,6 @@ describe('Video hearing service', () => {
         expect(editHearingRequest.participants[0].last_name).toEqual(hearingModel.participants[0].last_name);
         expect(editHearingRequest.participants[0].middle_names).toEqual(hearingModel.participants[0].middle_names);
         expect(editHearingRequest.participants[0].hearing_role_name).toEqual(hearingModel.participants[0].hearing_role_name);
-        expect(editHearingRequest.participants[0].case_role_name).toEqual(hearingModel.participants[0].case_role_name);
         expect(editHearingRequest.case.name).toEqual(hearingModel.cases[0].name);
         expect(editHearingRequest.case.number).toEqual(hearingModel.cases[0].number);
         expect(editHearingRequest.audio_recording_required).toEqual(hearingModel.audio_recording_required);

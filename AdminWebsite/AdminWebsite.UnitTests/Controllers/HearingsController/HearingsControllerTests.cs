@@ -17,7 +17,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
     {
         private Mock<IConferenceDetailsService> _conferencesServiceMock;
 
-        private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private IHearingsService _hearingsService;
         private Mock<ILogger<HearingsService>> _participantGroupLogger;
         private Mock<VodafoneConfiguration> _VodafoneConfigurationMock;
@@ -32,7 +31,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             BookingsApiClient = new Mock<IBookingsApiClient>();
             UserIdentity = new Mock<IUserIdentity>();
-            _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _conferencesServiceMock = new Mock<IConferenceDetailsService>();
             FeatureToggle = new Mock<IFeatureToggles>();
             _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
@@ -58,7 +56,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             Controller = new AdminWebsite.Controllers.HearingsController(BookingsApiClient.Object,
                 UserIdentity.Object,
-                _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
                 _conferencesServiceMock.Object);

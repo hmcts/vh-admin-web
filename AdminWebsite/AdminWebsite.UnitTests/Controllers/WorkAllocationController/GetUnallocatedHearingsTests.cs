@@ -24,7 +24,7 @@ public class GetUnallocatedHearingsTests
     public async Task Should_get_unallocated_hearings()
     {
         // Arrange
-        _mocker.Mock<IBookingsApiClient>().Setup(client => client.GetUnallocatedHearingsAsync())
+        _mocker.Mock<IBookingsApiClient>().Setup(client => client.GetUnallocatedHearingsV2Async())
             .ReturnsAsync(new List<HearingDetailsResponseV2> {new ()});
         // Act
         var response = await _controller.GetUnallocatedHearings();
@@ -40,7 +40,7 @@ public class GetUnallocatedHearingsTests
     public async Task Should_try_get_unallocated_hearings_and_return_empty_list()
     {
         // Arrange
-        _mocker.Mock<IBookingsApiClient>().Setup(client => client.GetUnallocatedHearingsAsync())
+        _mocker.Mock<IBookingsApiClient>().Setup(client => client.GetUnallocatedHearingsV2Async())
             .ReturnsAsync(new List<HearingDetailsResponseV2>());
             
         // Act

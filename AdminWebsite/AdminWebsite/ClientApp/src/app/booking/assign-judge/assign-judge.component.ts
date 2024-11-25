@@ -348,7 +348,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         if (!this.isExistingJudge(judge)) {
             if (this.hearingService.canAddJudge(judge.username)) {
                 judge.is_judge = true;
-                judge.case_role_name = null;
                 judge.hearing_role_code = Constants.HearingRoleCodes.Judge;
                 judge.hearing_role_name = 'Judge';
                 this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);

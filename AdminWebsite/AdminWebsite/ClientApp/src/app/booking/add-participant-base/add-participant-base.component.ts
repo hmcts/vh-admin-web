@@ -5,7 +5,6 @@ import { Constants } from 'src/app/common/constants';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { HearingModel } from 'src/app/common/model/hearing.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
-import { PartyModel } from 'src/app/common/model/party.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
@@ -17,7 +16,6 @@ import { InterpreterFormComponent } from '../interpreter-form/interpreter-form.c
 @Directive()
 export abstract class AddParticipantBaseDirective extends BookingBaseComponent implements OnInit {
     isShowErrorSummary = false;
-    caseAndHearingRoles: PartyModel[] = [];
     hearingRoles: HearingRoleModel[] = [];
 
     participantDetails: ParticipantModel;
@@ -54,7 +52,6 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     role: FormControl;
     interpreterFor: FormControl;
     lastName: FormControl;
-    party: FormControl;
     phone: FormControl;
     representing: FormControl;
     title: FormControl;
@@ -89,10 +86,6 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         return this.phone.invalid && (this.phone.dirty || this.phone.touched || this.isShowErrorSummary);
     }
 
-    get partyInvalid() {
-        return this.party.invalid && (this.party.dirty || this.party.touched || this.isShowErrorSummary);
-    }
-
     get roleInvalid() {
         return this.role.invalid && (this.role.dirty || this.role.touched || this.isShowErrorSummary);
     }
@@ -124,7 +117,6 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
             Validators.required,
             Validators.pattern(this.constants.PleaseSelectPattern)
         ]);
-        this.party = new FormControl(this.constants.PleaseSelect);
         this.title = new FormControl(this.constants.PleaseSelect);
         this.firstName = new FormControl('', [
             Validators.required,
@@ -153,7 +145,6 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
 
         this.form = new FormGroup({
             role: this.role,
-            party: this.party,
             title: this.title,
             firstName: this.firstName,
             lastName: this.lastName,
@@ -223,7 +214,6 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         this.resetPartyAndRole();
         this.isRepresentative = this.isRoleRepresentative(this.participantDetails.hearing_role_name);
         const formControlsObj = {
-            party: this.participantDetails.case_role_name,
             role: this.participantDetails.hearing_role_name,
             title: this.participantDetails.title ?? this.constants.PleaseSelect,
             firstName: this.participantDetails.first_name?.trim(),
@@ -256,7 +246,6 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     }
 
     protected disableCaseAndHearingRoles() {
-        this.form.get('party').disable();
         this.form.get('role').disable();
     }
 
@@ -283,36 +272,16 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         this.emailDisabled = false;
         this.form.get('lastName').enable();
         this.form.get('firstName').enable();
-        this.form.get('party').enable();
         this.form.get('role').enable();
     }
 
     resetPartyAndRole() {
-        if (this.participantDetails.case_role_name) {
-            this.setupHearingRoles(this.participantDetails.case_role_name);
-        }
-        if (
-            this.isPartySelected &&
-            !this.existingParticipant &&
-            (!this.participantDetails.case_role_name || this.participantDetails.case_role_name.length === 0)
-        ) {
-            this.participantDetails.case_role_name = this.party.value;
-        }
         if (
             this.isRoleSelected &&
             !this.existingParticipant &&
             (!this.participantDetails.hearing_role_name || this.participantDetails.hearing_role_name.length === 0)
         ) {
             this.participantDetails.hearing_role_name = this.role.value;
-        }
-    }
-
-    setupHearingRoles(caseRoleName: string) {
-        const list = this.caseAndHearingRoles.find(x => x.name === caseRoleName && x.name !== 'Judge' && x.name !== 'Staff Member');
-        this.hearingRoleList = list ? list.hearingRoles.map(x => x.name) : [];
-        this.updateHearingRoleList(this.hearingRoleList);
-        if (!this.hearingRoleList.find(s => s === this.constants.PleaseSelect)) {
-            this.hearingRoleList.unshift(this.constants.PleaseSelect);
         }
     }
 
@@ -429,11 +398,8 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         this.interpreterForm?.forceValidation();
     }
 
-    protected isAnObserver(participant): boolean {
-        return (
-            participant.hearing_role_name === Constants.HearingRoles.Observer ||
-            participant.case_role_name === Constants.HearingRoles.Observer
-        );
+    protected isAnObserver(participant: ParticipantModel): boolean {
+        return participant.hearing_role_name === Constants.HearingRoles.Observer;
     }
 
     private setRepresenteeLabel() {

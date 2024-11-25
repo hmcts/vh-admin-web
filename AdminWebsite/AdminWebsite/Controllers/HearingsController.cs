@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using AdminWebsite.Attributes;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
-using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
@@ -21,7 +20,6 @@ using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Requests;
 using BookingsApi.Contract.V2.Responses;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -45,7 +43,6 @@ namespace AdminWebsite.Controllers
     public class HearingsController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
-        private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
         private readonly IHearingsService _hearingsService;
         private readonly IConferenceDetailsService _conferenceDetailsService;
         private readonly ILogger<HearingsController> _logger;
@@ -57,14 +54,12 @@ namespace AdminWebsite.Controllers
 #pragma warning disable S107
         public HearingsController(IBookingsApiClient bookingsApiClient, 
             IUserIdentity userIdentity,
-            IValidator<EditHearingRequest> editHearingRequestValidator,
             ILogger<HearingsController> logger, 
             IHearingsService hearingsService,
             IConferenceDetailsService conferenceDetailsService)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
-            _editHearingRequestValidator = editHearingRequestValidator;
             _logger = logger;
             _hearingsService = hearingsService;
             _conferenceDetailsService = conferenceDetailsService;
@@ -250,14 +245,6 @@ namespace AdminWebsite.Controllers
             }
 
             _logger.LogDebug("Attempting to edit hearing {Hearing}", hearingId);
-            var result = await _editHearingRequestValidator.ValidateAsync(request);
-            if (!result.IsValid)
-            {
-                _logger.LogWarning("Failed edit hearing validation");
-                ModelState.AddFluentValidationErrors(result.Errors);
-                return ValidationProblem(ModelState);
-            }
-
             HearingDetailsResponse originalHearing;
             try
             {
@@ -438,8 +425,8 @@ namespace AdminWebsite.Controllers
             
             hearingsToUpdate = hearingsToUpdate
                 .Where(h => 
-                    h.Status != BookingsApi.Contract.V2.Enums.BookingStatusV2.Cancelled && 
-                    h.Status != BookingsApi.Contract.V2.Enums.BookingStatusV2.Failed)
+                    h.Status != BookingStatusV2.Cancelled && 
+                    h.Status != BookingStatusV2.Failed)
                 .ToList();
                 
             await UpdateMultiDayHearingV2(hearingsToUpdate, hearingId, groupId, request);

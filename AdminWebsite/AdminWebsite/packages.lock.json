@@ -14,11 +14,11 @@
       },
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[3.1.2-pr-0919-0010, )",
-        "resolved": "3.1.2-pr-0919-0010",
-        "contentHash": "uTjHes/RCMLANtbDLm2sfQTdqSA/90fwUGb2KthKSsZWpjoYdZtJYDjLtTNFqeH7qAKQTV0herli/gAyAAP0hg==",
+        "requested": "[3.1.2-pr-0919-0013, )",
+        "resolved": "3.1.2-pr-0919-0013",
+        "contentHash": "obv+kZ7pXc1ijmIiFzwEmFca1sNIIodlRHwzoiX5fUaIGNwX4Zgm4UZYEx2aM3kn0z1CMVXiYSerD6TGiNf4MA==",
         "dependencies": {
-          "BookingsApi.Common.DotNet6": "3.1.2-pr-0919-0010",
+          "BookingsApi.Common.DotNet6": "3.1.2-pr-0919-0013",
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "System.Text.Json": "8.0.5"
         }
@@ -135,9 +135,9 @@
       },
       "Microsoft.Identity.Client": {
         "type": "Direct",
-        "requested": "[4.61.0, )",
-        "resolved": "4.61.0",
-        "contentHash": "3TDPEie+9t/NgBhoNifLFwM6nkypYUa8GUHfMnkYtovDDTQM8bsS2KEIP5tAh28BgfJZgof/KlCEKvGxz0H3Eg==",
+        "requested": "[4.61.3, )",
+        "resolved": "4.61.3",
+        "contentHash": "naJo/Qm35Caaoxp5utcw+R8eU8ZtLz2ALh8S+gkekOYQ1oazfCQMWVT4NJ/FnHzdIJlm8dMz0oMpMGCabx5odA==",
         "dependencies": {
           "Microsoft.IdentityModel.Abstractions": "6.35.0",
           "System.Diagnostics.DiagnosticSource": "6.0.1"
@@ -271,8 +271,8 @@
       },
       "BookingsApi.Common.DotNet6": {
         "type": "Transitive",
-        "resolved": "3.1.2-pr-0919-0010",
-        "contentHash": "JBKWH0dvKUOBh9AnUV0C6ExjeV0Wem3bfmk7Gkxrqnc+Iz5cUvz6zyMMnGVX1mFlsEgrxVeJXj/DoTV0YCyN0Q==",
+        "resolved": "3.1.2-pr-0919-0013",
+        "contentHash": "BV8KrhMjIlCeRJajRCQ6X47VJSBAIql8O/1JSOgISVnnxTSNKiBc9htjyXgAsobkbAv6ylSTYVi6UENFp8BOiw==",
         "dependencies": {
           "System.Text.Json": "8.0.5"
         }

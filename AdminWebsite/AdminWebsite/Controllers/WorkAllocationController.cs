@@ -36,7 +36,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(UnallocatedHearingsForVhoResponse), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetUnallocatedHearings()
         {
-            var unallocatedHearings = await _bookingsApiClient.GetUnallocatedHearingsAsync();
+            var unallocatedHearings = await _bookingsApiClient.GetUnallocatedHearingsV2Async();
 
             if (unallocatedHearings == null || unallocatedHearings.Count == 0)
                 return Ok(UnallocatedHearingsForVhoMapper.MapFrom(new List<HearingDetailsResponseV2>(), DateTime.Today));

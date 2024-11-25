@@ -34,7 +34,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _hearingServiceMock = new Mock<IHearingsService>();
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClientMock.Object, 
                 new Mock<IUserIdentity>().Object,
-                new Mock<IValidator<EditHearingRequest>>().Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingServiceMock.Object,
                 _conferenceDetailsServiceMock.Object);
