@@ -1,4 +1,4 @@
-<label class="govuk-label" for="case-type-list">Case types</label>
+<label class="govuk-label" for="case-type-list">Services</label>
 <div [formGroup]="form">
   <ng-select
     id="case-type-list"
@@ -8,9 +8,9 @@
     bindLabel="item"
     bindValue="item"
     formControlName="selectedCaseTypes"
-    [placeholder]="'Select case types'"
+    [placeholder]="'Select Services'"
     [multiple]="true"
-    [attr.aria-label]="'Case type list'"
+    [attr.aria-label]="'Service list'"
     [closeOnSelect]="false"
     [clearSearchOnAdd]="true"
     [selectOnTab]="true"
@@ -18,7 +18,7 @@
     (change)="onSelect()"
   >
     <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-      <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'Case type ' + item" />
+      <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'Service ' + item" />
       {{ item }}
     </ng-template>
   </ng-select>

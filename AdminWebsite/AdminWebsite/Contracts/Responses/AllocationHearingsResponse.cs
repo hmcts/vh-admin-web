@@ -25,7 +25,7 @@ public class AllocationHearingsResponse
     public string CaseNumber { get; set; }
     
     /// <summary>
-    /// The hearing case type
+    /// The hearing Service
     /// </summary>
     public string CaseType { get; set; }
     
@@ -33,7 +33,7 @@ public class AllocationHearingsResponse
     /// The allocated CSO. Can be one of following:
     /// <list type="bullet">
     ///     <item>"Not Allocated"</item>
-    ///     <item>"Not Required" (if venue is scottish or case type is generic)</item>
+    ///     <item>"Not Required" (if venue is scottish or Service is generic)</item>
     ///     <item>The username of the allocated justice user</item>
     /// </list>
     /// </summary>

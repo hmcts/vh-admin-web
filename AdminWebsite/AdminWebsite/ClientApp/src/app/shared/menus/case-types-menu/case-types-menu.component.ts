@@ -46,7 +46,7 @@ export class CaseTypesMenuComponent extends MenuBase {
                 ];
                 this.logger.debug(`${this.loggerPrefix} Updating list of case-types.`, { caseTypes: data.length });
             },
-            error: error => this.handleListError(error, 'case types')
+            error: error => this.handleListError(error, 'Services')
         });
     }
 }

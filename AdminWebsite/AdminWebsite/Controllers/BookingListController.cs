@@ -38,7 +38,7 @@ namespace AdminWebsite.Controllers
         }
 
         /// <summary>
-        /// Gets the all upcoming bookings hearing by the given case types for a hearing administrator.
+        /// Gets the all upcoming bookings hearing by the given Services for a hearing administrator.
         /// </summary>
         /// <param name="request"></param>
         /// <returns> The hearings list</returns>

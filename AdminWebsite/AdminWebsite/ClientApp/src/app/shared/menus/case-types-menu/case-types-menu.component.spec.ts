@@ -45,7 +45,7 @@ describe('CaseTypesMenuComponent', () => {
 
     it('should render menu item', () => {
         const compiled = fixture.nativeElement;
-        expect(compiled.querySelector('.govuk-label').textContent).toContain('Case types');
+        expect(compiled.querySelector('.govuk-label').textContent).toContain('Services');
     });
 
     describe('enable', () => {
@@ -77,7 +77,7 @@ describe('CaseTypesMenuComponent', () => {
     });
 
     describe('onSelect', () => {
-        it('should select case type', () => {
+        it('should select Service', () => {
             component.loadItems();
             component.form.controls[component.formGroupName].setValue(caseType);
             component.onSelect();
