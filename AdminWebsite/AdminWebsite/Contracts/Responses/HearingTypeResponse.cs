@@ -11,7 +11,7 @@
         public string Code { get; set; }
 
         /// <summary>
-        /// Which Service it belongs to
+        /// Which case type it belongs to
         /// </summary>
         public string Group { get; set; }
 
