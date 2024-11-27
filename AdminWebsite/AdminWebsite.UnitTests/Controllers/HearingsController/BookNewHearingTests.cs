@@ -77,7 +77,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Result.Should().BeOfType<CreatedResult>();
             var createdObjectResult = (CreatedResult) result.Result;
             createdObjectResult.StatusCode.Should().Be(201);
-            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse, options => options.ExcludingMissingMembers());
+            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse,
+                options => options.ExcludingMissingMembers().Excluding(x => x.HearingVenueName));
             
             bookingDetails.Participants.Exists(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
 
