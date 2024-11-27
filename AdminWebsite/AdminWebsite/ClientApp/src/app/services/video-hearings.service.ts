@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { firstValueFrom, lastValueFrom, Observable } from 'rxjs';
+import { combineLatest, firstValueFrom, lastValueFrom, Observable } from 'rxjs';
 import {
     BHClient,
     BookHearingRequest,
@@ -18,6 +18,7 @@ import {
     HearingDetailsResponse,
     HearingRoleResponse,
     HearingTypeResponse,
+    HearingVenueResponse,
     JudiciaryParticipantRequest,
     LinkedParticipant,
     LinkedParticipantRequest,
@@ -38,9 +39,10 @@ import { LinkedParticipantModel } from '../common/model/linked-participant.model
 import { Constants } from '../common/constants';
 import * as moment from 'moment';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
 import { mapScreeningResponseToScreeningDto, ScreeningDto } from '../booking/screening/screening.model';
+import { ReferenceDataService } from './reference-data.service';
 
 @Injectable({
     providedIn: 'root'
@@ -53,10 +55,13 @@ export class VideoHearingsService {
     private readonly vhoNonAvailabiltiesHaveChangesKey: string;
     private readonly totalHearingsCountThreshold: number = 40;
 
+    private venues$: Observable<HearingVenueResponse[]>;
+    private hearingTypes$: Observable<HearingTypeResponse[]>;
+
     private modelHearing: HearingModel;
     private readonly judiciaryRoles = Constants.JudiciaryRoles;
 
-    constructor(private readonly bhClient: BHClient) {
+    constructor(private readonly bhClient: BHClient, private readonly referenceDataService: ReferenceDataService) {
         this.newRequestKey = 'bh-newRequest';
         this.bookingHasChangesKey = 'bookingHasChangesKey';
         this.conferencePhoneNumberKey = 'conferencePhoneNumberKey';
@@ -64,6 +69,8 @@ export class VideoHearingsService {
         this.vhoNonAvailabiltiesHaveChangesKey = 'vhoNonAvailabiltiesHaveChangesKey';
 
         this.checkForExistingHearing();
+        this.venues$ = this.referenceDataService.getCourts().pipe(shareReplay(1));
+        this.hearingTypes$ = this.referenceDataService.getHearingTypes();
     }
 
     private checkForExistingHearing() {
@@ -114,6 +121,10 @@ export class VideoHearingsService {
         sessionStorage.removeItem(this.vhoNonAvailabiltiesHaveChangesKey);
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in future versions.
+     * Please use the new method `getNewHearingTypes` in `ReferenceDataService` instead.
+     */
     getHearingTypes(): Observable<HearingTypeResponse[]> {
         return this.bhClient.getHearingTypes();
     }
@@ -341,7 +352,10 @@ export class VideoHearingsService {
         hearing.scheduled_date_time = new Date(response.scheduled_date_time);
         hearing.scheduled_duration = response.scheduled_duration;
         hearing.court_code = response.hearing_venue_code;
+        hearing.court_name = response.hearing_venue_name;
         hearing.court_room = response.hearing_room_name;
+        hearing.case_type = response.case_type_name;
+        hearing.case_type_service_id = response.service_id;
         hearing.participants = this.mapParticipantResponseToParticipantModel(response.participants);
         hearing.other_information = response.other_information;
         hearing.created_date = new Date(response.created_date);
@@ -551,7 +565,20 @@ export class VideoHearingsService {
     }
 
     getHearingById(hearingId: string): Observable<HearingDetailsResponse> {
-        return this.bhClient.getHearingById(hearingId);
+        const hearingById$ = this.bhClient.getHearingById(hearingId);
+        return combineLatest([hearingById$, this.venues$, this.hearingTypes$]).pipe(
+            map(([hearing, venues, hearingTypes]) => {
+                const venue = venues.find(v => v.code === hearing.hearing_venue_code);
+                if (venue) {
+                    hearing.hearing_venue_name = venue.name;
+                }
+                const hearingType = hearingTypes.find(ht => ht.service_id === hearing.service_id);
+                if (hearingType) {
+                    hearing.case_type_name = hearingType.group;
+                }
+                return hearing;
+            })
+        );
     }
 
     cancelBooking(hearingId: string, reason: string): Observable<UpdateBookingStatusResponse> {

@@ -6673,12 +6673,10 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     id?: string;
     scheduled_date_time?: Date;
     scheduled_duration?: number;
-    /** V2 only */
     hearing_venue_code?: string | undefined;
-    /** V2 only */
+    hearing_venue_name?: string | undefined;
     service_id?: string | undefined;
-    /** V2 only */
-    hearing_type_code?: string | undefined;
+    case_type_name?: string | undefined;
     cases?: CaseResponse[] | undefined;
     participants?: ParticipantResponse[] | undefined;
     judiciary_participants?: JudiciaryParticipantResponse[] | undefined;
@@ -6716,8 +6714,9 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
             this.scheduled_duration = _data['scheduled_duration'];
             this.hearing_venue_code = _data['hearing_venue_code'];
+            this.hearing_venue_name = _data['hearing_venue_name'];
             this.service_id = _data['service_id'];
-            this.hearing_type_code = _data['hearing_type_code'];
+            this.case_type_name = _data['case_type_name'];
             if (Array.isArray(_data['cases'])) {
                 this.cases = [] as any;
                 for (let item of _data['cases']) this.cases!.push(CaseResponse.fromJS(item));
@@ -6772,8 +6771,9 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
         data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
         data['scheduled_duration'] = this.scheduled_duration;
         data['hearing_venue_code'] = this.hearing_venue_code;
+        data['hearing_venue_name'] = this.hearing_venue_name;
         data['service_id'] = this.service_id;
-        data['hearing_type_code'] = this.hearing_type_code;
+        data['case_type_name'] = this.case_type_name;
         if (Array.isArray(this.cases)) {
             data['cases'] = [];
             for (let item of this.cases) data['cases'].push(item.toJSON());
@@ -6819,12 +6819,10 @@ export interface IHearingDetailsResponse {
     id?: string;
     scheduled_date_time?: Date;
     scheduled_duration?: number;
-    /** V2 only */
     hearing_venue_code?: string | undefined;
-    /** V2 only */
+    hearing_venue_name?: string | undefined;
     service_id?: string | undefined;
-    /** V2 only */
-    hearing_type_code?: string | undefined;
+    case_type_name?: string | undefined;
     cases?: CaseResponse[] | undefined;
     participants?: ParticipantResponse[] | undefined;
     judiciary_participants?: JudiciaryParticipantResponse[] | undefined;

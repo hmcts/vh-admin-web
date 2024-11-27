@@ -7,6 +7,7 @@ using BookingsApi.Client;
 using BookingsApi.Contract.V1.Responses;
 using BookingsApi.Contract.V2.Responses;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace AdminWebsite.Services;
 
@@ -19,7 +20,7 @@ public interface IReferenceDataService
     Task<List<HearingRoleResponseV2>> GetHearingRolesAsync(CancellationToken cancellationToken = default);
 }
 
-public class ReferenceDataService(IBookingsApiClient bookingsApiClient, IMemoryCache memoryCache) : IReferenceDataService
+public class ReferenceDataService(IBookingsApiClient bookingsApiClient, IMemoryCache memoryCache, ILogger<ReferenceDataService> logger) : IReferenceDataService
 {
     private const string InterpreterLanguagesKey = "RefData_InterpreterLanguages";
     private const string HearingVenuesKey = "RefData_HearingVenues";
@@ -28,9 +29,13 @@ public class ReferenceDataService(IBookingsApiClient bookingsApiClient, IMemoryC
     public async Task InitialiseCache()
     {
         await GetInterpreterLanguagesAsync();
+        logger.LogInformation("Interpreter languages cached");
         await GetHearingVenuesAsync();
+        logger.LogInformation("Hearing venues cached");
         await GetNonDeletedCaseTypesAsync();
+        logger.LogInformation("Case types cached");
         await GetHearingRolesAsync();
+        logger.LogInformation("Hearing roles cached");
     }
 
     public async Task<List<CaseTypeResponseV2>> GetNonDeletedCaseTypesAsync(

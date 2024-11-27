@@ -25,14 +25,20 @@ import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/l
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
 import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
 import { ScreeningDto } from '../booking/screening/screening.model';
+import { ReferenceDataService } from './reference-data.service';
+import { MockValues } from '../testing/data/test-objects';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
     let clientApiSpy: jasmine.SpyObj<BHClient>;
+    let referenceDataServiceSpy: jasmine.SpyObj<ReferenceDataService>;
     const newRequestKey = 'bh-newRequest';
     const conferencePhoneNumberKey = 'conferencePhoneNumberKey';
     const conferencePhoneNumberWelshKey = 'conferencePhoneNumberWelshKey';
     beforeEach(() => {
+        referenceDataServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts', 'getHearingTypes']);
+        referenceDataServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
+        referenceDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
         clientApiSpy = jasmine.createSpyObj<BHClient>([
             'getHearingTypes',
             'bookNewHearing',
@@ -46,7 +52,7 @@ describe('Video hearing service', () => {
             'cancelMultiDayHearing',
             'getBookingQueueState'
         ]);
-        service = new VideoHearingsService(clientApiSpy);
+        service = new VideoHearingsService(clientApiSpy, referenceDataServiceSpy);
     });
 
     afterEach(() => {
@@ -941,7 +947,7 @@ describe('Video hearing service', () => {
             }
             sessionStorage.setItem(newRequestKey, JSON.stringify(hearing));
 
-            service = new VideoHearingsService(clientApiSpy);
+            service = new VideoHearingsService(clientApiSpy, referenceDataServiceSpy);
 
             expect(service.isTotalHearingMoreThanThreshold()).toBe(false);
         });
@@ -958,7 +964,7 @@ describe('Video hearing service', () => {
             }
             sessionStorage.setItem(newRequestKey, JSON.stringify(hearing));
 
-            service = new VideoHearingsService(clientApiSpy);
+            service = new VideoHearingsService(clientApiSpy, referenceDataServiceSpy);
 
             expect(service.isTotalHearingMoreThanThreshold()).toBe(true);
         });
