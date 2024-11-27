@@ -22,7 +22,7 @@ parameters:
     pushHelmChart: true
   - env: 'demo'
     requireApproval: true
-    buildPushImage: false
+    buildPushImage: true
     pushHelmChart: false
   - env: 'test'
     requireApproval: true
