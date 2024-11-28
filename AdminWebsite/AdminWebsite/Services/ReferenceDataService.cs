@@ -29,13 +29,10 @@ public class ReferenceDataService(IBookingsApiClient bookingsApiClient, IMemoryC
     public async Task InitialiseCache()
     {
         await GetInterpreterLanguagesAsync();
-        logger.LogInformation("Interpreter languages cached");
         await GetHearingVenuesAsync();
-        logger.LogInformation("Hearing venues cached");
         await GetNonDeletedCaseTypesAsync();
-        logger.LogInformation("Case types cached");
         await GetHearingRolesAsync();
-        logger.LogInformation("Hearing roles cached");
+        logger.LogInformation("Static ref data (languages, venues, case types and hearing roles) cached");
     }
 
     public async Task<List<CaseTypeResponseV2>> GetNonDeletedCaseTypesAsync(
