@@ -326,7 +326,7 @@ describe('SummaryComponent with valid request', () => {
             expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
         });
     }));
-    it('should set audio recording to false if case type is CACD', () => {
+    it('should set audio recording to false if Service is CACD', () => {
         component.hearing.case_type = component.constants.CaseTypes.CourtOfAppealCriminalDivision;
         component.ngOnInit();
         expect(component.hearing.audio_recording_required).toBe(false);
@@ -337,19 +337,19 @@ describe('SummaryComponent with valid request', () => {
         fixture.detectChanges();
         expect(component.hearing.audio_recording_required).toBe(true);
     });
-    it('should set audio recording to false if case type is CACD and an interpreter is present', () => {
+    it('should set audio recording to false if Service is CACD and an interpreter is present', () => {
         component.hearing.case_type = component.constants.CaseTypes.CourtOfAppealCriminalDivision;
         component.interpreterPresent = true;
         component.isAudioRecordingRequired();
         component.ngOnInit();
         expect(component.hearing.audio_recording_required).toBe(false);
     });
-    it('should set audio recording to false if case type is Crime Crown Court', () => {
+    it('should set audio recording to false if Service is Crime Crown Court', () => {
         component.hearing.case_type = component.constants.CaseTypes.CrimeCrownCourt;
         component.ngOnInit();
         expect(component.hearing.audio_recording_required).toBe(false);
     });
-    it('should set audio recording to false if case type is Crime Crown Court and an interpreter is present', () => {
+    it('should set audio recording to false if Service is Crime Crown Court and an interpreter is present', () => {
         component.hearing.case_type = component.constants.CaseTypes.CrimeCrownCourt;
         component.interpreterPresent = true;
         component.isAudioRecordingRequired();
