@@ -214,7 +214,7 @@ function initHearingRequest(): HearingModel {
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
     newHearing.participants = participants;
-    newHearing.case_type = 'Test Case Type';
+    newHearing.case_type = 'Test Service';
     newHearing.case_type_service_id = 'AA1';
     return newHearing;
 }

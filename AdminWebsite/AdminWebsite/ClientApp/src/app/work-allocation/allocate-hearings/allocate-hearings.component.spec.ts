@@ -250,7 +250,7 @@ describe('AllocateHearingsComponent', () => {
             expect(allocateServiceSpy.getAllocationHearings).toHaveBeenCalled();
         });
 
-        it('should map selected options for case types to id array', () => {
+        it('should map selected options for Services to id array', () => {
             const id = newGuid();
             const id2 = newGuid();
             const label = '';

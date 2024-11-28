@@ -21,7 +21,7 @@
         <a (click)="goToDiv('caseName-error')">Please enter a case name</a>
       </li>
       <li *ngIf="caseType.invalid">
-        <a (click)="goToDiv('caseType-error')">Please enter a case type</a>
+        <a (click)="goToDiv('caseType-error')">Please enter a service</a>
       </li>
     </ul>
   </div>
@@ -66,7 +66,7 @@
   </div>
 
   <div *ngIf="availableCaseTypes.length > 1" [ngClass]="caseTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-    <label class="govuk-label govuk-!-width-one-half" for="caseType"> Case type </label>
+    <label class="govuk-label govuk-!-width-one-half" for="caseType">Service</label>
     <!--suppress XmlDuplicatedId -->
     <select *ngIf="!this.editMode" class="govuk-select govuk-!-width-one-half" id="caseType" formControlName="caseType">
       <option *ngFor="let availableCaseType of availableCaseTypes" [ngValue]="availableCaseType">
@@ -83,7 +83,7 @@
       formControlName="caseType"
     />
     <div *ngIf="caseTypeInvalid" class="alert alert-danger">
-      <span id="caseType-error" class="govuk-error-message"> Please select a case type </span>
+      <span id="caseType-error" class="govuk-error-message">Please select a service</span>
     </div>
   </div>
 

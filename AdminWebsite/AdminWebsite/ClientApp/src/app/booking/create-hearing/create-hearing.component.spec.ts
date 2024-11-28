@@ -46,7 +46,7 @@ let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 const defaultOverrideValue: ServiceIds = { serviceIds: [] };
 
-describe('CreateHearingComponent with multiple case types', () => {
+describe('CreateHearingComponent with multiple Services', () => {
     let component: CreateHearingComponent;
     let fixture: ComponentFixture<CreateHearingComponent>;
     let caseNameControl: AbstractControl;
@@ -103,7 +103,7 @@ describe('CreateHearingComponent with multiple case types', () => {
         hearingTypeControl = component.form.controls['hearingType'];
     });
 
-    it('should not set case type when multiple items returned', () => {
+    it('should not set Service when multiple items returned', () => {
         fixture.detectChanges();
         expect(component).toBeTruthy();
     });
@@ -140,7 +140,7 @@ describe('CreateHearingComponent with multiple case types', () => {
         component.failedSubmission = true;
         expect(component.caseNumberInvalid).toBeTruthy();
     });
-    it('should validate case type', () => {
+    it('should validate Service', () => {
         const caseTypeValue = 'Tax';
         expect(caseNumberControl.valid).toBeFalsy();
         caseTypeControl.setValue(caseTypeValue);
@@ -164,14 +164,14 @@ describe('CreateHearingComponent with multiple case types', () => {
             expect(component.vodafoneToggle).toBeTrue();
         });
 
-        it('should display supplier override when selected case type is in the override list', () => {
+        it('should display supplier override when selected Service is in the override list', () => {
             const caseTypeValue = 'Generic';
             caseTypeControl.setValue(caseTypeValue);
             expect(component.selectedCaseType).toBe(caseTypeValue);
             expect(component.displayOverrideSupplier).toBeTrue();
         });
 
-        it('should not display supplier override when selected case type is not in the override list', () => {
+        it('should not display supplier override when selected Service is not in the override list', () => {
             const caseTypeValue = 'Tax';
             caseTypeControl.setValue(caseTypeValue);
             expect(component.selectedCaseType).toBe(caseTypeValue);
@@ -194,7 +194,7 @@ describe('CreateHearingComponent with multiple case types', () => {
     });
 });
 
-describe('CreateHearingComponent with single case type', () => {
+describe('CreateHearingComponent with single Service', () => {
     let component: CreateHearingComponent;
     let fixture: ComponentFixture<CreateHearingComponent>;
     const newHearing = initHearingRequest();
@@ -241,7 +241,7 @@ describe('CreateHearingComponent with single case type', () => {
         fixture.detectChanges();
     });
 
-    it('should set case type when single item returned', fakeAsync(() => {
+    it('should set Service when single item returned', fakeAsync(() => {
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
         fixture.detectChanges();
         tick();

@@ -2,12 +2,12 @@ import { RecordingGuardService } from './recording-guard.service';
 
 describe('RecordingGuardService', () => {
     const service = new RecordingGuardService();
-    service.excludedCaseTypes = ['case type one', 'case type two'];
+    service.excludedCaseTypes = ['Service one', 'Service two'];
 
-    it('should switch off recording for case type', () => {
-        expect(service.switchOffRecording('case type one')).toBe(true);
+    it('should switch off recording for Service', () => {
+        expect(service.switchOffRecording('Service one')).toBe(true);
     });
-    it('should not switch off recording for case type', () => {
-        expect(service.switchOffRecording('case type four')).toBe(false);
+    it('should not switch off recording for Service', () => {
+        expect(service.switchOffRecording('Service four')).toBe(false);
     });
 });

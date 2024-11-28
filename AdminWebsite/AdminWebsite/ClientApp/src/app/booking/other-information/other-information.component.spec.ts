@@ -181,14 +181,14 @@ describe('OtherInformationComponent', () => {
         component.next();
         expect(component.hearing.audio_recording_required).toBe(false);
     });
-    it('should not be allowed to set audio recording options for case type CACD to recording', () => {
+    it('should not be allowed to set audio recording options for Service CACD to recording', () => {
         component.hearing.case_type = 'Court of Appeal Criminal Division';
         component.ngOnInit();
         fixture.autoDetectChanges();
         expect(component.switchOffRecording).toBe(true);
         expect(component.hearing.audio_recording_required).toBe(false);
     });
-    it('should be allowed to set audio recording options for case type', () => {
+    it('should be allowed to set audio recording options for Service', () => {
         component.hearing.case_type = 'Rents';
         component.ngOnInit();
         fixture.autoDetectChanges();
