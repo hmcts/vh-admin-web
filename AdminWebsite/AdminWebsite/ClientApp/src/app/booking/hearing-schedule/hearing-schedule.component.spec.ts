@@ -525,10 +525,12 @@ describe('HearingScheduleComponent returning to page', () => {
     });
     it('should set venue for existing hearing', () => {
         component.availableCourts = [
-            new HearingVenueResponse({ id: 1, name: 'aa@hmcts.net' }),
-            new HearingVenueResponse({ id: 2, name: 'aa@hmcts.net1' })
+            new HearingVenueResponse({ id: 1, name: 'aa@hmcts.net', code: '123' }),
+            new HearingVenueResponse({ id: 2, name: 'aa@hmcts.net1', code: '456' })
         ];
         component.hearing = new HearingModel();
+        component.hearing.hearing_venue_id = 2;
+        component.hearing.court_code = '456';
         component.hearing.court_name = 'aa@hmcts.net1';
         component.isExistinHearing = true;
         component.setVenueForExistingHearing();
