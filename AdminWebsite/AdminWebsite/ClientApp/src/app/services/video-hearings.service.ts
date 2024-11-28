@@ -55,8 +55,8 @@ export class VideoHearingsService {
     private readonly vhoNonAvailabiltiesHaveChangesKey: string;
     private readonly totalHearingsCountThreshold: number = 40;
 
-    private venues$: Observable<HearingVenueResponse[]>;
-    private hearingTypes$: Observable<HearingTypeResponse[]>;
+    private readonly venues$: Observable<HearingVenueResponse[]>;
+    private readonly hearingTypes$: Observable<HearingTypeResponse[]>;
 
     private modelHearing: HearingModel;
     private readonly judiciaryRoles = Constants.JudiciaryRoles;
