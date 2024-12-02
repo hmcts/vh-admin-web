@@ -100,7 +100,7 @@
         <div class="govuk-grid-column-one-quarter contact-label">Username</div>
 
         <div
-          *ngIf="participant.Email === participant.UserName; else usernamePending"
+          *ngIf="participant.Email !== participant.UserName; else usernamePending"
           id="participant-{{ participant?.ParticipantId }}-username"
           class="govuk-grid-column-three-quarters wrap"
         >
