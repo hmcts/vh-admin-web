@@ -16,6 +16,7 @@ import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.
 import { takeUntil } from 'rxjs/operators';
 import { combineLatest, Subject } from 'rxjs';
 import { ServiceIds } from '../models/supplier-override';
+import { ReferenceDataService } from 'src/app/services/reference-data.service';
 
 @Component({
     selector: 'app-create-hearing',
@@ -49,7 +50,8 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         protected bookingService: BookingService,
         protected logger: Logger,
         private readonly errorService: ErrorService,
-        private readonly launchDarklyService: LaunchDarklyService
+        private readonly launchDarklyService: LaunchDarklyService,
+        private readonly referenceDataService: ReferenceDataService
     ) {
         super(bookingService, router, hearingService, logger);
         this.attemptingCancellation = false;
@@ -259,7 +261,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     private retrieveHearingTypes() {
         this.logger.debug(`${this.loggerPrefix} Retrieving hearing type`);
-        this.hearingService.getHearingTypes().subscribe({
+        this.referenceDataService.getHearingTypes().subscribe({
             next: (data: HearingTypeResponse[]) => {
                 this.setupCaseTypeAndHearingTypes(data);
             },

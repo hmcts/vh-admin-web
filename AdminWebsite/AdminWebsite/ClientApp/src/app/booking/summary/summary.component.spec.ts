@@ -38,6 +38,7 @@ import { ResponseTestData } from 'src/app/testing/data/response-test-data';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { TruncatableTextComponent } from 'src/app/shared/truncatable-text/truncatable-text.component';
+import { ReferenceDataService } from 'src/app/services/reference-data.service';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -103,8 +104,8 @@ recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('Recordin
     'mandatoryRecordingForHearingRole'
 ]);
 
+const refDataServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getHearingTypes']);
 const videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService> = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-    'getHearingTypes',
     'getCurrentRequest',
     'updateHearingRequest',
     'saveHearing',
@@ -139,7 +140,7 @@ describe('SummaryComponent with valid request', () => {
         const mockResp = new UpdateBookingStatusResponse();
         mockResp.success = true;
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
         videoHearingsServiceSpy.saveHearing.and.returnValue(Promise.resolve(ResponseTestData.getHearingResponseTestData()));
         videoHearingsServiceSpy.cloneMultiHearings.and.callThrough();
         videoHearingsServiceSpy.getStatus.and.returnValue(Promise.resolve(mockResp));
@@ -633,7 +634,7 @@ describe('SummaryComponent  with invalid request', () => {
         initExistingHearingRequest();
         const existingRequest = initBadHearingRequest();
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
 
         const validationProblem = new ValidationProblemDetails({
             errors: {
@@ -696,7 +697,7 @@ describe('SummaryComponent  with existing request', () => {
         const existingRequest = initExistingHearingRequest();
         existingRequest.hearing_id = '12345ty';
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
         videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
         videoHearingsServiceSpy.updateMultiDayHearing.and.returnValue(of(new HearingDetailsResponse()));
 
@@ -926,7 +927,7 @@ describe('SummaryComponent  with multi days request', () => {
     existingRequest.isMultiDayEdit = true;
     existingRequest.hearing_id = '12345ty';
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-    videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+    refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
     videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
     const participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', ['removeParticipant']);
 

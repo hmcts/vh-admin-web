@@ -2,9 +2,9 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { BookingPersistService } from '../../../services/bookings-persist.service';
 import { FormBuilder } from '@angular/forms';
 import { HearingTypeResponse } from '../../../services/clients/api-client';
-import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { Logger } from '../../../services/logger';
 import { MenuBase } from '../menu-base';
+import { ReferenceDataService } from 'src/app/services/reference-data.service';
 
 @Component({
     selector: 'app-case-types-menu',
@@ -22,7 +22,7 @@ export class CaseTypesMenuComponent extends MenuBase {
 
     constructor(
         private readonly bookingPersistService: BookingPersistService,
-        private readonly videoHearingService: VideoHearingsService,
+        private readonly referenceDataService: ReferenceDataService,
         formBuilder: FormBuilder,
         logger: Logger
     ) {
@@ -34,7 +34,7 @@ export class CaseTypesMenuComponent extends MenuBase {
 
     loadItems(): void {
         const distinct = (value, index, array) => array.indexOf(value) === index;
-        this.videoHearingService.getHearingTypes().subscribe({
+        this.referenceDataService.getHearingTypes().subscribe({
             next: (data: HearingTypeResponse[]) => {
                 this.caseTypes = this.items = [
                     ...Array.from(

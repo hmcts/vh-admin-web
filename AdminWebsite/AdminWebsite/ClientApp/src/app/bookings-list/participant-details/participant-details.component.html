@@ -98,9 +98,24 @@
       </div>
       <div class="govuk-grid-row vh-mtop">
         <div class="govuk-grid-column-one-quarter contact-label">Username</div>
-        <div id="participant-{{ participant?.ParticipantId }}-username" class="govuk-grid-column-three-quarters wrap">
+
+        <div
+          *ngIf="participant.Email === participant.UserName; else usernamePending"
+          id="participant-{{ participant?.ParticipantId }}-username"
+          class="govuk-grid-column-three-quarters wrap"
+        >
           {{ participant?.UserName }}
         </div>
+        <ng-template #usernamePending>
+          <div
+            id="participant-{{ participant?.ParticipantId }}-username"
+            class="govuk-grid-column-three-quarters wrap"
+            appTooltip
+            [text]="'The account is being created. This may take a few moments. Please refresh shortly.'"
+          >
+            Pending
+          </div>
+        </ng-template>
       </div>
       <div class="govuk-grid-row vh-mtop">
         <div class="govuk-grid-column-one-quarter contact-label">Telephone</div>

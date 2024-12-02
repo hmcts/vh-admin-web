@@ -121,14 +121,6 @@ export class VideoHearingsService {
         sessionStorage.removeItem(this.vhoNonAvailabiltiesHaveChangesKey);
     }
 
-    /**
-     * @deprecated This method is deprecated and will be removed in future versions.
-     * Please use the new method `getNewHearingTypes` in `ReferenceDataService` instead.
-     */
-    getHearingTypes(): Observable<HearingTypeResponse[]> {
-        return this.bhClient.getHearingTypes();
-    }
-
     getCurrentRequest(): HearingModel {
         return this.modelHearing;
     }

@@ -92,10 +92,6 @@ describe('Video hearing service', () => {
         expect(service.hasUnsavedChanges()).toBe(true);
     });
 
-    it('should get hearings types', () => {
-        service.getHearingTypes();
-        expect(clientApiSpy.getHearingTypes).toHaveBeenCalled();
-    });
     it('should clone hearing', async () => {
         clientApiSpy.cloneHearing.and.returnValue(of(null));
 
