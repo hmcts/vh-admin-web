@@ -135,7 +135,7 @@ describe('JusticeUsersService', () => {
     });
 
     describe('clearUsers', () => {
-        fit('should clear the search term', (done: DoneFn) => {
+        it('should clear the search term', (done: DoneFn) => {
             // arrange
             clientApiSpy.getUserList.and.returnValue(of([]));
 
