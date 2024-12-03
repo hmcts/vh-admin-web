@@ -86,6 +86,7 @@ describe('CreateHearingComponent with multiple Services', () => {
             imports: [SharedModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: ReferenceDataService, useValue: refDataServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },
@@ -229,6 +230,7 @@ describe('CreateHearingComponent with single Service', () => {
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: ReferenceDataService, useValue: refDataServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },
@@ -296,6 +298,7 @@ describe('CreateHearingComponent with existing request in session', () => {
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: ReferenceDataService, useValue: refDataServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },

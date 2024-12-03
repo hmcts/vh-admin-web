@@ -54,10 +54,9 @@ const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'cancelRequest',
     'getHearingById',
     'mapHearingDetailsResponseToHearingModel',
-    'getHearingTypes',
     'getUsers'
 ]);
-const referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts']);
+const referenceDataServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts', 'getHearingTypes']);
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 let returnUrlService: ReturnUrlService;
 const featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
@@ -585,7 +584,7 @@ describe('BookingsListComponent', () => {
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
         videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
-        videoHearingServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
+        referenceDataServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
         configServiceSpy.getConfig.and.returnValue({});
 
         referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));
