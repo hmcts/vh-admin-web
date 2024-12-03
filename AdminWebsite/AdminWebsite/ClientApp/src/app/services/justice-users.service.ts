@@ -40,6 +40,10 @@ export class JusticeUsersService {
         this.refresh$.next();
     }
 
+    clearUsers() {
+        this.searchTerm$.next(null);
+    }
+
     search(searchTerm: string) {
         this.searchTerm$.next(searchTerm);
     }
