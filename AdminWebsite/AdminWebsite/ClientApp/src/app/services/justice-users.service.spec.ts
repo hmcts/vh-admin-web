@@ -138,7 +138,7 @@ describe('JusticeUsersService', () => {
         it('should clear the search term', (done: DoneFn) => {
             // arrange
             clientApiSpy.getUserList.and.returnValue(of([]));
- 
+
             // assert
             service.filteredUsers$.subscribe(users => {
                 expect(users).toEqual([]);
