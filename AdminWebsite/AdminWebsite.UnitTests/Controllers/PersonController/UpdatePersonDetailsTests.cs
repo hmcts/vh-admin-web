@@ -6,7 +6,7 @@ using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V2.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using UserApi.Contract.Responses;
@@ -78,8 +78,8 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
         {
             var actionResult = await _controller.UpdatePersonDetails(_personId, _payload);
             
-            actionResult.Result.Should().BeOfType<AcceptedResult>();
-            var result = (AcceptedResult) actionResult.Result;
+            actionResult.Should().BeOfType<AcceptedResult>();
+            var result = (AcceptedResult) actionResult;
             result.StatusCode.Should().Be((int) HttpStatusCode.Accepted);
         }
         
@@ -92,8 +92,8 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
 
             var actionResult = await _controller.UpdatePersonDetails(_personId, _payload);
             
-            actionResult.Result.Should().BeOfType<ObjectResult>();
-            var result = (ObjectResult) actionResult.Result;
+            actionResult.Should().BeOfType<ObjectResult>();
+            var result = (ObjectResult) actionResult;
             result.StatusCode.Should().Be((int) HttpStatusCode.NotFound);
         }
 
@@ -101,13 +101,13 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
         public async Task should_return_status_code_from_bookings_api_exception()
         {
             _bookingsApiClient
-                .Setup(x => x.UpdatePersonDetailsAsync(_personId, It.IsAny<UpdatePersonDetailsRequest>()))
+                .Setup(x => x.UpdatePersonDetailsV2Async(_personId, It.IsAny<UpdatePersonDetailsRequestV2>()))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.NotFound));
 
             var actionResult = await _controller.UpdatePersonDetails(_personId, _payload);
             
-            actionResult.Result.Should().BeOfType<ObjectResult>();
-            var result = (ObjectResult) actionResult.Result;
+            actionResult.Should().BeOfType<ObjectResult>();
+            var result = (ObjectResult) actionResult;
             result.StatusCode.Should().Be((int) HttpStatusCode.NotFound);
         }
     }

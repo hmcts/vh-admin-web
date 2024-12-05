@@ -1,11 +1,11 @@
 using System.Threading;
 using System.Threading.Tasks;
-using AdminWebsite.Controllers;
+using AdminWebsite.Controllers.ReferenceData;
 using AdminWebsite.Services;
 using BookingsApi.Contract.V2.Responses;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AdminWebsite.UnitTests.Controllers
+namespace AdminWebsite.UnitTests.Controllers.ReferenceData
 {
     public class HearingRolesControllerTests
     {

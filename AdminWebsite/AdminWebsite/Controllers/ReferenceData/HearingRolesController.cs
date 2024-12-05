@@ -9,7 +9,7 @@ using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace AdminWebsite.Controllers
+namespace AdminWebsite.Controllers.ReferenceData
 {
     [Produces("application/json")]
     [Route("api/hearingroles")]

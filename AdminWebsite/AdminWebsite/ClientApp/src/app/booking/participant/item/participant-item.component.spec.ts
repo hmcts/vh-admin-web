@@ -165,18 +165,6 @@ describe('ParticipantItemComponent', () => {
         expect(component.isStaffMember).toBeFalsy();
     });
 
-    it('should return false if participant`s case role is None', () => {
-        component.participant = {
-            case_role_name: 'None',
-            is_judge: true,
-            is_exist_person: false,
-            isJudiciaryMember: false,
-            interpretation_language: undefined
-        };
-        fixture.detectChanges();
-        expect(component.hasCaseRole).toBeFalsy();
-    });
-
     it('should return true if participant is an observer', () => {
         component.participant = {
             hearing_role_name: 'Observer',
@@ -200,23 +188,9 @@ describe('ParticipantItemComponent', () => {
         fixture.detectChanges();
         expect(component.isObserverOrPanelMember).toBeTruthy();
     });
-
-    it('should return true if participant has a case role and is not a Panel Member', () => {
-        component.participant = {
-            hearing_role_name: 'Judge',
-            case_role_name: 'Judge',
-            is_judge: true,
-            is_exist_person: false,
-            isJudiciaryMember: false,
-            interpretation_language: undefined
-        };
-        fixture.detectChanges();
-        expect(component.displayCaseRole).toBeTruthy();
-    });
     it('should get judge email', () => {
         component.participant = {
             hearing_role_name: 'Judge',
-            case_role_name: 'Judge',
             is_judge: true,
             is_exist_person: false,
             isJudiciaryMember: false,
@@ -228,7 +202,6 @@ describe('ParticipantItemComponent', () => {
     it('should get judge phone', () => {
         component.participant = {
             hearing_role_name: 'Judge',
-            case_role_name: 'Judge',
             is_judge: true,
             is_exist_person: false,
             isJudiciaryMember: false,

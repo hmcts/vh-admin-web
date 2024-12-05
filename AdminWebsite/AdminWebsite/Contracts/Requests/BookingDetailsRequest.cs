@@ -15,7 +15,6 @@ public class BookingDetailsRequest
     public int ScheduledDuration { get; set; }
     
     public string HearingVenueCode { get; set; }
-    public string CaseTypeName { get; set; }
     public string CaseTypeServiceId { get; set; }
     public List<CaseRequest> Cases { get; set; }
     public List<ParticipantRequest> Participants { get; set; }

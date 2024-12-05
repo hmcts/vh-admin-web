@@ -1,5 +1,5 @@
 ﻿using AdminWebsite.Mappers;
-using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Responses;
 
 namespace AdminWebsite.UnitTests.Mappers
 {
@@ -8,7 +8,7 @@ namespace AdminWebsite.UnitTests.Mappers
         [Test]
         public void Should_map_all_properties_for_Edit_participant_request()
         {
-            var source = new ParticipantResponse
+            var source = new ParticipantResponseV2
             {
                 Id = Guid.NewGuid(),
                 Title = "Mr",
@@ -18,7 +18,6 @@ namespace AdminWebsite.UnitTests.Mappers
                 ContactEmail = "test@test.com",
                 TelephoneNumber = "123",
                 DisplayName = "test",
-                CaseRoleName = "test Case Role Name",
                 HearingRoleName = "test Hearting Role Name",
                 Representee = "test Re",
                 Organisation = "test Or"
@@ -32,7 +31,6 @@ namespace AdminWebsite.UnitTests.Mappers
             result.ContactEmail.Should().Be(source.ContactEmail);
             result.TelephoneNumber.Should().Be(source.TelephoneNumber);
             result.DisplayName.Should().Be(source.DisplayName);
-            result.CaseRoleName.Should().Be(source.CaseRoleName);
             result.HearingRoleName.Should().Be(source.HearingRoleName);
             result.Representee.Should().Be(source.Representee);
             result.OrganisationName.Should().Be(source.Organisation);

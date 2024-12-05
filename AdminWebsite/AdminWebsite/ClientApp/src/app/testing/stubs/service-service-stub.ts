@@ -1,8 +1,8 @@
 import { IDropDownModel } from 'src/app/common/model/drop-down.model';
 import { Observable, of } from 'rxjs';
-import { PersonResponse } from '../../services/clients/api-client';
+import { PersonResponseV2 } from '../../services/clients/api-client';
 
-const participantList: PersonResponse[] = JSON.parse(
+const participantList: PersonResponseV2[] = JSON.parse(
     `
     [
       {

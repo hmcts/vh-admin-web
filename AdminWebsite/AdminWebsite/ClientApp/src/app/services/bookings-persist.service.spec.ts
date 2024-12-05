@@ -20,7 +20,6 @@ function MockBookedHearing(): BookingsDetailsModel {
         45,
         'CaseNo',
         'CaseName',
-        'Financial Remedy',
         'Judge Dredd',
         'Manchester Room 1',
         'Manchester Civil Court',

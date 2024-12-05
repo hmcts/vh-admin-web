@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AvailableLanguageResponse, BHClient, HearingVenueResponse } from './clients/api-client';
+import { AvailableLanguageResponse, BHClient, HearingTypeResponse, HearingVenueResponse } from './clients/api-client';
 import { Observable, shareReplay } from 'rxjs';
 
 @Injectable({
@@ -7,10 +7,16 @@ import { Observable, shareReplay } from 'rxjs';
 })
 export class ReferenceDataService {
     private interpreterLanguages$: Observable<AvailableLanguageResponse[]>;
+    private courts$: Observable<HearingVenueResponse[]>;
+    private hearingTypes$: Observable<HearingTypeResponse[]>;
+
     constructor(private readonly bhClient: BHClient) {}
 
     getCourts(): Observable<HearingVenueResponse[]> {
-        return this.bhClient.getCourts();
+        if (!this.courts$) {
+            this.courts$ = this.bhClient.getCourts().pipe(shareReplay(1));
+        }
+        return this.courts$;
     }
 
     getAvailableInterpreterLanguages(): Observable<AvailableLanguageResponse[]> {
@@ -18,5 +24,12 @@ export class ReferenceDataService {
             this.interpreterLanguages$ = this.bhClient.getAvailableLanguages().pipe(shareReplay(1));
         }
         return this.interpreterLanguages$;
+    }
+
+    getHearingTypes(): Observable<HearingTypeResponse[]> {
+        if (!this.hearingTypes$) {
+            this.hearingTypes$ = this.bhClient.getHearingTypes().pipe(shareReplay(1));
+        }
+        return this.hearingTypes$;
     }
 }

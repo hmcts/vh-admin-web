@@ -86,8 +86,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             });
         this.failedSubmission = false;
         this.checkForExistingRequest();
-        this.retrieveCourts();
         this.initForm();
+        this.retrieveCourts();
+
         super.ngOnInit();
     }
 
@@ -439,7 +440,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     setVenueForExistingHearing() {
         if (this.isExistinHearing && this.availableCourts && this.availableCourts.length > 0) {
-            const selectedCourts = this.availableCourts.filter(x => x.name === this.hearing.court_name);
+            const selectedCourts = this.availableCourts.filter(x => x.code === this.hearing.court_code);
             if (selectedCourts && selectedCourts.length > 0) {
                 this.selectedCourtName = selectedCourts[0].name;
                 this.selectedCourtCode = selectedCourts[0].code;

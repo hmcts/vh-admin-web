@@ -1,27 +1,19 @@
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V1.Requests.Enums;
-using BookingsApi.Contract.V1.Responses;
 using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Requests;
 using BookingsApi.Contract.V2.Responses;
-using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VideoApi.Contract.Consts;
 using VideoApi.Contract.Responses;
-using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
 using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
-using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -33,11 +25,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
         private AdminWebsite.Controllers.HearingsController _controller;
         private EditHearingRequest _editEndpointOnHearingRequestWithJudge;
-        private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private IHearingsService _hearingsService;
 
         private Mock<ILogger<HearingsService>> _participantGroupLogger;
-        private HearingDetailsResponse _updatedExistingParticipantHearingOriginal;
+        private HearingDetailsResponseV2 _updatedExistingParticipantHearingOriginal;
         private Mock<IUserIdentity> _userIdentity;
         private HearingDetailsResponseV2 _v2HearingDetailsResponse;
 
@@ -50,7 +41,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
-            _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _conferencesServiceMock = new Mock<IConferenceDetailsService>();
             _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(new ConferenceDetailsResponse
@@ -74,7 +64,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _hearingsService = new HearingsService(_bookingsApiClient.Object, _participantGroupLogger.Object);
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
-                _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
                 _conferencesServiceMock.Object);
@@ -98,17 +87,17 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
             };
 
-            var cases = new List<CaseResponse>
+            var cases = new List<CaseResponseV2>
             {
-                new CaseResponse {Name = "Case", Number = "123"}
+                new() {Name = "Case", Number = "123"}
             };
 
-            _updatedExistingParticipantHearingOriginal = new HearingDetailsResponse
+            _updatedExistingParticipantHearingOriginal = new HearingDetailsResponseV2()
             {
                 Id = _validId,
                 GroupId = _validId,
                 Participants = [
-                    new ParticipantResponse
+                    new ParticipantResponseV2()
                     {
                         Id = Guid.NewGuid(),
                         UserRoleName = "Individual",
@@ -116,7 +105,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         Username = "old@domain.net"
                     }],
                 Cases = cases,
-                CaseTypeName = "Unit Test",
+                ServiceId = "ABC123",
                 ScheduledDateTime = DateTime.UtcNow.AddHours(3),
                 OtherInformation = ""
             };
@@ -139,10 +128,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 Participants = new List<EditParticipantRequest>()
                 {
-                    new EditParticipantRequest() {
+                    new() {
                         Id = participantId1,
-                        CaseRoleName = "judge",
-                        HearingRoleName = HearingRoleName.Judge,
+                        HearingRoleName = HearingRoleName.Expert,
                         FirstName = "FirstName",
                         LastName = "LastName",
                         ContactEmail = "judge@email.com",
@@ -164,11 +152,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
 
-            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal);
-
-            _editHearingRequestValidator.Setup(x => x.ValidateAsync(It.IsAny<EditHearingRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ValidationResult());
 
             _v2HearingDetailsResponse = new HearingDetailsResponseV2
             {
@@ -215,7 +200,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         Sip = "sip"
                     }
                 },
-                JudiciaryParticipants = new List<JudiciaryParticipantResponse>()
+                JudicialOfficeHolders = new List<JudiciaryParticipantResponse>()
                 {
                     new (){FullName = "Judge Fudge", FirstName = "John", LastName = "Doe", HearingRoleCode = JudiciaryParticipantHearingRoleCode.Judge, PersonalCode = "1234"},
                     new (){FullName = "Jane Doe", FirstName = "Jane", LastName = "Doe", HearingRoleCode = JudiciaryParticipantHearingRoleCode.PanelMember, PersonalCode = "4567"},
@@ -279,7 +264,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 },
             });
-            var existingJudiciaryParticipants = updatedHearing.JudiciaryParticipants.ToList();
+            var existingJudiciaryParticipants = updatedHearing.JudicialOfficeHolders.ToList();
             _addNewParticipantRequest.JudiciaryParticipants = existingJudiciaryParticipants.Select(x => new JudiciaryParticipantRequest
             {
                 PersonalCode = x.PersonalCode,
@@ -321,7 +306,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _bookingsApiClient.Verify(x => x.AddJudiciaryParticipantsToHearingAsync(
                     hearing.Id, 
-                    It.Is<List<BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest>>(r => 
+                    It.Is<List<BookingsApi.Contract.V2.Requests.JudiciaryParticipantRequest>>(r => 
                             r.Any(y => y.PersonalCode == panelMemberToAdd.PersonalCode))),
                 Times.Once);
         }
@@ -336,7 +321,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
             
-            var existingJudge = updatedHearing.JudiciaryParticipants
+            var existingJudge = updatedHearing.JudicialOfficeHolders
                 .Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge);
             
             var request = new EditHearingRequest
@@ -372,7 +357,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var updatedHearing = _v2HearingDetailsResponse;
             updatedHearing.Participants.Clear();
-            updatedHearing.JudiciaryParticipants.Clear();
+            updatedHearing.JudicialOfficeHolders.Clear();
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing)
@@ -418,7 +403,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Role = JudiciaryParticipantHearingRoleCode.Judge.ToString()
             };
 
-            var existingPanelMembers = updatedHearing.JudiciaryParticipants
+            var existingPanelMembers = updatedHearing.JudicialOfficeHolders
                 .Where(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.PanelMember);
             
             var request = new EditHearingRequest
@@ -452,7 +437,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var updatedHearing = _v2HearingDetailsResponse;
             updatedHearing.Participants.Clear();
-            updatedHearing.JudiciaryParticipants.Clear();
+            updatedHearing.JudicialOfficeHolders.Clear();
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing)
@@ -528,7 +513,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 HearingRoleCode = "Judge"
                 
             });
-            updatedHearing.JudiciaryParticipants.Clear();
+            updatedHearing.JudicialOfficeHolders.Clear();
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
                               .ReturnsAsync(updatedHearing);
 
@@ -570,9 +555,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
 
-            var existingJudge = updatedHearing.JudiciaryParticipants
+            var existingJudge = updatedHearing.JudicialOfficeHolders
                 .Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge);
-            var existingPanelMembers = updatedHearing.JudiciaryParticipants
+            var existingPanelMembers = updatedHearing.JudicialOfficeHolders
                 .Where(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.PanelMember);
             
             var request = new EditHearingRequest
@@ -633,7 +618,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _bookingsApiClient.Verify(x => x.AddJudiciaryParticipantsToHearingAsync(
                     It.IsAny<Guid>(),
-                    It.IsAny<List<BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest>>()),
+                    It.IsAny<List<BookingsApi.Contract.V2.Requests.JudiciaryParticipantRequest>>()),
                 Times.Never);
         }
 

@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { MockLogger } from '../shared/testing/mock-logger';
-import { BHClient, BookHearingException, PersonResponse } from './clients/api-client';
+import { BHClient, BookHearingException, PersonResponseV2 } from './clients/api-client';
 import { ParticipantEditService } from './participant-edit-service.service';
 
 describe('ParticipantDeleteServiceService', () => {
@@ -33,7 +33,7 @@ describe('ParticipantDeleteServiceService', () => {
     });
 
     it('should return person', async () => {
-        const existingPerson = new PersonResponse({
+        const existingPerson = new PersonResponseV2({
             id: 'id',
             first_name: 'John',
             last_name: 'Doe',

@@ -1,6 +1,6 @@
 ﻿using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Models;
-using V1 = BookingsApi.Contract.V1.Responses;
+using V2 = BookingsApi.Contract.V2.Responses;
 
 namespace AdminWebsite.Mappers
 {
@@ -17,7 +17,7 @@ namespace AdminWebsite.Mappers
             };
 
         }
-        public static EditEndpointRequest MapFrom(V1.EndpointResponse response)
+        public static EditEndpointRequest MapFrom(V2.EndpointResponseV2 response)
         {
             return new EditEndpointRequest
             {

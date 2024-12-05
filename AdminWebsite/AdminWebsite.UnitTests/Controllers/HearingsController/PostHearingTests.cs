@@ -1,18 +1,18 @@
+using System.Linq;
 using AdminWebsite.Models;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Requests;
 using BookingsApi.Client;
 using Autofac.Extras.Moq;
-using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Requests;
+using BookingsApi.Contract.V2.Responses;
 using VideoApi.Contract.Responses;
 using ParticipantRequest = AdminWebsite.Contracts.Requests.ParticipantRequest;
-using V1 = BookingsApi.Contract.V1;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -39,14 +39,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         TelephoneConferenceId = "expected_conference_phone_id"
                     }
                 });
-            _mocker.Mock<IBookingsApiClient>().Setup(bs => bs.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new V1.Responses.HearingDetailsResponse
+            _mocker.Mock<IBookingsApiClient>().Setup(bs => bs.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(new HearingDetailsResponseV2()
                 {
-                    Participants = new List<V1.Responses.ParticipantResponse>
+                    Participants = new List<ParticipantResponseV2>
                     {
                         new () {HearingRoleName = "Judge"}
                     },
-                    CaseTypeName = "Generic"
+                    ServiceId = "Generic"
                 });
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
         }
@@ -98,22 +98,22 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var request = GetMultiHearingRequest();
             request.ScheduledDuration = 120;
-            var groupedHearings = new List<V1.Responses.HearingDetailsResponse>
+            var groupedHearings = new List<HearingDetailsResponseV2>
             {
                 new()
                 {
-                    Status = V1.Enums.BookingStatus.Booked,
+                    Status = BookingStatusV2.Booked,
                     GroupId = Guid.NewGuid(),
                     Id = Guid.NewGuid(),
                 }
             };
 
             _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetHearingsByGroupIdV2Async(It.IsAny<Guid>()))
                 .ReturnsAsync(groupedHearings);
 
             _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()))
+                .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequestV2>()))
                 .Verifiable();
 
             var response = await _controller.CloneHearing(Guid.NewGuid(), request);
@@ -121,7 +121,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             response.Should().BeOfType<NoContentResult>();
 
             _mocker.Mock<IBookingsApiClient>().Verify(
-                x => x.CloneHearingAsync(It.IsAny<Guid>(), It.Is<CloneHearingRequest>(
+                x => x.CloneHearingAsync(It.IsAny<Guid>(), It.Is<CloneHearingRequestV2>(
                     y => y.ScheduledDuration == request.ScheduledDuration)),
                 Times.Exactly(1));
         }
@@ -131,24 +131,24 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var request = GetMultiHearingRequest();
             var hearingGroupId = Guid.NewGuid();
-            var groupedHearings = new List<V1.Responses.HearingDetailsResponse>();
+            var groupedHearings = new List<HearingDetailsResponseV2>();
             var batchSize = 30;
             for (var i = 1; i <= batchSize; i++)
             {
-                groupedHearings.Add(new V1.Responses.HearingDetailsResponse
+                groupedHearings.Add(new HearingDetailsResponseV2
                 {
-                    Status = V1.Enums.BookingStatus.Booked,
+                    Status = BookingStatusV2.Booked,
                     GroupId = hearingGroupId,
                     Id = Guid.NewGuid()
                 });
             }
             
             _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetHearingsByGroupIdV2Async(It.IsAny<Guid>()))
                 .ReturnsAsync(groupedHearings);
 
             _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()))
+                .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequestV2>()))
                 .Verifiable();
             
             var response = await _controller.CloneHearing(Guid.NewGuid(), request);
@@ -156,7 +156,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             response.Should().BeOfType<NoContentResult>();
             
             _mocker.Mock<IBookingsApiClient>().Verify(
-                x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()),
+                x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequestV2>()),
                 Times.Exactly(1));
         }
 
@@ -178,7 +178,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var request = GetMultiHearingRequest();
             _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()))
+                .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequestV2>()))
                 .Throws(new BookingsApiException("Error", (int)HttpStatusCode.BadRequest, "response", null, null));
 
             var response = await _controller.CloneHearing(Guid.NewGuid(), request);
@@ -191,7 +191,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var request = GetMultiHearingRequest();
             _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()))
+                .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequestV2>()))
                 .Throws(new BookingsApiException("Error", (int)HttpStatusCode.InternalServerError, "response", null, null));
 
             var response = await _controller.CloneHearing(Guid.NewGuid(), request);
@@ -206,18 +206,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_clone_hearings_on_weekends_when_start_or_end_date_are_on_weekends(DateTime startDate, DateTime endDate)
         {
             var request = new MultiHearingRequest { StartDate = startDate, EndDate = endDate};
-            var groupedHearings = new List<V1.Responses.HearingDetailsResponse>
+            var groupedHearings = new List<HearingDetailsResponseV2>
             {
                 new()
                 {
-                    Status = V1.Enums.BookingStatus.Booked,
+                    Status = BookingStatusV2.Booked,
                     GroupId = Guid.NewGuid(),
                     Id = Guid.NewGuid(),
                 }
             };
             
             _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetHearingsByGroupIdV2Async(It.IsAny<Guid>()))
                 .ReturnsAsync(groupedHearings);
             
             var expectedDates = new List<DateTime>();
@@ -232,7 +232,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _mocker.Mock<IBookingsApiClient>().Verify(
                 x => x.CloneHearingAsync(It.IsAny<Guid>(), 
-                    It.Is<CloneHearingRequest>(r => r.Dates.All(d => expectedDates.Contains(d)))),
+                    It.Is<CloneHearingRequestV2>(r => r.Dates.All(d => expectedDates.Contains(d)))),
                 Times.Exactly(1));
         }
         
@@ -242,18 +242,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var startDate = new DateTime(2022, 12, 15, 0, 0, 0, DateTimeKind.Utc);
             var endDate = new DateTime(2022, 12, 20, 0, 0, 0, DateTimeKind.Utc);
             var request = new MultiHearingRequest { StartDate = startDate, EndDate = endDate};
-            var groupedHearings = new List<V1.Responses.HearingDetailsResponse>
+            var groupedHearings = new List<HearingDetailsResponseV2>
             {
                 new()
                 {
-                    Status = V1.Enums.BookingStatus.Booked,
+                    Status = BookingStatusV2.Booked,
                     GroupId = Guid.NewGuid(),
                     Id = Guid.NewGuid(),
                 }
             };
             
             _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetHearingsByGroupIdV2Async(It.IsAny<Guid>()))
                 .ReturnsAsync(groupedHearings);
 
             var expectedDates = new List<DateTime>
@@ -271,7 +271,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _mocker.Mock<IBookingsApiClient>().Verify(
                 x => x.CloneHearingAsync(It.IsAny<Guid>(), 
-                    It.Is<CloneHearingRequest>(r => r.Dates.All(d => expectedDates.Contains(d)))),
+                    It.Is<CloneHearingRequestV2>(r => r.Dates.All(d => expectedDates.Contains(d)))),
                 Times.Exactly(1));
         }
 
@@ -285,18 +285,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 new (2023, 1, 8, 0, 0, 0, DateTimeKind.Utc)
             };
             var request = new MultiHearingRequest { HearingDates = hearingDates };
-            var groupedHearings = new List<V1.Responses.HearingDetailsResponse>
+            var groupedHearings = new List<HearingDetailsResponseV2>
             {
                 new()
                 {
-                    Status = V1.Enums.BookingStatus.Booked,
+                    Status = BookingStatusV2.Booked,
                     GroupId = Guid.NewGuid(),
                     Id = Guid.NewGuid(),
                 }
             };
             
             _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetHearingsByGroupIdV2Async(It.IsAny<Guid>()))
                 .ReturnsAsync(groupedHearings);
 
             var expectedDates = new List<DateTime>
@@ -312,7 +312,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _mocker.Mock<IBookingsApiClient>().Verify(
                 x => x.CloneHearingAsync(It.IsAny<Guid>(), 
-                    It.Is<CloneHearingRequest>(r => r.Dates.All(d => expectedDates.Contains(d)))),
+                    It.Is<CloneHearingRequestV2>(r => r.Dates.All(d => expectedDates.Contains(d)))),
                 Times.Exactly(1));
         }
 

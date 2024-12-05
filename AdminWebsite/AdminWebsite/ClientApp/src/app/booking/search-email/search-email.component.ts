@@ -37,8 +37,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Input() disabled = true;
 
-    @Input() caseRole = '';
-
     @Input() hearingRoleParticipant = '';
 
     @Input() initialValue = '';

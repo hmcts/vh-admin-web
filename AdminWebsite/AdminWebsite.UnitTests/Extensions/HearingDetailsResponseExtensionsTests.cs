@@ -1,247 +1,43 @@
-using AdminWebsite.Extensions;
-using AdminWebsite.Models;
-using FizzWare.NBuilder;
 using AdminWebsite.Contracts.Responses;
-using VideoApi.Contract.Enums;
+using AdminWebsite.Extensions;
 
 namespace AdminWebsite.UnitTests.Extensions
 {
     public class HearingDetailsResponseExtensionsTests
     {
-        private HearingDetailsResponse _hearing;
-
-        [SetUp]
-        public void Setup()
+        [Test]
+        public void HasScheduleAmended__True_WhenDatesHaveChanged()
         {
-            _hearing = new HearingDetailsResponse
+            var hearing = new HearingDetailsResponse
             {
-                Id = Guid.NewGuid(),
-                Participants = new List<ParticipantResponse>()
+                ScheduledDateTime = DateTime.UtcNow
             };
-        }
-
-        [Test]
-        public void Should_Return_True_If_Judge_Phone_Exists()
-        {
-            var otherInfo = new OtherInformationDetails { JudgePhone = "1234564978" };
-            _hearing.OtherInformation = otherInfo.ToOtherInformationString();
-
-            _hearing.DoesJudgePhoneExist().Should().BeTrue();
-        }
-
-        [Test]
-        public void Should_Return_False_If_Judge_Phone_Does_Not_Exist()
-        {
-            _hearing.DoesJudgePhoneExist().Should().BeFalse();
-        }
-
-        [Test]
-        public void Should_Return_True_If_Judge_Email_Exists()
-        {
-            var otherInfo = new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" };
-            _hearing.OtherInformation = otherInfo.ToOtherInformationString();
-
-            _hearing.DoesJudgeEmailExist().Should().BeTrue();
-        }
-
-        [Test]
-        public void Should_Return_False_If_Judge_Email_Does_Not_Exist()
-        {
-            _hearing.DoesJudgeEmailExist().Should().BeFalse();
-        }
-
-        [Test]
-        public void Should_Return_False_If_Judge_Email_is_empty()
-        {
-            var otherInfo = new OtherInformationDetails { JudgeEmail = "" };
-            _hearing.OtherInformation = otherInfo.ToOtherInformationString();
-            _hearing.DoesJudgeEmailExist().Should().BeFalse();
-        }
-
-        [Test]
-        public void Should_Return_False_If_Judge_Email_is_null()
-        {
-            var otherInfo = new OtherInformationDetails { JudgeEmail = null };
-            _hearing.OtherInformation = otherInfo.ToOtherInformationString();
-            _hearing.DoesJudgeEmailExist().Should().BeFalse();
-        }
-
-        [Test]
-        public void Should_Return_False_If_OtherInformation_Is_Null_When_Comparing_Judge_Emails()
-        {
-            _hearing.HasJudgeEmailChanged(new HearingDetailsResponse { Id = Guid.NewGuid(), Participants = new List<ParticipantResponse>() }).Should().BeFalse();
-        }
-
-        [Test]
-        public void Should_Return_False_If_Judge_Has_Not_Changed_When_Comparing_Judge_Emails()
-        {
-            var otherInfo = new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" };
-            _hearing.OtherInformation = otherInfo.ToOtherInformationString();
-
-            var hearing2 = new HearingDetailsResponse { Id = Guid.NewGuid(), Participants = new List<ParticipantResponse>() };
-            var hearing2OtherInfo = new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" };
-            hearing2.OtherInformation = hearing2OtherInfo.ToOtherInformationString();
-
-            _hearing.HasJudgeEmailChanged(hearing2).Should().BeFalse();
-        }
-
-        [Test]
-        public void Should_Return_True_If_Judge_Has_Changed_When_Comparing_Judge_Emails()
-        {
-            var otherInfo = new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" };
-            _hearing.OtherInformation = otherInfo.ToOtherInformationString();
-
-            var hearing2 = new HearingDetailsResponse { Id = Guid.NewGuid(), Participants = new List<ParticipantResponse>() };
-            var hearing2OtherInfo = new OtherInformationDetails { JudgeEmail = "judge2@hmcts.net" };
-            hearing2.OtherInformation = hearing2OtherInfo.ToOtherInformationString();
-
-            _hearing.HasJudgeEmailChanged(hearing2).Should().BeTrue();
-        }        
-        [Test]
-        public void Should_Return_False_If_Judge_Has_Changed_When_Comparing_Generic_Hearing_Judges()
-        {
-            _hearing.CaseTypeName = "Generic";
-            var existingJudge = Builder<ParticipantResponse>.CreateNew()
-               .With(x => x.UserRoleName = UserRole.Judge.ToString())
-               .With(x => x.Username = "old@judge.com")
-               .Build();
-            _hearing.Participants.Add(existingJudge);
-
-            var newJudge = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.UserRoleName = UserRole.Judge.ToString())
-                .With(x => x.ContactEmail = "new@judge.com")
-                .Build();
-
-            var updatedHearing = new HearingDetailsResponse
+            var anotherHearing = new HearingDetailsResponse
             {
-                Id = _hearing.Id,
-                Participants = new List<ParticipantResponse> { newJudge }
+                ScheduledDateTime = DateTime.UtcNow.AddHours(1)
             };
-
-            _hearing.JudgeHasNotChangedForGenericHearing(updatedHearing).Should().BeFalse();
+            
+            var result = hearing.HasScheduleAmended(anotherHearing);
+            
+            result.Should().BeTrue();
         }
+        
         [Test]
-        public void Should_Return_True_If_Judge_Has_Changed_When_Comparing_Non_Generic_Hearing_Judges()
+        public void HasScheduleAmended__False_WhenDatesAreTheSame()
         {
-            _hearing.CaseTypeName = "Unit Test";
-            var existingJudge = Builder<ParticipantResponse>.CreateNew()
-               .With(x => x.UserRoleName = UserRole.Judge.ToString())
-               .With(x => x.Username = "old@judge.com")
-               .Build();
-            _hearing.Participants.Add(existingJudge);
-
-            var newJudge = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.UserRoleName = UserRole.Judge.ToString())
-                .With(x => x.ContactEmail = "new@judge.com")
-                .Build();
-
-            var updatedHearing = new HearingDetailsResponse
+            var now = DateTime.UtcNow;
+            var hearing = new HearingDetailsResponse
             {
-                Id = _hearing.Id,
-                Participants = new List<ParticipantResponse> { newJudge }
+                ScheduledDateTime = now
             };
-
-            _hearing.JudgeHasNotChangedForGenericHearing(updatedHearing).Should().BeTrue();
-        }
-        [Test]
-        public void Should_Return_True_If_Judge_Has_Not_Changed_When_Comparing_Generic_Hearing_Judges()
-        {
-            _hearing.CaseTypeName = "Generic";
-            var existingJudge = Builder<ParticipantResponse>.CreateNew()
-               .With(x => x.UserRoleName = UserRole.Judge.ToString())
-               .With(x => x.Username = "old@judge.com")
-               .Build();
-            _hearing.Participants.Add(existingJudge);
-
-            var newJudge = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = existingJudge.Id)
-                .With(x => x.UserRoleName = UserRole.Judge.ToString())
-                .With(x => x.ContactEmail = "new@judge.com")
-                .Build();
-
-            var updatedHearing = new HearingDetailsResponse
+            var anotherHearing = new HearingDetailsResponse
             {
-                Id = _hearing.Id,
-                Participants = new List<ParticipantResponse> { newJudge }
+                ScheduledDateTime = now
             };
-
-            _hearing.JudgeHasNotChangedForGenericHearing(updatedHearing).Should().BeTrue();
-        }
-
-        [Test]
-        public void Should_return_true_when_ejud_email_has_been_assigned_from_no_judge()
-        {
-            var judge = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.UserRoleName = UserRole.Judge.ToString())
-                .With(x => x.Username = "new@judiciaryejud.com")
-                .Build();
-            var newHearing = new HearingDetailsResponse
-            {
-                Id = Guid.NewGuid(),
-                Participants = new List<ParticipantResponse> { judge }
-            };
-            _hearing.HasJudgeEmailChanged(newHearing).Should().BeTrue();
-        }
-
-        [Test]
-        public void Should_return_true_when_ejud_email_has_changed_to_another_ejud()
-        {
-            var existingEJudJudge = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.UserRoleName = UserRole.Judge.ToString())
-                .With(x => x.Username = "old@judiciaryejud.com")
-                .Build();
-            _hearing.Participants.Add(existingEJudJudge);
-
-            var newEJudJudge = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.UserRoleName = UserRole.Judge.ToString())
-                .With(x => x.ContactEmail = "new@judiciaryejud.com")
-                .Build();
-            var newHearing = new HearingDetailsResponse
-            {
-                Id = Guid.NewGuid(),
-                Participants = new List<ParticipantResponse> { newEJudJudge }
-            };
-            _hearing.HasJudgeEmailChanged(newHearing).Should().BeTrue();
-        }
-
-        [Test]
-        public void Should_return_true_when_ejud_email_has_changed_to_vh_judge()
-        {
-            var otherInfo = new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" };
-            _hearing.OtherInformation = otherInfo.ToOtherInformationString();
-
-            var newEJudJudge = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.UserRoleName = UserRole.Judge.ToString())
-                .With(x => x.ContactEmail = "new@judiciaryejud.com")
-                .Build();
-            var newHearing = new HearingDetailsResponse
-            {
-                Id = Guid.NewGuid(),
-                Participants = new List<ParticipantResponse> { newEJudJudge }
-            };
-            _hearing.HasJudgeEmailChanged(newHearing).Should().BeTrue();
-        }
-
-        [Test]
-        public void Should_return_true_when_vh_judge_has_changed_to_ejud_judge()
-        {
-            var existingEJudJudge = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.UserRoleName = UserRole.Judge.ToString())
-                .With(x => x.ContactEmail = "old@judiciaryejud.com")
-                .Build();
-            _hearing.Participants.Add(existingEJudJudge);
-
-
-            var otherInfo = new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" };
-            var newHearing = new HearingDetailsResponse
-            {
-                Id = Guid.NewGuid(),
-                Participants = new List<ParticipantResponse>(),
-                OtherInformation = otherInfo.ToOtherInformationString()
-            };
-            _hearing.HasJudgeEmailChanged(newHearing).Should().BeTrue();
+            
+            var result = hearing.HasScheduleAmended(anotherHearing);
+            
+            result.Should().BeFalse();
         }
     }
 }

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using AdminWebsite.Attributes;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
-using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
@@ -18,10 +17,9 @@ using AdminWebsite.Services;
 using BookingsApi.Client;
 using BookingsApi.Contract.Interfaces.Requests;
 using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V1.Requests.Enums;
+using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Requests;
 using BookingsApi.Contract.V2.Responses;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -30,6 +28,7 @@ using VideoApi.Client;
 using VideoApi.Contract.Responses;
 using HearingDetailsResponse = AdminWebsite.Contracts.Responses.HearingDetailsResponse;
 using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
+using JudiciaryParticipantResponse = AdminWebsite.Contracts.Responses.JudiciaryParticipantResponse;
 using LinkedParticipantRequest = AdminWebsite.Contracts.Requests.LinkedParticipantRequest;
 using ParticipantResponse = AdminWebsite.Contracts.Responses.ParticipantResponse;
 
@@ -44,7 +43,6 @@ namespace AdminWebsite.Controllers
     public class HearingsController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
-        private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
         private readonly IHearingsService _hearingsService;
         private readonly IConferenceDetailsService _conferenceDetailsService;
         private readonly ILogger<HearingsController> _logger;
@@ -56,14 +54,12 @@ namespace AdminWebsite.Controllers
 #pragma warning disable S107
         public HearingsController(IBookingsApiClient bookingsApiClient, 
             IUserIdentity userIdentity,
-            IValidator<EditHearingRequest> editHearingRequestValidator,
             ILogger<HearingsController> logger, 
             IHearingsService hearingsService,
             IConferenceDetailsService conferenceDetailsService)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
-            _editHearingRequestValidator = editHearingRequestValidator;
             _logger = logger;
             _hearingsService = hearingsService;
             _conferenceDetailsService = conferenceDetailsService;
@@ -180,7 +176,7 @@ namespace AdminWebsite.Controllers
                 return BadRequest();
             }
 
-            var cloneHearingRequest = new CloneHearingRequest
+            var cloneHearingRequest = new CloneHearingRequestV2()
             {
                 Dates = hearingDates, 
                 ScheduledDuration = hearingRequest.ScheduledDuration
@@ -192,7 +188,7 @@ namespace AdminWebsite.Controllers
                 await _bookingsApiClient.CloneHearingAsync(hearingId, cloneHearingRequest);
                 _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
 
-                var groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearingId);
+                var groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdV2Async(hearingId);
 
                 var conferenceStatusToGet = groupedHearings.Where(x => x.Participants?
                     .Exists(gh => gh.HearingRoleName == RoleNames.Judge) ?? false);
@@ -249,14 +245,6 @@ namespace AdminWebsite.Controllers
             }
 
             _logger.LogDebug("Attempting to edit hearing {Hearing}", hearingId);
-            var result = await _editHearingRequestValidator.ValidateAsync(request);
-            if (!result.IsValid)
-            {
-                _logger.LogWarning("Failed edit hearing validation");
-                ModelState.AddFluentValidationErrors(result.Errors);
-                return ValidationProblem(ModelState);
-            }
-
             HearingDetailsResponse originalHearing;
             try
             {
@@ -437,8 +425,8 @@ namespace AdminWebsite.Controllers
             
             hearingsToUpdate = hearingsToUpdate
                 .Where(h => 
-                    h.Status != BookingsApi.Contract.V2.Enums.BookingStatusV2.Cancelled && 
-                    h.Status != BookingsApi.Contract.V2.Enums.BookingStatusV2.Failed)
+                    h.Status != BookingStatusV2.Cancelled && 
+                    h.Status != BookingStatusV2.Failed)
                 .ToList();
                 
             await UpdateMultiDayHearingV2(hearingsToUpdate, hearingId, groupId, request);
@@ -512,10 +500,10 @@ namespace AdminWebsite.Controllers
 
         private async Task CancelMultiDayHearing(CancelMultiDayHearingRequest request, Guid hearingId, Guid groupId)
         {
-            var hearingsInMultiDay = await _bookingsApiClient.GetHearingsByGroupIdAsync(groupId);
+            var hearingsInMultiDay = await _bookingsApiClient.GetHearingsByGroupIdV2Async(groupId);
             var thisHearing = hearingsInMultiDay.First(x => x.Id == hearingId);
             
-            var hearingsToCancel = new List<BookingsApi.Contract.V1.Responses.HearingDetailsResponse>
+            var hearingsToCancel = new List<HearingDetailsResponseV2>
             {
                 thisHearing
             };
@@ -529,8 +517,8 @@ namespace AdminWebsite.Controllers
             // Hearings with these statuses will be rejected by bookings api, so filter them out
             hearingsToCancel = hearingsToCancel
                 .Where(h => 
-                    h.Status != BookingsApi.Contract.V1.Enums.BookingStatus.Cancelled && 
-                    h.Status != BookingsApi.Contract.V1.Enums.BookingStatus.Failed)
+                    h.Status != BookingStatusV2.Cancelled && 
+                    h.Status != BookingStatusV2.Failed)
                 .ToList();
 
             var cancelRequest = new CancelHearingsInGroupRequest
@@ -628,7 +616,7 @@ namespace AdminWebsite.Controllers
             }
 
             var johsToAdd = request.NewJudiciaryParticipants
-                .Select(jp => new BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest()
+                .Select(jp => new BookingsApi.Contract.V2.Requests.JudiciaryParticipantRequest()
                 {
                     DisplayName = jp.DisplayName,
                     PersonalCode = jp.PersonalCode,
@@ -703,7 +691,7 @@ namespace AdminWebsite.Controllers
             var newJohRequest = newJohs.Select(jp =>
             {
                 var roleCode = Enum.Parse<JudiciaryParticipantHearingRoleCode>(jp.Role);
-                return new BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest()
+                return new BookingsApi.Contract.V2.Requests.JudiciaryParticipantRequest()
                 {
                     DisplayName = jp.DisplayName,
                     PersonalCode = jp.PersonalCode,
@@ -720,7 +708,7 @@ namespace AdminWebsite.Controllers
                 if (johsToAdd.Count != 0)
                 {
                     var newParticipants = johsToAdd
-                        .Select(x => new BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest
+                        .Select(x => new BookingsApi.Contract.V2.Requests.JudiciaryParticipantRequest
                         {
                             ContactEmail = x.ContactEmail,
                             DisplayName = x.DisplayName,

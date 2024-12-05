@@ -1,15 +1,14 @@
 using System.Threading.Tasks;
-using AdminWebsite.Configuration;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VideoApi.Contract.Responses;
-using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
+using ParticipantResponse = BookingsApi.Contract.V2.Responses.ParticipantResponseV2;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -36,8 +35,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         TelephoneConferenceId = "expected_conference_phone_id"
                     }
                 });
-            _mocker.Mock<IBookingsApiClient>().Setup(bs => bs.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(new HearingDetailsResponse
+            _mocker.Mock<IBookingsApiClient>().Setup(bs => bs.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(new HearingDetailsResponseV2
                 {
                     Participants = [new ParticipantResponse { HearingRoleName = "Judge" }]
                 });

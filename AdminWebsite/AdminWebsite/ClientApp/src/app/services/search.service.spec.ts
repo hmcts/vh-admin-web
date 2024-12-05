@@ -2,7 +2,7 @@ import { SearchService } from './search.service';
 import { TestBed } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
-import { BHClient, JudgeAccountType, JudgeResponse, PersonResponse } from './clients/api-client';
+import { BHClient, JudgeAccountType, JudgeResponse, PersonResponseV2 } from './clients/api-client';
 import { ParticipantModel } from '../common/model/participant.model';
 import { Constants } from '../common/constants';
 import { LaunchDarklyService } from './launch-darkly.service';
@@ -15,7 +15,7 @@ const roleJudge = 'Judge';
 const validSearchTerms = 'abc';
 const invalidSearchTerms = 'ab';
 
-const personList: PersonResponse[] = JSON.parse(
+const personList: PersonResponseV2[] = JSON.parse(
     `
     [
       {

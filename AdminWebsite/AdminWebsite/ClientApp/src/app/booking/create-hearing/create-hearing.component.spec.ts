@@ -22,6 +22,7 @@ import { By } from '@angular/platform-browser';
 import { createMultiDayHearing } from 'src/app/testing/helpers/hearing.helpers';
 import { VideoSupplier } from 'src/app/services/clients/api-client';
 import { ServiceIds } from '../models/supplier-override';
+import { ReferenceDataService } from 'src/app/services/reference-data.service';
 
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
@@ -39,6 +40,7 @@ function initExistingHearingRequest(): HearingModel {
 }
 
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+let refDataServiceSpy: jasmine.SpyObj<ReferenceDataService>;
 let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 let routerSpy: jasmine.SpyObj<Router>;
 const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
@@ -65,23 +67,26 @@ describe('CreateHearingComponent with multiple Services', () => {
             .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
             .and.returnValue(of(defaultOverrideValue));
 
+        refDataServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getHearingTypes']);
+
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
             'getCurrentRequest',
             'updateHearingRequest',
             'setBookingHasChanged',
             'unsetBookingHasChanged'
         ]);
+
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
         bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
 
         TestBed.configureTestingModule({
             imports: [SharedModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: ReferenceDataService, useValue: refDataServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },
@@ -208,8 +213,8 @@ describe('CreateHearingComponent with single Service', () => {
             .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
             .and.returnValue(of(defaultOverrideValue));
 
+        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
             'getCurrentRequest',
             'updateHearingRequest',
             'cancelRequest',
@@ -219,12 +224,13 @@ describe('CreateHearingComponent with single Service', () => {
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
+        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: ReferenceDataService, useValue: refDataServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },
@@ -242,7 +248,7 @@ describe('CreateHearingComponent with single Service', () => {
     });
 
     it('should set Service when single item returned', fakeAsync(() => {
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
+        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
         fixture.detectChanges();
         tick();
         fixture.detectChanges();
@@ -276,7 +282,6 @@ describe('CreateHearingComponent with existing request in session', () => {
             .and.returnValue(of(defaultOverrideValue));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
             'getCurrentRequest',
             'updateHearingRequest',
             'cancelRequest',
@@ -287,12 +292,13 @@ describe('CreateHearingComponent with existing request in session', () => {
         bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: ReferenceDataService, useValue: refDataServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },

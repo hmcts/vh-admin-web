@@ -18,7 +18,6 @@ namespace AdminWebsite.Services
     public interface IHearingsService
     {
         void AssignEndpointDefenceAdvocates(List<Contracts.Requests.EndpointRequest> endpointsWithDa, IReadOnlyCollection<Contracts.Requests.ParticipantRequest> participants);
-        Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants, List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants);
         Task ProcessParticipantsV2(Guid hearingId, List<UpdateParticipantRequestV2> existingParticipants, List<ParticipantRequestV2> newParticipants, List<Guid> removedParticipantIds, List<LinkedParticipantRequestV2> linkedParticipants);
         Task<IParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, IParticipantRequest newParticipant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
         Task ProcessEndpoints(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList);
@@ -60,23 +59,6 @@ namespace AdminWebsite.Services
                     .ToList()
                 : new List<EditParticipantRequest>();
         }
-
-        public async Task ProcessParticipants(Guid hearingId, 
-            List<UpdateParticipantRequest> existingParticipants, 
-            List<ParticipantRequest> newParticipants,
-            List<Guid> removedParticipantIds, 
-            List<LinkedParticipantRequest> linkedParticipants)
-        {
-
-            var updateHearingParticipantsRequest = new UpdateHearingParticipantsRequest
-            {
-                ExistingParticipants = existingParticipants,
-                NewParticipants = newParticipants,
-                RemovedParticipantIds = removedParticipantIds,
-                LinkedParticipants = linkedParticipants
-            };
-            await _bookingsApiClient.UpdateHearingParticipantsAsync(hearingId, updateHearingParticipantsRequest);
-        }
         
         public async Task ProcessParticipantsV2(Guid hearingId, 
             List<UpdateParticipantRequestV2> existingParticipants, 
@@ -102,23 +84,6 @@ namespace AdminWebsite.Services
             List<Guid> removedParticipantIds,
             HearingDetailsResponse hearing)
         {
-            // Add a new participant
-            // Map the request except the username
-            if (participant.CaseRoleName == RoleNames.Judge || (participant.HearingRoleName is RoleNames.PanelMember or RoleNames.Winger))
-            {
-                if (hearing.Participants != null &&
-                    hearing.Participants.Exists(p => p.ContactEmail.Equals(participant.ContactEmail) && removedParticipantIds.TrueForAll(removedParticipantId => removedParticipantId != p.Id)))
-                {
-                    //If the judge already exists in the database, there is no need to add again.
-                    return Task.FromResult<IParticipantRequest>(null);
-                }
-
-                if (newParticipant is ParticipantRequest v1Request)
-                {
-                    v1Request.Username = participant.ContactEmail;
-                }
-            }
-
             _logger.LogDebug("Adding participant {Participant} to hearing {Hearing}",
                 newParticipant.DisplayName, hearingId);
             return Task.FromResult(newParticipant);

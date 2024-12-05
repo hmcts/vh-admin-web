@@ -12,6 +12,7 @@ using BookingsApi.Client;
 using BookingsApi.Contract.V2.Requests;
 using Microsoft.AspNetCore.Mvc;
 using VideoApi.Contract.Responses;
+using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
 using LinkedParticipantType = AdminWebsite.Contracts.Enums.LinkedParticipantType;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -76,7 +77,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Result.Should().BeOfType<CreatedResult>();
             var createdObjectResult = (CreatedResult) result.Result;
             createdObjectResult.StatusCode.Should().Be(201);
-            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse, options => options.ExcludingMissingMembers());
+            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse,
+                options => options.ExcludingMissingMembers().Excluding(x => x.HearingVenueName));
             
             bookingDetails.Participants.Exists(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
 

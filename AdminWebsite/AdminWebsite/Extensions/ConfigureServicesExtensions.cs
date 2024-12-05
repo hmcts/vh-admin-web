@@ -5,13 +5,10 @@ using System.Reflection;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Middleware;
-using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Swagger;
-using AdminWebsite.Validators;
 using BookingsApi.Client;
-using FluentValidation;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -139,12 +136,10 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddHttpClient<IPublicHolidayRetriever, UkPublicHolidayRetriever>();
             serviceCollection.AddTransient<IUserIdentity, UserIdentity>((ctx) =>
             {
-                var userPrincipal = ctx.GetService<IHttpContextAccessor>().HttpContext.User;
+                var userPrincipal = ctx.GetService<IHttpContextAccessor>().HttpContext!.User;
 
                 return new UserIdentity(userPrincipal);
             });
-
-            serviceCollection.AddSingleton<IValidator<EditHearingRequest>, EditHearingRequestValidator>();
 
             return serviceCollection;
         }

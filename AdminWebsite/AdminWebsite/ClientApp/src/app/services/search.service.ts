@@ -3,7 +3,7 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IDropDownModel } from '../common/model/drop-down.model';
 import { ParticipantModel } from '../common/model/participant.model';
-import { BHClient, JudgeResponse, PersonResponse } from '../services/clients/api-client';
+import { BHClient, JudgeResponse, PersonResponseV2 } from './clients/api-client';
 import { Constants } from '../common/constants';
 
 @Injectable({
@@ -76,7 +76,7 @@ export class SearchService {
         }
     }
 
-    searchEntries(term): Observable<Array<PersonResponse>> {
+    searchEntries(term): Observable<Array<PersonResponseV2>> {
         return this.bhClient.postPersonBySearchTerm(term);
     }
 

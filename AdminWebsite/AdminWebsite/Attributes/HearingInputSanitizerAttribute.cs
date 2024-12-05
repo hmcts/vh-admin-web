@@ -2,7 +2,7 @@
 using AdminWebsite.Models;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Text.RegularExpressions;
-using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V2.Requests;
 
 namespace AdminWebsite.Attributes
 {
@@ -15,9 +15,8 @@ namespace AdminWebsite.Attributes
             {
                 switch (argument)
                 {
-                    case BookNewHearingRequest newHearingRequest:
+                    case BookNewHearingRequestV2 newHearingRequest:
                         newHearingRequest.HearingRoomName = Sanitize(newHearingRequest.HearingRoomName);
-                        newHearingRequest.HearingVenueName = Sanitize(newHearingRequest.HearingVenueName);
                         newHearingRequest.OtherInformation = Sanitize(newHearingRequest.OtherInformation);
 
                         newHearingRequest.Cases?.ForEach(x =>

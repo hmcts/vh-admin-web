@@ -5,8 +5,6 @@ using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Requests.Enums;
-using BookingsApi.Contract.V1.Responses;
 using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Requests;
 using BookingsApi.Contract.V2.Responses;
@@ -279,7 +277,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Id = Guid.NewGuid(),
                 DisplayName = "Endpoint X"
             });
-            day1Hearing.JudiciaryParticipants.Add(new JudiciaryParticipantResponse
+            day1Hearing.JudicialOfficeHolders.Add(new JudiciaryParticipantResponse
             {
                 PersonalCode = Guid.NewGuid().ToString(),
                 DisplayName = "PanelMemberDay1",
@@ -310,7 +308,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Id = Guid.NewGuid(),
                 DisplayName = "Endpoint C"
             });
-            day2Hearing.JudiciaryParticipants.Add(new JudiciaryParticipantResponse
+            day2Hearing.JudicialOfficeHolders.Add(new JudiciaryParticipantResponse
             {
                 PersonalCode = Guid.NewGuid().ToString(),
                 DisplayName = "PanelMemberDay2",
@@ -372,7 +370,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         h.Endpoints.NewEndpoints.Count == 0 && 
                         h.Endpoints.RemovedEndpointIds.Count == 0 &&
                         h.JudiciaryParticipants.NewJudiciaryParticipants.Count == 0 &&
-                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == day1Hearing.JudiciaryParticipants.Count &&
+                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == day1Hearing.JudicialOfficeHolders.Count &&
                         h.JudiciaryParticipants.RemovedJudiciaryParticipantPersonalCodes.Count == 0
                         ))));
             
@@ -396,7 +394,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         h.Endpoints.NewEndpoints.Count == 0 && 
                         h.Endpoints.RemovedEndpointIds.Count == 0 &&
                         h.JudiciaryParticipants.NewJudiciaryParticipants.Count == 0 &&
-                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == day2Hearing.JudiciaryParticipants.Count &&
+                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == day2Hearing.JudicialOfficeHolders.Count &&
                         h.JudiciaryParticipants.RemovedJudiciaryParticipantPersonalCodes.Count == 0
                         ))));
         }
@@ -438,7 +436,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Id = Guid.NewGuid(),
                 DisplayName = "Endpoint C"
             });
-            day1Hearing.JudiciaryParticipants.Add(new JudiciaryParticipantResponse
+            day1Hearing.JudicialOfficeHolders.Add(new JudiciaryParticipantResponse
             {
                 PersonalCode = Guid.NewGuid().ToString(),
                 DisplayName = "PanelMember",
@@ -487,7 +485,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         h.Endpoints.ExistingEndpoints.Count == day1Hearing.Endpoints.Count && 
                         h.Endpoints.NewEndpoints.Count == 0 && 
                         h.Endpoints.RemovedEndpointIds.Count == 0 &&
-                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == day1Hearing.JudiciaryParticipants.Count &&
+                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == day1Hearing.JudicialOfficeHolders.Count &&
                         h.JudiciaryParticipants.NewJudiciaryParticipants.Count == 0 &&
                         h.JudiciaryParticipants.RemovedJudiciaryParticipantPersonalCodes.Count == 0
                         ))));
@@ -505,7 +503,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         h.Endpoints.ExistingEndpoints.Count == day2Hearing.Endpoints.Count && 
                         h.Endpoints.NewEndpoints.Count == 0 && 
                         h.Endpoints.RemovedEndpointIds.Count == 0 &&
-                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == day2Hearing.JudiciaryParticipants.Count &&
+                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == day2Hearing.JudicialOfficeHolders.Count &&
                         h.JudiciaryParticipants.NewJudiciaryParticipants.Count == 0 &&
                         h.JudiciaryParticipants.RemovedJudiciaryParticipantPersonalCodes.Count == 0
                         ))));
@@ -675,8 +673,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Assign day 2 to a different judge
             var day1Hearing = existingHearingsInMultiDayGroup[0];
             var day2Hearing = existingHearingsInMultiDayGroup[1];
-            var day1OldJudge = day1Hearing.JudiciaryParticipants.Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge);
-            var day2OldJudge = day2Hearing.JudiciaryParticipants.Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge);
+            var day1OldJudge = day1Hearing.JudicialOfficeHolders.Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge);
+            var day2OldJudge = day2Hearing.JudicialOfficeHolders.Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge);
             day2OldJudge.PersonalCode = Guid.NewGuid().ToString();
             day2OldJudge.Email = "day2Judge@email.com";
 
@@ -721,7 +719,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         h.JudiciaryParticipants.NewJudiciaryParticipants.Exists(x => x.PersonalCode == newJudge.PersonalCode) &&
                         h.JudiciaryParticipants.RemovedJudiciaryParticipantPersonalCodes.Count == 1 &&
                         h.JudiciaryParticipants.RemovedJudiciaryParticipantPersonalCodes.Contains(day1OldJudge.PersonalCode) &&
-                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == day1Hearing.JudiciaryParticipants.Count - 1
+                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == day1Hearing.JudicialOfficeHolders.Count - 1
                     ))));
             
             // Day 2
@@ -734,7 +732,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         h.JudiciaryParticipants.NewJudiciaryParticipants.Exists(x => x.PersonalCode == newJudge.PersonalCode) &&
                         h.JudiciaryParticipants.RemovedJudiciaryParticipantPersonalCodes.Count == 1 &&
                         h.JudiciaryParticipants.RemovedJudiciaryParticipantPersonalCodes.Contains(day2OldJudge.PersonalCode) &&
-                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == day2Hearing.JudiciaryParticipants.Count - 1
+                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == day2Hearing.JudicialOfficeHolders.Count - 1
                     ))));
         }
 
@@ -810,7 +808,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     ContactEmail = x.ContactEmail,
                     DisplayName = x.DisplayName
                 }).ToList(),
-                JudiciaryParticipants = request.JudiciaryParticipants.Select(x => new JudiciaryParticipantResponse
+                JudicialOfficeHolders = request.JudiciaryParticipants.Select(x => new JudiciaryParticipantResponse
                 {
                     DisplayName = x.DisplayName,
                     PersonalCode = x.PersonalCode,
@@ -852,7 +850,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     Id = x.Id,
                     DisplayName = x.DisplayName
                 }).ToList(),
-                JudiciaryParticipants = hearing.JudiciaryParticipants.Select(x => new JudiciaryParticipantRequest
+                JudiciaryParticipants = hearing.JudicialOfficeHolders.Select(x => new JudiciaryParticipantRequest
                 {
                     PersonalCode = x.PersonalCode,
                     Role = x.HearingRoleCode.ToString(),

@@ -1,15 +1,15 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
 using System.Text.Encodings.Web;
 using AdminWebsite.UnitTests.Helper;
 using AdminWebsite.Configuration;
-using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Services;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Requests;
+using BookingsApi.Contract.V2.Responses;
 using Microsoft.Extensions.Options;
 
 namespace AdminWebsite.UnitTests.Controllers
@@ -20,7 +20,7 @@ namespace AdminWebsite.UnitTests.Controllers
         private AdminWebsite.Controllers.PersonsController _controller;
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserAccountService> _userAccountService;
-        private List<PersonResponse> _response;
+        private List<PersonResponseV2> _response;
 
         [SetUp]
         public void Setup()
@@ -35,9 +35,9 @@ namespace AdminWebsite.UnitTests.Controllers
             _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object,
                 JavaScriptEncoder.Default, Options.Create(testSettings), _userAccountService.Object);
 
-            _response = new List<PersonResponse>
+            _response = new List<PersonResponseV2>
             {
-                new PersonResponse
+                new PersonResponseV2
                 {
                   Id = Guid.NewGuid(),
                   ContactEmail = "adoman@hmcts.net",
@@ -55,7 +55,7 @@ namespace AdminWebsite.UnitTests.Controllers
         public async Task Should_return_searched_participants()
         {
             // Arrange
-            var additionalParticipantToReturn = new PersonResponse
+            var additionalParticipantToReturn = new PersonResponseV2
             {
                 Id = Guid.NewGuid(),
                 ContactEmail = "jackfilter@hmcts.net",
@@ -70,13 +70,13 @@ namespace AdminWebsite.UnitTests.Controllers
             
             var searchTerm = "ado";
 
-            var expectedResponse = new List<PersonResponse>
+            var expectedResponse = new List<PersonResponseV2>
             {
                 _response[0],
                 additionalParticipantToReturn
             };
 
-            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
+            _bookingsApiClient.Setup(x => x.SearchForPersonV2Async(It.Is<SearchTermRequestV2>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(_response);
 
             
@@ -86,7 +86,7 @@ namespace AdminWebsite.UnitTests.Controllers
             // Assert
             var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
             okObjectResult.Value.Should().BeEquivalentTo(expectedResponse);
-            _bookingsApiClient.Verify(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(request => request.Term == searchTerm)), Times.Once);
+            _bookingsApiClient.Verify(x => x.SearchForPersonV2Async(It.Is<SearchTermRequestV2>(request => request.Term == searchTerm)), Times.Once);
             
         }
         
@@ -96,7 +96,7 @@ namespace AdminWebsite.UnitTests.Controllers
         public async Task Should_filter_TestUsernameStem()
         {
             // Arrange
-            var participantToFilter = new PersonResponse
+            var participantToFilter = new PersonResponseV2
             {
                 Id = Guid.NewGuid(),
                 ContactEmail = "jackfilter@hmcts.net1",
@@ -111,12 +111,12 @@ namespace AdminWebsite.UnitTests.Controllers
             
             var searchTerm = "ado";
 
-            var expectedResponse = new List<PersonResponse>
+            var expectedResponse = new List<PersonResponseV2>
             {
                 _response[0]
             };
 
-            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
+            _bookingsApiClient.Setup(x => x.SearchForPersonV2Async(It.Is<SearchTermRequestV2>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(_response);
                        
             // Act
@@ -125,7 +125,7 @@ namespace AdminWebsite.UnitTests.Controllers
             // Assert
             var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
             okObjectResult.Value.Should().BeEquivalentTo(expectedResponse);
-            _bookingsApiClient.Verify(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(request => request.Term == searchTerm)), Times.Once);
+            _bookingsApiClient.Verify(x => x.SearchForPersonV2Async(It.Is<SearchTermRequestV2>(request => request.Term == searchTerm)), Times.Once);
             
         }
         
@@ -135,7 +135,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                 .ReturnsAsync(new List<JudiciaryPersonResponse>());
             
-            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+            _bookingsApiClient.Setup(x => x.SearchForPersonV2Async(It.IsAny<SearchTermRequestV2>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
 
             var response = await _controller.PostPersonBySearchTerm("term");
@@ -148,7 +148,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                 .ReturnsAsync(new List<JudiciaryPersonResponse>());
             
-            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+            _bookingsApiClient.Setup(x => x.SearchForPersonV2Async(It.IsAny<SearchTermRequestV2>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
             Assert.ThrowsAsync<BookingsApiException>(() => _controller.PostPersonBySearchTerm("term"));
         }

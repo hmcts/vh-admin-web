@@ -169,7 +169,6 @@ export class BookingsListService {
             hearing.scheduled_duration,
             hearing.hearing_number,
             hearing.hearing_name,
-            hearing.hearing_type_name,
             hearing.judge_name,
             hearing.court_room,
             hearing.court_address,

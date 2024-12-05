@@ -9,39 +9,13 @@ public class HearingDetailsResponse
     public Guid Id { get; set; }
     public DateTime ScheduledDateTime { get; set; }
     public int ScheduledDuration { get; set; }
-    /// <summary>
-    /// V1 only
-    /// </summary>
-    public string HearingVenueName { get; set; }
-    /// <summary>
-    /// V2 only
-    /// </summary>
     public string HearingVenueCode { get; set; }
-    /// <summary>
-    /// V1 only
-    /// </summary>
-    public string CaseTypeName { get; set; }
-    /// <summary>
-    /// V2 only
-    /// </summary>
+    public string HearingVenueName { get; set; }
     public string ServiceId { get; set; }
-    /// <summary>
-    /// V1 only
-    /// </summary>
-    public string HearingTypeName { get; set; }
-    /// <summary>
-    /// V2 only
-    /// </summary>
-    public string HearingTypeCode { get; set; }
+    public string CaseTypeName { get; set; }
     public List<CaseResponse> Cases { get; set; }
     public List<ParticipantResponse> Participants { get; set; }
-    /// <summary>
-    /// V1 only
-    /// </summary>
-    public List<TelephoneParticipantResponse> TelephoneParticipants { get; set; }
-    
     public List<JudiciaryParticipantResponse> JudiciaryParticipants { get; set; }
-    
     public string HearingRoomName { get; set; }
     public string OtherInformation { get; set; }
     public DateTime CreatedDate { get; set; }

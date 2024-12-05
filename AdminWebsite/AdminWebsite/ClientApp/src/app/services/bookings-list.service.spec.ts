@@ -17,7 +17,7 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -40,7 +40,7 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -63,7 +63,7 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -100,7 +100,7 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -123,7 +123,7 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -146,7 +146,7 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -177,7 +177,7 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -200,7 +200,7 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -223,7 +223,7 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -271,7 +271,6 @@ export class ResponseTestData {
         bhr.court_room = '12A';
         bhr.hearing_name = 'A vs B';
         bhr.hearing_number = '123A';
-        bhr.hearing_type_name = 'Tax';
         bhr.judge_name = 'Judge';
         bhr.scheduled_duration = 45;
         bhr.created_by = 'Roy';
@@ -288,7 +287,6 @@ export class ResponseTestData {
         bhr1.court_room = '12A';
         bhr1.hearing_name = 'A vs B';
         bhr1.hearing_number = '123A';
-        bhr1.hearing_type_name = 'Tax';
         bhr1.judge_name = 'Judge';
         bhr1.scheduled_duration = 45;
         bhr1.created_by = 'Roy';
@@ -346,7 +344,6 @@ describe('bookings list service', () => {
         expect(model.Hearings[0].BookingsDetails[0].CourtAddress).toBe('court address');
         expect(model.Hearings[0].BookingsDetails[0].HearingCaseName).toBe('A vs B');
         expect(model.Hearings[0].BookingsDetails[0].HearingCaseNumber).toBe('123A');
-        expect(model.Hearings[0].BookingsDetails[0].HearingType).toBe('Tax');
         expect(model.Hearings[0].BookingsDetails[0].AudioRecordingRequired).toBe(true);
         expect(model.Hearings[0].BookingsDetails[0].GroupId).toBe('123');
     });
@@ -402,7 +399,7 @@ describe('Booking list service functionality', () => {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -439,7 +436,7 @@ describe('Booking list service functionality', () => {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JadgeGreen',
             '33A',
             'Coronation Street',

@@ -11,8 +11,9 @@ using System.Threading.Tasks;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Services;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Requests;
+using BookingsApi.Contract.V2.Responses;
 using UserApi.Client;
 
 namespace AdminWebsite.Controllers
@@ -49,16 +50,16 @@ namespace AdminWebsite.Controllers
         /// <returns> The list of person</returns>
         [HttpPost]
         [SwaggerOperation(OperationId = "PostPersonBySearchTerm")]
-        [ProducesResponseType(typeof(List<PersonResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<PersonResponseV2>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<IList<PersonResponse>>> PostPersonBySearchTerm([FromBody] string term)
+        public async Task<ActionResult<IList<PersonResponseV2>>> PostPersonBySearchTerm([FromBody] string term)
         {
             try
             {
                 term = _encoder.Encode(term);
-                var searchTerm = new SearchTermRequest(term);
+                var searchTerm = new SearchTermRequestV2(term);
 
-                var personsResponse = await _bookingsApiClient.PostPersonBySearchTermAsync(searchTerm);
+                var personsResponse = await _bookingsApiClient.SearchForPersonV2Async(searchTerm);
                 
                 personsResponse = personsResponse?.Where(p => !p.ContactEmail.Contains(_testSettings.TestUsernameStem)).ToList();
 
@@ -128,14 +129,14 @@ namespace AdminWebsite.Controllers
         /// <returns>A person</returns>
         [HttpGet(Name = "GetPersonForUpdateByContactEmail")]
         [SwaggerOperation(OperationId = "GetPersonForUpdateByContactEmail")]
-        [ProducesResponseType(typeof(PersonResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PersonResponseV2), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult<PersonResponse>> GetPersonForUpdateByContactEmail(
+        public async Task<ActionResult<PersonResponseV2>> GetPersonForUpdateByContactEmail(
             [FromQuery] string contactEmail)
         {
             try
             {
-                var person = await _bookingsApiClient.SearchForNonJudgePersonsByContactEmailAsync(contactEmail);
+                var person = await _bookingsApiClient.SearchForNonJudgePersonsByContactEmailV2Async(contactEmail);
                 return Ok(person);
             }
             catch (BookingsApiException e)
@@ -144,7 +145,6 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        /// <returns>A person</returns>
         /// <summary>
         /// Update the personal details
         /// </summary>
@@ -156,10 +156,9 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.Accepted)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<IList<PersonResponse>>> UpdatePersonDetails([FromRoute] Guid personId,
+        public async Task<ActionResult> UpdatePersonDetails([FromRoute] Guid personId,
             [FromBody] UpdateAccountDetailsRequest payload)
         {
-
             try
             {
                 var useridString = await _userAccountService.GetAdUserIdForUsername(payload.CurrentUsername);
@@ -167,13 +166,13 @@ namespace AdminWebsite.Controllers
                 var updatedPerson =
                     await _userAccountService.UpdateUserAccountDetails(userId, payload.FirstName, payload.LastName);
 
-                var updateBookingPersonRequest = new UpdatePersonDetailsRequest
+                var updateBookingPersonRequest = new UpdatePersonDetailsRequestV2()
                 {
                     FirstName = updatedPerson.FirstName,
                     LastName = updatedPerson.LastName,
                     Username = updatedPerson.Email
                 };
-                await _bookingsApiClient.UpdatePersonDetailsAsync(personId, updateBookingPersonRequest);
+                await _bookingsApiClient.UpdatePersonDetailsV2Async(personId, updateBookingPersonRequest);
                 return Accepted();
             }
             catch (UserApiException e)

@@ -1,4 +1,4 @@
-import { JudgeAccountType, JudgeResponse, PersonResponse } from 'src/app/services/clients/api-client';
+import { JudgeAccountType, JudgeResponse, PersonResponseV2 } from 'src/app/services/clients/api-client';
 import { LinkedParticipantModel } from './linked-participant.model';
 import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 import { InterpreterSelectedDto } from 'src/app/booking/interpreter-form/interpreter-selected.model';
@@ -15,7 +15,6 @@ export class ParticipantModel {
     display_name?: string;
     username?: string;
     email?: string;
-    case_role_name?: string;
     hearing_role_name?: string;
     hearing_role_code?: string;
     phone?: string;
@@ -43,7 +42,7 @@ export class ParticipantModel {
         }
     }
 
-    static fromPersonResponse(person: PersonResponse): ParticipantModel {
+    static fromPersonResponse(person: PersonResponseV2): ParticipantModel {
         return person
             ? {
                   ...person,

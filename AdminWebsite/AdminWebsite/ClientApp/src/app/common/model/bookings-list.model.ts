@@ -18,7 +18,6 @@ export class BookingsDetailsModel {
         duration: number,
         hearingCaseNumber: string,
         hearingCaseName: string,
-        hearingType: string,
         judgeName: string,
         courtRoom: string,
         courtAddress: string,
@@ -43,7 +42,6 @@ export class BookingsDetailsModel {
         this.Duration = duration;
         this.HearingCaseName = hearingCaseName;
         this.HearingCaseNumber = hearingCaseNumber;
-        this.HearingType = hearingType;
         this.JudgeName = judgeName;
         this.CourtRoom = courtRoom;
         this.CourtAddress = courtAddress;
@@ -71,7 +69,6 @@ export class BookingsDetailsModel {
     Duration: number;
     HearingCaseNumber: string;
     HearingCaseName: string;
-    HearingType: string;
     JudgeName: string;
     CourtRoom: string;
     CourtAddress: string;
