@@ -134,6 +134,31 @@ describe('JusticeUsersService', () => {
         });
     });
 
+    describe('clearUsers', () => {
+        it('should clear the search term', (done: DoneFn) => {
+            // arrange
+            clientApiSpy.getUserList.and.returnValue(
+                of([{ username: 'test', first_name: 'test', lastname: 'test', contact_email: 'test' } as JusticeUserResponse])
+            );
+            // assert
+            const emittedValues: JusticeUserResponse[][] = [];
+            service.filteredUsers$.pipe(take(2)).subscribe({
+                next: users => emittedValues.push(users),
+                complete: () => {
+                    // Assert
+                    // First emission should have 1 user from searching for 'test'
+                    expect(emittedValues[0].length).toBe(1);
+                    // Second emission should have 0 users after clearing the search term
+                    expect(emittedValues[1].length).toBe(0);
+                    done();
+                }
+            });
+
+            service.search('test');
+            service.clearUsers();
+        });
+    });
+
     describe('addNewJusticeUser', () => {
         it('should call the api to save a new user & again to get the users list', (done: DoneFn) => {
             const username = 'john@doe.com';

@@ -40,11 +40,20 @@ export class JusticeUsersService {
         this.refresh$.next();
     }
 
+    clearUsers() {
+        this.searchTerm$.next('');
+    }
+
     search(searchTerm: string) {
         this.searchTerm$.next(searchTerm);
     }
 
     applyFilter(searchTerm: string, users: JusticeUserResponse[]): JusticeUserResponse[] {
+        // Clear all users
+        if (searchTerm === '') {
+            return [];
+        }
+
         if (!searchTerm) {
             return users;
         }
