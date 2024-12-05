@@ -137,12 +137,21 @@ describe('JusticeUsersService', () => {
     describe('clearUsers', () => {
         it('should clear the search term', (done: DoneFn) => {
             // arrange
-            clientApiSpy.getUserList.and.returnValue(of([]));
-
+            clientApiSpy.getUserList.and.returnValue(
+                of([{ username: 'test', first_name: 'test', lastname: 'test', contact_email: 'test' } as JusticeUserResponse])
+            );
             // assert
-            service.filteredUsers$.subscribe(users => {
-                expect(users).toEqual([]);
-                done();
+            const emittedValues: JusticeUserResponse[][] = [];
+            service.filteredUsers$.pipe(take(2)).subscribe({
+                next: users => emittedValues.push(users),
+                complete: () => {
+                    // Assert
+                    // First emission should have 1 user from searching for 'test'
+                    expect(emittedValues[0].length).toBe(1);
+                    // Second emission should have 0 users after clearing the search term
+                    expect(emittedValues[1].length).toBe(0);
+                    done();
+                }
             });
 
             service.search('test');

@@ -41,7 +41,7 @@ export class JusticeUsersService {
     }
 
     clearUsers() {
-        this.searchTerm$.next(null);
+        this.searchTerm$.next('');
     }
 
     search(searchTerm: string) {
@@ -49,6 +49,11 @@ export class JusticeUsersService {
     }
 
     applyFilter(searchTerm: string, users: JusticeUserResponse[]): JusticeUserResponse[] {
+        // Clear all users
+        if (searchTerm === '') {
+            return [];
+        }
+
         if (!searchTerm) {
             return users;
         }
