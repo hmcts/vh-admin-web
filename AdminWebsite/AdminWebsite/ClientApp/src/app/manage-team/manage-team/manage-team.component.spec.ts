@@ -29,7 +29,8 @@ describe('ManageTeamComponent', () => {
         justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', [
             'allUsers$',
             'filteredUsers$',
-            'search'
+            'search',
+            'clearUsers'
         ]);
         justiceUsersServiceSpy.filteredUsers$ = filteredUsers$;
 
