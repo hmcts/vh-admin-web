@@ -3,7 +3,6 @@ import { ParticipantDetailsModel } from '../../common/model/participant-details.
 import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { Constants } from '../../common/constants';
-import {} from 'src/app/common/model/participant.model';
 
 @Component({
     selector: 'app-booking-participant-list',
@@ -45,30 +44,22 @@ export class BookingParticipantListComponent {
     }
 
     private sortParticipants() {
-        const compareByPartyThenByFirstName = () => (a, b) => {
+        const compareByHearingRoleThenByFirstName = () => (a: ParticipantDetailsModel, b: ParticipantDetailsModel) => {
             const swapIndices = a > b ? 1 : 0;
-            const partyA = a.CaseRoleName === Constants.None ? a.HearingRoleName : a.CaseRoleName;
-            const partyB = b.CaseRoleName === Constants.None ? b.HearingRoleName : b.CaseRoleName;
-            if (partyA === partyB) {
+            const hearingRoleA = a.HearingRoleName;
+            const hearingRoleB = b.HearingRoleName;
+            if (hearingRoleA === hearingRoleB) {
                 return a.FirstName < b.FirstName ? -1 : swapIndices;
             }
-            return partyA < partyB ? -1 : swapIndices;
+            return hearingRoleA < hearingRoleB ? -1 : swapIndices;
         };
         const judges = this.participants.filter(participant => participant.HearingRoleName === Constants.Judge);
         const staffMember = this.participants.filter(participant => participant.HearingRoleName === Constants.HearingRoles.StaffMember);
         const panelMembersAndWingers = this.participants
-            .filter(participant =>
-                Constants.JudiciaryRoles.includes(
-                    participant.CaseRoleName === Constants.None ? participant.HearingRoleName : participant.CaseRoleName
-                )
-            )
-            .sort(compareByPartyThenByFirstName());
+            .filter(participant => Constants.JudiciaryRoles.includes(participant.HearingRoleName))
+            .sort(compareByHearingRoleThenByFirstName());
         const interpreters = this.participants.filter(participant => participant.isInterpreter);
-        const observers = this.participants.filter(
-            participant =>
-                Constants.HearingRoles.Observer ===
-                (participant.CaseRoleName === Constants.None ? participant.HearingRoleName : participant.CaseRoleName)
-        );
+        const observers = this.participants.filter(participant => Constants.HearingRoles.Observer === participant.HearingRoleName);
         const others = this.participants
             .filter(
                 participant =>
@@ -78,7 +69,7 @@ export class BookingParticipantListComponent {
                     !interpreters.includes(participant) &&
                     !observers.includes(participant)
             )
-            .sort(compareByPartyThenByFirstName());
+            .sort(compareByHearingRoleThenByFirstName());
         const sorted = [...judges, ...panelMembersAndWingers, ...staffMember, ...others, ...observers];
         this.insertInterpreters(interpreters, sorted);
         this.sortedParticipants = sorted;

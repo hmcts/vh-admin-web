@@ -38,6 +38,7 @@ import { ResponseTestData } from 'src/app/testing/data/response-test-data';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { TruncatableTextComponent } from 'src/app/shared/truncatable-text/truncatable-text.component';
+import { ReferenceDataService } from 'src/app/services/reference-data.service';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -54,7 +55,6 @@ function initExistingHearingRequest(): HearingModel {
     newCaseRequest.number = 'TX/12345/2018';
 
     const existingRequest = new HearingModel();
-    existingRequest.hearing_type_id = 2;
     existingRequest.cases.push(newCaseRequest);
     existingRequest.hearing_venue_id = 2;
     existingRequest.scheduled_date_time = today;
@@ -62,8 +62,6 @@ function initExistingHearingRequest(): HearingModel {
     existingRequest.other_information = '|OtherInformation|some notes';
     existingRequest.audio_recording_required = true;
     existingRequest.court_room = '123W';
-    const hearingTypeName = MockValues.HearingTypesList.find(c => c.id === existingRequest.hearing_type_id).name;
-    existingRequest.hearing_type_name = hearingTypeName;
     const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearing_venue_id).name;
     existingRequest.court_name = courtString;
     existingRequest.isMultiDayEdit = false;
@@ -89,7 +87,6 @@ function initBadHearingRequest(): HearingModel {
     newCaseRequest.number = 'TX/12345/2018';
 
     const existingRequest = new HearingModel();
-    existingRequest.hearing_type_id = 2;
     existingRequest.cases.push(newCaseRequest);
     existingRequest.hearing_venue_id = 2;
     existingRequest.scheduled_date_time = today;
@@ -107,8 +104,8 @@ recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('Recordin
     'mandatoryRecordingForHearingRole'
 ]);
 
+const refDataServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getHearingTypes']);
 const videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService> = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-    'getHearingTypes',
     'getCurrentRequest',
     'updateHearingRequest',
     'saveHearing',
@@ -143,7 +140,7 @@ describe('SummaryComponent with valid request', () => {
         const mockResp = new UpdateBookingStatusResponse();
         mockResp.success = true;
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
         videoHearingsServiceSpy.saveHearing.and.returnValue(Promise.resolve(ResponseTestData.getHearingResponseTestData()));
         videoHearingsServiceSpy.cloneMultiHearings.and.callThrough();
         videoHearingsServiceSpy.getStatus.and.returnValue(Promise.resolve(mockResp));
@@ -277,8 +274,6 @@ describe('SummaryComponent with valid request', () => {
         expect(component.otherInformation.OtherInformation).toEqual(
             stringifier.decode<OtherInformationModel>(existingRequest.other_information).OtherInformation
         );
-        const hearingstring = MockValues.HearingTypesList.find(c => c.id === existingRequest.hearing_type_id).name;
-        expect(component.caseHearingType).toEqual(hearingstring);
         expect(component.hearingDate).toEqual(existingRequest.scheduled_date_time);
         const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearing_venue_id);
         expect(component.courtRoomAddress).toEqual(`${courtString.name}, 123W`);
@@ -378,7 +373,6 @@ describe('SummaryComponent with valid request', () => {
         participant.first_name = 'firstname';
         participant.last_name = 'lastname';
         participant.email = 'firstname.lastname@email.com';
-        participant.case_role_name = 'Claimant';
         participant.hearing_role_name = 'Litigant in person';
         participants.push(participant);
 
@@ -386,7 +380,6 @@ describe('SummaryComponent with valid request', () => {
         participant.first_name = 'firstname1';
         participant.last_name = 'lastname1';
         participant.email = 'firstname1.lastname1@email.com';
-        participant.case_role_name = 'Claimant';
         participant.hearing_role_name = 'Interpreter';
         participant.interpreterFor = 'firstname.lastname@email.com';
         participants.push(participant);
@@ -414,7 +407,6 @@ describe('SummaryComponent with valid request', () => {
         participant.first_name = 'firstname';
         participant.last_name = 'lastname';
         participant.email = 'firstname.lastname@email.com';
-        participant.case_role_name = 'Claimant';
         participant.hearing_role_name = 'Litigant in person';
         participants.push(participant);
 
@@ -422,7 +414,6 @@ describe('SummaryComponent with valid request', () => {
         participant.first_name = 'firstname1';
         participant.last_name = 'lastname1';
         participant.email = 'firstname1.lastname1@email.com';
-        participant.case_role_name = 'Claimant';
         participant.hearing_role_name = 'Interpreter';
         participant.interpreterFor = 'firstname.lastname@email.com';
         participants.push(participant);
@@ -643,7 +634,7 @@ describe('SummaryComponent  with invalid request', () => {
         initExistingHearingRequest();
         const existingRequest = initBadHearingRequest();
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
 
         const validationProblem = new ValidationProblemDetails({
             errors: {
@@ -706,7 +697,7 @@ describe('SummaryComponent  with existing request', () => {
         const existingRequest = initExistingHearingRequest();
         existingRequest.hearing_id = '12345ty';
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
         videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
         videoHearingsServiceSpy.updateMultiDayHearing.and.returnValue(of(new HearingDetailsResponse()));
 
@@ -758,7 +749,6 @@ describe('SummaryComponent  with existing request', () => {
         fixture.detectChanges();
         expect(component.caseNumber).toBe('TX/12345/2018');
         expect(component.caseName).toBe('Mr. Test User vs HMRC');
-        expect(component.caseHearingType).toBe('Automated Test');
         expect(component.courtRoomAddress).toBeTruthy();
         expect(component.hearingDuration).toBe('listed for 1 hour 20 minutes');
     });
@@ -888,7 +878,6 @@ describe('SummaryComponent  with existing request', () => {
         participant.first_name = 'firstname';
         participant.last_name = 'lastname';
         participant.email = 'firstname.lastname@email.com';
-        participant.case_role_name = 'Claimant';
         participant.hearing_role_name = 'Litigant in person';
         participant.id = '100';
         participant.linked_participants = linkedParticipants;
@@ -903,7 +892,6 @@ describe('SummaryComponent  with existing request', () => {
         participant.first_name = 'firstname1';
         participant.last_name = 'lastname1';
         participant.email = 'firstname1.lastname1@email.com';
-        participant.case_role_name = 'Claimant';
         participant.hearing_role_name = 'Interpreter';
         participant.interpreterFor = '';
         participant.id = '200';
@@ -939,7 +927,7 @@ describe('SummaryComponent  with multi days request', () => {
     existingRequest.isMultiDayEdit = true;
     existingRequest.hearing_id = '12345ty';
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-    videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+    refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
     videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
     const participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', ['removeParticipant']);
 
@@ -986,7 +974,6 @@ describe('SummaryComponent  with multi days request', () => {
         participant.first_name = 'firstname';
         participant.last_name = 'lastname';
         participant.email = 'firstname.lastname@email.com';
-        participant.case_role_name = 'Claimant';
         participant.hearing_role_name = 'Litigant in person';
         participant.id = '100';
         participant.linked_participants = linkedParticipants;
@@ -1001,7 +988,6 @@ describe('SummaryComponent  with multi days request', () => {
         participant.first_name = 'firstname1';
         participant.last_name = 'lastname1';
         participant.email = 'firstname1.lastname1@email.com';
-        participant.case_role_name = 'Claimant';
         participant.hearing_role_name = 'Interpreter';
         participant.interpreterFor = '';
         participant.id = '200';

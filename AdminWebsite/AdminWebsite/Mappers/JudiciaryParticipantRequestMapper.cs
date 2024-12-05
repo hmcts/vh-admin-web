@@ -1,13 +1,13 @@
 using System;
 using AdminWebsite.Contracts.Requests;
-using BookingsApi.Contract.V1.Requests.Enums;
-using V1 = BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V2.Enums;
+using V2 = BookingsApi.Contract.V2.Requests;
 
 namespace AdminWebsite.Mappers
 {
     public static class JudiciaryParticipantRequestMapper
     {
-        public static V1.JudiciaryParticipantRequest MapToV1(this JudiciaryParticipantRequest request) =>
+        public static V2.JudiciaryParticipantRequest MapToV2(this JudiciaryParticipantRequest request) =>
             new()
             {
                 DisplayName = request.DisplayName,

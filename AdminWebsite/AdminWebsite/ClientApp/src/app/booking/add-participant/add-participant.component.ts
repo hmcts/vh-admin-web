@@ -7,7 +7,7 @@ import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { IDropDownModel } from '../../common/model/drop-down.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
-import { CaseAndHearingRolesResponse, HearingRoleResponse } from '../../services/clients/api-client';
+import { HearingRoleResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -16,7 +16,6 @@ import { ParticipantService } from '../services/participant.service';
 import { ParticipantListComponent } from '../participant';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
 import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
-import { Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { InterpreterSelectedDto } from '../interpreter-form/interpreter-selected.model';
@@ -131,7 +130,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                 .getHearingRoles()
                 .then((data: HearingRoleResponse[]) => {
                     self.setupRolesWithoutCaseRole(data);
-                    self.removePartyValidators();
                     self.handleRoleSetupForEditMode(self);
                 })
                 .catch(error => this.logger.error(`${this.loggerPrefix} Error getting hearing roles.`, error));
@@ -184,7 +182,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
     initialiseForm() {
         super.initialiseForm();
-        this.party.setValidators([Validators.required, Validators.pattern(this.constants.PleaseSelectPattern)]);
 
         const self = this;
         this.$subscriptions.push(
@@ -196,7 +193,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                     if (
                         self.showDetails &&
                         self.role.value === self.constants.PleaseSelect &&
-                        self.party.value === self.constants.PleaseSelect &&
                         self.title.value === self.constants.PleaseSelect &&
                         self.firstName.value === '' &&
                         self.lastName.value === '' &&
@@ -204,11 +200,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                         self.displayName.value === ''
                     ) {
                         self.displayNext();
-                    } else if (
-                        !self.showDetails &&
-                        self.role.value === self.constants.PleaseSelect &&
-                        self.party.value === self.constants.PleaseSelect
-                    ) {
+                    } else if (!self.showDetails && self.role.value === self.constants.PleaseSelect) {
                         self.displayNext();
                     } else if (self.showDetails && self.form.valid && self.searchEmail?.validateEmail()) {
                         if (self.localEditMode) {
@@ -222,11 +214,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                 }, 500);
             })
         );
-    }
-
-    private removePartyValidators() {
-        this.party.clearValidators();
-        this.party.updateValueAndValidity();
     }
 
     private repopulateParticipantToEdit() {
@@ -253,15 +240,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                 this.bookingHasParticipants = anyParticipants && !anyParticipants.is_judge;
             }
         }
-    }
-
-    setupRoles(data: CaseAndHearingRolesResponse[]) {
-        this.caseAndHearingRoles = this.participantService.mapParticipantsRoles(data);
-        this.roleList = this.caseAndHearingRoles.filter(x => x.name !== 'Judge' && x.name !== 'Staff Member').map(x => x.name);
-        this.roleList.unshift(this.constants.PleaseSelect);
-        this.caseAndHearingRoles.forEach(x => {
-            this.setupHearingRoles(x.name);
-        });
     }
 
     setupRolesWithoutCaseRole(data: HearingRoleResponse[]) {
@@ -303,11 +281,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         this.displayClearButton = true;
         this.displayAddButton = false;
         this.displayUpdateButton = false;
-    }
-
-    partySelected() {
-        this.isPartySelected = this.party.value !== this.constants.PleaseSelect;
-        this.setupHearingRoles(this.party.value);
     }
 
     onRoleSelected($event) {
@@ -479,8 +452,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         newParticipant.last_name = this.lastName.value;
         newParticipant.phone = this.phone.value;
         newParticipant.title = this.title.value === this.constants.PleaseSelect ? null : this.title.value;
-        newParticipant.case_role_name = this.party.value;
-        newParticipant.case_role_name = null;
 
         newParticipant.hearing_role_name = this.role.value;
         newParticipant.hearing_role_code = this.hearingRoles.find(h => h.name === this.role.value)?.code;
@@ -617,7 +588,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         this.enableFields();
         this.form.setValue({
             role: this.constants.PleaseSelect,
-            party: this.constants.PleaseSelect,
             title: this.constants.PleaseSelect,
             firstName: '',
             lastName: '',

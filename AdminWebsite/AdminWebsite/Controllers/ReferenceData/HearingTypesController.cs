@@ -30,26 +30,15 @@ public class HearingTypesController : ReferenceDataControllerBase
     [HttpGet("types", Name = "GetHearingTypes")]
     [ProducesResponseType(typeof(IList<HearingTypeResponse>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NotFound)]
-    public async Task<ActionResult<IList<HearingTypeResponse>>> GetHearingTypes(
-        [FromQuery] bool includeDeleted = false)
+    public async Task<ActionResult<IList<HearingTypeResponse>>> GetHearingTypes()
     {
         var caseTypes = await _referenceDataService.GetNonDeletedCaseTypesAsync();
-        var result = caseTypes.SelectMany(caseType => caseType.HearingTypes
-            .Select(hearingType => new HearingTypeResponse
+        var result = caseTypes.Select(caseType => new HearingTypeResponse
             {
                 Group = caseType.Name,
-                Id = hearingType.Id,
-                Name = hearingType.Name,
-                ServiceId = caseType.ServiceId,
-                Code = hearingType.Code
-            })).ToList();
-
-        result.AddRange(caseTypes.Where(ct => ct.HearingTypes.Count == 0)
-            .Select(caseType => new HearingTypeResponse
-            {
-                Group = caseType.Name,
+                Id = caseType.Id,
                 ServiceId = caseType.ServiceId
-            }));
+            }).ToList();
 
         return Ok(result);
     }

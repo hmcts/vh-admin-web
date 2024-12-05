@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.Contracts.Responses;
-using BookingsApi.Contract.V1.Responses;
-using HearingDetailsResponse = BookingsApi.Contract.V1.Responses.HearingDetailsResponse;
+using BookingsApi.Contract.V2.Responses;
 
 namespace AdminWebsite.Mappers;
 
 public static class UnallocatedHearingsForVhoMapper
 {
-    public static UnallocatedHearingsForVhoResponse MapFrom(List<HearingDetailsResponse> unallocatedHearings, DateTime today)
+    public static UnallocatedHearingsForVhoResponse MapFrom(List<HearingDetailsResponseV2> unallocatedHearings, DateTime today)
     {
         return new UnallocatedHearingsForVhoResponse
         {
@@ -20,7 +19,7 @@ public static class UnallocatedHearingsForVhoMapper
         };
     }
 
-    private static DateForUnallocatedHearings MapToday(List<HearingDetailsResponse> unallocatedHearings, DateTime today)
+    private static DateForUnallocatedHearings MapToday(List<HearingDetailsResponseV2> unallocatedHearings, DateTime today)
     {
         return new DateForUnallocatedHearings
         {
@@ -29,7 +28,7 @@ public static class UnallocatedHearingsForVhoMapper
         };
     }
     
-    private static DateForUnallocatedHearings MapTomorrow(List<HearingDetailsResponse> unallocatedHearings, DateTime today)
+    private static DateForUnallocatedHearings MapTomorrow(List<HearingDetailsResponseV2> unallocatedHearings, DateTime today)
     {
         var tomorrow = today.AddDays(1);
         return new DateForUnallocatedHearings
@@ -39,7 +38,7 @@ public static class UnallocatedHearingsForVhoMapper
         };
     }
     
-    private static DateForUnallocatedHearings FindNext7Days(List<HearingDetailsResponse> unallocatedHearings, DateTime today)
+    private static DateForUnallocatedHearings FindNext7Days(List<HearingDetailsResponseV2> unallocatedHearings, DateTime today)
     {
         var dateStart = today.Date;
         var dateEnd = dateStart.AddDays(7);
@@ -52,7 +51,7 @@ public static class UnallocatedHearingsForVhoMapper
         };
     }
     
-    private static DateForUnallocatedHearings FindNext30Days(List<HearingDetailsResponse> unallocatedHearings, DateTime today)
+    private static DateForUnallocatedHearings FindNext30Days(List<HearingDetailsResponseV2> unallocatedHearings, DateTime today)
     {
         var dateStart = today.Date;
         var dateEnd = dateStart.AddDays(30);

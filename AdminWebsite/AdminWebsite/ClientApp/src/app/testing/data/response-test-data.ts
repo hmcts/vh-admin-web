@@ -19,13 +19,9 @@ export class ResponseTestData {
         caseHearing.number = 'XX3456234565';
         response.cases = [];
         response.cases.push(caseHearing);
-        response.hearing_type_name = 'Tax';
         response.id = '1';
         response.scheduled_date_time = new Date('2019-10-22 13:58:40.3730067');
         response.scheduled_duration = 125;
-        response.hearing_venue_name = 'Coronation Street';
-        response.case_type_name = 'Generic';
-        response.hearing_type_name = 'Automated Test';
         response.other_information = 'some note';
         response.hearing_room_name = '777';
         response.created_date = new Date('2019-10-22 13:58:40.3730067');
@@ -125,7 +121,6 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -148,7 +143,6 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -170,7 +164,6 @@ export class ResponseTestData {
             new Date('2019-12-22 13:58:40.3730067'),
             120,
             'XX3456234565',
-            'Smith vs Donner',
             'Tax',
             'JadgeGreen',
             '33A',
@@ -208,7 +201,6 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -231,7 +223,6 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -254,7 +245,6 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -285,7 +275,6 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -308,7 +297,6 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -331,7 +319,6 @@ export class ResponseTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
             'JadgeGreen',
             '33A',
             'Coronation Street',
@@ -380,7 +367,6 @@ export class ResponseTestData {
         bhr.court_room = '12A';
         bhr.hearing_name = 'A vs B';
         bhr.hearing_number = '123A';
-        bhr.hearing_type_name = 'Tax';
         bhr.judge_name = 'Judge';
         bhr.scheduled_duration = 45;
         bhr.created_by = 'Roy';
@@ -397,7 +383,6 @@ export class ResponseTestData {
         bhr1.court_room = '12A';
         bhr1.hearing_name = 'A vs B';
         bhr1.hearing_number = '123A';
-        bhr1.hearing_type_name = 'Tax';
         bhr1.judge_name = 'Judge';
         bhr1.scheduled_duration = 45;
         bhr1.created_by = 'Roy';

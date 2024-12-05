@@ -1,5 +1,5 @@
 import { ComponentFixture, fakeAsync, flush, TestBed, tick, waitForAsync } from '@angular/core/testing';
-import { AbstractControl, Validators } from '@angular/forms';
+import { AbstractControl } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { of, Subscription } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -7,9 +7,8 @@ import { SearchServiceStub } from 'src/app/testing/stubs/service-service-stub';
 import { Constants } from '../../common/constants';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
-import { PartyModel } from '../../common/model/party.model';
 import { BookingService } from '../../services/booking.service';
-import { CaseAndHearingRolesResponse, ClientSettingsResponse, HearingRole, HearingRoleResponse } from '../../services/clients/api-client';
+import { ClientSettingsResponse, HearingRoleResponse } from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
@@ -23,7 +22,6 @@ import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/mo
 import { BookingModule } from '../booking.module';
 import { PopupModule } from 'src/app/popups/popup.module';
 import { TestingModule } from 'src/app/testing/testing.module';
-import { By } from '@angular/platform-browser';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { InterpreterFormComponent } from '../interpreter-form/interpreter-form.component';
@@ -34,17 +32,6 @@ import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.direct
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
 
-const roleList: CaseAndHearingRolesResponse[] = [
-    new CaseAndHearingRolesResponse({
-        name: 'Applicant',
-        hearing_roles: [
-            new HearingRole({ name: 'Representative', user_role: 'Representative' }),
-            new HearingRole({ name: 'Litigant in person', user_role: 'Individual' }),
-            new HearingRole({ name: 'presenting officer', user_role: 'Representative' }),
-            new HearingRole({ name: 'Interpreter', user_role: 'Individual' })
-        ]
-    })
-];
 const flatRoleList: HearingRoleResponse[] = [
     new HearingRoleResponse({
         name: 'Applicant',
@@ -88,19 +75,9 @@ const flatRoleList: HearingRoleResponse[] = [
     })
 ];
 
-const partyR = new PartyModel('Applicant');
-partyR.hearingRoles = [
-    new HearingRoleModel('Representative', 'Representative'),
-    new HearingRoleModel('Litigant in person', 'Individual'),
-    new HearingRoleModel('presenting officer', 'Representative'),
-    new HearingRoleModel('Interpreter', 'Interpreter')
-];
-const partyList: PartyModel[] = [partyR];
-
 const mappedHearingRoles: HearingRoleModel[] = flatRoleList.map(x => new HearingRoleModel(x.name, x.user_role, x.code));
 
 let role: AbstractControl;
-let party: AbstractControl;
 let title: AbstractControl;
 let firstName: AbstractControl;
 let lastName: AbstractControl;
@@ -123,7 +100,6 @@ p1.title = 'Mr.';
 p1.email = 'test1@hmcts.net';
 p1.phone = '32332';
 p1.hearing_role_name = 'Representative';
-p1.case_role_name = 'Applicant';
 p1.company = 'CN';
 p1.representee = 'representee';
 p1.user_role_name = 'Representative';
@@ -138,7 +114,6 @@ p2.title = 'Mr.';
 p2.email = 'test2@hmcts.net';
 p2.phone = '32332';
 p2.hearing_role_name = 'Representative';
-p2.case_role_name = 'Applicant';
 p2.company = 'CN';
 p2.representee = 'representee';
 p2.user_role_name = 'Representative';
@@ -153,7 +128,6 @@ p3.title = 'Mr.';
 p3.email = 'test3@hmcts.net';
 p3.phone = '32332';
 p3.hearing_role_name = 'Representative';
-p3.case_role_name = 'Applicant';
 p3.company = 'CN';
 p3.is_exist_person = true;
 p3.id = '1234';
@@ -168,7 +142,6 @@ p4.title = 'Mr.';
 p4.email = 'test4@hmcts.net';
 p4.phone = '32332';
 p4.hearing_role_name = 'Litigant in person';
-p4.case_role_name = 'Applicant';
 p4.company = 'CN';
 p4.id = '1234';
 p4.user_role_name = 'Individual';
@@ -182,7 +155,6 @@ p5.title = 'Mr.';
 p5.email = 'test7@hmcts.net';
 p5.phone = '32332';
 p5.hearing_role_name = 'Interpreter';
-p5.case_role_name = 'Applicant';
 p5.company = 'CN';
 p5.id = '1234666';
 p5.user_role_name = 'Individual';
@@ -197,7 +169,6 @@ p6.title = 'Mr.';
 p6.email = 'test8@hmcts.net';
 p6.phone = '32332';
 p6.hearing_role_name = 'Litigant in Person';
-p6.case_role_name = 'Applicant';
 p6.company = 'CN';
 p6.id = '1234555';
 p6.user_role_name = 'Individual';
@@ -210,7 +181,6 @@ participants.push(p4);
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
     newHearing.cases = [];
-    newHearing.hearing_type_id = -1;
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
     newHearing.participants = participants;
@@ -223,7 +193,6 @@ function initExistHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
     newHearing.cases = [];
     newHearing.hearing_id = '12345';
-    newHearing.hearing_type_id = 1;
     newHearing.hearing_venue_id = 1;
     newHearing.scheduled_duration = 20;
     newHearing.participants = participants;
@@ -244,7 +213,6 @@ function initParticipant() {
     participant.display_name = 'Sam Green';
     participant.title = 'Mr';
     participant.hearing_role_name = 'Representative';
-    participant.case_role_name = 'Applicant';
     participant.company = 'CN';
     participant.representee = 'test representee';
     participant.user_role_name = 'Individual';
@@ -258,7 +226,6 @@ const routerSpy: jasmine.SpyObj<Router> = {
 
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
-    'getParticipantRoles',
     'getCurrentRequest',
     'setBookingHasChanged',
     'unsetBookingHasChanged',
@@ -279,7 +246,6 @@ const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'war
 let participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', [
     'checkDuplication',
     'removeParticipant',
-    'mapParticipantsRoles',
     'mapParticipantHearingRoles'
 ]);
 
@@ -293,18 +259,15 @@ describe('AddParticipantComponent', () => {
         initParticipant();
 
         const hearing = initHearingRequest();
-        videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
         videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(flatRoleList));
         participantServiceSpy = jasmine.createSpyObj<ParticipantService>([
-            'mapParticipantsRoles',
             'checkDuplication',
             'removeParticipant',
             'mapParticipantHearingRoles'
         ]);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.specialMeasures).and.returnValue(of(false));
-        participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
         bookingServiceSpy.isEditMode.and.returnValue(false);
@@ -336,7 +299,6 @@ describe('AddParticipantComponent', () => {
         component.ngOnInit();
 
         role = component.form.controls['role'];
-        party = component.form.controls['party'];
         title = component.form.controls['title'];
         firstName = component.form.controls['firstName'];
         lastName = component.form.controls['lastName'];
@@ -383,7 +345,6 @@ describe('AddParticipantComponent', () => {
         component.ngOnInit();
         tick(500);
         expect(role.value).toBe(Constants.PleaseSelect);
-        expect(party.value).toBe(Constants.PleaseSelect);
         expect(firstName.value).toBe('');
         expect(lastName.value).toBe('');
         expect(email.value).toBe('');
@@ -431,31 +392,9 @@ describe('AddParticipantComponent', () => {
         component.roleSelected();
         expect(role.valid && component.isRoleSelected).toBeTruthy();
     });
-    it('should reset undefined value for party and role to Please select', () => {
-        participant.case_role_name = undefined;
-        participant.hearing_role_name = undefined;
-        component.getParticipant(participant);
-
-        expect(component.participantDetails.case_role_name).toBeTruthy();
-        expect(component.participantDetails.case_role_name).toEqual(Constants.PleaseSelect);
-        expect(component.participantDetails.hearing_role_name).toEqual(Constants.PleaseSelect);
-    });
-    it('should reset empty party and role to Please select', () => {
-        participant.case_role_name = '';
-        participant.hearing_role_name = '';
-
-        component.isPartySelected = true;
-        component.isRoleSelected = true;
-        component.getParticipant(participant);
-
-        expect(component.participantDetails.case_role_name).toBeTruthy();
-        expect(component.participantDetails.case_role_name).toEqual(Constants.PleaseSelect);
-        expect(component.participantDetails.hearing_role_name).toEqual(Constants.PleaseSelect);
-    });
     it('should populate the form fields if the participant is found in data store', () => {
         participant.id = '2345';
         component.isPartySelected = true;
-        component.form.get('party').setValue('Applicant');
         component.isRoleSelected = true;
         component.form.get('role').setValue('Representative');
 
@@ -465,7 +404,6 @@ describe('AddParticipantComponent', () => {
         participant.last_name = participant.last_name + ' ';
         component.getParticipant(participant);
         expect(role.value).toBe(participant.hearing_role_name);
-        expect(party.value).toBe(participant.case_role_name);
         expect(firstName.value).toBe(originalFirstName);
         expect(lastName.value).toBe(originalLastName);
         expect(email.value).toBe(participant.email);
@@ -495,7 +433,6 @@ describe('AddParticipantComponent', () => {
         component.getParticipant(participant);
         component.clearForm();
         expect(role.value).toBe(Constants.PleaseSelect);
-        expect(party.value).toBe(Constants.PleaseSelect);
         expect(firstName.value).toBe('');
         expect(lastName.value).toBe('');
         expect(email.value).toBe('');
@@ -504,7 +441,6 @@ describe('AddParticipantComponent', () => {
         expect(displayName.value).toBe('');
         expect(companyName.value).toBe('');
         expect(role.untouched).toBeTruthy();
-        expect(party.untouched).toBeTruthy();
         expect(firstName.untouched).toBeTruthy();
         expect(interpretee.value).toBe(Constants.PleaseSelect);
     });
@@ -530,7 +466,6 @@ describe('AddParticipantComponent', () => {
             component.searchEmail.initialValue = 'mockInitialValue@hmcts.net';
             component.searchEmail.email = 'mock@hmcts.net';
             role.setValue('Litigant in person');
-            party.setValue('Applicant');
             firstName.setValue('Sam');
             lastName.setValue('Green');
             email.setValue('Sam.Green@litigant.com');
@@ -634,41 +569,6 @@ describe('AddParticipantComponent', () => {
         component.next();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/video-access-points']);
     });
-    it('the case roles and hearing roles were populated', () => {
-        component.setupRoles(roleList);
-        expect(component.roleList.length).toBe(2);
-        expect(component.roleList[0]).toEqual(Constants.PleaseSelect);
-
-        expect(component.hearingRoleList.length).toBe(5);
-        expect(component.hearingRoleList[0]).toEqual(Constants.PleaseSelect);
-    });
-    it('party selected will reset hearing roles', () => {
-        role.setValue('Applicant');
-        component.partySelected();
-        expect(component.isRoleSelected).toBeTruthy();
-        expect(component.hearingRoleList.length).toBe(1);
-    });
-    it('should not add second time value: Please select to a hearing role list', () => {
-        const roles = new PartyModel('Applicant');
-        roles.hearingRoles = [
-            new HearingRoleModel(Constants.PleaseSelect, 'None'),
-            new HearingRoleModel('Representative', 'Representative')
-        ];
-        component.caseAndHearingRoles = [roles];
-        role.setValue('Applicant');
-        component.setupHearingRoles('Applicant');
-        expect(component.hearingRoleList.length).toBe(2);
-    });
-    it('the hearing role list should be empty if selected party name was not found, ', () => {
-        const roles = new PartyModel('Applicant');
-        roles.hearingRoles = [
-            new HearingRoleModel(Constants.PleaseSelect, 'None'),
-            new HearingRoleModel('Representative', 'Representative')
-        ];
-        component.caseAndHearingRoles = [roles];
-        component.setupHearingRoles('Respondent');
-        expect(component.hearingRoleList.length).toBe(1);
-    });
     it('should set to true isTitleSelected', () => {
         title.setValue('Mr');
         component.titleSelected();
@@ -692,83 +592,7 @@ describe('AddParticipantComponent', () => {
         component.handleContinueBooking();
         expect(component.showCancelPopup).toBeFalsy();
     });
-    it('should not list an interpreter in hearing roles if there are no interpretees in the participant list', fakeAsync(() => {
-        component.ngOnInit();
-        component.ngAfterViewInit();
-        tick(1000);
-        expect(component.hearingRoleList).toContain('Interpreter');
-        component.hearing.participants = [];
-        component.setupHearingRoles('Claimant');
-        tick(1000);
-        expect(component.hearingRoleList).not.toContain('Interpreter');
-    }));
-    it('should show the interpreter in hearings role if lip or witness is added', fakeAsync(() => {
-        component.ngOnInit();
-        component.ngAfterViewInit();
-        tick(1000);
-        component.setupHearingRoles('Claimant');
-        expect(component.hearingRoleList).not.toContain('Interpreter');
-    }));
-    it('should not show the interpreter option in hearings role if an interpreter participant is added', fakeAsync(() => {
-        component.ngOnInit();
-        component.ngAfterViewInit();
-        tick(1000);
-        component.hearing.participants = [];
-        component.setupHearingRoles('Claimant');
-        expect(component.hearingRoleList).not.toContain('Interpreter');
-        let participant01 = new ParticipantModel();
-        participant01.first_name = 'firstName';
-        participant01.last_name = 'lastName';
-        participant01.hearing_role_name = 'Witness';
-        participant01.user_role_name = 'Individual';
-        component.hearing.participants.push(participant01);
-        participant01 = new ParticipantModel();
-        participant01.first_name = 'firstName';
-        participant01.last_name = 'lastName';
-        participant01.hearing_role_name = 'Interpreter';
-        participant01.user_role_name = 'Individual';
-        component.hearing.participants.push(participant01);
-        component.setupHearingRoles('Claimant');
-        tick(1000);
-        expect(component.hearingRoleList).not.toContain('Interpreter');
-    }));
-    it('should not show the interpreter option in hearings role if observer/appraiser participant is added.', fakeAsync(() => {
-        component.ngOnInit();
-        component.ngAfterViewInit();
-        tick(1000);
-        component.hearing.participants = [];
-        expect(component.hearingRoleList).toContain('Interpreter');
-        let participant01 = new ParticipantModel();
-        participant01.first_name = 'firstName';
-        participant01.last_name = 'lastName';
-        participant01.hearing_role_name = 'Observer';
-        participant01.case_role_name = 'Observer';
-        participant01.user_role_name = 'Individual';
-        component.hearing.participants.push(participant01);
-        participant01 = new ParticipantModel();
-        participant01.first_name = 'firstName';
-        participant01.last_name = 'lastName';
-        participant01.hearing_role_name = 'Appraiser';
-        participant01.case_role_name = 'Observer';
-        participant01.user_role_name = 'Individual';
-        component.hearing.participants.push(participant01);
-        participant01 = new ParticipantModel();
-        participant01.first_name = 'firstName';
-        participant01.last_name = 'lastName';
-        participant01.hearing_role_name = 'Observer';
-        participant01.case_role_name = 'Vets UK';
-        participant01.user_role_name = 'Individual';
-        component.hearing.participants.push(participant01);
-        participant01 = new ParticipantModel();
-        participant01.first_name = 'firstName';
-        participant01.last_name = 'lastName';
-        participant01.hearing_role_name = 'Observer';
-        participant01.case_role_name = Constants.None;
-        participant01.user_role_name = 'Individual';
-        component.hearing.participants.push(participant01);
-        component.setupHearingRoles('Applicant');
-        expect(component.hearingRoleList).not.toContain('Interpreter');
-    }));
+
     it('should not show observers in the interpretee list', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
@@ -778,23 +602,13 @@ describe('AddParticipantComponent', () => {
         observer01.first_name = 'firstName';
         observer01.last_name = 'lastName';
         observer01.hearing_role_name = 'Observer';
-        observer01.case_role_name = 'Observer';
         observer01.user_role_name = 'Individual';
         component.hearing.participants.push(observer01);
-        const observer02 = new ParticipantModel();
-        observer02.id = 'Observer Appraiser';
-        observer02.first_name = 'firstName';
-        observer02.last_name = 'lastName';
-        observer02.hearing_role_name = 'Appraiser';
-        observer02.case_role_name = 'Observer';
-        observer02.user_role_name = 'Individual';
-        component.hearing.participants.push(observer02);
         const observer03 = new ParticipantModel();
         observer03.id = 'Vets UK Observer';
         observer03.first_name = 'firstName';
         observer03.last_name = 'lastName';
         observer03.hearing_role_name = 'Observer';
-        observer03.case_role_name = 'Vets UK';
         observer03.user_role_name = 'Individual';
         component.hearing.participants.push(observer03);
         const observer04 = new ParticipantModel();
@@ -802,12 +616,10 @@ describe('AddParticipantComponent', () => {
         observer04.first_name = 'firstName';
         observer04.last_name = 'lastName';
         observer04.hearing_role_name = 'Observer';
-        observer04.case_role_name = Constants.None;
         observer04.user_role_name = 'Individual';
         component.hearing.participants.push(observer04);
         component.populateInterpretedForList();
         expect(component.interpreteeList.find(i => i.id === observer01.id)).toBeUndefined();
-        expect(component.interpreteeList.find(i => i.id === observer02.id)).toBeUndefined();
         expect(component.interpreteeList.find(i => i.id === observer03.id)).toBeUndefined();
         expect(component.interpreteeList.find(i => i.id === observer04.id)).toBeUndefined();
     }));
@@ -842,7 +654,6 @@ describe('AddParticipantComponent', () => {
         pa1.is_judge = false;
         pa1.email = 'firstname.lastname-interpretee@email.com';
         pa1.hearing_role_name = 'Litigant in Person';
-        pa1.case_role_name = 'Claimant';
 
         const pa2 = new ParticipantModel();
         pa2.first_name = 'firstname';
@@ -851,7 +662,6 @@ describe('AddParticipantComponent', () => {
         pa2.is_judge = false;
         pa2.email = 'firstname.lastname-interpreter@email.com';
         pa2.hearing_role_name = 'Interpreter';
-        pa2.case_role_name = 'Claimant';
         pa2.interpreterFor = 'firstname.lastname-interpretee@email.com';
         component.hearing.participants.push(pa1);
         component.hearing.participants.push(pa2);
@@ -878,7 +688,6 @@ describe('AddParticipantComponent', () => {
         part1.is_judge = false;
         part1.email = 'firstname.lastname-interpretee@email.com';
         part1.hearing_role_name = 'Litigant in Person';
-        part1.case_role_name = 'Claimant';
 
         const part2 = new ParticipantModel();
         part2.first_name = 'firstname';
@@ -887,7 +696,6 @@ describe('AddParticipantComponent', () => {
         part2.is_judge = false;
         part2.email = 'firstname.lastname-interpreter@email.com';
         part2.hearing_role_name = 'Interpreter';
-        part2.case_role_name = 'Claimant';
         part2.interpreterFor = 'firstname.lastname-interpretee@email.com';
         component.hearing.participants.push(part1);
         component.hearing.participants.push(part2);
@@ -1025,7 +833,6 @@ describe('AddParticipantComponent edit mode', () => {
     beforeEach(waitForAsync(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
             'getCurrentRequest',
-            'getParticipantRoles',
             'setBookingHasChanged',
             'unsetBookingHasChanged',
             'updateHearingRequest',
@@ -1055,10 +862,8 @@ describe('AddParticipantComponent edit mode', () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.specialMeasures).and.returnValue(of(false));
 
         const hearing = initExistHearingRequest();
-        videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
         videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(flatRoleList));
-        participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('test3@hmcts.net');
@@ -1072,7 +877,6 @@ describe('AddParticipantComponent edit mode', () => {
         fixture.detectChanges();
 
         role = component.form.controls['role'];
-        party = component.form.controls['party'];
         title = component.form.controls['title'];
         firstName = component.form.controls['firstName'];
         lastName = component.form.controls['lastName'];
@@ -1084,9 +888,7 @@ describe('AddParticipantComponent edit mode', () => {
         interpretee = component.form.controls['interpreterFor'];
     }));
 
-    afterEach(() => {
-        videoHearingsServiceSpy.getParticipantRoles.calls.reset();
-    });
+    afterEach(() => {});
 
     it('should initialize form controls', () => {
         component.initialiseForm();
@@ -1116,7 +918,6 @@ describe('AddParticipantComponent edit mode', () => {
             title: 'Mr',
             firstName: participant.first_name,
             lastName: participant.last_name,
-            party: 'Panel Member',
             role: 'Panel Member',
             email: participant.email,
             phone: participant.phone,
@@ -1225,12 +1026,8 @@ describe('AddParticipantComponent edit mode', () => {
         fixture.detectChanges();
 
         fixture.whenStable().then(() => {
-            const partyControl = component.form.controls['party'];
-            const partyElement = fixture.debugElement.query(By.css('#party'));
             expect(videoHearingsServiceSpy.getHearingRoles).toHaveBeenCalled();
-            expect(partyControl.hasValidator(Validators.required)).toBeFalsy();
             expect(component.hearingRoleList).toEqual(['Please select', 'Applicant', 'Litigant in person']);
-            expect(partyElement).toBeNull();
             expect(component.displayNextButton).toBeTruthy();
             expect(component.displayClearButton).toBeFalsy();
             expect(component.displayAddButton).toBeFalsy();
@@ -1245,7 +1042,6 @@ describe('AddParticipantComponent edit mode', () => {
         component.searchEmail.email = 'mock@hmcts.net';
 
         role.setValue('Representative');
-        party.setValue('Applicant');
         firstName.setValue('Sam');
         lastName.setValue('Green');
         email.setValue('Sam.Green@Representative.com');
@@ -1279,7 +1075,6 @@ describe('AddParticipantComponent edit mode', () => {
         fixture.detectChanges();
         component.searchEmail.email = participant.email;
         component.form.setValue({
-            party: 'Applicant',
             role: 'Representative',
             title: 'Ms',
             firstName: participant.first_name,
@@ -1305,7 +1100,6 @@ describe('AddParticipantComponent edit mode', () => {
         fixture.detectChanges();
         component.searchEmail.email = participant.email;
         component.form.setValue({
-            party: Constants.PleaseSelect,
             role: '',
             title: Constants.PleaseSelect,
             firstName: participant.first_name,
@@ -1395,7 +1189,6 @@ describe('AddParticipantComponent edit mode', () => {
         part1.is_judge = false;
         part1.email = 'firstname.lastname-interpretee@email.com';
         part1.hearing_role_name = 'Litigant in Person';
-        part1.case_role_name = 'Claimant';
         part1.id = '100';
 
         const part2 = new ParticipantModel();
@@ -1405,7 +1198,6 @@ describe('AddParticipantComponent edit mode', () => {
         part2.is_judge = false;
         part2.email = 'firstname.lastname-interpreter@email.com';
         part2.hearing_role_name = 'Interpreter';
-        part2.case_role_name = 'Claimant';
         part2.interpreterFor = 'firstname.lastname-interpretee@email.com';
         part2.id = '300';
         component.hearing.participants.push(part1);
@@ -1432,7 +1224,6 @@ describe('AddParticipantComponent edit mode', () => {
         spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
         component.searchEmail.email = 'test7@hmcts.net';
         role.setValue('Interpreter');
-        party.setValue('Applicant');
         firstName.setValue('Test');
         lastName.setValue('Participant8');
         title.setValue('Mr');
@@ -1451,7 +1242,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     beforeEach(waitForAsync(() => {
         const hearing = initExistHearingRequest();
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
-            'getParticipantRoles',
             'getCurrentRequest',
             'setBookingHasChanged',
             'unsetBookingHasChanged',
@@ -1462,10 +1252,8 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             'getHearingRoles'
         ]);
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
         videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(flatRoleList));
-        participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['getParticipantEmail', 'isEditMode', 'setEditMode', 'resetEditMode']);
         bookingServiceSpy.isEditMode.and.returnValue(true);
@@ -1496,7 +1284,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         component.ngOnInit();
 
         role = component.form.controls['role'];
-        party = component.form.controls['party'];
         title = component.form.controls['title'];
         firstName = component.form.controls['firstName'];
         lastName = component.form.controls['lastName'];
@@ -1517,9 +1304,9 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             expect(bookingServiceSpy.getParticipantEmail).toHaveBeenCalled();
             expect(component.selectedParticipantEmail).toBe('');
             expect(component.showDetails).toBeFalsy();
-            expect(component.displayNextButton).toBeTruthy();
-            expect(component.displayClearButton).toBeFalsy();
-            expect(component.displayAddButton).toBeFalsy();
+            expect(component.displayNextButton).toBeFalsy();
+            expect(component.displayClearButton).toBeTruthy();
+            expect(component.displayAddButton).toBeTruthy();
             expect(component.displayUpdateButton).toBeFalsy();
         });
     }));
@@ -1568,7 +1355,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         participant.hearing_role_name = HearingRoles.INTERPRETER;
         component.isRoleSelected = true;
         component.form.setValue({
-            party: 'Applicant',
             role: 'Representative',
             title: 'Ms',
             firstName: participant.first_name,
@@ -1618,7 +1404,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         tick(1000);
 
         expect(component.showDetails).toBeFalsy();
-        expect(component.displayAddButton).toBeFalsy();
+        expect(component.displayAddButton).toBeTruthy();
     }));
     it('should set existingParticipant to false', () => {
         participant.id = '';
@@ -1631,26 +1417,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         component.participantDetails = participant;
         component.getParticipant(participant);
         expect(component.existingParticipant).toBeTruthy();
-    });
-    it('should reset hearing roles drop down if participant case role changed', () => {
-        spyOn(component, 'setupHearingRoles');
-        participant.id = undefined;
-        participant.case_role_name = 'Applicant';
-        component.participantDetails = participant;
-
-        component.resetPartyAndRole();
-
-        expect(component.setupHearingRoles).toHaveBeenCalled();
-    });
-    it('should set case role value from the input field', () => {
-        participant.id = undefined;
-        participant.case_role_name = undefined;
-        component.isPartySelected = true;
-        component.participantDetails = participant;
-
-        component.resetPartyAndRole();
-        expect(component.participantDetails.case_role_name).toBeTruthy();
-        expect(component.participantDetails.case_role_name).toEqual(Constants.PleaseSelect);
     });
     it('should set hearing role value from the input field', () => {
         participant.id = undefined;
@@ -1750,10 +1516,8 @@ describe('AddParticipantComponent edit mode no participants added', () => {
 describe('AddParticipantComponent set representer', () => {
     beforeEach(waitForAsync(() => {
         const hearing = initExistHearingRequest();
-        videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
         videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(flatRoleList));
-        participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
@@ -1775,7 +1539,6 @@ describe('AddParticipantComponent set representer', () => {
         component.ngOnInit();
 
         role = component.form.controls['role'];
-        party = component.form.controls['party'];
         title = component.form.controls['title'];
         firstName = component.form.controls['firstName'];
         lastName = component.form.controls['lastName'];
@@ -1790,8 +1553,6 @@ describe('AddParticipantComponent set representer', () => {
     }));
 
     it('should show company and name of representing person', () => {
-        component.caseAndHearingRoles = partyList;
-        component.form.get('party').setValue('Applicant');
         component.form.get('role').setValue('Representative');
 
         component.roleSelected();

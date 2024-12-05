@@ -16,7 +16,6 @@ import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.direct
 
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
-    newHearing.hearing_type_id = -1;
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
     newHearing.participants = [

@@ -1,14 +1,13 @@
-﻿
-using BookingsApi.Contract.V1.Responses;
+﻿using BookingsApi.Contract.V2.Responses;
 using UserApi.Contract.Responses;
 
 namespace AdminWebsite.Mappers
 {
     public static class UserResponseMapper
     {
-        public static PersonResponse MapFrom(UserResponse userResponse)
+        public static PersonResponseV2 MapFrom(UserResponse userResponse)
         {
-            return new PersonResponse
+            return new PersonResponseV2
             {
                 FirstName = userResponse.FirstName,
                 LastName = userResponse.LastName,

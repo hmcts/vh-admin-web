@@ -6,6 +6,7 @@ using BookingsApi.Contract.V1.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using BookingsApi.Contract.V2.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -56,7 +57,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 .ReturnsAsync(new BookingsResponse());
             _userIdentity.Setup(x => x.GetGroupDisplayNames()).Returns(new List<string> { "type1", "type2" });
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(new List<CaseTypeResponse>());
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(new List<CaseTypeResponseV2>());
 
             var request = new BookingSearchRequest
             {
@@ -115,8 +116,8 @@ namespace AdminWebsite.UnitTests.Controllers
         public async Task Should_return_ok_for_booking_list_with_null_types_in_database()
         {
             SetupTestCase();
-            List<CaseTypeResponse> response = null;
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(response);
+            List<CaseTypeResponseV2> response = null;
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(response);
 
             var request = new BookingSearchRequest
             {
@@ -135,8 +136,8 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            var response = new List<CaseTypeResponse>();
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(response);
+            var response = new List<CaseTypeResponseV2>();
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(response);
 
             var request = new BookingSearchRequest
             {
@@ -156,19 +157,19 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            var response = new List<CaseTypeResponse>
+            var response = new List<CaseTypeResponseV2>
             {
-                new CaseTypeResponse
+                new CaseTypeResponseV2()
                 {
-                    HearingTypes = new List<HearingTypeResponse>(), Id = 1, Name = "type3"
+                    Id = 1, Name = "type3"
                 },
-                new CaseTypeResponse
+                new CaseTypeResponseV2
                 {
-                    HearingTypes = new List<HearingTypeResponse>(), Id = 2, Name = "type4"
+                    Id = 2, Name = "type4"
                 }
             };
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(response);
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(response);
 
             var request = new BookingSearchRequest
             {
@@ -194,7 +195,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             _userIdentity.Setup(x => x.GetGroupDisplayNames()).Returns(new List<string> { "type1", "type2" });
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(() => GetCaseTypesList());
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(() => GetCaseTypesList());
 
             var request = new BookingSearchRequest
             {
@@ -207,7 +208,7 @@ namespace AdminWebsite.UnitTests.Controllers
             okResult.StatusCode.Should().Be(200);
 
             _userIdentity.Verify(x => x.IsATeamLead(), Times.Once);
-            _bookingsApiClient.Verify(s => s.GetCaseTypesAsync(true), Times.Once);
+            _bookingsApiClient.Verify(s => s.GetCaseTypesV2Async(true), Times.Once);
             _bookingsApiClient.Verify(x => x.GetHearingsByTypesAsync(It.IsAny<GetHearingRequest>()), Times.Once);
         }
 
@@ -224,7 +225,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             _userIdentity.Setup(x => x.GetGroupDisplayNames()).Returns(new List<string> { "type1", "type2", "type2" });
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(() => GetCaseTypesList());
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(() => GetCaseTypesList());
 
             var request = new BookingSearchRequest
             {
@@ -238,7 +239,7 @@ namespace AdminWebsite.UnitTests.Controllers
             okResult.StatusCode.Should().Be(200);
 
             _userIdentity.Verify(x => x.IsATeamLead(), Times.Once);
-            _bookingsApiClient.Verify(s => s.GetCaseTypesAsync(true), Times.Once);
+            _bookingsApiClient.Verify(s => s.GetCaseTypesV2Async(true), Times.Once);
             _bookingsApiClient.Verify(x => x.GetHearingsByTypesAsync(It.IsAny<GetHearingRequest>()), Times.Once);
         }
 
@@ -247,7 +248,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(default(List<CaseTypeResponseV2>));
 
             var request = new BookingSearchRequest
             {
@@ -268,7 +269,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(default(List<CaseTypeResponseV2>));
 
             var request = new BookingSearchRequest
             {
@@ -288,7 +289,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(default(List<CaseTypeResponseV2>));
 
             var request = new BookingSearchRequest
             {
@@ -311,7 +312,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(default(List<CaseTypeResponseV2>));
 
             var request = new BookingSearchRequest
             {
@@ -334,7 +335,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             var startDate = new DateTime(2022, 3, 25, 0, 0, 0, DateTimeKind.Utc);
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(default(List<CaseTypeResponseV2>));
 
             var request = new BookingSearchRequest
             {
@@ -359,7 +360,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             var endDate = new DateTime(2022, 3, 25, 0, 0, 0, DateTimeKind.Utc);
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(default(List<CaseTypeResponseV2>));
 
             var request = new BookingSearchRequest
             {
@@ -384,7 +385,7 @@ namespace AdminWebsite.UnitTests.Controllers
             var startDate = new DateTime(2022, 3, 24, 0, 0, 0, DateTimeKind.Utc);
             var endDate = new DateTime(2022, 3, 25, 0, 0, 0, DateTimeKind.Utc);
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(default(List<CaseTypeResponseV2>));
 
             var request = new BookingSearchRequest
             {
@@ -411,7 +412,7 @@ namespace AdminWebsite.UnitTests.Controllers
             var startDate = new DateTime(2022, 3, 25, 0, 0, 0, DateTimeKind.Utc);
             var endDate = new DateTime(2022, 3, 24, 0, 0, 0, DateTimeKind.Utc);
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(default(List<CaseTypeResponseV2>));
 
             var request = new BookingSearchRequest
             {
@@ -433,7 +434,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesV2Async(true)).ReturnsAsync(default(List<CaseTypeResponseV2>));
 
             var request = new BookingSearchRequest
             {
@@ -452,21 +453,21 @@ namespace AdminWebsite.UnitTests.Controllers
             okResult.StatusCode.Should().Be(200);
         }
 
-        private static List<CaseTypeResponse> GetCaseTypesList()
+        private static List<CaseTypeResponseV2> GetCaseTypesList()
         {
-            return new List<CaseTypeResponse>
+            return new List<CaseTypeResponseV2>
             {
-                new CaseTypeResponse
+                new()
                 {
-                    HearingTypes = new List<HearingTypeResponse>(), Id = 1, Name = "type1"
+                    Id = 1, Name = "type1"
                 },
-                new CaseTypeResponse
+                new()
                 {
-                    HearingTypes = new List<HearingTypeResponse>(), Id = 2, Name = "type2"
+                    Id = 2, Name = "type2"
                 },
-                new CaseTypeResponse
+                new()
                 {
-                    HearingTypes = new List<HearingTypeResponse>(), Id = 3, Name = "type3"
+                    Id = 3, Name = "type3"
                 }
             };
         }

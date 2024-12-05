@@ -4,7 +4,7 @@ namespace AdminWebsite.Mappers
 {
     public static class JudiciaryParticipantResponseMapper
     {
-        public static JudiciaryParticipantResponse Map(this BookingsApi.Contract.V1.Responses.JudiciaryParticipantResponse judiciaryParticipantResponse)
+        public static JudiciaryParticipantResponse Map(this BookingsApi.Contract.V2.Responses.JudiciaryParticipantResponse judiciaryParticipantResponse)
         {
             return new JudiciaryParticipantResponse()
             {

@@ -83,7 +83,6 @@ namespace AdminWebsite.UnitTests.Mappers.EditMultiDayHearing
                             ContactEmail = "litigant@email.com",
                             TelephoneNumber = "0845",
                             DisplayName = "Litigant",
-                            CaseRoleName = null,
                             HearingRoleName = "Applicant",
                             HearingRoleCode = "APPL",
                             Representee = null,

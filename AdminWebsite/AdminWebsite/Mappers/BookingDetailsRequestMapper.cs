@@ -25,7 +25,7 @@ public static class BookingDetailsRequestMapper
             Participants = bookingDetails.Participants?
                 .Select(p => p.MapToV2())
                 .ToList(),
-            JudiciaryParticipants = bookingDetails.JudiciaryParticipants.Select(jp => jp.MapToV1()).ToList(),
+            JudicialOfficeHolders = bookingDetails.JudiciaryParticipants.Select(jp => jp.MapToV2()).ToList(),
             HearingRoomName = bookingDetails.HearingRoomName,
             OtherInformation = bookingDetails.OtherInformation,
             CreatedBy = bookingDetails.CreatedBy,

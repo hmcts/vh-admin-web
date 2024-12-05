@@ -1,9 +1,6 @@
-using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Mappers;
 using AdminWebsite.UnitTests.Helper;
-using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V2.Enums;
-using V1 = BookingsApi.Contract.V1.Responses;
 using V2 = BookingsApi.Contract.V2.Responses;
 
 namespace AdminWebsite.UnitTests.Mappers
@@ -33,7 +30,7 @@ namespace AdminWebsite.UnitTests.Mappers
                 Sip = "Sip",
                 Pin = "Pin",
                 DefenceAdvocateId = Guid.NewGuid(),
-                InterpreterLanguage = new V1.InterpreterLanguagesResponse
+                InterpreterLanguage = new V2.InterpreterLanguagesResponse
                 {
                     Code = "spa",
                     Value = "Spanish",

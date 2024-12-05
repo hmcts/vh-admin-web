@@ -1,5 +1,6 @@
 using AdminWebsite.Contracts.Responses;
 using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Responses;
 
 namespace AdminWebsite.Mappers
 {
@@ -20,9 +21,9 @@ namespace AdminWebsite.Mappers
             };
         }
         
-        public static PersonResponse MapToPersonResponse(this JudiciaryPersonResponse judiciaryPersonResponse)
+        public static PersonResponseV2 MapToPersonResponse(this JudiciaryPersonResponse judiciaryPersonResponse)
         {
-            return new PersonResponse()
+            return new PersonResponseV2()
             {
                 Title = judiciaryPersonResponse.Title,
                 FirstName = judiciaryPersonResponse.FirstName,

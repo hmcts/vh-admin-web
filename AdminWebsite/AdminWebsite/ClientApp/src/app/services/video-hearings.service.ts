@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { firstValueFrom, lastValueFrom, Observable } from 'rxjs';
+import { combineLatest, firstValueFrom, lastValueFrom, Observable } from 'rxjs';
 import {
     BHClient,
     BookHearingRequest,
     BookingDetailsRequest,
     BookingStatus,
     CancelMultiDayHearingRequest,
-    CaseAndHearingRolesResponse,
     CaseRequest,
     CaseResponse,
     EditCaseRequest,
@@ -19,6 +18,7 @@ import {
     HearingDetailsResponse,
     HearingRoleResponse,
     HearingTypeResponse,
+    HearingVenueResponse,
     JudiciaryParticipantRequest,
     LinkedParticipant,
     LinkedParticipantRequest,
@@ -39,9 +39,10 @@ import { LinkedParticipantModel } from '../common/model/linked-participant.model
 import { Constants } from '../common/constants';
 import * as moment from 'moment';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
 import { mapScreeningResponseToScreeningDto, ScreeningDto } from '../booking/screening/screening.model';
+import { ReferenceDataService } from './reference-data.service';
 
 @Injectable({
     providedIn: 'root'
@@ -54,11 +55,13 @@ export class VideoHearingsService {
     private readonly vhoNonAvailabiltiesHaveChangesKey: string;
     private readonly totalHearingsCountThreshold: number = 40;
 
+    private readonly venues$: Observable<HearingVenueResponse[]>;
+    private readonly hearingTypes$: Observable<HearingTypeResponse[]>;
+
     private modelHearing: HearingModel;
-    private readonly participantRoles = new Map<string, CaseAndHearingRolesResponse[]>();
     private readonly judiciaryRoles = Constants.JudiciaryRoles;
 
-    constructor(private readonly bhClient: BHClient) {
+    constructor(private readonly bhClient: BHClient, private readonly referenceDataService: ReferenceDataService) {
         this.newRequestKey = 'bh-newRequest';
         this.bookingHasChangesKey = 'bookingHasChangesKey';
         this.conferencePhoneNumberKey = 'conferencePhoneNumberKey';
@@ -66,6 +69,8 @@ export class VideoHearingsService {
         this.vhoNonAvailabiltiesHaveChangesKey = 'vhoNonAvailabiltiesHaveChangesKey';
 
         this.checkForExistingHearing();
+        this.venues$ = this.referenceDataService.getCourts().pipe(shareReplay(1));
+        this.hearingTypes$ = this.referenceDataService.getHearingTypes();
     }
 
     private checkForExistingHearing() {
@@ -116,10 +121,6 @@ export class VideoHearingsService {
         sessionStorage.removeItem(this.vhoNonAvailabiltiesHaveChangesKey);
     }
 
-    getHearingTypes(includeDeleted: boolean = false): Observable<HearingTypeResponse[]> {
-        return this.bhClient.getHearingTypes(includeDeleted);
-    }
-
     getCurrentRequest(): HearingModel {
         return this.modelHearing;
     }
@@ -139,15 +140,6 @@ export class VideoHearingsService {
         this.modelHearing = updatedRequest;
         const localRequest = JSON.stringify(this.modelHearing);
         sessionStorage.setItem(this.newRequestKey, localRequest);
-    }
-
-    async getParticipantRoles(caseTypeName: string): Promise<CaseAndHearingRolesResponse[]> {
-        if (this.participantRoles.has(caseTypeName)) {
-            return this.participantRoles.get(caseTypeName);
-        }
-        const roles = await firstValueFrom(this.bhClient.getParticipantRoles(caseTypeName));
-        this.participantRoles.set(caseTypeName, roles);
-        return roles;
     }
 
     async getHearingRoles(): Promise<HearingRoleResponse[]> {
@@ -281,7 +273,6 @@ export class VideoHearingsService {
         const editParticipant = new EditParticipantRequest();
         editParticipant.id = participant.id;
         editParticipant.external_reference_id = participant.externalReferenceId;
-        editParticipant.case_role_name = participant.case_role_name;
         editParticipant.contact_email = participant.email;
         editParticipant.display_name = participant.display_name;
         editParticipant.first_name = participant.first_name;
@@ -330,7 +321,6 @@ export class VideoHearingsService {
     mapHearing(newRequest: HearingModel): BookingDetailsRequest {
         const newHearingRequest = new BookingDetailsRequest();
         newHearingRequest.cases = this.mapCases(newRequest);
-        newHearingRequest.case_type_name = newRequest.case_type;
         newHearingRequest.case_type_service_id = newRequest.case_type_service_id;
         newHearingRequest.scheduled_date_time = new Date(newRequest.scheduled_date_time);
         newHearingRequest.scheduled_duration = newRequest.scheduled_duration;
@@ -351,12 +341,13 @@ export class VideoHearingsService {
         const hearing = new HearingModel();
         hearing.hearing_id = response.id;
         hearing.cases = this.mapCaseResponseToCaseModel(response.cases);
-        hearing.case_type = response.case_type_name;
         hearing.scheduled_date_time = new Date(response.scheduled_date_time);
         hearing.scheduled_duration = response.scheduled_duration;
-        hearing.court_name = response.hearing_venue_name;
         hearing.court_code = response.hearing_venue_code;
+        hearing.court_name = response.hearing_venue_name;
         hearing.court_room = response.hearing_room_name;
+        hearing.case_type = response.case_type_name;
+        hearing.case_type_service_id = response.service_id;
         hearing.participants = this.mapParticipantResponseToParticipantModel(response.participants);
         hearing.other_information = response.other_information;
         hearing.created_date = new Date(response.created_date);
@@ -436,8 +427,6 @@ export class VideoHearingsService {
                 participant.display_name = p.display_name;
                 participant.contact_email = p.email;
                 participant.telephone_number = p.phone;
-                participant.case_role_name = p.case_role_name;
-                participant.hearing_role_name = p.hearing_role_name;
                 participant.hearing_role_code = p.hearing_role_code;
                 participant.representee = p.representee;
                 participant.organisation_name = p.company;
@@ -494,7 +483,6 @@ export class VideoHearingsService {
                 participant.display_name = p.display_name;
                 participant.email = p.contact_email;
                 participant.phone = p.telephone_number;
-                participant.case_role_name = p.case_role_name;
                 participant.hearing_role_name = p.hearing_role_name;
                 participant.hearing_role_code = p.hearing_role_code;
                 participant.representee = p.representee;
@@ -569,7 +557,20 @@ export class VideoHearingsService {
     }
 
     getHearingById(hearingId: string): Observable<HearingDetailsResponse> {
-        return this.bhClient.getHearingById(hearingId);
+        const hearingById$ = this.bhClient.getHearingById(hearingId);
+        return combineLatest([hearingById$, this.venues$, this.hearingTypes$]).pipe(
+            map(([hearing, venues, hearingTypes]) => {
+                const venue = venues.find(v => v.code === hearing.hearing_venue_code);
+                if (venue) {
+                    hearing.hearing_venue_name = venue.name;
+                }
+                const hearingType = hearingTypes.find(ht => ht.service_id === hearing.service_id);
+                if (hearingType) {
+                    hearing.case_type_name = hearingType.group;
+                }
+                return hearing;
+            })
+        );
     }
 
     cancelBooking(hearingId: string, reason: string): Observable<UpdateBookingStatusResponse> {

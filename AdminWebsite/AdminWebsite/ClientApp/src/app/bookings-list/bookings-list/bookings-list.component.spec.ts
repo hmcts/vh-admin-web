@@ -54,10 +54,9 @@ const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'cancelRequest',
     'getHearingById',
     'mapHearingDetailsResponseToHearingModel',
-    'getHearingTypes',
     'getUsers'
 ]);
-const referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts']);
+const referenceDataServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts', 'getHearingTypes']);
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 let returnUrlService: ReturnUrlService;
 const featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
@@ -134,7 +133,6 @@ export class BookingslistTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
             'JudgeGreen',
             '33A',
             'Coronation Street',
@@ -158,7 +156,6 @@ export class BookingslistTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
             'JudgeGreen',
             '33A',
             'Coronation Street',
@@ -181,7 +178,7 @@ export class BookingslistTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JudgeGreen',
             '33A',
             'Coronation Street',
@@ -217,7 +214,7 @@ export class BookingslistTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JudgeGreen',
             '33A',
             'Coronation Street',
@@ -240,7 +237,7 @@ export class BookingslistTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JudgeGreen',
             '33A',
             'Coronation Street',
@@ -263,7 +260,7 @@ export class BookingslistTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JudgeGreen',
             '33A',
             'Coronation Street',
@@ -302,7 +299,7 @@ export class ArrayBookingslistModelTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JudgeGreen',
             '33A',
             'Coronation Street',
@@ -325,7 +322,7 @@ export class ArrayBookingslistModelTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JudgeGreen',
             '33A',
             'Coronation Street',
@@ -348,7 +345,7 @@ export class ArrayBookingslistModelTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JudgeGreen',
             '33A',
             'Coronation Street',
@@ -380,7 +377,7 @@ export class ArrayBookingslistModelTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JudgeGreen',
             '33A',
             'Coronation Street',
@@ -403,7 +400,7 @@ export class ArrayBookingslistModelTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JudgeGreen',
             '33A',
             'Coronation Street',
@@ -426,7 +423,7 @@ export class ArrayBookingslistModelTestData {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JudgeGreen',
             '33A',
             'Coronation Street',
@@ -544,7 +541,7 @@ export class BookingPersistServiceSpy {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JudgeGreen',
             '33A',
             'Coronation Street',
@@ -587,7 +584,7 @@ describe('BookingsListComponent', () => {
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
         videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
-        videoHearingServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
+        referenceDataServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
         configServiceSpy.getConfig.and.returnValue({});
 
         referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));
@@ -1079,7 +1076,7 @@ describe('BookingsListComponent', () => {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JudgeGreen',
             '33A',
             'Coronation Street',
@@ -1109,7 +1106,7 @@ describe('BookingsListComponent', () => {
             120,
             'XX3456234565',
             'Smith vs Donner',
-            'Tax',
+
             'JudgeGreen',
             '33A',
             'Coronation Street',

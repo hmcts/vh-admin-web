@@ -5,20 +5,20 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MockLogger } from '../../testing/mock-logger';
 import { Logger } from '../../../services/logger';
-import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { of, throwError } from 'rxjs';
 import { HearingTypeResponse } from '../../../services/clients/api-client';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { ReferenceDataService } from 'src/app/services/reference-data.service';
 
 describe('CaseTypesMenuComponent', () => {
     let component: CaseTypesMenuComponent;
     let fixture: ComponentFixture<CaseTypesMenuComponent>;
-    let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+    let refDataServiceSpy: jasmine.SpyObj<ReferenceDataService>;
     const caseType = 'caseType1';
 
     beforeEach(async () => {
-        videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['getHearingTypes']);
-        videoHearingServiceSpy.getHearingTypes.and.returnValue(of([new HearingTypeResponse({ group: caseType })]));
+        refDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getHearingTypes']);
+        refDataServiceSpy.getHearingTypes.and.returnValue(of([new HearingTypeResponse({ group: caseType })]));
         await TestBed.configureTestingModule({
             imports: [NgSelectModule, ReactiveFormsModule],
             declarations: [CaseTypesMenuComponent],
@@ -27,7 +27,7 @@ describe('CaseTypesMenuComponent', () => {
                 HttpHandler,
                 FormBuilder,
                 { provide: Logger, useValue: new MockLogger() },
-                { provide: VideoHearingsService, useValue: videoHearingServiceSpy }
+                { provide: ReferenceDataService, useValue: refDataServiceSpy }
             ]
         }).compileComponents();
     });
@@ -62,16 +62,16 @@ describe('CaseTypesMenuComponent', () => {
     describe('loadItems', () => {
         it('should call video hearing service', () => {
             component.loadItems();
-            expect(videoHearingServiceSpy.getHearingTypes).toHaveBeenCalled();
+            expect(refDataServiceSpy.getHearingTypes).toHaveBeenCalled();
             expect(component.caseTypes).toContain('caseType1');
         });
 
         it('should call video hearing service, and catch thrown exception', () => {
-            videoHearingServiceSpy.getHearingTypes.and.returnValue(throwError({ status: 404 }));
+            refDataServiceSpy.getHearingTypes.and.returnValue(throwError({ status: 404 }));
 
             const handleListErrorSpy = spyOn(component, 'handleListError');
             component.loadItems();
-            expect(videoHearingServiceSpy.getHearingTypes).toHaveBeenCalled();
+            expect(refDataServiceSpy.getHearingTypes).toHaveBeenCalled();
             expect(handleListErrorSpy).toHaveBeenCalled();
         });
     });

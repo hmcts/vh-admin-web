@@ -19,7 +19,6 @@ export class HearingModel {
     hearing_id?: string;
     scheduled_date_time?: Date;
     scheduled_duration?: number;
-    hearing_type_id?: number;
     cases?: CaseModel[];
     participants?: ParticipantModel[];
     judiciaryParticipants?: JudicialMemberDto[];
@@ -30,8 +29,6 @@ export class HearingModel {
     court_room?: string;
     hearing_venue_id?: number;
     case_type_id?: number;
-    hearing_type_name?: string;
-    hearing_type_code?: string;
     court_id?: number;
     court_name?: string;
     court_code?: string;

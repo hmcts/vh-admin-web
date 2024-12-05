@@ -69,9 +69,6 @@
           <div>
             <strong>{{ participant.representee }}</strong>
           </div>
-          <div *ngIf="displayCaseRole">
-            {{ participant.case_role_name }}
-          </div>
         </ng-container>
 
         <ng-container *ngIf="isInterpreter">
@@ -81,9 +78,6 @@
               <strong>{{ participant.interpretee_name }}</strong>
             </div>
           </ng-container>
-          <div *ngIf="displayCaseRole">
-            {{ participant.case_role_name }}
-          </div>
         </ng-container>
       </div>
 
@@ -95,16 +89,10 @@
               <strong>{{ participant.interpretee_name }}</strong>
             </div>
           </ng-container>
-          <div *ngIf="displayCaseRole">
-            {{ participant.case_role_name }}
-          </div>
         </div>
         <ng-template #otherIndividual>
           <div>
             {{ participant.hearing_role_name }}
-          </div>
-          <div *ngIf="displayCaseRole">
-            {{ participant.case_role_name }}
           </div>
         </ng-template>
       </ng-template>

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using AdminWebsite.Models;
 using AdminWebsite.UnitTests.Controllers;
-using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V2.Requests;
 
 namespace AdminWebsite.UnitTests.Attributes
 {
@@ -29,12 +29,11 @@ namespace AdminWebsite.UnitTests.Attributes
             var request = context.ActionArguments
                 .Should().NotBeNull()
                 .And.ContainKey("request")
-                .WhoseValue.As<BookNewHearingRequest>()
+                .WhoseValue.As<BookNewHearingRequestV2>()
                 .Should().NotBeNull()
-                .And.Subject.As<BookNewHearingRequest>();
+                .And.Subject.As<BookNewHearingRequestV2>();
 
             request.HearingRoomName.Should().BeEquivalentTo(expectedText);
-            request.HearingVenueName.Should().BeEquivalentTo(expectedText);
             request.OtherInformation.Should().BeEquivalentTo(expectedText);
             request.Cases.Should().OnlyContain(x => x.Name == expectedText && x.Number == expectedText);
             request.Participants.Should().OnlyContain
@@ -90,9 +89,9 @@ namespace AdminWebsite.UnitTests.Attributes
             var request = context.ActionArguments
                 .Should().NotBeNull()
                 .And.ContainKey("nothing")
-                .WhoseValue.As<BookNewHearingRequest>()
+                .WhoseValue.As<BookNewHearingRequestV2>()
                 .Should().NotBeNull()
-                .And.Subject.As<BookNewHearingRequest>();
+                .And.Subject.As<BookNewHearingRequestV2>();
 
             request.HearingRoomName.Should().BeEquivalentTo(inputText);
 
@@ -102,18 +101,17 @@ namespace AdminWebsite.UnitTests.Attributes
         {
             var actionArguments = new Dictionary<string, object>
             {
-                { requestKey, new BookNewHearingRequest
+                { requestKey, new BookNewHearingRequestV2
                     {
                         HearingRoomName = text,
-                        HearingVenueName = text,
                         OtherInformation = text,
-                        Cases = new List<CaseRequest>
+                        Cases = new List<CaseRequestV2>
                         {
-                            new CaseRequest{Name = text, Number = text}
+                            new(){Name = text, Number = text}
                         },
-                        Participants = new List<BookingsApi.Contract.V1.Requests.ParticipantRequest>
+                        Participants = new List<ParticipantRequestV2>
                         {
-                            new BookingsApi.Contract.V1.Requests.ParticipantRequest
+                            new()
                             {
                                 Title = text,
                                 FirstName = text,

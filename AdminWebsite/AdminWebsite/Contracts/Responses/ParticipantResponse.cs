@@ -9,7 +9,6 @@ public class ParticipantResponse
     public string ExternalReferenceId { get; set; }
     public string MeasuresExternalId { get; set; }
     public string DisplayName { get; set; }
-    public string CaseRoleName { get; set; }
     public string HearingRoleName { get; set; }
     public string HearingRoleCode { get; set; }
     public string UserRoleName { get; set; }

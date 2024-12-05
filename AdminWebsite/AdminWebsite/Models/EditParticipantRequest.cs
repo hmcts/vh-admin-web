@@ -63,11 +63,6 @@ namespace AdminWebsite.Models
         public string DisplayName { get; set; }
 
         /// <summary>
-        ///     The name of the participant's case role
-        /// </summary>
-        public string CaseRoleName { get; set; }
-
-        /// <summary>
         ///     The name of the participant's hearing role
         /// </summary>
         public string HearingRoleName { get; set; }

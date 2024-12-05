@@ -103,19 +103,11 @@ export class ParticipantItemComponent implements OnInit {
         return this.participant?.hearing_role_name === Constants.HearingRoles.StaffMember;
     }
 
-    get hasCaseRole() {
-        return this.participant?.case_role_name !== 'None';
-    }
-
     get isObserverOrPanelMember() {
         return (
             ['Observer', 'Panel Member'].includes(this.participant?.hearing_role_name) ||
             [HearingRoleCodes.Observer, 'PanelMember'].includes(this.participant?.hearing_role_code)
         );
-    }
-
-    get displayCaseRole() {
-        return this.hasCaseRole && !this.isObserverOrPanelMember;
     }
 
     get isInterpreter() {

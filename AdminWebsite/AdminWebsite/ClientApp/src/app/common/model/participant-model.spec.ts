@@ -1,4 +1,4 @@
-import { JudgeAccountType, JudgeResponse, PersonResponse } from 'src/app/services/clients/api-client';
+import { JudgeAccountType, JudgeResponse, PersonResponseV2 } from 'src/app/services/clients/api-client';
 import { ParticipantModel } from './participant.model';
 
 describe('ParticipantModel', () => {
@@ -12,8 +12,8 @@ describe('ParticipantModel', () => {
         expect(participant).toBeTruthy();
     });
 
-    it('should map PersonResponse to ParticipantModel', () => {
-        const person = new PersonResponse({
+    it('should map PersonResponseV2 to ParticipantModel', () => {
+        const person = new PersonResponseV2({
             contact_email: 'aa@hmcts.net',
             first_name: 'Sam',
             last_name: 'Green',
@@ -35,7 +35,7 @@ describe('ParticipantModel', () => {
         expect(participant.username).toEqual(person.username);
         expect(participant.company).toEqual(person.organisation);
     });
-    it('should mapping return empty ParticipantModel if  PersonResponse is null', () => {
+    it('should mapping return empty ParticipantModel if  PersonResponseV2 is null', () => {
         const person = null;
         participant = ParticipantModel.fromPersonResponse(person);
         expect(participant).toBeNull();

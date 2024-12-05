@@ -5,8 +5,8 @@ using AdminWebsite.Controllers.ReferenceData;
 using AdminWebsite.Mappers;
 using AdminWebsite.Services;
 using Autofac.Extras.Moq;
-using BookingsApi.Contract.V1.Enums;
-using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Enums;
+using BookingsApi.Contract.V2.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdminWebsite.UnitTests.Controllers.ReferenceData

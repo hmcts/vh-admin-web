@@ -5,7 +5,7 @@ using AdminWebsite.Configuration;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Responses;
 using FizzWare.NBuilder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -36,9 +36,9 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
         public async Task should_return_ok_with_person()
         {
             var contactEmail = "john@hmcts.net";
-            var person = Builder<PersonResponse>.CreateNew().Build();
+            var person = Builder<PersonResponseV2>.CreateNew().Build();
             _bookingsApiClient
-                .Setup(x => x.SearchForNonJudgePersonsByContactEmailAsync(contactEmail))
+                .Setup(x => x.SearchForNonJudgePersonsByContactEmailV2Async(contactEmail))
                 .ReturnsAsync(person);
             
             var actionResult = await _controller.GetPersonForUpdateByContactEmail(contactEmail);
@@ -53,7 +53,7 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
         {
             var contactEmail = "john@hmcts.net";
             _bookingsApiClient
-                .Setup(x => x.SearchForNonJudgePersonsByContactEmailAsync(contactEmail))
+                .Setup(x => x.SearchForNonJudgePersonsByContactEmailV2Async(contactEmail))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.NotFound));
             
             var actionResult = await _controller.GetPersonForUpdateByContactEmail(contactEmail);
