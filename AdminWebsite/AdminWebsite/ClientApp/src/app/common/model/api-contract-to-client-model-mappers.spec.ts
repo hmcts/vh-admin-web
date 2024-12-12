@@ -82,24 +82,24 @@ describe('mapParticipantToVHParticipant', () => {
         expect(result.id).toBe(participant.id);
         expect(result.externalReferenceId).toBe(participant.external_reference_id);
         expect(result.title).toBe(participant.title);
-        expect(result.firstName).toBe(participant.first_name);
-        expect(result.lastName).toBe(participant.last_name);
-        expect(result.middleNames).toBe(participant.middle_names);
-        expect(result.displayName).toBe(participant.display_name);
+        expect(result.first_name).toBe(participant.first_name);
+        expect(result.last_name).toBe(participant.last_name);
+        expect(result.middle_names).toBe(participant.middle_names);
+        expect(result.display_name).toBe(participant.display_name);
         expect(result.username).toBe(participant.username);
         expect(result.email).toBe(participant.contact_email);
-        expect(result.hearingRoleName).toBe(participant.hearing_role_name);
-        expect(result.hearingRoleCode).toBe(participant.hearing_role_code);
+        expect(result.hearing_role_name).toBe(participant.hearing_role_name);
+        expect(result.hearing_role_code).toBe(participant.hearing_role_code);
         expect(result.phone).toBe(participant.telephone_number);
         expect(result.representee).toBe(participant.representee);
         expect(result.company).toBe(participant.organisation);
-        expect(result.isJudge).toBe(false);
-        expect(result.linkedParticipants).toEqual(
+        expect(result.is_judge).toBe(false);
+        expect(result.linked_participants).toEqual(
             participant.linked_participants?.map(linkedParticipant => mapLinkedParticipantResponseToVHLinkedParticipant(linkedParticipant))
         );
-        expect(result.userRoleName).toBe(participant.user_role_name);
-        expect(result.isStaffMember).toBe(false);
-        expect(result.interpretationLanguage).toEqual(mapAvailableLanguageToVHInterpreterSelected(participant.interpreter_language));
+        expect(result.user_role_name).toBe(participant.user_role_name);
+        expect(result.is_staff_member).toBe(false);
+        expect(result.interpretation_language).toEqual(mapAvailableLanguageToVHInterpreterSelected(participant.interpreter_language));
         expect(result.screening).toEqual(mapScreeningResponseToVHScreening(participant.screening_requirement));
     });
 });
@@ -456,26 +456,26 @@ function createEndpoints(): EndpointResponse[] {
 }
 
 function verifyVHBooking(vhBooking: VHBooking, hearing: HearingDetailsResponse) {
-    expect(vhBooking.hearingId).toBe(hearing.id);
-    expect(vhBooking.scheduledDateTime).toEqual(hearing.scheduled_date_time);
-    expect(vhBooking.scheduledDuration).toBe(hearing.scheduled_duration);
-    expect(vhBooking.courtCode).toBe(hearing.hearing_venue_code);
-    expect(vhBooking.courtName).toBe(hearing.hearing_venue_name);
-    expect(vhBooking.caseTypeServiceId).toBe(hearing.service_id);
-    expect(vhBooking.caseType).toBe(hearing.case_type_name);
+    expect(vhBooking.hearing_id).toBe(hearing.id);
+    expect(vhBooking.scheduled_date_time).toEqual(hearing.scheduled_date_time);
+    expect(vhBooking.scheduled_duration).toBe(hearing.scheduled_duration);
+    expect(vhBooking.court_code).toBe(hearing.hearing_venue_code);
+    expect(vhBooking.court_name).toBe(hearing.hearing_venue_name);
+    expect(vhBooking.case_type_service_id).toBe(hearing.service_id);
+    expect(vhBooking.case_type).toBe(hearing.case_type_name);
     expect(vhBooking.case).toEqual(mapCaseToVHCase(hearing.cases[0]));
     expect(vhBooking.participants).toEqual(hearing.participants.map(participant => mapParticipantToVHParticipant(participant)));
     expect(vhBooking.judiciaryParticipants).toEqual(
         hearing.judiciary_participants.map(judiciaryParticipant => mapJudiciaryParticipantToVHJudiciaryParticipant(judiciaryParticipant))
     );
-    expect(vhBooking.courtRoom).toBe(hearing.hearing_room_name);
-    expect(vhBooking.otherInformation).toBe(hearing.other_information);
-    expect(vhBooking.createdDate).toEqual(hearing.created_date);
-    expect(vhBooking.createdBy).toBe(hearing.created_by);
-    expect(vhBooking.updatedBy).toBe(hearing.updated_by);
-    expect(vhBooking.updatedDate).toEqual(hearing.updated_date);
+    expect(vhBooking.court_room).toBe(hearing.hearing_room_name);
+    expect(vhBooking.other_information).toBe(hearing.other_information);
+    expect(vhBooking.created_date).toEqual(hearing.created_date);
+    expect(vhBooking.created_by).toBe(hearing.created_by);
+    expect(vhBooking.updated_by).toBe(hearing.updated_by);
+    expect(vhBooking.updated_date).toEqual(hearing.updated_date);
     expect(vhBooking.status).toBe(hearing.status);
-    expect(vhBooking.audioRecordingRequired).toBe(hearing.audio_recording_required);
+    expect(vhBooking.audio_recording_required).toBe(hearing.audio_recording_required);
     expect(vhBooking.endpoints).toEqual(hearing.endpoints.map(endpoint => mapEndpointToVHEndpoint(endpoint, hearing.participants)));
     expect(vhBooking.originalScheduledDateTime).toEqual(hearing.scheduled_date_time);
     expect(vhBooking.supplier).toBe(hearing.conference_supplier);
