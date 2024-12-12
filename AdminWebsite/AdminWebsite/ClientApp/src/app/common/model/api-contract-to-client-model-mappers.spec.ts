@@ -13,17 +13,17 @@ import {
     ScreeningType,
     VideoSupplier
 } from 'src/app/services/clients/api-client';
-import {
-    mapAvailableLanguageToVHInterpreterSelected,
-    mapCaseToVHCase,
-    mapEndpointToVHEndpoint,
-    mapHearingToVHBooking,
-    mapJudiciaryParticipantToVHJudiciaryParticipant,
-    mapLinkedParticipantResponseToVHLinkedParticipant,
-    mapParticipantToVHParticipant,
-    mapScreeningResponseToVHScreening
-} from './api-contract-to-client-model-mappers';
 import { VHBooking } from './vh-booking';
+import {
+    mapHearingToVHBooking,
+    mapCaseToVHCase,
+    mapParticipantToVHParticipant,
+    mapLinkedParticipantResponseToVHLinkedParticipant,
+    mapAvailableLanguageToVHInterpreterSelected,
+    mapScreeningResponseToVHScreening,
+    mapJudiciaryParticipantToVHJudiciaryParticipant,
+    mapEndpointToVHEndpoint
+} from './api-contract-to-client-model-mappers';
 
 const DEFENCE_COUNSEL_ID = 'defence-counsel-id';
 

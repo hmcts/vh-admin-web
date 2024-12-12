@@ -10,19 +10,19 @@ import {
     JudiciaryParticipantResponse,
     LinkedParticipantResponse
 } from 'src/app/services/clients/api-client';
+import { Constants } from 'src/app/common/constants';
+import { v4 as uuid } from 'uuid';
 import {
     VHBooking,
     VHCase,
+    VHParticipant,
+    VHLinkedParticipant,
+    VHJudiciaryParticipant,
+    VHJudicaryRoleCode,
     VHEndpoint,
     VHInterpreterSelected,
-    VHJudicaryRoleCode,
-    VHJudiciaryParticipant,
-    VHLinkedParticipant,
-    VHParticipant,
     VHScreening
 } from './vh-booking';
-import { Constants } from 'src/app/common/constants';
-import { v4 as uuid } from 'uuid';
 
 export function mapHearingToVHBooking(hearing: HearingDetailsResponse): VHBooking {
     return {
