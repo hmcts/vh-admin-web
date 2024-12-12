@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Constants } from 'src/app/common/constants';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
-import { HearingModel } from 'src/app/common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
@@ -31,7 +31,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     representeeLabelText: string;
     representeeErrorMessage: string;
 
-    hearing: HearingModel;
+    hearing: VHBooking;
 
     displayNextButton = true;
     displayAddButton = false;

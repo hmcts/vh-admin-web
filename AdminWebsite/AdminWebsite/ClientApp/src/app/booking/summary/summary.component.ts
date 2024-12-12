@@ -7,7 +7,7 @@ import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { RemoveInterpreterPopupComponent } from 'src/app/popups/remove-interpreter-popup/remove-interpreter-popup.component';
 import { Constants } from '../../common/constants';
 import { FormatShortDuration } from '../../common/formatters/format-short-duration';
-import { HearingModel } from '../../common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { BookingService } from '../../services/booking.service';
 import {
@@ -36,7 +36,7 @@ import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkl
 export class SummaryComponent implements OnInit, OnDestroy {
     protected readonly loggerPrefix: string = '[Booking] - [Summary] -';
     constants = Constants;
-    hearing: HearingModel;
+    hearing: VHBooking;
     attemptingCancellation: boolean;
     canNavigate = true;
     failedSubmission: boolean;
@@ -219,8 +219,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     private retrieveHearingSummary() {
-        this.caseNumber = this.hearing.cases.length > 0 ? this.hearing.cases[0].number : '';
-        this.caseName = this.hearing.cases.length > 0 ? this.hearing.cases[0].name : '';
+        this.caseNumber = this.hearing.case ? this.hearing.case.number : '';
+        this.caseName = this.hearing.case ? this.hearing.case.name : '';
         this.hearingDate = this.hearing.scheduled_date_time;
         this.hearingDuration = `listed for ${FormatShortDuration(this.hearing.scheduled_duration)}`;
         this.courtRoomAddress = this.formatCourtRoom(this.hearing.court_name, this.hearing.court_room);
@@ -283,8 +283,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
         if (this.hearing.hearing_id && this.hearing.hearing_id.length > 0) {
             this.logger.info(`${this.loggerPrefix} Attempting to update an existing hearing.`, {
                 hearingId: this.hearing.hearing_id,
-                caseName: this.hearing.cases[0].name,
-                caseNumber: this.hearing.cases[0].number
+                caseName: this.hearing.case.name,
+                caseNumber: this.hearing.case.number
             });
             if (this.hearing.isMultiDayEdit && this.multiDayBookingEnhancementsEnabled) {
                 this.updateMultiDayHearing();
@@ -295,8 +295,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
             this.setDurationOfMultiHearing();
             try {
                 this.logger.info(`${this.loggerPrefix} Attempting to book a new hearing.`, {
-                    caseName: this.hearing.cases[0].name,
-                    caseNumber: this.hearing.cases[0].number
+                    caseName: this.hearing.case.name,
+                    caseNumber: this.hearing.case.number
                 });
 
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
@@ -320,8 +320,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
         if (this.hearing.isMultiDayEdit) {
             this.logger.info(`${this.loggerPrefix} Hearing is multi-day`, {
                 hearingId: hearingDetailsResponse.id,
-                caseName: this.hearing.cases[0].name,
-                caseNumber: this.hearing.cases[0].number
+                caseName: this.hearing.case.name,
+                caseNumber: this.hearing.case.number
             });
 
             const isMultipleIndividualHearingDates = this.hearing.hearing_dates && this.hearing.hearing_dates.length > 1;
@@ -330,8 +330,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
             if (isMultipleIndividualHearingDates) {
                 this.logger.info(`${this.loggerPrefix} Hearing has multiple, individual days. Booking remaining days`, {
                     hearingId: hearingDetailsResponse.id,
-                    caseName: this.hearing.cases[0].name,
-                    caseNumber: this.hearing.cases[0].number
+                    caseName: this.hearing.case.name,
+                    caseNumber: this.hearing.case.number
                 });
                 await this.hearingService.cloneMultiHearings(
                     hearingDetailsResponse.id,
@@ -343,8 +343,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
             } else if (isHearingDateRange) {
                 this.logger.info(`${this.loggerPrefix} Hearing has a range of days. Booking remaining days`, {
                     hearingId: hearingDetailsResponse.id,
-                    caseName: this.hearing.cases[0].name,
-                    caseNumber: this.hearing.cases[0].number
+                    caseName: this.hearing.case.name,
+                    caseNumber: this.hearing.case.number
                 });
                 await this.hearingService.cloneMultiHearings(
                     hearingDetailsResponse.id,
@@ -357,8 +357,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
             } else {
                 this.logger.info(`${this.loggerPrefix} Hearing has just one day, no remaining days to book`, {
                     hearingId: hearingDetailsResponse.id,
-                    caseName: this.hearing.cases[0].name,
-                    caseNumber: this.hearing.cases[0].number
+                    caseName: this.hearing.case.name,
+                    caseNumber: this.hearing.case.number
                 });
             }
         }

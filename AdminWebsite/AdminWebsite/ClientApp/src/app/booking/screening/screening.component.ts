@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-import { HearingModel } from 'src/app/common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { SelectedScreeningDto } from './screening.model';
@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
     templateUrl: './screening.component.html'
 })
 export class ScreeningComponent implements OnInit, OnDestroy {
-    hearing: HearingModel;
+    hearing: VHBooking;
 
     destroyed$ = new Subject<void>();
 

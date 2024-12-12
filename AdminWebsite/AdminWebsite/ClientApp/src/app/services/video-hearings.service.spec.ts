@@ -16,7 +16,6 @@ import {
     UpdateHearingInGroupRequest,
     VideoSupplier
 } from './clients/api-client';
-import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { of } from 'rxjs';
@@ -27,6 +26,7 @@ import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-
 import { ScreeningDto } from '../booking/screening/screening.model';
 import { ReferenceDataService } from './reference-data.service';
 import { MockValues } from '../testing/data/test-objects';
+import { createVHBooking, VHBooking } from '../common/model/vh-booking';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
@@ -86,7 +86,7 @@ describe('Video hearing service', () => {
     });
 
     it('should have changes when updating hearing request', () => {
-        const model = new HearingModel();
+        const model = createVHBooking();
         service.updateHearingRequest(model);
 
         expect(service.hasUnsavedChanges()).toBe(true);
@@ -105,14 +105,14 @@ describe('Video hearing service', () => {
     });
 
     it('should cache current hearing request', () => {
-        const model = new HearingModel();
+        const model = createVHBooking();
         model.hearing_id = 'hearingId';
         service.updateHearingRequest(model);
         expect(service.getCurrentRequest().hearing_id).toBe('hearingId');
     });
 
     it('should remove currently cached hearing when cancelling', () => {
-        const model = new HearingModel();
+        const model = createVHBooking();
         model.hearing_id = 'hearingId';
         service.updateHearingRequest(model);
         service.cancelRequest();
@@ -124,14 +124,14 @@ describe('Video hearing service', () => {
         const caseModel = new CaseModel();
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
-        const model = new HearingModel();
+        const model = createVHBooking();
         model.case_type = 'Tax';
         model.scheduled_date_time = new Date(date);
         model.scheduled_duration = 30;
         model.court_name = 'court address';
         model.court_room = 'room 09';
         model.other_information = 'note';
-        model.cases = [caseModel];
+        model.case = caseModel;
         model.participants = [];
         model.audio_recording_required = true;
         const response = new HearingDetailsResponse({ id: '1234566' });
@@ -146,14 +146,14 @@ describe('Video hearing service', () => {
         const caseModel = new CaseModel();
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
-        const model = new HearingModel();
+        const model = createVHBooking();
         model.case_type = 'Tax';
         model.scheduled_date_time = new Date(date);
         model.scheduled_duration = 30;
         model.court_name = 'court address';
         model.court_room = 'room 09';
         model.other_information = 'note';
-        model.cases = [caseModel];
+        model.case = caseModel;
         model.participants = [];
         model.audio_recording_required = true;
         model.supplier = VideoSupplier.Vodafone;
@@ -178,9 +178,9 @@ describe('Video hearing service', () => {
             expect(request.hearing_id).toEqual(model.id);
             expect(request.court_room).toBe('room 09');
             expect(request.other_information).toBe('note');
-            expect(request.cases).toBeTruthy();
-            expect(request.cases[0].name).toBe('case1');
-            expect(request.cases[0].number).toBe('Number 1');
+            expect(request.case).toBeTruthy();
+            expect(request.case.name).toBe('case1');
+            expect(request.case.number).toBe('Number 1');
             expect(request.scheduled_date_time).toEqual(model.scheduled_date_time);
             expect(request.scheduled_duration).toBe(30);
             expect(request.audio_recording_required).toBeTruthy();
@@ -357,14 +357,14 @@ describe('Video hearing service', () => {
         const caseModel = new CaseModel();
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
-        const hearingModel = new HearingModel();
+        const hearingModel = createVHBooking();
         hearingModel.court_room = 'Court Room1';
         hearingModel.court_name = 'Test Court';
         hearingModel.other_information = 'Other Information';
         hearingModel.scheduled_date_time = new Date();
         hearingModel.scheduled_duration = 45;
         hearingModel.participants = participants;
-        hearingModel.cases = [caseModel];
+        hearingModel.case = caseModel;
         hearingModel.audio_recording_required = true;
         const endpoints: EndpointModel[] = [];
         const endpoint = new EndpointModel(null);
@@ -375,7 +375,7 @@ describe('Video hearing service', () => {
         const editHearingRequest = service.mapExistingHearing(hearingModel);
         const actualParticipant = editHearingRequest.participants[0];
         const expectedParticipant = hearingModel.participants[0];
-        const expectedCase = hearingModel.cases[0];
+        const expectedCase = hearingModel.case;
         const actualCase = editHearingRequest.case;
         const actualEndpoint = editHearingRequest.endpoints[0].display_name;
         const expectedEndpoint = hearingModel.endpoints[0].displayName;
@@ -425,14 +425,14 @@ describe('Video hearing service', () => {
         const caseModel = new CaseModel();
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
-        const hearingModel = new HearingModel();
+        const hearingModel = createVHBooking();
         hearingModel.court_room = 'Court Room1';
         hearingModel.court_name = 'Test Court';
         hearingModel.other_information = 'Other Information';
         hearingModel.scheduled_date_time = new Date();
         hearingModel.scheduled_duration = 45;
         hearingModel.participants = participants;
-        hearingModel.cases = [caseModel];
+        hearingModel.case = caseModel;
         hearingModel.audio_recording_required = true;
         const endpoints: EndpointModel[] = [];
         const endpoint = new EndpointModel(null);
@@ -453,8 +453,8 @@ describe('Video hearing service', () => {
         expect(editHearingRequest.participants[0].last_name).toEqual(hearingModel.participants[0].last_name);
         expect(editHearingRequest.participants[0].middle_names).toEqual(hearingModel.participants[0].middle_names);
         expect(editHearingRequest.participants[0].hearing_role_name).toEqual(hearingModel.participants[0].hearing_role_name);
-        expect(editHearingRequest.case.name).toEqual(hearingModel.cases[0].name);
-        expect(editHearingRequest.case.number).toEqual(hearingModel.cases[0].number);
+        expect(editHearingRequest.case.name).toEqual(hearingModel.case.name);
+        expect(editHearingRequest.case.number).toEqual(hearingModel.case.number);
         expect(editHearingRequest.audio_recording_required).toEqual(hearingModel.audio_recording_required);
         expect(editHearingRequest.endpoints[0].display_name).toEqual(hearingModel.endpoints[0].displayName);
         expect(editHearingRequest.participants[0].linked_participants[0].linked_id).toEqual(
@@ -579,28 +579,28 @@ describe('Video hearing service', () => {
 
     describe('isConferenceClosed', () => {
         it('should return false if booking status booked and telephone conference Id is empty', () => {
-            const model = new HearingModel();
+            const model = createVHBooking();
             model.status = BookingStatus.Booked;
             model.telephone_conference_id = '';
             service.updateHearingRequest(model);
             expect(service.isConferenceClosed()).toBe(false);
         });
         it('should return false if booking status created and telephone conference Id is not empty', () => {
-            const model = new HearingModel();
+            const model = createVHBooking();
             model.status = BookingStatus.Created;
             model.telephone_conference_id = '1111';
             service.updateHearingRequest(model);
             expect(service.isConferenceClosed()).toBe(false);
         });
         it('should return false if booking status booked and telephone conference Id is not empty', () => {
-            const model = new HearingModel();
+            const model = createVHBooking();
             model.status = BookingStatus.Booked;
             model.telephone_conference_id = '1111';
             service.updateHearingRequest(model);
             expect(service.isConferenceClosed()).toBe(false);
         });
         it('should return true if booking status created and telephone conference Id is empty', () => {
-            const model = new HearingModel();
+            const model = createVHBooking();
             model.status = BookingStatus.Created;
             model.telephone_conference_id = '';
             service.updateHearingRequest(model);
@@ -610,9 +610,9 @@ describe('Video hearing service', () => {
 
     describe('isHearingAboutToStart', () => {
         const aboutToStartMinutesThreshold = 30;
-        let model: HearingModel;
+        let model: VHBooking;
         beforeEach(() => {
-            model = new HearingModel();
+            model = createVHBooking();
             model.scheduled_date_time = new Date();
             model.status = BookingStatus.Created;
         });
@@ -810,7 +810,7 @@ describe('Video hearing service', () => {
     });
 
     describe('updateMultiDayHearing', () => {
-        const hearing = new HearingModel();
+        const hearing = createVHBooking();
         const date = Date.now();
         const caseModel = new CaseModel();
         caseModel.name = 'case1';
@@ -819,7 +819,7 @@ describe('Video hearing service', () => {
         hearing.case_type = 'Tax';
         hearing.scheduled_date_time = new Date(date);
         hearing.scheduled_duration = 30;
-        hearing.cases = [caseModel];
+        hearing.case = caseModel;
         hearing.audio_recording_required = true;
         hearing.court_code = '701411';
         hearing.court_name = 'Manchester Civil and Family Justice Centre';
@@ -931,12 +931,12 @@ describe('Video hearing service', () => {
 
     describe('isTotalHearingMoreThanThreshold', () => {
         it('should return false if booking is multiday and the total days are less than 40', () => {
-            const hearing = new HearingModel();
+            const hearing = createVHBooking();
             hearing.hearing_id = 'SomeGuid';
             hearing.hearingsInGroup = [];
 
             for (let i = 0; i < 39; i++) {
-                const model = new HearingModel();
+                const model = createVHBooking();
                 model.status = BookingStatus.Booked;
                 model.hearing_id = 'guid' + i;
                 hearing.hearingsInGroup.push(model);
@@ -948,12 +948,12 @@ describe('Video hearing service', () => {
             expect(service.isTotalHearingMoreThanThreshold()).toBe(false);
         });
         it('should return true if booking is multiday and the total days are more than 40', () => {
-            const hearing = new HearingModel();
+            const hearing = createVHBooking();
             hearing.hearing_id = 'SomeGuid';
             hearing.hearingsInGroup = [];
 
             for (let i = 0; i < 50; i++) {
-                const model = new HearingModel();
+                const model = createVHBooking();
                 model.status = BookingStatus.Booked;
                 model.hearing_id = 'guid' + i;
                 hearing.hearingsInGroup.push(model);

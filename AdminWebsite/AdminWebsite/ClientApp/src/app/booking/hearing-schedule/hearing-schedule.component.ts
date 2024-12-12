@@ -7,7 +7,7 @@ import { ErrorService } from 'src/app/services/error.service';
 import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
-import { HearingModel } from '../../common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { BookingService } from '../../services/booking.service';
 import { HearingVenueResponse } from '../../services/clients/api-client';
 import { ReferenceDataService } from '../../services/reference-data.service';
@@ -25,7 +25,7 @@ import { EditHearingDatesComponent } from './edit-hearing-dates/edit-hearing-dat
     styleUrls: ['./hearing-schedule.component.scss']
 })
 export class HearingScheduleComponent extends BookingBaseComponent implements OnInit, OnDestroy {
-    hearing: HearingModel;
+    hearing: VHBooking;
     availableCourts: HearingVenueResponse[];
     failedSubmission: boolean;
     attemptingCancellation = false;
@@ -46,7 +46,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     addHearingDateControl: FormControl = null;
     hearingDates: Date[] = [];
     hearingIds: string[] = [];
-    hearingsInGroupToEdit: HearingModel[];
+    hearingsInGroupToEdit: VHBooking[];
     newDatesFormArray: FormArray;
 
     hearingDateParsed: string = null;

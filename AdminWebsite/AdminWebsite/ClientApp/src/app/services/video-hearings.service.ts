@@ -31,7 +31,6 @@ import {
     UpdateBookingStatusResponse,
     UpdateHearingInGroupRequest
 } from './clients/api-client';
-import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { EndpointModel } from '../common/model/endpoint.model';
@@ -43,6 +42,8 @@ import { map, shareReplay } from 'rxjs/operators';
 import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
 import { mapScreeningResponseToScreeningDto, ScreeningDto } from '../booking/screening/screening.model';
 import { ReferenceDataService } from './reference-data.service';
+import { createVHBooking, VHBooking } from '../common/model/vh-booking';
+import { mapHearingToVHBooking } from '../common/model/api-contract-to-client-model-mappers';
 
 @Injectable({
     providedIn: 'root'
@@ -58,7 +59,7 @@ export class VideoHearingsService {
     private readonly venues$: Observable<HearingVenueResponse[]>;
     private readonly hearingTypes$: Observable<HearingTypeResponse[]>;
 
-    private modelHearing: HearingModel;
+    private modelHearing: VHBooking;
     private readonly judiciaryRoles = Constants.JudiciaryRoles;
 
     constructor(private readonly bhClient: BHClient, private readonly referenceDataService: ReferenceDataService) {
@@ -76,7 +77,7 @@ export class VideoHearingsService {
     private checkForExistingHearing() {
         const localRequest = sessionStorage.getItem(this.newRequestKey);
         if (localRequest === null) {
-            this.modelHearing = new HearingModel();
+            this.modelHearing = createVHBooking();
         } else {
             this.modelHearing = JSON.parse(localRequest);
         }
@@ -87,7 +88,7 @@ export class VideoHearingsService {
         let existingHearing = false;
 
         if (request) {
-            const model: HearingModel = JSON.parse(request);
+            const model: VHBooking = JSON.parse(request);
             existingHearing = model.hearing_id && model.hearing_id.length > 0;
         }
 
@@ -121,7 +122,7 @@ export class VideoHearingsService {
         sessionStorage.removeItem(this.vhoNonAvailabiltiesHaveChangesKey);
     }
 
-    getCurrentRequest(): HearingModel {
+    getCurrentRequest(): VHBooking {
         return this.modelHearing;
     }
 
@@ -136,7 +137,7 @@ export class VideoHearingsService {
         );
     }
 
-    updateHearingRequest(updatedRequest: HearingModel) {
+    updateHearingRequest(updatedRequest: VHBooking) {
         this.modelHearing = updatedRequest;
         const localRequest = JSON.stringify(this.modelHearing);
         sessionStorage.setItem(this.newRequestKey, localRequest);
@@ -148,7 +149,7 @@ export class VideoHearingsService {
     }
 
     cancelRequest() {
-        this.modelHearing = new HearingModel();
+        this.modelHearing = createVHBooking();
         sessionStorage.removeItem(this.newRequestKey);
         sessionStorage.removeItem(this.bookingHasChangesKey);
     }
@@ -161,7 +162,7 @@ export class VideoHearingsService {
         return lastValueFrom(this.bhClient.updateFailedBookingStatus(hearingId));
     }
 
-    saveHearing(newRequest: HearingModel): Promise<HearingDetailsResponse> {
+    saveHearing(newRequest: VHBooking): Promise<HearingDetailsResponse> {
         const hearingRequest = this.mapHearing(newRequest);
         const bookingRequest = new BookHearingRequest({
             booking_details: hearingRequest
@@ -194,21 +195,21 @@ export class VideoHearingsService {
         return lastValueFrom(this.bhClient.rebookHearing(hearingId));
     }
 
-    updateHearing(booking: HearingModel): Observable<HearingDetailsResponse> {
+    updateHearing(booking: VHBooking): Observable<HearingDetailsResponse> {
         const hearingRequest = this.mapExistingHearing(booking);
         return this.bhClient.editHearing(booking.hearing_id, hearingRequest);
     }
 
-    updateMultiDayHearing(booking: HearingModel): Observable<HearingDetailsResponse> {
+    updateMultiDayHearing(booking: VHBooking): Observable<HearingDetailsResponse> {
         const request = this.mapExistingHearingToEditMultiDayHearingRequest(booking);
         return this.bhClient.editMultiDayHearing(booking.hearing_id, request);
     }
 
-    mapExistingHearing(booking: HearingModel): EditHearingRequest {
+    mapExistingHearing(booking: VHBooking): EditHearingRequest {
         const hearing = new EditHearingRequest();
 
-        if (booking.cases && booking.cases.length > 0) {
-            hearing.case = new EditCaseRequest({ name: booking.cases[0].name, number: booking.cases[0].number });
+        if (booking.case) {
+            hearing.case = new EditCaseRequest({ name: booking.case.name, number: booking.case.number });
         }
 
         hearing.hearing_room_name = booking.court_room;
@@ -226,7 +227,7 @@ export class VideoHearingsService {
         return hearing;
     }
 
-    mapExistingHearingToEditMultiDayHearingRequest(booking: HearingModel): EditMultiDayHearingRequest {
+    mapExistingHearingToEditMultiDayHearingRequest(booking: VHBooking): EditMultiDayHearingRequest {
         const editMultiDayRequest = new EditMultiDayHearingRequest();
 
         const editHearingRequest = this.mapExistingHearing(booking);
@@ -318,7 +319,7 @@ export class VideoHearingsService {
         return editEndpoint;
     }
 
-    mapHearing(newRequest: HearingModel): BookingDetailsRequest {
+    mapHearing(newRequest: VHBooking): BookingDetailsRequest {
         const newHearingRequest = new BookingDetailsRequest();
         newHearingRequest.cases = this.mapCases(newRequest);
         newHearingRequest.case_type_service_id = newRequest.case_type_service_id;
@@ -337,49 +338,18 @@ export class VideoHearingsService {
         return newHearingRequest;
     }
 
-    mapHearingDetailsResponseToHearingModel(response: HearingDetailsResponse): HearingModel {
-        const hearing = new HearingModel();
-        hearing.hearing_id = response.id;
-        hearing.cases = this.mapCaseResponseToCaseModel(response.cases);
-        hearing.scheduled_date_time = new Date(response.scheduled_date_time);
-        hearing.scheduled_duration = response.scheduled_duration;
-        hearing.court_code = response.hearing_venue_code;
-        hearing.court_name = response.hearing_venue_name;
-        hearing.court_room = response.hearing_room_name;
-        hearing.case_type = response.case_type_name;
-        hearing.case_type_service_id = response.service_id;
-        hearing.participants = this.mapParticipantResponseToParticipantModel(response.participants);
-        hearing.other_information = response.other_information;
-        hearing.created_date = new Date(response.created_date);
-        hearing.created_by = response.created_by;
-        hearing.updated_date = new Date(response.updated_date);
-        hearing.updated_by = response.updated_by;
-        hearing.status = response.status;
-        hearing.audio_recording_required = response.audio_recording_required;
-        hearing.endpoints = this.mapEndpointResponseToEndpointModel(response.endpoints, response.participants);
-        hearing.judiciaryParticipants = response.judiciary_participants?.map(judiciaryParticipant =>
-            JudicialMemberDto.fromJudiciaryParticipantResponse(judiciaryParticipant)
-        );
-        hearing.isConfirmed = Boolean(response.confirmed_date);
-        hearing.isMultiDay = response.group_id !== null;
-        hearing.multiDayHearingLastDayScheduledDateTime = response.multi_day_hearing_last_day_scheduled_date_time;
-        hearing.originalScheduledDateTime = hearing.scheduled_date_time;
-        hearing.hearingsInGroup = response.hearings_in_group?.map(hearingInGroup =>
-            this.mapHearingDetailsResponseToHearingModel(hearingInGroup)
-        );
+    mapHearingDetailsResponseToHearingModel(response: HearingDetailsResponse): VHBooking {
+        const hearing = mapHearingToVHBooking(response);
         return hearing;
     }
 
-    mapCases(newRequest: HearingModel): CaseRequest[] {
+    mapCases(newRequest: VHBooking): CaseRequest[] {
         const cases: CaseRequest[] = [];
-        let caseRequest: CaseRequest;
-        newRequest.cases.forEach(c => {
-            caseRequest = new CaseRequest();
-            caseRequest.name = c.name;
-            caseRequest.number = c.number;
-            caseRequest.is_lead_case = false;
-            cases.push(caseRequest);
-        });
+        const caseRequest = new CaseRequest();
+        caseRequest.name = newRequest.case.name;
+        caseRequest.number = newRequest.case.number;
+        caseRequest.is_lead_case = false;
+        cases.push(caseRequest);
         return cases;
     }
 

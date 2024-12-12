@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { HearingModel } from 'src/app/common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { ScreeningDto, ScreeningType } from './screening.model';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
@@ -14,7 +14,7 @@ export class ScreeningListItemComponent implements OnChanges {
 
     @Input() participant: ParticipantModel;
     @Input() endpoint: EndpointModel;
-    @Input() hearing: HearingModel;
+    @Input() hearing: VHBooking;
 
     model: ScreeningItemViewModel;
 
@@ -29,7 +29,7 @@ export class ScreeningListItemComponent implements OnChanges {
         }
     }
 
-    initModelForParticipant(hearing: HearingModel, participant: ParticipantModel): ScreeningItemViewModel {
+    initModelForParticipant(hearing: VHBooking, participant: ParticipantModel): ScreeningItemViewModel {
         const protectFromMapped = this.initProtectFromViewModel(hearing, participant.screening);
         return {
             displayName: participant.display_name,
@@ -38,7 +38,7 @@ export class ScreeningListItemComponent implements OnChanges {
         };
     }
 
-    initModelForEndpoint(hearing: HearingModel, endpoint: EndpointModel): ScreeningItemViewModel {
+    initModelForEndpoint(hearing: VHBooking, endpoint: EndpointModel): ScreeningItemViewModel {
         const protectFromMapped = this.initProtectFromViewModel(hearing, endpoint.screening);
         return {
             displayName: endpoint.displayName,
@@ -47,7 +47,7 @@ export class ScreeningListItemComponent implements OnChanges {
         };
     }
 
-    initProtectFromViewModel(hearing: HearingModel, screening: ScreeningDto): ProtectFromViewModel[] {
+    initProtectFromViewModel(hearing: VHBooking, screening: ScreeningDto): ProtectFromViewModel[] {
         const protectFrom = (screening.protectFrom = screening.protectFrom || []);
         if (protectFrom.length === 0) {
             return [];

@@ -14,7 +14,6 @@ export interface VHBooking {
     court_room?: string;
     hearing_venue_id?: number;
     case_type_id?: number;
-    //courtId?: number; // doesn't seem to be used outside of tests
     court_name?: string;
     court_code?: string;
     created_date?: Date;
@@ -34,6 +33,20 @@ export interface VHBooking {
     hearingsInGroup?: VHBooking[];
     originalScheduledDateTime?: Date;
     supplier: VideoSupplier;
+}
+
+export function createVHBooking(): VHBooking {
+    return {
+        hearing_id: '',
+        scheduled_duration: 0,
+        participants: [],
+        judiciaryParticipants: [],
+        endpoints: [],
+        linked_participants: [],
+        hearing_dates: [],
+        updated_date: new Date(),
+        supplier: VideoSupplier.Vodafone
+    };
 }
 
 export interface VHCase {

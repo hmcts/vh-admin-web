@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BookingsListModel, BookingsDetailsModel } from '../common/model/bookings-list.model';
-import { HearingModel } from '../common/model/hearing.model';
+import { VHBooking } from '../common/model/vh-booking';
 
 @Injectable({ providedIn: 'root' })
 export class BookingPersistService {
@@ -28,7 +28,7 @@ export class BookingPersistService {
         sessionStorage.removeItem(this.SelectedHearingIdKey);
     }
 
-    updateBooking(hearing: HearingModel): BookingsDetailsModel {
+    updateBooking(hearing: VHBooking): BookingsDetailsModel {
         if (
             this._bookingList.length > this._selectedGroupIndex &&
             this._bookingList[this._selectedGroupIndex].BookingsDetails.length > this._selectedItemIndex
@@ -45,14 +45,14 @@ export class BookingPersistService {
         }
     }
 
-    private updateBookingRecord(hearingUpdate: BookingsDetailsModel, hearing: HearingModel) {
+    private updateBookingRecord(hearingUpdate: BookingsDetailsModel, hearing: VHBooking) {
         const newStartDate = new Date(hearing.scheduled_date_time);
 
         hearingUpdate.IsStartTimeChanged = hearingUpdate.StartTime.toString() !== newStartDate.toString();
         hearingUpdate.Selected = true;
 
-        hearingUpdate.HearingCaseName = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].name : '';
-        hearingUpdate.HearingCaseNumber = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].number : '';
+        hearingUpdate.HearingCaseName = hearing.case ? hearing.case.name : '';
+        hearingUpdate.HearingCaseNumber = hearing.case ? hearing.case.number : '';
         hearingUpdate.StartTime = newStartDate;
         hearingUpdate.Duration = hearing.scheduled_duration;
         hearingUpdate.CourtRoomAccount = hearing.participants.find(x => x.is_judge)?.username;
@@ -74,7 +74,7 @@ export class BookingPersistService {
         return hearingUpdate;
     }
 
-    private updateHearingsInGroup(hearingUpdate: BookingsDetailsModel, hearing: HearingModel) {
+    private updateHearingsInGroup(hearingUpdate: BookingsDetailsModel, hearing: VHBooking) {
         const hearingsInGroupUpdate: BookingsDetailsModel[] = this._bookingList.flatMap(booking =>
             booking.BookingsDetails.filter(
                 bookingDetail => bookingDetail.GroupId === hearingUpdate.GroupId && bookingDetail.HearingId !== hearing.hearing_id
@@ -99,7 +99,7 @@ export class BookingPersistService {
         return false;
     }
 
-    getJudgeName(hearing: HearingModel) {
+    getJudgeName(hearing: VHBooking) {
         if (hearing.judiciaryParticipants && hearing.judiciaryParticipants.length > 0) {
             const judiciaryJudge = hearing.judiciaryParticipants.find(x => x.roleCode === 'Judge');
             return judiciaryJudge ? judiciaryJudge.displayName : '';

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HearingModel } from '../../common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { HearingRoleResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
@@ -32,7 +32,7 @@ export class ParticipantService {
         return existParticipant;
     }
 
-    public removeParticipant(hearing: HearingModel, email: string) {
+    public removeParticipant(hearing: VHBooking, email: string) {
         const indexOfParticipant = hearing.participants.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
         if (indexOfParticipant > -1) {
             if (hearing.hearing_id && hearing.participants[indexOfParticipant].id) {

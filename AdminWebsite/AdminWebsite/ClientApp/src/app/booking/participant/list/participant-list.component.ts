@@ -3,7 +3,7 @@ import { Constants } from 'src/app/common/constants';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { LinkedParticipantType } from 'src/app/services/clients/api-client';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
-import { HearingModel } from '../../../common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { HearingRoleCodes } from '../../../common/model/hearing-roles.model';
 import { FeatureFlags, LaunchDarklyService } from '../../../services/launch-darkly.service';
 import { takeUntil } from 'rxjs/operators';
@@ -14,7 +14,7 @@ import { takeUntil } from 'rxjs/operators';
     styleUrls: ['./participant-list.component.scss']
 })
 export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnDestroy {
-    @Input() hearing: HearingModel;
+    @Input() hearing: VHBooking;
     @Input() isSummaryPage = false;
     @Input() canEdit = false;
 

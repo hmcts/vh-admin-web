@@ -5,7 +5,6 @@ import { of, Subscription } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { SearchServiceStub } from 'src/app/testing/stubs/service-service-stub';
 import { Constants } from '../../common/constants';
-import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
 import { ClientSettingsResponse, HearingRoleResponse } from '../../services/clients/api-client';
@@ -28,6 +27,7 @@ import { InterpreterFormComponent } from '../interpreter-form/interpreter-form.c
 import { MockComponent } from 'ng-mocks';
 import { InterpreterSelectedDto } from '../interpreter-form/interpreter-selected.model';
 import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
+import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -178,9 +178,8 @@ participants.push(p2);
 participants.push(p3);
 participants.push(p4);
 
-function initHearingRequest(): HearingModel {
-    const newHearing = new HearingModel();
-    newHearing.cases = [];
+function initHearingRequest(): VHBooking {
+    const newHearing = createVHBooking();
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
     newHearing.participants = participants;
@@ -189,9 +188,8 @@ function initHearingRequest(): HearingModel {
     return newHearing;
 }
 
-function initExistHearingRequest(): HearingModel {
-    const newHearing = new HearingModel();
-    newHearing.cases = [];
+function initExistHearingRequest(): VHBooking {
+    const newHearing = createVHBooking();
     newHearing.hearing_id = '12345';
     newHearing.hearing_venue_id = 1;
     newHearing.scheduled_duration = 20;

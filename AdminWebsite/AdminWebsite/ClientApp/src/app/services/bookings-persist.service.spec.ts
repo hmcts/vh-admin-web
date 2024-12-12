@@ -1,11 +1,11 @@
 import { BookingsListModel, BookingsDetailsModel } from './../common/model/bookings-list.model';
-import { HearingModel } from 'src/app/common/model/hearing.model';
 import { BookingPersistService } from './bookings-persist.service';
 import { v4 as uuid } from 'uuid';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
 import { VideoSupplier } from './clients/api-client';
+import { createVHBooking, VHBooking } from '../common/model/vh-booking';
 
 function MockGroupedBookings(hearings: BookingsDetailsModel[]): BookingsListModel {
     const model = new BookingsListModel(new Date());
@@ -79,7 +79,7 @@ describe('BookingsPersistService', () => {
 
     describe('#updateBooking', () => {
         it('should not update if there are no loaded hearings', () => {
-            const model: HearingModel = {
+            const model: VHBooking = {
                 updated_date: new Date(),
                 audio_recording_required: true,
                 supplier: VideoSupplier.Kinly
@@ -91,10 +91,10 @@ describe('BookingsPersistService', () => {
         it('should not update hearing if it is not selected', () => {
             service.bookingList = [MockGroupedBookings([MockBookedHearing(), MockBookedHearing()])];
 
-            const hearing = new HearingModel();
+            const hearing = createVHBooking();
             const updatedCase = new CaseModel();
             updatedCase.name = 'updated case';
-            hearing.cases = [updatedCase];
+            hearing.case = updatedCase;
             hearing.hearing_id = service.bookingList[0].BookingsDetails[0].HearingId;
             service.updateBooking(hearing);
 
@@ -107,14 +107,13 @@ describe('BookingsPersistService', () => {
             service.selectedGroupIndex = 0;
             service.selectedItemIndex = 0;
 
-            const hearing = new HearingModel();
-            hearing.court_id = 1;
+            const hearing = createVHBooking();
             hearing.court_room = 'court room';
             hearing.court_name = 'court';
 
             const updatedCase = new CaseModel();
             updatedCase.name = 'updated case';
-            hearing.cases = [updatedCase];
+            hearing.case = updatedCase;
 
             hearing.hearing_id = service.bookingList[0].BookingsDetails[0].HearingId;
             service.updateBooking(hearing);
@@ -133,13 +132,12 @@ describe('BookingsPersistService', () => {
             // Simulate an update to the scheduled duration for all days in the multi day hearing
             const newScheduledDurationValue = 180;
 
-            const hearing = new HearingModel();
-            hearing.court_id = 1;
+            const hearing = createVHBooking();
             hearing.court_room = 'court room';
             hearing.court_name = 'court';
             hearing.scheduled_duration = newScheduledDurationValue;
             hearing.hearingsInGroup = multiDays.map(x => {
-                const hearingInGroup = new HearingModel();
+                const hearingInGroup = createVHBooking();
                 hearingInGroup.hearing_id = x.HearingId;
                 hearingInGroup.scheduled_duration = newScheduledDurationValue;
                 return hearingInGroup;
@@ -160,8 +158,7 @@ describe('BookingsPersistService', () => {
             service.selectedGroupIndex = 0;
             service.selectedItemIndex = 0;
 
-            const hearing = new HearingModel();
-            hearing.court_id = 1;
+            const hearing = createVHBooking();
             hearing.court_room = 'court room';
             hearing.court_name = 'court';
             const participants: ParticipantModel[] = [];
@@ -171,7 +168,7 @@ describe('BookingsPersistService', () => {
 
             const updatedCase = new CaseModel();
             updatedCase.name = 'updated case';
-            hearing.cases = [updatedCase];
+            hearing.case = updatedCase;
 
             hearing.hearing_id = service.bookingList[0].BookingsDetails[0].HearingId;
             service.updateBooking(hearing);
@@ -186,8 +183,7 @@ describe('BookingsPersistService', () => {
             service.selectedGroupIndex = 0;
             service.selectedItemIndex = 0;
 
-            const hearing = new HearingModel();
-            hearing.court_id = 1;
+            const hearing = createVHBooking();
             hearing.court_room = 'court room';
             hearing.court_name = 'court';
             const judiciaryParticipants: JudicialMemberDto[] = [];
@@ -199,7 +195,7 @@ describe('BookingsPersistService', () => {
 
             const updatedCase = new CaseModel();
             updatedCase.name = 'updated case';
-            hearing.cases = [updatedCase];
+            hearing.case = updatedCase;
 
             hearing.hearing_id = service.bookingList[0].BookingsDetails[0].HearingId;
             service.updateBooking(hearing);
@@ -214,8 +210,7 @@ describe('BookingsPersistService', () => {
             service.selectedGroupIndex = 0;
             service.selectedItemIndex = 0;
 
-            const hearing = new HearingModel();
-            hearing.court_id = 1;
+            const hearing = createVHBooking();
             hearing.court_room = 'court room';
             hearing.court_name = 'court';
             const judiciaryParticipants: JudicialMemberDto[] = [];
@@ -227,7 +222,7 @@ describe('BookingsPersistService', () => {
 
             const updatedCase = new CaseModel();
             updatedCase.name = 'updated case';
-            hearing.cases = [updatedCase];
+            hearing.case = updatedCase;
 
             hearing.hearing_id = service.bookingList[0].BookingsDetails[0].HearingId;
             service.updateBooking(hearing);

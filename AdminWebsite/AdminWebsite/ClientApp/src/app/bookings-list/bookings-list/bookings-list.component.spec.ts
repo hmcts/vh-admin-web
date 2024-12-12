@@ -17,7 +17,6 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { BookingsDetailsModel, BookingsListModel } from '../../common/model/bookings-list.model';
 import { BookingsModel } from '../../common/model/bookings.model';
-import { HearingModel } from '../../common/model/hearing.model';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import {
@@ -534,7 +533,7 @@ export class BookingPersistServiceSpy {
         this._selectedUsers = value;
     }
 
-    updateBooking(hearing: HearingModel) {
+    updateBooking() {
         const booking = new BookingsDetailsModel(
             '1',
             new Date('2019-10-22 13:58:40.3730067'),

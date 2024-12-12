@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HearingTypeResponse, VideoSupplier } from '../../services/clients/api-client';
-import { HearingModel } from '../../common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { CaseModel } from '../../common/model/case.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
@@ -27,7 +27,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     attemptingCancellation: boolean;
     attemptingDiscardChanges = false;
     failedSubmission: boolean;
-    hearing: HearingModel;
+    hearing: VHBooking;
     availableHearingTypes: HearingTypeResponse[];
     availableCaseTypes: string[];
     selectedCaseType: string;
@@ -124,7 +124,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     }
 
     private initForm() {
-        let firstCase = this.hearing.cases[0];
+        let firstCase = this.hearing.case;
         if (!firstCase) {
             firstCase = new CaseModel();
         }
@@ -251,7 +251,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         const hearingCase = new CaseModel();
         hearingCase.name = this.form.value.caseName;
         hearingCase.number = this.form.value.caseNumber;
-        this.hearing.cases[0] = hearingCase;
+        this.hearing.case = hearingCase;
         this.hearing.case_type_id = this.isExistingHearing ? this.hearing.case_type_id : this.form.getRawValue().caseType;
         this.hearing.case_type_service_id = this.selectedCaseTypeServiceId;
         this.hearing.supplier = this.form.getRawValue().supplier ?? this.retrieveDefaultSupplier();

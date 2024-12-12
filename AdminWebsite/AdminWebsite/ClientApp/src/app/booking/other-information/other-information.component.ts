@@ -5,7 +5,7 @@ import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from '../../common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
-import { HearingModel } from '../../common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { BookingService } from '../../services/booking.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
@@ -20,7 +20,7 @@ import { PipeStringifierService } from 'src/app/services/pipe-stringifier.servic
 })
 export class OtherInformationComponent extends BookingBaseComponent implements OnInit {
     constants = Constants;
-    hearing: HearingModel;
+    hearing: VHBooking;
     attemptingCancellation = false;
     attemptingDiscardChanges = false;
     canNavigate = true;

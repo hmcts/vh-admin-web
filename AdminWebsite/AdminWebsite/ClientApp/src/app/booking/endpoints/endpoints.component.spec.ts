@@ -7,15 +7,15 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Logger } from 'src/app/services/logger';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { HearingModel } from '../../common/model/hearing.model';
 import { VideoEndpointFormComponent } from './video-endpoint-form/video-endpoint-form.component';
 import { VideoEndpointListComponent } from './video-endpoint-list/video-endpoint-list.component';
 import { VideoEndpointItemComponent } from './video-endpoint-item/video-endpoint-item.component';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
+import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
 
-function initHearingRequest(): HearingModel {
-    const newHearing = new HearingModel();
+function initHearingRequest(): VHBooking {
+    const newHearing = createVHBooking();
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
     newHearing.participants = [
@@ -185,7 +185,7 @@ describe('EndpointsComponent', () => {
 
     describe('when booking is multi day', () => {
         beforeEach(() => {
-            const booking = new HearingModel();
+            const booking = createVHBooking();
             booking.isMultiDay = true;
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(booking);
         });
@@ -204,7 +204,7 @@ describe('EndpointsComponent', () => {
     });
     describe('when booking is not multi day', () => {
         beforeEach(() => {
-            const booking = new HearingModel();
+            const booking = createVHBooking();
             booking.isMultiDay = false;
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(booking);
         });

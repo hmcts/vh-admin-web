@@ -3,9 +3,9 @@ import { ParticipantService } from './participant.service';
 import { HttpClientModule } from '@angular/common/http';
 import { HearingRoleResponse } from '../../services/clients/api-client';
 import { ParticipantModel } from '../../common/model/participant.model';
-import { HearingModel } from '../../common/model/hearing.model';
 import { Logger } from '../../services/logger';
 import { HearingRoleModel } from 'src/app/common/model/hearing-role.model';
+import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
 
 describe('ParticipantService', () => {
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info']);
@@ -68,7 +68,7 @@ describe('ParticipantService', () => {
         expect(result).toBeTruthy();
     }));
     it('should remove participant', inject([ParticipantService], (service: ParticipantService) => {
-        const hearing: HearingModel = new HearingModel();
+        const hearing: VHBooking = createVHBooking();
         const part1 = new ParticipantModel();
         part1.email = 'aa@hmcts.net';
         const participants: ParticipantModel[] = [];
@@ -78,7 +78,7 @@ describe('ParticipantService', () => {
         expect(hearing.participants.length).toBe(0);
     }));
     it('should not remove participant, if email is not in the list', inject([ParticipantService], (service: ParticipantService) => {
-        const hearing: HearingModel = new HearingModel();
+        const hearing: VHBooking = createVHBooking();
         const part1 = new ParticipantModel();
         part1.email = 'aa@hmcts.net';
         const participants: ParticipantModel[] = [];
@@ -88,7 +88,7 @@ describe('ParticipantService', () => {
         expect(hearing.participants.length).toBe(1);
     }));
     it('should remove participant and log a message', inject([ParticipantService], (service: ParticipantService) => {
-        const hearing: HearingModel = new HearingModel();
+        const hearing: VHBooking = createVHBooking();
         hearing.hearing_id = '12345';
         const part1 = new ParticipantModel();
         part1.email = 'aa@hmcts.net';

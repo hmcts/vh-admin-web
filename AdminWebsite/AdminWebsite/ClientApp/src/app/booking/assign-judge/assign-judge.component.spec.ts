@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
-import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
@@ -24,8 +23,9 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { MockComponent } from 'ng-mocks';
 import { Constants } from 'src/app/common/constants';
+import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
 
-function initHearingRequest(): HearingModel {
+function initHearingRequest(): VHBooking {
     const participants: ParticipantModel[] = [];
     const p1 = new ParticipantModel();
     p1.display_name = 'display name1';
@@ -52,8 +52,7 @@ function initHearingRequest(): HearingModel {
     participants.push(p1);
     participants.push(p2);
 
-    const newHearing = new HearingModel();
-    newHearing.cases = [];
+    const newHearing = createVHBooking();
     newHearing.participants = participants;
 
     newHearing.hearing_venue_id = -1;
@@ -512,7 +511,7 @@ describe('AssignJudgeComponent', () => {
 
     describe('updateJudge', () => {
         beforeEach(() => {
-            component.hearing = new HearingModel();
+            component.hearing = createVHBooking();
             component.canNavigate = null;
 
             component.judgeDisplayNameFld.setValue(initialJudgeDisplayNameFld);

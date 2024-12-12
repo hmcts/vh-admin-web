@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { first } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { HearingModel } from 'src/app/common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
@@ -21,7 +21,7 @@ import { FormGroup } from '@angular/forms';
 export class EndpointsComponent extends BookingBaseComponent implements OnInit, OnDestroy {
     canNavigate = true;
     constants = Constants;
-    hearing: HearingModel;
+    hearing: VHBooking;
 
     attemptingCancellation = false;
     attemptingDiscardChanges = false;

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ScreeningListComponent } from './screening-list.component';
-import { HearingModel } from 'src/app/common/model/hearing.model';
+import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { SimpleChange, SimpleChanges } from '@angular/core';
@@ -9,10 +9,10 @@ import { SimpleChange, SimpleChanges } from '@angular/core';
 describe('ScreeningListComponent', () => {
     let component: ScreeningListComponent;
     let fixture: ComponentFixture<ScreeningListComponent>;
-    let hearing: HearingModel;
+    let hearing: VHBooking;
 
     beforeEach(async () => {
-        hearing = new HearingModel();
+        hearing = createVHBooking();
         const participantWithoutScreening = new ParticipantModel();
         participantWithoutScreening.id = '1';
         participantWithoutScreening.display_name = 'Participant No Screening';

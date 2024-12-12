@@ -6,7 +6,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 import { CaseModel } from '../../common/model/case.model';
-import { HearingModel } from '../../common/model/hearing.model';
 import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from '../../services/booking.service';
@@ -23,16 +22,17 @@ import { createMultiDayHearing } from 'src/app/testing/helpers/hearing.helpers';
 import { VideoSupplier } from 'src/app/services/clients/api-client';
 import { ServiceIds } from '../models/supplier-override';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
+import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
 
-function initHearingRequest(): HearingModel {
-    const newHearing = new HearingModel();
+function initHearingRequest(): VHBooking {
+    const newHearing = createVHBooking();
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
     return newHearing;
 }
 
-function initExistingHearingRequest(): HearingModel {
-    const existingRequest = new HearingModel();
+function initExistingHearingRequest(): VHBooking {
+    const existingRequest = createVHBooking();
     existingRequest.hearing_venue_id = 1;
     existingRequest.case_type = 'Generic';
 
@@ -312,7 +312,7 @@ describe('CreateHearingComponent with existing request in session', () => {
         const existingCase = new CaseModel();
         existingCase.name = 'Captain America Vs. The World';
         existingCase.number = '1234';
-        existingRequest.cases.push(existingCase);
+        existingRequest.case = existingCase;
 
         const newRequestKey = 'bh-newRequest';
         const jsonRequest = JSON.stringify(existingRequest);
@@ -332,8 +332,8 @@ describe('CreateHearingComponent with existing request in session', () => {
     });
 
     it('should repopulate form with existing request', fakeAsync(() => {
-        expect(component.caseNumber.value).toBe(existingRequest.cases[0].number);
-        expect(component.caseName.value).toBe(existingRequest.cases[0].name);
+        expect(component.caseNumber.value).toBe(existingRequest.case.number);
+        expect(component.caseName.value).toBe(existingRequest.case.name);
     }));
 
     it('should hide cancel and discard pop up confirmation', () => {

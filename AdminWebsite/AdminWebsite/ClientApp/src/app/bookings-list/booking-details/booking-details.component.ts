@@ -4,7 +4,6 @@ import * as moment from 'moment';
 import { interval, lastValueFrom, Subject, Subscription, takeUntil } from 'rxjs';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
-import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
 import { BookingDetailsService } from '../../services/booking-details.service';
@@ -17,6 +16,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 @Component({
     selector: 'app-booking-details',
@@ -26,7 +26,7 @@ import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkl
 export class BookingDetailsComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[BookingDetails] -';
     hearing: BookingsDetailsModel;
-    booking: HearingModel;
+    booking: VHBooking;
     participants: Array<ParticipantDetailsModel> = [];
     judges: Array<ParticipantDetailsModel> = [];
     judicialMembers: Array<JudiciaryParticipantDetailsModel> = [];
@@ -148,7 +148,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.hearing.Endpoints = this.bookingDetailsService.mapBookingEndpoints(hearingResponse);
     }
 
-    mapResponseToModel(hearingResponse: HearingDetailsResponse): HearingModel {
+    mapResponseToModel(hearingResponse: HearingDetailsResponse): VHBooking {
         return this.videoHearingService.mapHearingDetailsResponseToHearingModel(hearingResponse);
     }
 

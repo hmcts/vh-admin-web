@@ -4,17 +4,17 @@ import { ScreeningFormComponent as ScreeningFormComponent } from './screening-fo
 import { Logger } from 'src/app/services/logger';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { HearingModel } from 'src/app/common/model/hearing.model';
+import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 
 describe('ScreeningFormComponent', () => {
     let component: ScreeningFormComponent;
     let fixture: ComponentFixture<ScreeningFormComponent>;
     let loggerSpy: jasmine.SpyObj<Logger>;
-    let hearing: HearingModel;
+    let hearing: VHBooking;
 
     beforeEach(async () => {
-        hearing = new HearingModel();
+        hearing = createVHBooking();
         const participant1 = new ParticipantModel();
         participant1.id = '1';
         participant1.email = 'email1';

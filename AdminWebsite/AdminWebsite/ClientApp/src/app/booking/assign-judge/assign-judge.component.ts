@@ -7,7 +7,7 @@ import { OtherInformationModel } from 'src/app/common/model/other-information.mo
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
-import { HearingModel } from '../../common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
 import { Logger } from '../../services/logger';
@@ -23,7 +23,7 @@ import { map } from 'rxjs/operators';
 })
 export class AssignJudgeComponent extends BookingBaseComponent implements OnInit, OnDestroy {
     judgeLocator = 'judge-email';
-    hearing: HearingModel;
+    hearing: VHBooking;
     courtAccountJudgeEmail: string;
     judge: ParticipantModel;
     otherInformationDetails: OtherInformationModel;

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
-import { HearingModel } from 'src/app/common/model/hearing.model';
+import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -14,8 +14,8 @@ import { ScreeningFormComponent } from './screening-form.component';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { ScreeningListComponent } from './screening-list.component';
 
-function initHearingRequest(): HearingModel {
-    const hearing = new HearingModel();
+function initHearingRequest(): VHBooking {
+    const hearing = createVHBooking();
     hearing.hearing_id = '';
     hearing.participants = [
         {

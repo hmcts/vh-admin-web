@@ -5,7 +5,6 @@ import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { CaseModel } from '../../common/model/case.model';
-import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingService } from '../../services/booking.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
@@ -24,6 +23,7 @@ import { BookingDetailsComponent } from './booking-details.component';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { HearingRoleCodes } from '../../common/model/hearing-roles.model';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { createVHBooking } from 'src/app/common/model/vh-booking';
 
 let component: BookingDetailsComponent;
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
@@ -146,9 +146,9 @@ const hearingResponse = new HearingDetailsResponse();
 const caseModel = new CaseModel();
 caseModel.name = 'X vs Y';
 caseModel.number = 'XX3456234565';
-const hearingModel = new HearingModel();
+const hearingModel = createVHBooking();
 hearingModel.hearing_id = '44';
-hearingModel.cases = [caseModel];
+hearingModel.case = caseModel;
 hearingModel.scheduled_duration = 120;
 let now = new Date();
 now.setMonth(now.getMonth());
@@ -254,7 +254,7 @@ describe('BookingDetailsComponent', () => {
         expect(component.booking).toBeTruthy();
         expect(component.booking.hearing_id).toBe('44');
         expect(component.booking.scheduled_duration).toBe(120);
-        expect(component.booking.cases[0].number).toBe('XX3456234565');
+        expect(component.booking.case.number).toBe('XX3456234565');
         expect(component.hearing.AudioRecordingRequired).toBeTruthy();
         expect(component.hearing.AllocatedTo).toBe('Not Allocated');
         discardPeriodicTasks();
@@ -287,13 +287,13 @@ describe('BookingDetailsComponent', () => {
     }));
     describe('edit buttons pressed', () => {
         it('should set edit mode if the single day edit button pressed', fakeAsync(() => {
-            component.booking = new HearingModel();
+            component.booking = createVHBooking();
             component.editHearing();
             expect(component.booking.isMultiDayEdit).toBeFalsy();
             assertUpdatesAfterEditButtonsPressed();
         }));
         it('should set edit mode if the multi day edit button pressed', fakeAsync(() => {
-            component.booking = new HearingModel();
+            component.booking = createVHBooking();
             component.editMultiDaysOfHearing();
             expect(component.booking.isMultiDayEdit).toBeTruthy();
             assertUpdatesAfterEditButtonsPressed();

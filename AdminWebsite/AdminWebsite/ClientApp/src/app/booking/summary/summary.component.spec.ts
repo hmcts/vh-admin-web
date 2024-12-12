@@ -12,7 +12,6 @@ import { PipeStringifierService } from 'src/app/services/pipe-stringifier.servic
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { CaseModel } from '../../common/model/case.model';
-import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
@@ -39,8 +38,9 @@ import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { TruncatableTextComponent } from 'src/app/shared/truncatable-text/truncatable-text.component';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
+import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
 
-function initExistingHearingRequest(): HearingModel {
+function initExistingHearingRequest(): VHBooking {
     const pat1 = new ParticipantModel();
     pat1.email = 'aa@hmcts.net';
     pat1.representee = 'citizen 01';
@@ -54,8 +54,8 @@ function initExistingHearingRequest(): HearingModel {
     newCaseRequest.name = 'Mr. Test User vs HMRC';
     newCaseRequest.number = 'TX/12345/2018';
 
-    const existingRequest = new HearingModel();
-    existingRequest.cases.push(newCaseRequest);
+    const existingRequest = createVHBooking();
+    existingRequest.case = newCaseRequest;
     existingRequest.hearing_venue_id = 2;
     existingRequest.scheduled_date_time = today;
     existingRequest.scheduled_duration = 80;
@@ -78,7 +78,7 @@ function addDays(date, days) {
     return result;
 }
 
-function initBadHearingRequest(): HearingModel {
+function initBadHearingRequest(): VHBooking {
     const today = new Date();
     today.setHours(14, 30);
 
@@ -86,8 +86,8 @@ function initBadHearingRequest(): HearingModel {
     newCaseRequest.name = 'Mr. Test User vs HMRC';
     newCaseRequest.number = 'TX/12345/2018';
 
-    const existingRequest = new HearingModel();
-    existingRequest.cases.push(newCaseRequest);
+    const existingRequest = createVHBooking();
+    existingRequest.case = newCaseRequest;
     existingRequest.hearing_venue_id = 2;
     existingRequest.scheduled_date_time = today;
     existingRequest.scheduled_duration = 80;
@@ -132,7 +132,7 @@ describe('SummaryComponent with valid request', () => {
     let component: SummaryComponent;
     let fixture: ComponentFixture<SummaryComponent>;
 
-    let existingRequest: any;
+    let existingRequest: VHBooking;
 
     beforeEach(waitForAsync(() => {
         existingRequest = initExistingHearingRequest();
@@ -256,8 +256,8 @@ describe('SummaryComponent with valid request', () => {
                 message,
                 Object({
                     hearingId: hearingDetailsResponse.id,
-                    caseName: component.hearing.cases[0].name,
-                    caseNumber: component.hearing.cases[0].number
+                    caseName: component.hearing.case.name,
+                    caseNumber: component.hearing.case.number
                 })
             );
         }
@@ -269,8 +269,8 @@ describe('SummaryComponent with valid request', () => {
         expect(component.hearing).toBeTruthy();
     });
     it('should display summary data from existing hearing', () => {
-        expect(component.caseNumber).toEqual(existingRequest.cases[0].number);
-        expect(component.caseName).toEqual(existingRequest.cases[0].name);
+        expect(component.caseNumber).toEqual(existingRequest.case.number);
+        expect(component.caseName).toEqual(existingRequest.case.name);
         expect(component.otherInformation.OtherInformation).toEqual(
             stringifier.decode<OtherInformationModel>(existingRequest.other_information).OtherInformation
         );

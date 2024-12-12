@@ -5,7 +5,7 @@ import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { OtherInformationModel } from '../../../common/model/other-information.model';
-import { HearingModel } from '../../../common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Constants } from 'src/app/common/constants';
 import { HearingRoleCodes } from '../../../common/model/hearing-roles.model';
@@ -19,7 +19,7 @@ export class ParticipantItemComponent implements OnInit {
     private readonly loggerPrefix = '[ParticipantList - Item] -';
 
     @Input() participant: ParticipantModel;
-    @Input() hearing: HearingModel;
+    @Input() hearing: VHBooking;
     @Input() canEdit = false;
     @Input() isSummaryPage = false;
     @Input() interpreterEnhancementsEnabled = false;

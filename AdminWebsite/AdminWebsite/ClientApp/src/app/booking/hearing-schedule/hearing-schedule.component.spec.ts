@@ -7,7 +7,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { HearingVenueResponse } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
-import { HearingModel } from '../../common/model/hearing.model';
 import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { ErrorService } from '../../services/error.service';
@@ -22,14 +21,15 @@ import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkl
 import { By } from '@angular/platform-browser';
 import { createMultiDayHearing } from 'src/app/testing/helpers/hearing.helpers';
 import { EditHearingDatesComponent } from './edit-hearing-dates/edit-hearing-dates.component';
+import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
 
-const newHearing = new HearingModel();
+const newHearing = createVHBooking();
 
-function initExistingHearingRequest(): HearingModel {
+function initExistingHearingRequest(): VHBooking {
     const today = new Date();
     today.setHours(10, 30);
 
-    const existingRequest = new HearingModel();
+    const existingRequest = createVHBooking();
     existingRequest.hearing_venue_id = 1;
     existingRequest.scheduled_date_time = today;
     existingRequest.scheduled_duration = 80;
@@ -401,7 +401,7 @@ describe('HearingScheduleComponent returning to page', () => {
     let fixture: ComponentFixture<HearingScheduleComponent>;
     let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 
-    const existingRequest: HearingModel = initExistingHearingRequest();
+    const existingRequest: VHBooking = initExistingHearingRequest();
 
     let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
     let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
@@ -528,7 +528,7 @@ describe('HearingScheduleComponent returning to page', () => {
             new HearingVenueResponse({ id: 1, name: 'aa@hmcts.net', code: '123' }),
             new HearingVenueResponse({ id: 2, name: 'aa@hmcts.net1', code: '456' })
         ];
-        component.hearing = new HearingModel();
+        component.hearing = createVHBooking();
         component.hearing.hearing_venue_id = 2;
         component.hearing.court_code = '456';
         component.hearing.court_name = 'aa@hmcts.net1';
@@ -544,7 +544,6 @@ describe('HearingScheduleComponent returning to page', () => {
         const existingHearingRequest = { ...existingRequest };
         existingHearingRequest.hearing_id = '123455555900';
         existingHearingRequest.court_name = selectedCourt.name;
-        existingHearingRequest.court_id = selectedCourt.id;
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingHearingRequest);
         component.ngOnInit();
 
@@ -567,7 +566,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
     let component: HearingScheduleComponent;
     let fixture: ComponentFixture<HearingScheduleComponent>;
 
-    const existingRequest: HearingModel = initExistingHearingRequest();
+    const existingRequest: VHBooking = initExistingHearingRequest();
 
     let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
     let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
@@ -739,8 +738,8 @@ describe('HearingScheduleComponent multi days hearing', () => {
 
         describe('editing multiple hearings, day 2 of 4', () => {
             let hearingsInGroupDatesTable: HTMLTableElement;
-            let multiDayHearing: HearingModel;
-            let hearing: HearingModel;
+            let multiDayHearing: VHBooking;
+            let hearing: VHBooking;
             const dateTransfomer = new DatePipe('en-GB');
 
             beforeEach(() => {
