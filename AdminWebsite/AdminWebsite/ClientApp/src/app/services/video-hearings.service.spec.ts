@@ -7,12 +7,9 @@ import {
     CaseResponse,
     ClientSettingsResponse,
     EditMultiDayHearingRequest,
-    EndpointResponse,
     HearingDetailsResponse,
     JudiciaryParticipantResponse,
-    LinkedParticipantResponse,
     MultiHearingRequest,
-    ParticipantResponse,
     UpdateHearingInGroupRequest,
     VideoSupplier
 } from './clients/api-client';
@@ -245,63 +242,6 @@ describe('Video hearing service', () => {
         }
     });
 
-    it('should map ParticipantResponse to ParticipantModel', () => {
-        const participants: ParticipantResponse[] = [];
-        const participant = new ParticipantResponse();
-        participant.title = 'Mr';
-        participant.first_name = 'Dan';
-        participant.middle_names = 'Ivan';
-        participant.last_name = 'Smith';
-        participant.username = 'dan@hmcts.net';
-        participant.display_name = 'Dan Smith';
-        participant.contact_email = 'dan@hmcts.net';
-        participant.telephone_number = '123123123';
-        participant.hearing_role_name = 'Litigant in person';
-        participant.user_role_name = 'Individual';
-        participant.interpreter_language = null;
-        participants.push(participant);
-
-        const judgeParticipant = new ParticipantResponse();
-        judgeParticipant.title = 'Mr';
-        judgeParticipant.first_name = 'Judge';
-        judgeParticipant.middle_names = 'MiddleNames';
-        judgeParticipant.last_name = 'Test';
-        judgeParticipant.username = 'judge@hmcts.net';
-        judgeParticipant.display_name = 'Judge Test';
-        judgeParticipant.contact_email = 'judge@hmcts.net';
-        judgeParticipant.telephone_number = '123123123';
-        judgeParticipant.hearing_role_name = null;
-        judgeParticipant.user_role_name = 'Judge';
-        judgeParticipant.interpreter_language = null;
-        participants.push(judgeParticipant);
-
-        const model = service.mapParticipantResponseToParticipantModel(participants);
-
-        expect(model[0].title).toEqual(participant.title);
-        expect(model[0].first_name).toEqual(participant.first_name);
-        expect(model[0].middle_names).toEqual(participant.middle_names);
-        expect(model[0].last_name).toEqual(participant.last_name);
-        expect(model[0].username).toEqual(participant.username);
-        expect(model[0].display_name).toEqual(participant.display_name);
-        expect(model[0].email).toEqual(participant.contact_email);
-        expect(model[0].phone).toEqual(participant.telephone_number);
-        expect(model[0].hearing_role_name).toEqual(participant.hearing_role_name);
-        expect(model[0].is_judge).toBeFalse();
-        expect(model[0].interpretation_language).toBeNull();
-
-        expect(model[1].title).toEqual(judgeParticipant.title);
-        expect(model[1].first_name).toEqual(judgeParticipant.first_name);
-        expect(model[1].middle_names).toEqual(judgeParticipant.middle_names);
-        expect(model[1].last_name).toEqual(judgeParticipant.last_name);
-        expect(model[1].username).toEqual(judgeParticipant.username);
-        expect(model[1].display_name).toEqual(judgeParticipant.display_name);
-        expect(model[1].email).toEqual(judgeParticipant.contact_email);
-        expect(model[1].phone).toEqual(judgeParticipant.telephone_number);
-        expect(model[1].hearing_role_name).toEqual(judgeParticipant.hearing_role_name);
-        expect(model[1].is_judge).toBeTrue();
-        expect(model[1].interpretation_language).toBeNull();
-    });
-
     it('should map ParticipantModel toParticipantResponse', () => {
         const participants: ParticipantModel[] = [];
         const participant = new ParticipantModel();
@@ -465,18 +405,6 @@ describe('Video hearing service', () => {
         );
     });
 
-    it('should map EndpointResponse to EndpointModel', () => {
-        const endpoints: EndpointResponse[] = [];
-        const endpoint = new EndpointResponse();
-        endpoint.display_name = 'endpoint 001';
-        endpoint.interpreter_language = null;
-        endpoints.push(endpoint);
-
-        const model = service.mapEndpointResponseToEndpointModel(endpoints, []);
-        expect(model[0].displayName).toEqual(endpoint.display_name);
-        expect(model[0].interpretationLanguage).toBeNull();
-    });
-
     it('should map EndpointModel toEndpointResponse', () => {
         const endpoints: EndpointModel[] = [];
         const endpoint = new EndpointModel(null);
@@ -557,17 +485,6 @@ describe('Video hearing service', () => {
         expect(model[0].linked_participant_contact_email).toEqual(linkedParticipantModelList[0].linkedParticipantEmail);
         expect(model[1].participant_contact_email).toEqual(linkedParticipantModelList[1].participantEmail);
         expect(model[1].linked_participant_contact_email).toEqual(linkedParticipantModelList[1].linkedParticipantEmail);
-    });
-    it('should map LinkedParticipantResponse to LinkedParticipantModel', () => {
-        const linkedParticipants: LinkedParticipantResponse[] = [];
-        const linkedParticipant = new LinkedParticipantResponse();
-        linkedParticipant.type = LinkedParticipantType.Interpreter;
-        linkedParticipant.linked_id = '100';
-        linkedParticipants.push(linkedParticipant);
-
-        const model = service.mapLinkedParticipantResponseToLinkedParticipantModel(linkedParticipants);
-        expect(model[0].linkType).toEqual(linkedParticipant.type);
-        expect(model[0].linkedParticipantId).toEqual(linkedParticipant.linked_id);
     });
 
     it('should rebook hearing', async () => {
