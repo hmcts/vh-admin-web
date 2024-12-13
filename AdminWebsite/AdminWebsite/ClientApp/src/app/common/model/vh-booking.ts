@@ -38,6 +38,8 @@ export interface VHBooking {
     hearingsInGroup?: VHBooking[];
     originalScheduledDateTime?: Date;
     supplier: VideoSupplier;
+    judge?: JudicialMemberDto;
+    isLastDayOfMultiDayHearing?: boolean;
 }
 
 export function createVHBooking(): VHBooking {

@@ -42,7 +42,10 @@ export function mapHearingToVHBooking(hearing: HearingDetailsResponse): VHBookin
         multiDayHearingLastDayScheduledDateTime: hearing.multi_day_hearing_last_day_scheduled_date_time,
         hearingsInGroup: hearing.hearings_in_group?.map(hearingInGroup => mapHearingToVHBooking(hearingInGroup)),
         originalScheduledDateTime: hearing.scheduled_date_time,
-        supplier: hearing.conference_supplier
+        supplier: hearing.conference_supplier,
+        judge: getJudge(hearing),
+        isLastDayOfMultiDayHearing:
+            hearing.scheduled_date_time.getTime() === hearing.multi_day_hearing_last_day_scheduled_date_time?.getTime()
     };
 }
 
@@ -128,4 +131,12 @@ export function mapEndpointResponseToEndpointModel(response: EndpointResponse[],
         });
     }
     return endpoints;
+}
+
+function getJudge(hearing: HearingDetailsResponse): JudicialMemberDto {
+    const judge = hearing.judiciary_participants?.find(x => x.role_code === Constants.Judge);
+    if (judge) {
+        return JudicialMemberDto.fromJudiciaryParticipantResponse(judge);
+    }
+    return null;
 }

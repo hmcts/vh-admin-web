@@ -22,6 +22,7 @@ import {
     mapParticipantResponseToParticipantModel
 } from './api-contract-to-client-model-mappers';
 import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
+import { Constants } from '../constants';
 
 const DEFENCE_COUNSEL_ID = 'defence-counsel-id';
 
@@ -50,6 +51,28 @@ describe('mapHearingToVHBooking', () => {
         expect(result.isMultiDay).toBe(true);
         expect(result.multiDayHearingLastDayScheduledDateTime).toBe(hearing.multi_day_hearing_last_day_scheduled_date_time);
         expect(result.hearingsInGroup).toEqual(hearing.hearings_in_group.map(hearingInGroup => mapHearingToVHBooking(hearingInGroup)));
+        expect(result.isLastDayOfMultiDayHearing).toBeFalse();
+        result.hearingsInGroup.forEach(hearingInGroup => {
+            const isLastDayOfMultiDayHearing =
+                hearingInGroup.scheduled_date_time.getTime() === hearing.multi_day_hearing_last_day_scheduled_date_time.getTime();
+            if (isLastDayOfMultiDayHearing) {
+                expect(hearingInGroup.isLastDayOfMultiDayHearing).toBeTrue();
+            } else {
+                expect(hearingInGroup.isLastDayOfMultiDayHearing).toBeFalse();
+            }
+        });
+    });
+
+    it('should map hearing without judge', () => {
+        // Arrange
+        const hearing = createSingleDayHearing();
+        hearing.judiciary_participants = hearing.judiciary_participants.filter(participant => participant.role_code !== 'Judge');
+
+        // Act
+        const result = mapHearingToVHBooking(hearing);
+
+        // Assert
+        verifyVHBooking(result, hearing);
     });
 });
 
@@ -174,6 +197,13 @@ function createMultiDayHearing(): HearingDetailsResponse {
     const hearing = createSingleDayHearing();
     hearing.group_id = 'group-id';
     hearing.hearings_in_group = createHearingsInGroup(hearing, 3);
+
+    const lastDay = hearing.hearings_in_group[hearing.hearings_in_group.length - 1];
+    hearing.multi_day_hearing_last_day_scheduled_date_time = lastDay.scheduled_date_time;
+    hearing.hearings_in_group.forEach(hearingInGroup => {
+        hearingInGroup.multi_day_hearing_last_day_scheduled_date_time = lastDay.scheduled_date_time;
+    });
+
     return hearing;
 }
 
@@ -305,6 +335,7 @@ function createJudiciaryParticipants(): JudiciaryParticipantResponse[] {
     judge.email = 'judge@email.com';
     judge.work_phone = '123456789';
     judge.personal_code = 'judge-personal-code';
+    judge.role_code = 'Judge';
     judge.display_name = 'JudgeDisplayName';
     judge.is_generic = true;
     judge.optional_contact_email = 'judge-optional-contact-email';
@@ -319,6 +350,7 @@ function createJudiciaryParticipants(): JudiciaryParticipantResponse[] {
     panelMember.email = 'pm@email.com';
     panelMember.work_phone = '123456789';
     panelMember.personal_code = 'pm-personal-code';
+    panelMember.role_code = 'PanelMember';
     panelMember.display_name = 'PMDisplayName';
     panelMember.is_generic = true;
     panelMember.optional_contact_email = 'pm-optional-contact-email';
@@ -367,4 +399,6 @@ function verifyVHBooking(vhBooking: VHBooking, hearing: HearingDetailsResponse) 
     expect(vhBooking.endpoints).toEqual(mapEndpointResponseToEndpointModel(hearing.endpoints, hearing.participants));
     expect(vhBooking.originalScheduledDateTime).toEqual(hearing.scheduled_date_time);
     expect(vhBooking.supplier).toBe(hearing.conference_supplier);
+    const expectedJudge = vhBooking.judiciaryParticipants.find(jp => jp.roleCode === Constants.Judge) ?? null;
+    expect(vhBooking.judge).toEqual(expectedJudge);
 }
