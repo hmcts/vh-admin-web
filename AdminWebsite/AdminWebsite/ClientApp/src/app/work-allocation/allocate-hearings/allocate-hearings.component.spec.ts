@@ -14,11 +14,12 @@ import { Constants } from 'src/app/common/constants';
 import { DatePipe } from '@angular/common';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
-import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { SharedModule } from '../../shared/shared.module';
 import { Logger } from 'src/app/services/logger';
 import { SelectComponent, SelectOption } from 'src/app/shared/select';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ReferenceDataService } from 'src/app/services/reference-data.service';
+import { MockValues } from 'src/app/testing/data/test-objects';
 
 describe('AllocateHearingsComponent', () => {
     let component: AllocateHearingsComponent;
@@ -29,7 +30,7 @@ describe('AllocateHearingsComponent', () => {
     let testData: AllocationHearingsResponse[];
 
     const loggerMock = jasmine.createSpyObj('Logger', ['debug']);
-    const hearingServiceMock = jasmine.createSpyObj('VideoHearingsService', ['getUsers', 'getHearingTypes']);
+    const referenceDataServiceMock = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getHearingTypes']);
     const allUsers$ = new BehaviorSubject<JusticeUserResponse[]>([]);
     beforeEach(async () => {
         justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', [
@@ -74,7 +75,7 @@ describe('AllocateHearingsComponent', () => {
                 { provide: ActivatedRoute, useValue: activatedRoute },
                 { provide: AllocateHearingsService, useValue: allocateServiceSpy },
                 { provide: JusticeUsersService, useValue: justiceUsersServiceSpy },
-                { provide: VideoHearingsService, useValue: hearingServiceMock },
+                { provide: ReferenceDataService, useValue: referenceDataServiceMock },
                 { provide: Logger, useValue: loggerMock }
             ],
             imports: [SharedModule, FontAwesomeModule]
@@ -91,7 +92,7 @@ describe('AllocateHearingsComponent', () => {
     describe('ngOnInit', () => {
         let searchForHearingsSpy;
 
-        hearingServiceMock.getHearingTypes.and.returnValue(of(['Type1', 'Type2']));
+        referenceDataServiceMock.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
 
         beforeEach(() => {
             searchForHearingsSpy = spyOn(component, 'searchForHearings');
