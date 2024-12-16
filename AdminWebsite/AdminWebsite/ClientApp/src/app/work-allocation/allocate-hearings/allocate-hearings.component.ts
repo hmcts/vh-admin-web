@@ -66,7 +66,7 @@ export class AllocateHearingsComponent implements OnInit, OnDestroy {
     caseTypesSelectOptions: SelectOption[];
     selectedCaseTypeIds: string[] = [];
 
-    private destroy$ = new Subject<void>();
+    private readonly destroy$ = new Subject<void>();
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
