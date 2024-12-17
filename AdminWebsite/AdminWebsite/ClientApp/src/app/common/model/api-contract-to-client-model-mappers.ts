@@ -3,7 +3,8 @@ import {
     HearingDetailsResponse,
     ParticipantResponse,
     LinkedParticipantResponse,
-    EndpointResponse
+    EndpointResponse,
+    BookingsHearingResponse
 } from 'src/app/services/clients/api-client';
 import { Constants } from 'src/app/common/constants';
 import { VHBooking } from './vh-booking';
@@ -38,14 +39,38 @@ export function mapHearingToVHBooking(hearing: HearingDetailsResponse): VHBookin
         status: hearing.status,
         audio_recording_required: hearing.audio_recording_required,
         endpoints: mapEndpointResponseToEndpointModel(hearing.endpoints, hearing.participants),
-        isMultiDay: hearing.group_id !== null,
+        isMultiDay: hearing.group_id !== null && hearing.group_id !== undefined,
         multiDayHearingLastDayScheduledDateTime: hearing.multi_day_hearing_last_day_scheduled_date_time,
         hearingsInGroup: hearing.hearings_in_group?.map(hearingInGroup => mapHearingToVHBooking(hearingInGroup)),
         originalScheduledDateTime: hearing.scheduled_date_time,
         supplier: hearing.conference_supplier,
         judge: getJudge(hearing),
         isLastDayOfMultiDayHearing:
-            hearing.scheduled_date_time.getTime() === hearing.multi_day_hearing_last_day_scheduled_date_time?.getTime()
+            hearing.scheduled_date_time.getTime() === hearing.multi_day_hearing_last_day_scheduled_date_time?.getTime(),
+        groupId: hearing.group_id
+    };
+}
+
+export function mapBookingsHearingResponseToVHBooking(response: BookingsHearingResponse): VHBooking {
+    return {
+        hearing_id: response.hearing_id,
+        scheduled_date_time: response.scheduled_date_time,
+        scheduled_duration: response.scheduled_duration,
+        case: mapCaseNameAndNumberToCaseModel(response.hearing_name, response.hearing_number),
+        created_by: response.created_by,
+        case_type: response.case_type_name,
+        court_room: response.court_room,
+        court_name: response.court_address,
+        created_date: response.created_date,
+        updated_by: response.last_edit_by,
+        updated_date: response.last_edit_date,
+        status: response.status,
+        audio_recording_required: response.audio_recording_required,
+        supplier: response.conference_supplier,
+        judge: mapJudgeNameToJudge(response.judge_name),
+        groupId: response.group_id,
+        courtRoomAccount: response.court_room_account,
+        allocatedTo: response.allocated_to
     };
 }
 
@@ -62,6 +87,13 @@ export function mapCaseResponseToCaseModel(casesResponse: CaseResponse[]): CaseM
         });
     }
     return cases;
+}
+
+export function mapCaseNameAndNumberToCaseModel(name: string, number: string): CaseModel {
+    const model = new CaseModel();
+    model.name = name;
+    model.number = number;
+    return model;
 }
 
 export function mapParticipantResponseToParticipantModel(response: ParticipantResponse[]): ParticipantModel[] {
@@ -131,6 +163,12 @@ export function mapEndpointResponseToEndpointModel(response: EndpointResponse[],
         });
     }
     return endpoints;
+}
+
+export function mapJudgeNameToJudge(judgeName: string): JudicialMemberDto {
+    const judge = new JudicialMemberDto(null, null, null, null, null, null, false);
+    judge.displayName = judgeName;
+    return judge;
 }
 
 function getJudge(hearing: HearingDetailsResponse): JudicialMemberDto {

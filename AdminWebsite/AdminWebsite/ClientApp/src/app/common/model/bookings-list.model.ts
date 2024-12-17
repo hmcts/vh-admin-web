@@ -1,4 +1,5 @@
 import { FormatShortDuration } from '../formatters/format-short-duration';
+import { BookingsListItemModel } from './booking-list-item.model';
 import { EndpointModel } from './endpoint.model';
 
 export class BookingsListModel {
@@ -8,7 +9,7 @@ export class BookingsListModel {
     }
 
     BookingsDate: Date;
-    BookingsDetails: Array<BookingsDetailsModel>;
+    BookingsDetails: Array<BookingsListItemModel>;
 }
 
 export class BookingsDetailsModel {

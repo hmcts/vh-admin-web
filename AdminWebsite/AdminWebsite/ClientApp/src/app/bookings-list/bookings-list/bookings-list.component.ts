@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { lastValueFrom, Observable, Subject, Subscription } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
-import { BookingsDetailsModel, BookingsListModel } from '../../common/model/bookings-list.model';
+import { BookingsListModel } from '../../common/model/bookings-list.model';
 import { BookingsModel } from '../../common/model/bookings.model';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
@@ -16,6 +16,8 @@ import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 import { VenuesMenuComponent } from '../../shared/menus/venues-menu/venues-menu.component';
+import { BookingsListItemModel } from 'src/app/common/model/booking-list-item.model';
+import { isCancelled, isCreated } from 'src/app/common/model/vh-booking';
 
 @Component({
     selector: 'app-bookings-list',
@@ -77,9 +79,15 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 this.replaceBookingRecord(updatedBooking);
 
                 // try to repeat for each of the hearings in group
-                if (updatedBooking.HearingsInGroup && updatedBooking.HearingsInGroup.length > 0) {
-                    updatedBooking.HearingsInGroup.forEach(updatedHearingInGroup => {
-                        this.replaceBookingRecord(updatedHearingInGroup);
+                if (updatedBooking.Booking.hearingsInGroup && updatedBooking.Booking.hearingsInGroup.length > 0) {
+                    updatedBooking.Booking.hearingsInGroup.forEach(updatedHearingInGroup => {
+                        const listItemModel = this.bookingPersistService.bookingList
+                            .flatMap(listItem => listItem.BookingsDetails)
+                            .find(detail => detail.Booking.hearing_id === updatedHearingInGroup.hearing_id);
+
+                        if (listItemModel) {
+                            this.replaceBookingRecord(listItemModel);
+                        }
                     });
                 }
 
@@ -104,20 +112,20 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.bookingList[this.bookingPersistService.selectedGroupIndex].BookingsDetails[
                 this.bookingPersistService.selectedItemIndex
             ];
-        this.logger.debug(`${this.loggerPrefix} Getting edited booking from storage`, { hearing: selectedRecord.HearingId });
-        const response = await lastValueFrom(this.videoHearingService.getHearingById(selectedRecord.HearingId));
-        this.logger.debug(`${this.loggerPrefix} Mapping hearing to edit hearing model`, { hearing: selectedRecord.HearingId });
+        this.logger.debug(`${this.loggerPrefix} Getting edited booking from storage`, { hearing: selectedRecord.Booking.hearing_id });
+        const response = await lastValueFrom(this.videoHearingService.getHearingById(selectedRecord.Booking.hearing_id));
+        this.logger.debug(`${this.loggerPrefix} Mapping hearing to edit hearing model`, { hearing: selectedRecord.Booking.hearing_id });
         return this.videoHearingService.mapHearingDetailsResponseToHearingModel(response);
     }
 
-    resetBookingIndex(booking: BookingsDetailsModel) {
-        this.logger.debug(`${this.loggerPrefix} Resseting the booking index`, { hearing: booking.HearingId });
-        const dateOnly = new Date(booking.StartTime.valueOf());
+    resetBookingIndex(booking: BookingsListItemModel) {
+        this.logger.debug(`${this.loggerPrefix} Resseting the booking index`, { hearing: booking.Booking.hearing_id });
+        const dateOnly = new Date(booking.Booking.scheduled_date_time.valueOf());
         const dateNoTime = new Date(dateOnly.setHours(0, 0, 0, 0));
         this.selectedGroupIndex = this.bookings.findIndex(s => s.BookingsDate.toString() === dateNoTime.toString());
         if (this.selectedGroupIndex > -1) {
             this.selectedItemIndex = this.bookings[this.selectedGroupIndex].BookingsDetails.findIndex(
-                x => x.HearingId === booking.HearingId
+                x => x.Booking.hearing_id === booking.Booking.hearing_id
             );
         } else {
             this.selectedItemIndex = -1;
@@ -288,10 +296,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.loaded = true;
     }
 
-    private replaceBookingRecord(booking: BookingsDetailsModel) {
+    private replaceBookingRecord(booking: BookingsListItemModel) {
         if (booking.IsStartTimeChanged) {
             this.logger.debug(`${this.loggerPrefix} Start time has changed. Replacing booking record.`, {
-                hearing: booking.HearingId
+                hearing: booking.Booking.hearing_id
             });
             this.bookingsListService.replaceBookingRecord(booking, this.bookingPersistService.bookingList);
         }
@@ -323,7 +331,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             indexHearing < this.bookings[groupByDate].BookingsDetails.length
         ) {
             this.bookings[groupByDate].BookingsDetails[indexHearing].Selected = true;
-            this.selectedHearingId = this.bookings[groupByDate].BookingsDetails[indexHearing].HearingId;
+            this.selectedHearingId = this.bookings[groupByDate].BookingsDetails[indexHearing].Booking.hearing_id;
             this.selectedGroupIndex = groupByDate;
             this.selectedItemIndex = indexHearing;
         }
@@ -465,5 +473,13 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
     selectedVenueEmitter($event: number[]) {
         this.bookingPersistService.selectedVenueIds = $event;
+    }
+
+    isCancelled(booking: BookingsListItemModel) {
+        return isCancelled(booking.Booking);
+    }
+
+    isCreated(booking: BookingsListItemModel) {
+        return isCreated(booking.Booking);
     }
 }

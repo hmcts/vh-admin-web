@@ -1,15 +1,15 @@
 <span *ngIf="this.hasNoJudge" class="vh-sml vh-nojudge">NO JUDGE ASSIGNED</span>
 <div *ngIf="this.showTime">
-  <div class="vh-sml vh-col govuk-!-margin-top-2">{{ bookingDetails.StartTime | amLocal | amDateFormat : 'h:mm a' }}</div>
-  <div class="govuk-hint vh-sml vh-col vh-font-black">listed for {{ bookingDetails.DurationInHoursAndMinutes }}</div>
+  <div class="vh-sml vh-col govuk-!-margin-top-2">{{ bookingDetails.scheduled_date_time | amLocal | amDateFormat : 'h:mm a' }}</div>
+  <div class="govuk-hint vh-sml vh-col vh-font-black">listed for {{ duration }}</div>
 </div>
 <div
   *ngIf="statusMessage !== null"
   class="vh-status"
   [ngClass]="{
-    'vh-cancelled-booking': bookingDetails.isCancelled,
-    'vh-created-booking': bookingDetails.isCreated || bookingDetails.hasConfirmationWithNoJudge,
-    'vh-confirmation-failed': bookingDetails.hasBookingConfirmationFailed
+    'vh-cancelled-booking': isCancelled,
+    'vh-created-booking': isCreated || hasConfirmationWithNoJudge,
+    'vh-confirmation-failed': hasBookingConfirmationFailed
   }"
 >
   {{ this.statusMessage }}

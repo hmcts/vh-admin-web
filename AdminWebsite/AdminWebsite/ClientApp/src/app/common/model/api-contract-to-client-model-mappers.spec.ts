@@ -1,6 +1,8 @@
 import {
     AvailableLanguageResponse,
+    BookingsHearingResponse,
     BookingStatus,
+    BookingStatus2,
     CaseResponse,
     EndpointResponse,
     HearingDetailsResponse,
@@ -15,6 +17,8 @@ import {
 } from 'src/app/services/clients/api-client';
 import { VHBooking } from './vh-booking';
 import {
+    mapBookingsHearingResponseToVHBooking,
+    mapCaseNameAndNumberToCaseModel,
     mapCaseResponseToCaseModel,
     mapEndpointResponseToEndpointModel,
     mapHearingToVHBooking,
@@ -61,6 +65,7 @@ describe('mapHearingToVHBooking', () => {
                 expect(hearingInGroup.isLastDayOfMultiDayHearing).toBeFalse();
             }
         });
+        expect(result.groupId).toBe(hearing.group_id);
     });
 
     it('should map hearing without judge', () => {
@@ -73,6 +78,51 @@ describe('mapHearingToVHBooking', () => {
 
         // Assert
         verifyVHBooking(result, hearing);
+    });
+});
+
+describe('mapBookingsHearingResponseToVHBooking', () => {
+    it('should map BookingsHearingResponse to VHBooking', () => {
+        // Arrange
+        const response = new BookingsHearingResponse();
+        response.hearing_id = 'hearing-id';
+        response.scheduled_date_time = new Date();
+        response.scheduled_duration = 90;
+        response.hearing_name = 'hearing-name';
+        response.hearing_number = 'hearing-number';
+        response.created_by = 'created-by';
+        response.case_type_name = 'case-type-name';
+        response.court_room = 'court-room';
+        response.court_address = 'court-address';
+        response.created_date = new Date();
+        response.last_edit_by = 'last-edit-by';
+        response.last_edit_date = new Date();
+        response.status = BookingStatus2.Created;
+        response.audio_recording_required = true;
+        response.conference_supplier = VideoSupplier.Vodafone;
+        response.judge_name = 'judge-name';
+        response.group_id = 'group-id';
+
+        // Act
+        const result = mapBookingsHearingResponseToVHBooking(response);
+
+        // Assert
+        expect(result.hearing_id).toBe(response.hearing_id);
+        expect(result.scheduled_date_time).toEqual(response.scheduled_date_time);
+        expect(result.scheduled_duration).toBe(response.scheduled_duration);
+        expect(result.case).toEqual(mapCaseNameAndNumberToCaseModel(response.hearing_name, response.hearing_number));
+        expect(result.created_by).toBe(response.created_by);
+        expect(result.case_type).toBe(response.case_type_name);
+        expect(result.court_room).toBe(response.court_room);
+        expect(result.court_name).toBe(response.court_address);
+        expect(result.created_date).toEqual(response.created_date);
+        expect(result.updated_by).toBe(response.last_edit_by);
+        expect(result.updated_date).toEqual(response.last_edit_date);
+        expect(result.status).toBe(response.status.toString());
+        expect(result.audio_recording_required).toBe(response.audio_recording_required);
+        expect(result.supplier).toBe(response.conference_supplier);
+        expect(result.judge.displayName).toBe(response.judge_name);
+        expect(result.groupId).toBe(response.group_id);
     });
 });
 

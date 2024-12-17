@@ -4,6 +4,8 @@ import { ParticipantModel } from './participant.model';
 import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 import { EndpointModel } from './endpoint.model';
 import { LinkedParticipantModel } from './linked-participant.model';
+import { mapCaseNameAndNumberToCaseModel, mapJudgeNameToJudge } from './api-contract-to-client-model-mappers';
+import { FormatShortDuration } from '../formatters/format-short-duration';
 
 export interface VHBooking {
     hearing_id?: string;
@@ -40,6 +42,12 @@ export interface VHBooking {
     supplier: VideoSupplier;
     judge?: JudicialMemberDto;
     isLastDayOfMultiDayHearing?: boolean;
+    groupId?: string;
+    confirmedBy?: string;
+    confirmedDate?: Date;
+    cancelReason?: string;
+    courtRoomAccount?: string;
+    allocatedTo?: string;
 }
 
 export function createVHBooking(): VHBooking {
@@ -54,4 +62,72 @@ export function createVHBooking(): VHBooking {
         updated_date: new Date(),
         supplier: VideoSupplier.Vodafone
     };
+}
+
+// TODO this is primarily used to enforce required properties
+// Should we consolidate this with createVHBooking
+// Or make them non-optional properties in VHBooking
+export function createVHBookingFromDetails(
+    hearingId: string,
+    startTime: Date,
+    duration: number,
+    hearingCaseNumber: string,
+    hearingCaseName: string,
+    judgeName: string,
+    courtRoom: string,
+    courtAddress: string,
+    createdBy: string,
+    createdDate: Date,
+    lastEditBy: string,
+    lastEditDate: Date,
+    confirmedBy: string,
+    confirmedDate: Date,
+    status: string,
+    audioRecordingRequired: boolean,
+    cancelReason: string,
+    caseType: string,
+    courtRoomAccount: string,
+    telephoneConferenceId: string
+): VHBooking {
+    const booking = createVHBooking();
+    booking.hearing_id = hearingId;
+    booking.scheduled_date_time = startTime;
+    booking.scheduled_duration = duration;
+    booking.case = mapCaseNameAndNumberToCaseModel(hearingCaseName, hearingCaseNumber);
+    booking.judge = mapJudgeNameToJudge(judgeName);
+    booking.court_room = courtRoom;
+    booking.court_name = courtAddress;
+    booking.created_by = createdBy;
+    booking.created_date = createdDate;
+    booking.updated_by = lastEditBy;
+    booking.updated_date = lastEditDate;
+    booking.confirmedBy = confirmedBy;
+    booking.confirmedDate = confirmedDate;
+    booking.status = status;
+    booking.audio_recording_required = audioRecordingRequired;
+    booking.cancelReason = cancelReason;
+    booking.case_type = caseType;
+    booking.courtRoomAccount = courtRoomAccount;
+    booking.telephone_conference_id = telephoneConferenceId;
+    return booking;
+}
+
+export function durationInHoursAndMinutes(booking: VHBooking) {
+    return FormatShortDuration(booking.scheduled_duration);
+}
+
+export function isCancelled(booking: VHBooking): boolean {
+    return booking.status === 'Cancelled';
+}
+
+export function isCreated(booking: VHBooking): boolean {
+    return booking.status === 'Created';
+}
+
+export function hasBookingConfirmationFailed(booking: VHBooking): boolean {
+    return booking.status === 'Failed';
+}
+
+export function hasConfirmationWithNoJudge(booking: VHBooking): boolean {
+    return booking.status === 'ConfirmedWithoutJudge';
 }

@@ -15,7 +15,7 @@ import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
-import { BookingsDetailsModel, BookingsListModel } from '../../common/model/bookings-list.model';
+import { BookingsListModel } from '../../common/model/bookings-list.model';
 import { BookingsModel } from '../../common/model/bookings.model';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
@@ -38,6 +38,8 @@ import { VenuesMenuComponent } from '../../shared/menus/venues-menu/venues-menu.
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { JusticeUserMenuStubComponent } from 'src/app/testing/stubs/dropdown-menu/justice-user-menu-stub.component';
 import { BookingStatusComponent } from '../booking-status/booking-status.component';
+import { createVHBookingFromDetails } from 'src/app/common/model/vh-booking';
+import { BookingsListItemModel } from 'src/app/common/model/booking-list-item.model';
 
 let component: BookingsListComponent;
 let bookingPersistService: BookingPersistService;
@@ -125,75 +127,85 @@ export class BookingslistTestData {
         const date = new Date('2019-10-22 00:00:00.0000000');
         const dateNoTime = new Date(date.setHours(0, 0, 0, 0));
         const model = new BookingsListModel(dateNoTime);
-        const lists: Array<BookingsDetailsModel> = [];
-        const b1 = new BookingsDetailsModel(
-            '1',
-            new Date('2019-10-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason1',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567',
-            'true'
+        const lists: Array<BookingsListItemModel> = [];
+        const b1 = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '1',
+                new Date('2019-10-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason1',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
         );
-        const b2 = new BookingsDetailsModel(
-            '2',
-            new Date('2019-10-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason2',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
-        );
-        const b3 = new BookingsDetailsModel(
-            '3',
-            new Date('2019-10-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
+        b1.Booking.allocatedTo = 'allocated-to';
 
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason3',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
+        const b2 = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '2',
+                new Date('2019-10-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason2',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
         );
+        b2.Booking.allocatedTo = 'allocated-to';
+
+        const b3 = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '3',
+                new Date('2019-10-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
+
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason3',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
+        );
+        b3.Booking.allocatedTo = 'allocated-to';
 
         lists.push(b1);
         lists.push(b2);
@@ -206,76 +218,87 @@ export class BookingslistTestData {
         const date = new Date('2019-10-22 00:00:00.0000000');
         const dateNoTime = new Date(date.setHours(0, 0, 0, 0));
         const model = new BookingsListModel(dateNoTime);
-        const lists: Array<BookingsDetailsModel> = [];
-        const b1 = new BookingsDetailsModel(
-            '1',
-            new Date('2019-10-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
+        const lists: Array<BookingsListItemModel> = [];
+        const b1 = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '1',
+                new Date('2019-10-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
 
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason4',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason4',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
         );
-        const b2 = new BookingsDetailsModel(
-            '2',
-            new Date('2019-10-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
+        b1.Booking.allocatedTo = 'allocated-to';
 
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason5',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
-        );
-        const b3 = new BookingsDetailsModel(
-            '6',
-            new Date('2019-10-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
+        const b2 = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '2',
+                new Date('2019-10-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
 
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason6',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason5',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
         );
+        b2.Booking.allocatedTo = 'allocated-to';
+
+        const b3 = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '6',
+                new Date('2019-10-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
+
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason6',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
+        );
+        b3.Booking.allocatedTo = 'allocated-to';
 
         lists.push(b1);
         lists.push(b2);
@@ -291,154 +314,176 @@ export class ArrayBookingslistModelTestData {
         const date = new Date('2019-10-22 00:00:00.0000000');
         const dateNoTime = new Date(date.setHours(0, 0, 0, 0));
         const model = new BookingsListModel(dateNoTime);
-        const lists: Array<BookingsDetailsModel> = [];
-        const b1 = new BookingsDetailsModel(
-            '11',
-            new Date('2019-10-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
+        const lists: Array<BookingsListItemModel> = [];
+        const b1 = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '11',
+                new Date('2019-10-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
 
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason7',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason7',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
         );
-        const b2 = new BookingsDetailsModel(
-            '12',
-            new Date('2019-10-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
+        b1.Booking.allocatedTo = 'allocated-to';
 
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason8',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
-        );
-        const b3 = new BookingsDetailsModel(
-            '33',
-            new Date('2019-10-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
+        const b2 = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '12',
+                new Date('2019-10-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
 
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason9',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason8',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
         );
+        b2.Booking.allocatedTo = 'allocated-to';
+
+        const b3 = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '33',
+                new Date('2019-10-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
+
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason9',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
+        );
+        b3.Booking.allocatedTo = 'allocated-to';
 
         lists.push(b1);
         lists.push(b2);
         lists.push(b3);
         model.BookingsDetails = lists;
-        const lists1: Array<BookingsDetailsModel> = [];
+        const lists1: Array<BookingsListItemModel> = [];
         const date1 = new Date('2019-11-22 00:00:00.0000000');
         const dateNoTime1 = new Date(date1.setHours(0, 0, 0, 0));
         const model1 = new BookingsListModel(dateNoTime1);
-        const b11 = new BookingsDetailsModel(
-            '44',
-            new Date('2019-11-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
+        const b11 = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '44',
+                new Date('2019-11-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
 
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason10',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason10',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
         );
-        const b21 = new BookingsDetailsModel(
-            '45',
-            new Date('2019-11-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
+        b11.Booking.allocatedTo = 'allocated-to';
 
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason11',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
-        );
-        const b31 = new BookingsDetailsModel(
-            '46',
-            new Date('2019-11-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
+        const b21 = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '45',
+                new Date('2019-11-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
 
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason12',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason11',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
         );
+        b21.Booking.allocatedTo = 'allocated-to';
+
+        const b31 = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '46',
+                new Date('2019-11-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
+
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason12',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
+        );
+        b31.Booking.allocatedTo = 'allocated-to';
 
         lists1.push(b11);
         lists1.push(b21);
@@ -534,32 +579,34 @@ export class BookingPersistServiceSpy {
     }
 
     updateBooking() {
-        const booking = new BookingsDetailsModel(
-            '1',
-            new Date('2019-10-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
+        const booking = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '1',
+                new Date('2019-10-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
 
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason13',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason13',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
         );
         booking.IsStartTimeChanged = true;
-        booking.GroupId = '123';
-        booking.HearingsInGroup = [booking, booking];
+        booking.Booking.groupId = '123';
+        booking.Booking.hearingsInGroup = [booking.Booking, booking.Booking];
         return booking;
     }
     resetAll() {}
@@ -1069,28 +1116,30 @@ describe('BookingsListComponent', () => {
     });
     it('should find the record position in the bookings list', () => {
         component.bookings = new ArrayBookingslistModelTestData().getTestData();
-        const booking = new BookingsDetailsModel(
-            '33',
-            new Date('2019-10-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
+        const booking = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '33',
+                new Date('2019-10-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
 
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason14',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason14',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
         );
 
         component.resetBookingIndex(booking);
@@ -1099,28 +1148,30 @@ describe('BookingsListComponent', () => {
     });
     it('should set the selected group index and item index to -1 for record is not found in the list', () => {
         component.bookings = new ArrayBookingslistModelTestData().getTestData();
-        const booking = new BookingsDetailsModel(
-            '3',
-            new Date('2019-12-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
+        const booking = new BookingsListItemModel(
+            createVHBookingFromDetails(
+                '3',
+                new Date('2019-12-22 13:58:40.3730067'),
+                120,
+                'XX3456234565',
+                'Smith vs Donner',
 
-            'JudgeGreen',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            true,
-            'reason15',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
+                'JudgeGreen',
+                '33A',
+                'Coronation Street',
+                'John Smith',
+                new Date('2018-10-22 13:58:40.3730067'),
+                'Roy Ben',
+                new Date('2018-10-22 13:58:40.3730067'),
+                null,
+                null,
+                'Booked',
+                true,
+                'reason15',
+                'Financial Remedy',
+                'judge.green@hmcts.net',
+                '1234567'
+            )
         );
 
         component.resetBookingIndex(booking);
@@ -1214,10 +1265,10 @@ describe('BookingsListComponent', () => {
             expect(bookingPersistService.selectedUsers.length).toEqual(count);
         });
 
-        it('should show allocated label to', async () => {
-            await component.ngOnInit();
+        it('should show allocated label to', () => {
+            component.ngOnInit();
             fixture.detectChanges();
-            const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookingData.BookingsDetails[0].HearingId));
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookingData.BookingsDetails[0].Booking.hearing_id));
             expect(divToHide).toBeTruthy();
         });
     });
