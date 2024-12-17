@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AllocateHearingsService } from '../services/allocate-hearings.service';
-import { AllocationHearingsResponse, JusticeUserResponse } from '../../services/clients/api-client';
+import { AllocationHearingsResponse, HearingTypeResponse, JusticeUserResponse } from '../../services/clients/api-client';
 import { faCircleExclamation, faHourglassStart, faTriangleExclamation, faClock } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingItemModel, AllocateHearingModel } from './models/allocate-hearing.model';
 import { Transform } from '@fortawesome/fontawesome-svg-core';
@@ -10,23 +10,24 @@ import { SelectComponent, SelectOption } from 'src/app/shared/select/select.comp
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { BookingPersistService } from 'src/app/services/bookings-persist.service';
-import { map, tap } from 'rxjs/operators';
+import { map, takeUntil, tap } from 'rxjs/operators';
+import { ReferenceDataService } from 'src/app/services/reference-data.service';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-allocate-hearings',
     templateUrl: './allocate-hearings.component.html',
     styleUrls: ['./allocate-hearings.component.scss']
 })
-export class AllocateHearingsComponent implements OnInit {
+export class AllocateHearingsComponent implements OnInit, OnDestroy {
     constructor(
         private readonly route: ActivatedRoute,
         private readonly fb: FormBuilder,
         private readonly allocateService: AllocateHearingsService,
         private readonly datePipe: DatePipe,
         private readonly justiceUserService: JusticeUsersService,
-        private readonly videoHearingService: VideoHearingsService,
+        private readonly referenceDataService: ReferenceDataService,
         private readonly bookingPersistService: BookingPersistService
     ) {
         this.form = fb.group({
@@ -65,6 +66,8 @@ export class AllocateHearingsComponent implements OnInit {
     caseTypesSelectOptions: SelectOption[];
     selectedCaseTypeIds: string[] = [];
 
+    private readonly destroy$ = new Subject<void>();
+
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
             const fromDt = params['fromDt'] ?? null;
@@ -83,19 +86,32 @@ export class AllocateHearingsComponent implements OnInit {
             }
         });
 
-        this.form.get('isUnallocated').valueChanges.subscribe(val => {
-            if (val) {
-                this.onIsAllocatedCheckboxChecked();
-            } else {
-                this.onIsAllocatedCheckboxUnchecked();
-            }
-        });
+        this.form
+            .get('isUnallocated')
+            .valueChanges.pipe(takeUntil(this.destroy$))
+            .subscribe(val => {
+                if (val) {
+                    this.onIsAllocatedCheckboxChecked();
+                } else {
+                    this.onIsAllocatedCheckboxUnchecked();
+                }
+            });
 
         this.selectedJusticeUserIds = this.bookingPersistService.selectedUsers;
         this.selectedCaseTypeIds = this.bookingPersistService.selectedCaseTypes;
+        this.referenceDataService
+            .getHearingTypes()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((data: HearingTypeResponse[]) => {
+                this.caseTypesSelectOptions = data
+                    .map(item => item.group)
+                    .sort((a, b) => a.localeCompare(b))
+                    .map(group => ({ entityId: group, label: group }));
+            });
 
         this.justiceUserService.allUsers$
             .pipe(
+                takeUntil(this.destroy$),
                 map(users => users.filter(user => !user.deleted)),
                 tap(() => this.selectFilterCso?.clear())
             )
@@ -107,6 +123,11 @@ export class AllocateHearingsComponent implements OnInit {
                     ariaLabel: item.first_name
                 }));
             });
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     searchForHearings(keepExistingMessage: boolean = false) {
