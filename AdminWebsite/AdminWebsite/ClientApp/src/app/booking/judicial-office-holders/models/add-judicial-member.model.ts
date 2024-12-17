@@ -37,4 +37,12 @@ export class JudicialMemberDto {
 
         return dto;
     }
+
+    static judgeWithDisplayName(displayName: string): JudicialMemberDto {
+        const dto = new JudicialMemberDto(null, null, null, null, null, null, false);
+        dto.displayName = displayName;
+        dto.roleCode = 'Judge';
+        
+        return dto
+    }
 }

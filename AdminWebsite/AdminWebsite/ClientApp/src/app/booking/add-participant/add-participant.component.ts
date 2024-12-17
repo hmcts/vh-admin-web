@@ -19,6 +19,7 @@ import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/mo
 import { takeUntil } from 'rxjs/operators';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { InterpreterSelectedDto } from '../interpreter-form/interpreter-selected.model';
+import { cloneWithGetters } from 'src/app/common/helpers/clone-with-getters';
 
 @Component({
     selector: 'app-add-participant',
@@ -324,7 +325,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
                 this.hearing.participants.push(newParticipant);
                 this.hearing.participants = [...this.hearing.participants];
-                this.hearing = { ...this.hearing };
+                this.hearing = cloneWithGetters(this.hearing);
 
                 this.populateInterpretedForList();
                 this.videoHearingService.updateHearingRequest(this.hearing);
@@ -392,7 +393,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                     }
                 });
                 this.hearing.participants = [...this.hearing.participants];
-                this.hearing = { ...this.hearing };
+                this.hearing = cloneWithGetters(this.hearing);
                 this.clearForm();
                 this.participantDetails = null;
                 this.form.markAsPristine();
@@ -442,7 +443,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
-        this.hearing = { ...this.hearing };
+        this.hearing = cloneWithGetters(this.hearing);
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.videoHearingService.setBookingHasChanged();
     }
@@ -759,7 +760,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
-        this.hearing = { ...this.hearing };
+        this.hearing = cloneWithGetters(this.hearing);
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.videoHearingService.setBookingHasChanged();
     }

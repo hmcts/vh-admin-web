@@ -27,6 +27,7 @@ import { OtherInformationModel } from '../../common/model/other-information.mode
 import { finalize, takeUntil } from 'rxjs/operators';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { cloneWithGetters } from 'src/app/common/helpers/clone-with-getters';
 
 @Component({
     selector: 'app-summary',
@@ -204,13 +205,13 @@ export class SummaryComponent implements OnInit, OnDestroy {
             }
             this.hearing.participants.splice(indexOfParticipant, 1);
             this.removeLinkedParticipant(this.selectedParticipantEmail);
-            this.hearing = { ...this.hearing };
+            this.hearing = cloneWithGetters(this.hearing);
         }
 
         const judicalParticipant = this.hearing.judiciaryParticipants?.findIndex(x => x.email === this.selectedParticipantEmail);
         if (judicalParticipant > -1) {
             this.hearing.judiciaryParticipants.splice(judicalParticipant, 1);
-            this.hearing = { ...this.hearing };
+            this.hearing = cloneWithGetters(this.hearing);
         }
 
         this.hearingService.updateHearingRequest(this.hearing);
@@ -535,7 +536,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
-        this.hearing = { ...this.hearing };
+        this.hearing = cloneWithGetters(this.hearing);
         this.hearingService.updateHearingRequest(this.hearing);
         this.hearingService.setBookingHasChanged();
         this.bookingService.removeParticipantEmail();

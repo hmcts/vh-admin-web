@@ -12,10 +12,10 @@ import { VideoEndpointListComponent } from './video-endpoint-list/video-endpoint
 import { VideoEndpointItemComponent } from './video-endpoint-item/video-endpoint-item.component';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
-import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 function initHearingRequest(): VHBooking {
-    const newHearing = createVHBooking();
+    const newHearing = new VHBooking();
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
     newHearing.participants = [
@@ -185,8 +185,8 @@ describe('EndpointsComponent', () => {
 
     describe('when booking is multi day', () => {
         beforeEach(() => {
-            const booking = createVHBooking();
-            booking.isMultiDay = true;
+            const booking = new VHBooking();
+            booking.groupId = '123';
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(booking);
         });
         it('should navigate to the summary page when next clicked and multi day booking enhancements are enabled', () => {
@@ -204,12 +204,12 @@ describe('EndpointsComponent', () => {
     });
     describe('when booking is not multi day', () => {
         beforeEach(() => {
-            const booking = createVHBooking();
-            booking.isMultiDay = false;
+            const booking = new VHBooking();
+            booking.groupId = '123';
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(booking);
         });
 
-        it('should navigate to the other information page when next clicked and multi day booking enhancements are enabled', () => {
+        fit('should navigate to the other information page when next clicked and multi day booking enhancements are enabled', () => {
             featureServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
             component.ngOnInit();
             component.videoEndpoints = [

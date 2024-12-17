@@ -27,7 +27,7 @@ import { InterpreterFormComponent } from '../interpreter-form/interpreter-form.c
 import { MockComponent } from 'ng-mocks';
 import { InterpreterSelectedDto } from '../interpreter-form/interpreter-selected.model';
 import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
-import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -179,7 +179,7 @@ participants.push(p3);
 participants.push(p4);
 
 function initHearingRequest(): VHBooking {
-    const newHearing = createVHBooking();
+    const newHearing = new VHBooking();
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
     newHearing.participants = participants;
@@ -189,7 +189,7 @@ function initHearingRequest(): VHBooking {
 }
 
 function initExistHearingRequest(): VHBooking {
-    const newHearing = createVHBooking();
+    const newHearing = new VHBooking();
     newHearing.hearing_id = '12345';
     newHearing.hearing_venue_id = 1;
     newHearing.scheduled_duration = 20;

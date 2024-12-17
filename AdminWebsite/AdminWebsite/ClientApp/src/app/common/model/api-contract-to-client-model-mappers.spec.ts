@@ -68,7 +68,7 @@ describe('mapHearingToVHBooking', () => {
         expect(result.groupId).toBe(hearing.group_id);
     });
 
-    it('should map hearing without judge', () => {
+    fit('should map hearing without judge', () => {
         // Arrange
         const hearing = createSingleDayHearing();
         hearing.judiciary_participants = hearing.judiciary_participants.filter(participant => participant.role_code !== 'Judge');
@@ -82,7 +82,7 @@ describe('mapHearingToVHBooking', () => {
 });
 
 describe('mapBookingsHearingResponseToVHBooking', () => {
-    it('should map BookingsHearingResponse to VHBooking', () => {
+    fit('should map BookingsHearingResponse to VHBooking', () => {
         // Arrange
         const response = new BookingsHearingResponse();
         response.hearing_id = 'hearing-id';

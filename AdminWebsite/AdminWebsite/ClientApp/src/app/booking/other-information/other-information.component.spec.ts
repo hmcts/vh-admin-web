@@ -12,7 +12,7 @@ import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { OtherInformationComponent } from './other-information.component';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { CaseModel } from 'src/app/common/model/case.model';
-import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 
@@ -21,7 +21,7 @@ function initHearingRequest(): VHBooking {
 
     const cases: CaseModel[] = [];
 
-    const newHearing = createVHBooking();
+    const newHearing = new VHBooking();
     newHearing.case = cases[0];
     newHearing.participants = participants;
 

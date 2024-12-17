@@ -17,61 +17,66 @@ import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/model
 import { EndpointModel } from './endpoint.model';
 
 export function mapHearingToVHBooking(hearing: HearingDetailsResponse): VHBooking {
-    return {
-        hearing_id: hearing.id,
-        scheduled_date_time: new Date(hearing.scheduled_date_time),
-        scheduled_duration: hearing.scheduled_duration,
-        case: mapCaseResponseToCaseModel(hearing.cases)[0],
-        participants: mapParticipantResponseToParticipantModel(hearing.participants),
-        judiciaryParticipants: hearing.judiciary_participants?.map(judiciaryParticipant =>
-            JudicialMemberDto.fromJudiciaryParticipantResponse(judiciaryParticipant)
-        ),
-        created_by: hearing.created_by,
-        case_type: hearing.case_type_name,
-        case_type_service_id: hearing.service_id,
-        other_information: hearing.other_information,
-        court_room: hearing.hearing_room_name,
-        court_name: hearing.hearing_venue_name,
-        court_code: hearing.hearing_venue_code,
-        created_date: new Date(hearing.created_date),
-        updated_by: hearing.updated_by,
-        updated_date: new Date(hearing.updated_date),
-        status: hearing.status,
-        audio_recording_required: hearing.audio_recording_required,
-        endpoints: mapEndpointResponseToEndpointModel(hearing.endpoints, hearing.participants),
-        isMultiDay: hearing.group_id !== null && hearing.group_id !== undefined,
-        multiDayHearingLastDayScheduledDateTime: hearing.multi_day_hearing_last_day_scheduled_date_time,
-        hearingsInGroup: hearing.hearings_in_group?.map(hearingInGroup => mapHearingToVHBooking(hearingInGroup)),
-        originalScheduledDateTime: hearing.scheduled_date_time,
-        supplier: hearing.conference_supplier,
-        judge: getJudge(hearing),
-        isLastDayOfMultiDayHearing:
-            hearing.scheduled_date_time.getTime() === hearing.multi_day_hearing_last_day_scheduled_date_time?.getTime(),
-        groupId: hearing.group_id
-    };
+    const booking = new VHBooking();
+    booking.hearing_id = hearing.id,
+    booking.scheduled_date_time = new Date(hearing.scheduled_date_time),
+    booking.scheduled_duration = hearing.scheduled_duration,
+    booking.case = mapCaseResponseToCaseModel(hearing.cases)[0],
+    booking.participants = mapParticipantResponseToParticipantModel(hearing.participants),
+    booking.judiciaryParticipants = hearing.judiciary_participants?.map(judiciaryParticipant =>
+        JudicialMemberDto.fromJudiciaryParticipantResponse(judiciaryParticipant)
+    ),
+    booking.created_by = hearing.created_by,
+    booking.case_type = hearing.case_type_name,
+    booking.case_type_service_id = hearing.service_id,
+    booking.other_information = hearing.other_information,
+    booking.court_room = hearing.hearing_room_name,
+    booking.court_name = hearing.hearing_venue_name,
+    booking.court_code = hearing.hearing_venue_code,
+    booking.created_date = new Date(hearing.created_date),
+    booking.updated_by = hearing.updated_by,
+    booking.updated_date = new Date(hearing.updated_date),
+    booking.status = hearing.status,
+    booking.audio_recording_required = hearing.audio_recording_required,
+    booking.endpoints = mapEndpointResponseToEndpointModel(hearing.endpoints, hearing.participants),
+    booking.multiDayHearingLastDayScheduledDateTime = hearing.multi_day_hearing_last_day_scheduled_date_time,
+    booking.hearingsInGroup = hearing.hearings_in_group?.map(hearingInGroup => mapHearingToVHBooking(hearingInGroup)),
+    booking.originalScheduledDateTime = hearing.scheduled_date_time,
+    booking.supplier = hearing.conference_supplier,
+    booking.groupId = hearing.group_id;
+    return booking;
 }
 
 export function mapBookingsHearingResponseToVHBooking(response: BookingsHearingResponse): VHBooking {
-    return {
-        hearing_id: response.hearing_id,
-        scheduled_date_time: response.scheduled_date_time,
-        scheduled_duration: response.scheduled_duration,
-        case: mapCaseNameAndNumberToCaseModel(response.hearing_name, response.hearing_number),
-        created_by: response.created_by,
-        case_type: response.case_type_name,
-        court_room: response.court_room,
-        court_name: response.court_address,
-        created_date: response.created_date,
-        updated_by: response.last_edit_by,
-        updated_date: response.last_edit_date,
-        status: response.status,
-        audio_recording_required: response.audio_recording_required,
-        supplier: response.conference_supplier,
-        judge: mapJudgeNameToJudge(response.judge_name),
-        groupId: response.group_id,
-        courtRoomAccount: response.court_room_account,
-        allocatedTo: response.allocated_to
-    };
+    const booking = new VHBooking();
+    booking.hearing_id = response.hearing_id;
+    booking.scheduled_date_time = response.scheduled_date_time;
+    booking.scheduled_duration = response.scheduled_duration;
+
+    const caseModel = new CaseModel();
+    caseModel.name = response.hearing_name;
+    caseModel.number = response.hearing_number;
+    booking.case = caseModel;
+
+    booking.created_by = response.created_by;
+    booking.case_type = response.case_type_name;
+    booking.court_room = response.court_room;
+    booking.court_name = response.court_address;
+    booking.created_date = response.created_date;
+    booking.updated_by = response.last_edit_by;
+    booking.updated_date = response.last_edit_date;
+    booking.status = response.status;
+    booking.audio_recording_required = response.audio_recording_required;
+    booking.supplier = response.conference_supplier;
+    
+    if (response.judge_name) {
+        booking.assignJudge(response.judge_name);
+    }
+
+    booking.groupId = response.group_id;
+    booking.courtRoomAccount = response.court_room_account;
+    booking.allocatedTo = response.allocated_to;
+    return booking;
 }
 
 export function mapCaseResponseToCaseModel(casesResponse: CaseResponse[]): CaseModel[] {
@@ -163,18 +168,4 @@ export function mapEndpointResponseToEndpointModel(response: EndpointResponse[],
         });
     }
     return endpoints;
-}
-
-export function mapJudgeNameToJudge(judgeName: string): JudicialMemberDto {
-    const judge = new JudicialMemberDto(null, null, null, null, null, null, false);
-    judge.displayName = judgeName;
-    return judge;
-}
-
-function getJudge(hearing: HearingDetailsResponse): JudicialMemberDto {
-    const judge = hearing.judiciary_participants?.find(x => x.role_code === Constants.Judge);
-    if (judge) {
-        return JudicialMemberDto.fromJudiciaryParticipantResponse(judge);
-    }
-    return null;
 }

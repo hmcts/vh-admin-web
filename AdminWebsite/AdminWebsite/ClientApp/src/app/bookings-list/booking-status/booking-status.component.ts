@@ -1,10 +1,5 @@
 import { Component, Input } from '@angular/core';
 import {
-    durationInHoursAndMinutes,
-    hasBookingConfirmationFailed,
-    hasConfirmationWithNoJudge,
-    isCancelled,
-    isCreated,
     VHBooking
 } from 'src/app/common/model/vh-booking';
 @Component({
@@ -32,25 +27,5 @@ export class BookingStatusComponent {
 
     public get hasNoJudge(): boolean {
         return this.bookingDetails.status === 'BookedWithoutJudge' || this.bookingDetails.status === 'ConfirmedWithoutJudge';
-    }
-
-    public get duration(): string {
-        return durationInHoursAndMinutes(this.bookingDetails);
-    }
-
-    public get isCancelled(): boolean {
-        return isCancelled(this.bookingDetails);
-    }
-
-    public get isCreated(): boolean {
-        return isCreated(this.bookingDetails);
-    }
-
-    public get hasBookingConfirmationFailed(): boolean {
-        return hasBookingConfirmationFailed(this.bookingDetails);
-    }
-
-    public get hasConfirmationWithNoJudge(): boolean {
-        return hasConfirmationWithNoJudge(this.bookingDetails);
     }
 }

@@ -15,6 +15,7 @@ import { FeatureFlags, LaunchDarklyService } from '../../../services/launch-dark
 import { of } from 'rxjs';
 import { InterpreterSelectedDto } from '../../interpreter-form/interpreter-selected.model';
 import { VideoSupplier } from 'src/app/services/clients/api-client';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 const router = {
@@ -63,7 +64,10 @@ describe('ParticipantListComponent', () => {
         fixture = TestBed.createComponent(ParticipantListComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-        component.hearing = { updated_date: new Date(), supplier: VideoSupplier.Kinly };
+        const hearing = new VHBooking();
+        hearing.updated_date = new Date();
+        hearing.supplier = VideoSupplier.Kinly;
+        component.hearing = hearing;
         fixture.detectChanges();
     });
 
@@ -335,7 +339,10 @@ describe('ParticipantListComponent-SortParticipants', () => {
         fixture = TestBed.createComponent(ParticipantListComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-        component.hearing = { updated_date: new Date(), supplier: VideoSupplier.Kinly };
+        const hearing = new VHBooking();
+        hearing.updated_date = new Date();
+        hearing.supplier = VideoSupplier.Kinly;
+        component.hearing = hearing;
         fixture.detectChanges();
     });
     it('should produce a sorted list with no duplicates', () => {

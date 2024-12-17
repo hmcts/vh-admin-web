@@ -16,6 +16,7 @@ import { PipeStringifierService } from '../../services/pipe-stringifier.service'
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 import { ConfigService } from '../../services/config.service';
 import { map } from 'rxjs/operators';
+import { cloneWithGetters } from 'src/app/common/helpers/clone-with-getters';
 @Component({
     selector: 'app-assign-judge',
     templateUrl: './assign-judge.component.html',
@@ -131,7 +132,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             this.removeJudge();
         }
 
-        this.hearing = { ...this.hearing };
+        this.hearing = cloneWithGetters(this.hearing);
         this.setTextFieldValues();
     }
 

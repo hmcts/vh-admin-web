@@ -9,6 +9,7 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Router } from '@angular/router';
+import { cloneWithGetters } from 'src/app/common/helpers/clone-with-getters';
 
 @Component({
     selector: 'app-screening',
@@ -55,7 +56,7 @@ export class ScreeningComponent implements OnInit, OnDestroy {
             };
         }
         this.hearingService.updateHearingRequest(this.hearing);
-        this.hearing = { ...this.hearing };
+        this.hearing = cloneWithGetters(this.hearing);
     }
 
     onDeleteEndpointScreening(endpoint: EndpointModel) {
@@ -64,7 +65,7 @@ export class ScreeningComponent implements OnInit, OnDestroy {
                 e.screening = null;
             }
         });
-        this.hearing = { ...this.hearing };
+        this.hearing = cloneWithGetters(this.hearing);
     }
 
     onDeleteParticipantScreening(participant: ParticipantModel) {
@@ -73,7 +74,7 @@ export class ScreeningComponent implements OnInit, OnDestroy {
                 p.screening = null;
             }
         });
-        this.hearing = { ...this.hearing };
+        this.hearing = cloneWithGetters(this.hearing);
     }
 
     onContinue() {

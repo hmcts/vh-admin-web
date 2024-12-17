@@ -6,7 +6,7 @@ import { BookingService } from '../../services/booking.service';
 import { BookingEditComponent } from './booking-edit.component';
 import { of } from 'rxjs';
 import { LaunchDarklyService, FeatureFlags } from 'src/app/services/launch-darkly.service';
-import { createVHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 describe('BookingEditComponent', () => {
     let component: BookingEditComponent;
@@ -18,7 +18,7 @@ describe('BookingEditComponent', () => {
         'isHearingAboutToStart',
         'getCurrentRequest'
     ]);
-    videoHearingServiceSpy.getCurrentRequest.and.returnValue(createVHBooking());
+    videoHearingServiceSpy.getCurrentRequest.and.returnValue(new VHBooking());
 
     const bookingServiceSpy = jasmine.createSpyObj('BookingService', ['setEditMode']);
 

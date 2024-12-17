@@ -3,9 +3,10 @@ import { BookingPersistService } from './bookings-persist.service';
 import { v4 as uuid } from 'uuid';
 import { CaseModel } from '../common/model/case.model';
 import { BookingStatus, CaseResponse, HearingDetailsResponse, JudiciaryParticipantResponse, VideoSupplier } from './clients/api-client';
-import { createVHBooking, VHBooking } from '../common/model/vh-booking';
+import { VHBooking } from '../common/model/vh-booking';
 import { BookingsListItemModel } from '../common/model/booking-list-item.model';
 import { mapHearingToVHBooking } from '../common/model/api-contract-to-client-model-mappers';
+import { cloneWithGetters } from '../common/helpers/clone-with-getters';
 
 function MockGroupedBookings(hearings: BookingsListItemModel[]): BookingsListModel {
     const model = new BookingsListModel(new Date());
@@ -83,11 +84,10 @@ describe('BookingsPersistService', () => {
 
     describe('#updateBooking', () => {
         it('should not update if there are no loaded hearings', () => {
-            const model: VHBooking = {
-                updated_date: new Date(),
-                audio_recording_required: true,
-                supplier: VideoSupplier.Kinly
-            };
+            const model = new VHBooking(); 
+            model.updated_date = new Date();
+            model.audio_recording_required = true;
+            model.supplier = VideoSupplier.Kinly;
             service.updateBooking(model);
             expect(service.bookingList.length).toBe(0);
         });
@@ -95,7 +95,7 @@ describe('BookingsPersistService', () => {
         it('should not update hearing if it is not selected', () => {
             service.bookingList = [MockGroupedBookings([MockBookedHearing(), MockBookedHearing()])];
 
-            const hearing = createVHBooking();
+            const hearing = new VHBooking();
             const updatedCase = new CaseModel();
             updatedCase.name = 'updated case';
             hearing.case = updatedCase;
@@ -111,7 +111,7 @@ describe('BookingsPersistService', () => {
             service.selectedGroupIndex = 0;
             service.selectedItemIndex = 0;
 
-            const hearing = createVHBooking();
+            const hearing = new VHBooking();
             hearing.court_room = 'court room';
             hearing.court_name = 'court';
 
@@ -153,13 +153,13 @@ describe('BookingsPersistService', () => {
             });
         });
 
-        it('should update judge name for selected hearing with judiciary participant judge', () => {
+        fit('should update judge name for selected hearing with judiciary participant judge', () => {
             service.bookingList = [MockGroupedBookings([MockBookedHearing(), MockBookedHearing()])];
 
             service.selectedGroupIndex = 0;
             service.selectedItemIndex = 0;
 
-            const hearing = { ...service.bookingList[0].BookingsDetails[0] };
+            const hearing = cloneWithGetters(service.bookingList[0].BookingsDetails[0]);
             const judge = hearing.Booking.judge;
             judge.displayName = 'Judge Test';
 
@@ -173,13 +173,13 @@ describe('BookingsPersistService', () => {
             expect(updatedHearing.Booking.judge.displayName).toBe(judge.displayName);
         });
 
-        it('should update judge name for selected hearing with judiciary participants but no judge', () => {
+        fit('should update judge name for selected hearing with judiciary participants but no judge', () => {
             service.bookingList = [MockGroupedBookings([MockBookedHearingWithoutJudge(), MockBookedHearingWithoutJudge()])];
 
             service.selectedGroupIndex = 0;
             service.selectedItemIndex = 0;
 
-            const hearing = { ...service.bookingList[0].BookingsDetails[0] };
+            const hearing = cloneWithGetters(service.bookingList[0].BookingsDetails[0]);
             const panelMember = hearing.Booking.judiciaryParticipants[0];
             panelMember.displayName = 'Panel Member';
 

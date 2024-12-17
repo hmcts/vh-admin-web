@@ -5,7 +5,7 @@ import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { AddJudicialOfficeHoldersComponent } from './add-judicial-office-holders.component';
 import { Router } from '@angular/router';
-import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { ParticipantListComponent } from '../../participant';
 import { ParticipantsListStubComponent } from 'src/app/testing/stubs/participant-list-stub';
 import { BreadcrumbComponent } from '../../breadcrumb/breadcrumb.component';
@@ -34,7 +34,7 @@ describe('AddJudicialOfficeHoldersComponent', () => {
     beforeEach(async () => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
-        hearing = createVHBooking();
+        hearing = new VHBooking();
         hearing.judiciaryParticipants = [];
         videoHearingsServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
             'getCurrentRequest',

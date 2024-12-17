@@ -3,7 +3,7 @@ import { VHBooking } from 'src/app/common/model/vh-booking';
 // Creates a multi day hearing from an existing hearing model
 export function createMultiDayHearing(currentHearing: VHBooking) {
     const multiDayHearing: VHBooking = Object.assign({}, currentHearing);
-    multiDayHearing.isMultiDay = true;
+    multiDayHearing.groupId = '123';
     const scheduledDateTime = new Date();
     scheduledDateTime.setSeconds(0);
     multiDayHearing.scheduled_date_time = scheduledDateTime;
