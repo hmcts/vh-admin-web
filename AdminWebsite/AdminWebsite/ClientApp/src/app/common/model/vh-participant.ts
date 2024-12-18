@@ -77,4 +77,8 @@ export class VHParticipant {
     get is_judge(): boolean {
         return this.hearing_role_name && this.hearing_role_name.toLowerCase().trim() === HearingRoles.JUDGE;
     }
+
+    get IsEmailEjud(): boolean {
+        return this.email?.toLowerCase().includes('judiciary') ?? false;
+    }
 }

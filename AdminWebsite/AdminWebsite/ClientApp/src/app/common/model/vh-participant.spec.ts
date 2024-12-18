@@ -180,4 +180,26 @@ describe('VHParticipant', () => {
             expect(participant.is_judge).toBeFalsy();
         });
     });
+
+    describe('IsEmailEjud', () => {
+        it('should return true if email includes judiciary', () => {
+            // Arrange
+            const participant = new VHParticipant({
+                email: 'test@judiciary.com'
+            });
+
+            // Act & Assert
+            expect(participant.IsEmailEjud).toBeTruthy();
+        });
+
+        it('should return false if email does not include judiciary', () => {
+            // Arrange
+            const participant = new VHParticipant({
+                email: 'test@email.com'
+            });
+
+            // Act & Assert
+            expect(participant.IsEmailEjud).toBeFalsy();
+        });
+    });
 });
