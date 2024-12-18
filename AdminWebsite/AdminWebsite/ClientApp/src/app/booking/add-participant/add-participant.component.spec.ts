@@ -28,6 +28,7 @@ import { MockComponent } from 'ng-mocks';
 import { InterpreterSelectedDto } from '../interpreter-form/interpreter-selected.model';
 import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
 import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -89,27 +90,25 @@ let companyNameIndividual: AbstractControl;
 let representing: AbstractControl;
 let interpretee: AbstractControl;
 
-const participants: ParticipantModel[] = [];
+const participants: VHParticipant[] = [];
 
-const p1 = new ParticipantModel();
+const p1 = new VHParticipant();
 p1.first_name = 'John';
 p1.last_name = 'Doe';
 p1.display_name = 'John Doe';
-p1.is_judge = true;
 p1.title = 'Mr.';
 p1.email = 'test1@hmcts.net';
 p1.phone = '32332';
-p1.hearing_role_name = 'Representative';
+p1.hearing_role_name = 'Judge';
 p1.company = 'CN';
-p1.representee = 'representee';
-p1.user_role_name = 'Representative';
+
+p1.user_role_name = 'Judge';
 p1.username = 'judge@user.name';
 
-const p2 = new ParticipantModel();
+const p2 = new VHParticipant();
 p2.first_name = 'Jane';
 p2.last_name = 'Doe';
 p2.display_name = 'Jane Doe';
-p2.is_judge = false;
 p2.title = 'Mr.';
 p2.email = 'test2@hmcts.net';
 p2.phone = '32332';
@@ -119,11 +118,10 @@ p2.representee = 'representee';
 p2.user_role_name = 'Representative';
 p1.username = 'judge@user.name';
 
-const p3 = new ParticipantModel();
+const p3 = new VHParticipant();
 p3.first_name = 'Chris';
 p3.last_name = 'Green';
 p3.display_name = 'Chris Green';
-p3.is_judge = false;
 p3.title = 'Mr.';
 p3.email = 'test3@hmcts.net';
 p3.phone = '32332';
@@ -133,11 +131,11 @@ p3.is_exist_person = true;
 p3.id = '1234';
 p3.representee = 'representee';
 p3.user_role_name = 'Representative';
-const p4 = new ParticipantModel();
+
+const p4 = new VHParticipant();
 p4.first_name = 'Test';
 p4.last_name = 'Participant';
 p4.display_name = 'Test Participant';
-p4.is_judge = false;
 p4.title = 'Mr.';
 p4.email = 'test4@hmcts.net';
 p4.phone = '32332';
@@ -146,11 +144,10 @@ p4.company = 'CN';
 p4.id = '1234';
 p4.user_role_name = 'Individual';
 
-const p5 = new ParticipantModel();
+const p5 = new VHParticipant();
 p5.first_name = 'Test7';
 p5.last_name = 'Participant7';
 p5.display_name = 'Test Participant7';
-p5.is_judge = false;
 p5.title = 'Mr.';
 p5.email = 'test7@hmcts.net';
 p5.phone = '32332';
@@ -160,11 +157,10 @@ p5.id = '1234666';
 p5.user_role_name = 'Individual';
 p5.interpreterFor = 'test4@hmcts.net';
 
-const p6 = new ParticipantModel();
+const p6 = new VHParticipant();
 p6.first_name = 'Test8';
 p6.last_name = 'Participant8';
 p6.display_name = 'Test Participant8';
-p6.is_judge = false;
 p6.title = 'Mr.';
 p6.email = 'test8@hmcts.net';
 p6.phone = '32332';
@@ -595,21 +591,21 @@ describe('AddParticipantComponent', () => {
         component.ngOnInit();
         component.ngAfterViewInit();
         tick(1000);
-        const observer01 = new ParticipantModel();
+        const observer01 = new VHParticipant();
         observer01.id = 'Observer Observer';
         observer01.first_name = 'firstName';
         observer01.last_name = 'lastName';
         observer01.hearing_role_name = 'Observer';
         observer01.user_role_name = 'Individual';
         component.hearing.participants.push(observer01);
-        const observer03 = new ParticipantModel();
+        const observer03 = new VHParticipant();
         observer03.id = 'Vets UK Observer';
         observer03.first_name = 'firstName';
         observer03.last_name = 'lastName';
         observer03.hearing_role_name = 'Observer';
         observer03.user_role_name = 'Individual';
         component.hearing.participants.push(observer03);
-        const observer04 = new ParticipantModel();
+        const observer04 = new VHParticipant();
         observer04.id = 'None Observer';
         observer04.first_name = 'firstName';
         observer04.last_name = 'lastName';
@@ -645,19 +641,17 @@ describe('AddParticipantComponent', () => {
         component.hearing.participants = [];
         component.ngOnInit();
 
-        const pa1 = new ParticipantModel();
+        const pa1 = new VHParticipant();
         pa1.first_name = 'firstname';
         pa1.last_name = 'lastname-interpretee';
         pa1.display_name = 'firstname lastname-interpretee';
-        pa1.is_judge = false;
         pa1.email = 'firstname.lastname-interpretee@email.com';
         pa1.hearing_role_name = 'Litigant in Person';
 
-        const pa2 = new ParticipantModel();
+        const pa2 = new VHParticipant();
         pa2.first_name = 'firstname';
         pa2.last_name = 'lastname-interpreter';
         pa1.display_name = 'firstname lastname-interpreter';
-        pa2.is_judge = false;
         pa2.email = 'firstname.lastname-interpreter@email.com';
         pa2.hearing_role_name = 'Interpreter';
         pa2.interpreterFor = 'firstname.lastname-interpretee@email.com';
@@ -679,19 +673,17 @@ describe('AddParticipantComponent', () => {
         component.hearing.participants = [];
         component.ngOnInit();
 
-        const part1 = new ParticipantModel();
+        const part1 = new VHParticipant();
         part1.first_name = 'firstname';
         part1.last_name = 'lastname-interpretee';
         part1.display_name = 'firstname lastname-interpretee';
-        part1.is_judge = false;
         part1.email = 'firstname.lastname-interpretee@email.com';
         part1.hearing_role_name = 'Litigant in Person';
 
-        const part2 = new ParticipantModel();
+        const part2 = new VHParticipant();
         part2.first_name = 'firstname';
         part2.last_name = 'lastname-interpreter';
         part2.display_name = 'firstname lastname-interpreter';
-        part2.is_judge = false;
         part2.email = 'firstname.lastname-interpreter@email.com';
         part2.hearing_role_name = 'Interpreter';
         part2.interpreterFor = 'firstname.lastname-interpretee@email.com';
@@ -1180,20 +1172,18 @@ describe('AddParticipantComponent edit mode', () => {
         component.hearing.participants = [];
         component.ngOnInit();
 
-        const part1 = new ParticipantModel();
+        const part1 = new VHParticipant();
         part1.first_name = 'firstname';
         part1.last_name = 'lastname-interpretee';
         part1.display_name = 'firstname lastname-interpretee';
-        part1.is_judge = false;
         part1.email = 'firstname.lastname-interpretee@email.com';
         part1.hearing_role_name = 'Litigant in Person';
         part1.id = '100';
 
-        const part2 = new ParticipantModel();
+        const part2 = new VHParticipant();
         part2.first_name = 'firstname';
         part2.last_name = 'lastname-interpreter';
         part2.display_name = 'firstname lastname-interpreter';
-        part2.is_judge = false;
         part2.email = 'firstname.lastname-interpreter@email.com';
         part2.hearing_role_name = 'Interpreter';
         part2.interpreterFor = 'firstname.lastname-interpretee@email.com';

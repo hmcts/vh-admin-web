@@ -10,14 +10,14 @@ import { CancelPopupStubComponent } from '../../testing/stubs/cancel-popup-stub'
 import { ConfirmationPopupStubComponent } from '../../testing/stubs/confirmation-popup-stub';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { OtherInformationComponent } from './other-information.component';
-import { ParticipantModel } from '../../common/model/participant.model';
 import { CaseModel } from 'src/app/common/model/case.model';
 import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
 import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 function initHearingRequest(): VHBooking {
-    const participants: ParticipantModel[] = [];
+    const participants: VHParticipant[] = [];
 
     const cases: CaseModel[] = [];
 
@@ -43,18 +43,16 @@ let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
-const interpreter: ParticipantModel = {
+const interpreter = new VHParticipant({
     hearing_role_name: 'Interpreter ',
-    is_judge: false,
     is_exist_person: false,
     interpretation_language: undefined
-};
-const notInterpreter: ParticipantModel = {
+});
+const notInterpreter = new VHParticipant({
     hearing_role_name: 'Not Interpreter ',
-    is_judge: false,
     is_exist_person: false,
     interpretation_language: undefined
-};
+});
 
 describe('OtherInformationComponent', () => {
     let component: OtherInformationComponent;

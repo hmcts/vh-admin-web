@@ -6,6 +6,7 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { Logger } from '../../services/logger';
 import { HearingRoleModel } from 'src/app/common/model/hearing-role.model';
 import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 describe('ParticipantService', () => {
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info']);
@@ -69,9 +70,9 @@ describe('ParticipantService', () => {
     }));
     it('should remove participant', inject([ParticipantService], (service: ParticipantService) => {
         const hearing: VHBooking = createVHBooking();
-        const part1 = new ParticipantModel();
+        const part1 = new VHParticipant();
         part1.email = 'aa@hmcts.net';
-        const participants: ParticipantModel[] = [];
+        const participants: VHParticipant[] = [];
         participants.push(part1);
         hearing.participants = participants;
         const result = service.removeParticipant(hearing, 'aa@hmcts.net');
@@ -79,9 +80,9 @@ describe('ParticipantService', () => {
     }));
     it('should not remove participant, if email is not in the list', inject([ParticipantService], (service: ParticipantService) => {
         const hearing: VHBooking = createVHBooking();
-        const part1 = new ParticipantModel();
+        const part1 = new VHParticipant();
         part1.email = 'aa@hmcts.net';
-        const participants: ParticipantModel[] = [];
+        const participants: VHParticipant[] = [];
         participants.push(part1);
         hearing.participants = participants;
         const result = service.removeParticipant(hearing, 'bb@hmcts.net');
@@ -90,10 +91,10 @@ describe('ParticipantService', () => {
     it('should remove participant and log a message', inject([ParticipantService], (service: ParticipantService) => {
         const hearing: VHBooking = createVHBooking();
         hearing.hearing_id = '12345';
-        const part1 = new ParticipantModel();
+        const part1 = new VHParticipant();
         part1.email = 'aa@hmcts.net';
         part1.id = '123';
-        const participants: ParticipantModel[] = [];
+        const participants: VHParticipant[] = [];
         participants.push(part1);
         hearing.participants = participants;
         const result = service.removeParticipant(hearing, 'aa@hmcts.net');

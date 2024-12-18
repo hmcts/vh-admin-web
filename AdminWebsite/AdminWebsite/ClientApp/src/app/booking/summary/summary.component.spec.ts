@@ -12,7 +12,6 @@ import { PipeStringifierService } from 'src/app/services/pipe-stringifier.servic
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { CaseModel } from '../../common/model/case.model';
-import { ParticipantModel } from '../../common/model/participant.model';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 import { BookingService } from '../../services/booking.service';
@@ -39,9 +38,11 @@ import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkl
 import { TruncatableTextComponent } from 'src/app/shared/truncatable-text/truncatable-text.component';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 
 function initExistingHearingRequest(): VHBooking {
-    const pat1 = new ParticipantModel();
+    const pat1 = new VHParticipant();
     pat1.email = 'aa@hmcts.net';
     pat1.representee = 'citizen 01';
     pat1.display_name = 'solicitor 01';
@@ -288,7 +289,7 @@ describe('SummaryComponent with valid request', () => {
     });
     it('should not remove participant by not existing email', () => {
         component.ngOnInit();
-        const pat1 = new ParticipantModel();
+        const pat1 = new VHParticipant();
         pat1.email = 'aa@hmcts.net';
         component.hearing.participants = [];
         component.hearing.participants.push(pat1);
@@ -368,15 +369,15 @@ describe('SummaryComponent with valid request', () => {
         component.ngOnInit();
         component.hearing.participants = [];
 
-        const participants: ParticipantModel[] = [];
-        let participant = new ParticipantModel();
+        const participants: VHParticipant[] = [];
+        let participant = new VHParticipant();
         participant.first_name = 'firstname';
         participant.last_name = 'lastname';
         participant.email = 'firstname.lastname@email.com';
         participant.hearing_role_name = 'Litigant in person';
         participants.push(participant);
 
-        participant = new ParticipantModel();
+        participant = new VHParticipant();
         participant.first_name = 'firstname1';
         participant.last_name = 'lastname1';
         participant.email = 'firstname1.lastname1@email.com';
@@ -402,15 +403,15 @@ describe('SummaryComponent with valid request', () => {
         component.ngOnInit();
         component.hearing.participants = [];
 
-        const participants: ParticipantModel[] = [];
-        let participant = new ParticipantModel();
+        const participants: VHParticipant[] = [];
+        let participant = new VHParticipant();
         participant.first_name = 'firstname';
         participant.last_name = 'lastname';
         participant.email = 'firstname.lastname@email.com';
         participant.hearing_role_name = 'Litigant in person';
         participants.push(participant);
 
-        participant = new ParticipantModel();
+        participant = new VHParticipant();
         participant.first_name = 'firstname1';
         participant.last_name = 'lastname1';
         participant.email = 'firstname1.lastname1@email.com';
@@ -526,14 +527,13 @@ describe('SummaryComponent with valid request', () => {
 
     it('When booking status false will re-poll', fakeAsync(async () => {
         videoHearingsServiceSpy.getStatus.calls.reset();
-        const participants: ParticipantModel[] = [];
-        const participant = new ParticipantModel();
+        const participants: VHParticipant[] = [];
+        const participant = new VHParticipant();
         participant.first_name = 'firstname';
         participant.last_name = 'lastname';
         participant.email = 'firstname.lastname@email.com';
-        participant.hearing_role_name = 'Litigant in person';
+        participant.hearing_role_name = HearingRoles.JUDGE;
         participant.id = '100';
-        participant.is_judge = true;
         participants.push(participant);
         component.hearing.participants = participants;
         const response = {
@@ -556,14 +556,13 @@ describe('SummaryComponent with valid request', () => {
 
     it('When booking status created but not judge assigned', fakeAsync(async () => {
         videoHearingsServiceSpy.getStatus.calls.reset();
-        const participants: ParticipantModel[] = [];
-        const participant = new ParticipantModel();
+        const participants: VHParticipant[] = [];
+        const participant = new VHParticipant();
         participant.first_name = 'firstname';
         participant.last_name = 'lastname';
         participant.email = 'firstname.lastname@email.com';
         participant.hearing_role_name = 'Litigant in person';
         participant.id = '100';
-        participant.is_judge = false;
         participants.push(participant);
         component.hearing.participants = participants;
         const response = {
@@ -873,8 +872,8 @@ describe('SummaryComponent  with existing request', () => {
         lp.linkType = LinkedParticipantType.Interpreter;
         lp.linkedParticipantId = '200';
         linkedParticipants.push(lp);
-        const participants: ParticipantModel[] = [];
-        let participant = new ParticipantModel();
+        const participants: VHParticipant[] = [];
+        let participant = new VHParticipant();
         participant.first_name = 'firstname';
         participant.last_name = 'lastname';
         participant.email = 'firstname.lastname@email.com';
@@ -888,7 +887,7 @@ describe('SummaryComponent  with existing request', () => {
         lp1.linkType = LinkedParticipantType.Interpreter;
         lp1.linkedParticipantId = '100';
         linkedParticipants1.push(lp1);
-        participant = new ParticipantModel();
+        participant = new VHParticipant();
         participant.first_name = 'firstname1';
         participant.last_name = 'lastname1';
         participant.email = 'firstname1.lastname1@email.com';
@@ -969,8 +968,8 @@ describe('SummaryComponent  with multi days request', () => {
         lp.linkType = LinkedParticipantType.Interpreter;
         lp.linkedParticipantId = '200';
         linkedParticipants.push(lp);
-        const participants: ParticipantModel[] = [];
-        let participant = new ParticipantModel();
+        const participants: VHParticipant[] = [];
+        let participant = new VHParticipant();
         participant.first_name = 'firstname';
         participant.last_name = 'lastname';
         participant.email = 'firstname.lastname@email.com';
@@ -984,7 +983,7 @@ describe('SummaryComponent  with multi days request', () => {
         lp1.linkType = LinkedParticipantType.Interpreter;
         lp1.linkedParticipantId = '100';
         linkedParticipants1.push(lp1);
-        participant = new ParticipantModel();
+        participant = new VHParticipant();
         participant.first_name = 'firstname1';
         participant.last_name = 'lastname1';
         participant.email = 'firstname1.lastname1@email.com';

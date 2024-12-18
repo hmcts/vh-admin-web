@@ -19,6 +19,7 @@ import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/mo
 import { takeUntil } from 'rxjs/operators';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { InterpreterSelectedDto } from '../interpreter-form/interpreter-selected.model';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-add-participant',
@@ -310,7 +311,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
             this.form.markAsUntouched();
             this.form.markAsPristine();
             this.form.updateValueAndValidity();
-            const newParticipant = new ParticipantModel();
+            const newParticipant = new VHParticipant();
 
             if (this.participantDetails) {
                 this.participantDetails.addedDuringHearing =

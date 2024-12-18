@@ -24,6 +24,7 @@ import { ScreeningDto } from '../booking/screening/screening.model';
 import { ReferenceDataService } from './reference-data.service';
 import { MockValues } from '../testing/data/test-objects';
 import { createVHBooking, VHBooking } from '../common/model/vh-booking';
+import { VHParticipant } from '../common/model/vh-participant';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
@@ -269,8 +270,8 @@ describe('Video hearing service', () => {
     });
 
     it('should map Existing hearing', () => {
-        const participants: ParticipantModel[] = [];
-        const participant = new ParticipantModel();
+        const participants: VHParticipant[] = [];
+        const participant = new VHParticipant();
         participant.title = 'Mr';
         participant.first_name = 'Dan';
         participant.middle_names = 'Ivan';
@@ -343,8 +344,8 @@ describe('Video hearing service', () => {
     });
 
     it('should map Existing hearing', () => {
-        const participants: ParticipantModel[] = [];
-        const participant = new ParticipantModel();
+        const participants: VHParticipant[] = [];
+        const participant = new VHParticipant();
         participant.title = 'Mr';
         participant.first_name = 'Dan';
         participant.middle_names = 'Ivan';
@@ -613,7 +614,7 @@ describe('Video hearing service', () => {
         it('should replace an existing judge, from participant list', () => {
             // Arrange
             const newJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
-            const existingJudge = new ParticipantModel();
+            const existingJudge = new VHParticipant();
             existingJudge.username = 'judge';
             service['modelHearing'].participants.push(existingJudge);
             spyOn(service['modelHearing'].participants, 'findIndex').and.returnValue(0);
@@ -755,9 +756,9 @@ describe('Video hearing service', () => {
             )
         );
         hearing.judiciaryParticipants = judiciaryParticipants;
-        const participants: ParticipantModel[] = [];
+        const participants: VHParticipant[] = [];
         participants.push(
-            new ParticipantModel({
+            new VHParticipant({
                 id: 'e09882e8-345c-4bbb-b412-af6f4f622a24',
                 email: 'app.litigant@email.com',
                 display_name: 'Litigant',

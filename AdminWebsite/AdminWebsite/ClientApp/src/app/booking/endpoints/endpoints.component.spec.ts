@@ -13,13 +13,14 @@ import { VideoEndpointItemComponent } from './video-endpoint-item/video-endpoint
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
 import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 function initHearingRequest(): VHBooking {
     const newHearing = createVHBooking();
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
     newHearing.participants = [
-        {
+        new VHParticipant({
             id: '1',
             first_name: 'John',
             last_name: 'Doe',
@@ -27,8 +28,8 @@ function initHearingRequest(): VHBooking {
             display_name: 'John Doe',
             user_role_name: 'Representative',
             interpretation_language: undefined
-        },
-        {
+        }),
+        new VHParticipant({
             id: '2',
             first_name: 'Chris',
             last_name: 'Green',
@@ -36,8 +37,8 @@ function initHearingRequest(): VHBooking {
             display_name: 'Chris Green',
             user_role_name: 'Representative',
             interpretation_language: undefined
-        },
-        {
+        }),
+        new VHParticipant({
             id: '3',
             first_name: 'Jane',
             last_name: 'Smith',
@@ -45,7 +46,7 @@ function initHearingRequest(): VHBooking {
             display_name: 'Jane Smith',
             user_role_name: 'Individual',
             interpretation_language: undefined
-        }
+        })
     ];
     newHearing.endpoints = [
         {

@@ -24,27 +24,27 @@ import { SearchEmailComponent } from '../search-email/search-email.component';
 import { MockComponent } from 'ng-mocks';
 import { Constants } from 'src/app/common/constants';
 import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 
 function initHearingRequest(): VHBooking {
-    const participants: ParticipantModel[] = [];
-    const p1 = new ParticipantModel();
+    const participants: VHParticipant[] = [];
+    const p1 = new VHParticipant();
     p1.display_name = 'display name1';
     p1.email = 'test1@hmcts.net';
     p1.contact_email = 'test1@hmcts.net';
     p1.first_name = 'first';
     p1.last_name = 'last';
-    p1.is_judge = true;
     p1.title = 'Mr.';
     p1.username = 'test1@hmcts.net';
     p1.hearing_role_name = 'Judge';
 
-    const p2 = new ParticipantModel();
+    const p2 = new VHParticipant();
     p2.display_name = 'display name2';
     p2.email = 'test2@hmcts.net';
     p2.contact_email = 'test2@hmcts.net';
     p2.first_name = 'first2';
     p2.last_name = 'last2';
-    p2.is_judge = false;
     p2.title = 'Mr.';
     p2.username = 'test2@hmcts.net';
     p2.hearing_role_name = 'Applicant';
@@ -187,7 +187,7 @@ describe('AssignJudgeComponent', () => {
         });
 
         it('should initialize form and create judgeDisplayName control', () => {
-            const existingStaffMember = new ParticipantModel({
+            const existingStaffMember = new VHParticipant({
                 hearing_role_name: staffMemberRole
             });
 
@@ -349,19 +349,19 @@ describe('AssignJudgeComponent', () => {
         });
     });
 
-    const judge = new ParticipantModel();
+    const judge = new VHParticipant();
     judge.username = 'JudgeUserName';
     judge.email = 'JudgeEmail';
     judge.display_name = 'JudgeDisplayName';
     judge.phone = 'JudgePhone';
     judge.is_courtroom_account = true;
 
-    const alternateJudge = new ParticipantModel();
+    const alternateJudge = new VHParticipant();
     alternateJudge.username = 'AlternateJudgeUserName';
     alternateJudge.email = 'AlternateJudgeEmail';
     alternateJudge.display_name = 'AlternateJudgeDisplayName';
     alternateJudge.phone = 'AlternateJudgePhone';
-    alternateJudge.is_judge = true;
+    alternateJudge.hearing_role_name = Constants.HearingRoles.Judge;
 
     const initialJudgeDisplayNameFld = 'InitialJudgeDisplayNameFld';
     const initialJudgeEmailFld = 'InitialJudgeEmailFld';
@@ -531,7 +531,7 @@ describe('AssignJudgeComponent', () => {
             });
 
             it('should not attempt to add if is existing judge', () => {
-                judge.is_judge = true;
+                judge.hearing_role_name = HearingRoles.JUDGE;
                 component.hearing.participants.unshift(judge);
                 component.updateJudge(judge);
                 expect(videoHearingsServiceSpy.canAddJudge).toHaveBeenCalledTimes(canAddJudgeCalledCountBefore);

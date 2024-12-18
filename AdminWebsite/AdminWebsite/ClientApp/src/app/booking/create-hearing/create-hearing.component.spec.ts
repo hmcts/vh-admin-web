@@ -23,6 +23,8 @@ import { VideoSupplier } from 'src/app/services/clients/api-client';
 import { ServiceIds } from '../models/supplier-override';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 
 function initHearingRequest(): VHBooking {
     const newHearing = createVHBooking();
@@ -391,15 +393,17 @@ describe('CreateHearingComponent with existing request in session', () => {
     });
     it('should return true if participants have been added', () => {
         component.hearing.participants = [
-            { is_judge: false, is_exist_person: true, interpretation_language: undefined },
-            { is_judge: true, is_exist_person: true, interpretation_language: undefined }
+            new VHParticipant({ is_exist_person: true, interpretation_language: undefined }),
+            new VHParticipant({ hearing_role_name: HearingRoles.JUDGE, is_exist_person: true, interpretation_language: undefined })
         ];
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(true);
     });
     it('should return false if participants have not been added', () => {
         component.hearing.participants = [];
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(false);
-        component.hearing.participants = [{ is_judge: true, is_exist_person: true, interpretation_language: undefined }];
+        component.hearing.participants = [
+            new VHParticipant({ hearing_role_name: HearingRoles.JUDGE, is_exist_person: true, interpretation_language: undefined })
+        ];
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(false);
     });
     it('should return false if hearing is undefined', () => {

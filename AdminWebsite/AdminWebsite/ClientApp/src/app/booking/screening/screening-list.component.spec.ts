@@ -5,6 +5,7 @@ import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { SimpleChange, SimpleChanges } from '@angular/core';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 describe('ScreeningListComponent', () => {
     let component: ScreeningListComponent;
@@ -13,11 +14,11 @@ describe('ScreeningListComponent', () => {
 
     beforeEach(async () => {
         hearing = createVHBooking();
-        const participantWithoutScreening = new ParticipantModel();
+        const participantWithoutScreening = new VHParticipant();
         participantWithoutScreening.id = '1';
         participantWithoutScreening.display_name = 'Participant No Screening';
 
-        const participantWithScreening = new ParticipantModel();
+        const participantWithScreening = new VHParticipant();
         participantWithScreening.id = '2';
         participantWithScreening.display_name = 'Participant With Screening';
         participantWithScreening.screening = {

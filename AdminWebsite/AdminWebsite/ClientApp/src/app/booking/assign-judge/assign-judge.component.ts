@@ -16,6 +16,7 @@ import { PipeStringifierService } from '../../services/pipe-stringifier.service'
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 import { ConfigService } from '../../services/config.service';
 import { map } from 'rxjs/operators';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 @Component({
     selector: 'app-assign-judge',
     templateUrl: './assign-judge.component.html',
@@ -119,7 +120,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         });
     }
 
-    updateJudge(judge: ParticipantModel) {
+    updateJudge(judge: VHParticipant) {
         this.updateJudgeAttempted = true;
         this.judge = judge;
         this.canNavigate = false;
@@ -343,11 +344,10 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
     }
 
-    private updateWithNewJudge(judge: ParticipantModel) {
+    private updateWithNewJudge(judge: VHParticipant) {
         this.courtAccountJudgeEmail = judge.username;
         if (!this.isExistingJudge(judge)) {
             if (this.hearingService.canAddJudge(judge.username)) {
-                judge.is_judge = true;
                 judge.hearing_role_code = Constants.HearingRoleCodes.Judge;
                 judge.hearing_role_name = 'Judge';
                 this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);

@@ -1,18 +1,18 @@
 import { VideoSupplier } from 'src/app/services/clients/api-client';
 import { CaseModel } from './case.model';
-import { ParticipantModel } from './participant.model';
 import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 import { EndpointModel } from './endpoint.model';
 import { LinkedParticipantModel } from './linked-participant.model';
 import { mapCaseNameAndNumberToCaseModel, mapJudgeNameToJudge } from './api-contract-to-client-model-mappers';
 import { FormatShortDuration } from '../formatters/format-short-duration';
+import { VHParticipant } from './vh-participant';
 
 export interface VHBooking {
     hearing_id?: string;
     scheduled_date_time?: Date;
     scheduled_duration?: number;
     case?: CaseModel;
-    participants?: ParticipantModel[];
+    participants?: VHParticipant[];
     judiciaryParticipants?: JudicialMemberDto[];
     created_by?: string;
     case_type?: string;

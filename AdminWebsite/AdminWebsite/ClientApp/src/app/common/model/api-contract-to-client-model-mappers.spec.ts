@@ -23,10 +23,12 @@ import {
     mapEndpointResponseToEndpointModel,
     mapHearingToVHBooking,
     mapLinkedParticipantResponseToLinkedParticipantModel,
-    mapParticipantResponseToParticipantModel
+    mapParticipantResponseToVHParticipant
 } from './api-contract-to-client-model-mappers';
 import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 import { Constants } from '../constants';
+import { InterpreterSelectedDto } from 'src/app/booking/interpreter-form/interpreter-selected.model';
+import { mapScreeningResponseToScreeningDto } from 'src/app/booking/screening/screening.model';
 
 const DEFENCE_COUNSEL_ID = 'defence-counsel-id';
 
@@ -126,62 +128,58 @@ describe('mapBookingsHearingResponseToVHBooking', () => {
     });
 });
 
-describe('mapParticipantResponseToParticipantModel', () => {
-    it('should map ParticipantResponse to ParticipantModel', () => {
-        const participants: ParticipantResponse[] = [];
+describe('mapParticipantResponseToVHParticipant', () => {
+    it('should map ParticipantResponse to VHParticipant', () => {
         const participant = new ParticipantResponse();
-        participant.title = 'Mr';
-        participant.first_name = 'Dan';
-        participant.middle_names = 'Ivan';
-        participant.last_name = 'Smith';
-        participant.username = 'dan@hmcts.net';
-        participant.display_name = 'Dan Smith';
-        participant.contact_email = 'dan@hmcts.net';
-        participant.telephone_number = '123123123';
-        participant.hearing_role_name = 'Litigant in person';
-        participant.user_role_name = 'Individual';
-        participant.interpreter_language = null;
-        participants.push(participant);
+        participant.id = 'id';
+        participant.external_reference_id = 'external-ref-id';
+        participant.title = 'title';
+        participant.first_name = 'first-name';
+        participant.last_name = 'last-name';
+        participant.middle_names = 'middle-names';
+        participant.display_name = 'display-name';
+        participant.username = 'username';
+        participant.contact_email = 'contact-email';
+        participant.hearing_role_name = 'hearing-role-name';
+        participant.hearing_role_code = 'hearing-role-code';
+        participant.telephone_number = 'telephone-number';
+        participant.representee = 'representee';
+        participant.organisation = 'organisation';
+        participant.linked_participants = createLinkedParticipants();
+        participant.user_role_name = 'user-role-name';
+        participant.interpreter_language = new AvailableLanguageResponse({
+            code: 'code',
+            description: 'description',
+            type: InterprepretationType.Verbal
+        });
+        participant.screening_requirement = new ScreeningResponse({
+            protect_from: ['protect-from'],
+            type: ScreeningType.Specific
+        });
 
-        const judgeParticipant = new ParticipantResponse();
-        judgeParticipant.title = 'Mr';
-        judgeParticipant.first_name = 'Judge';
-        judgeParticipant.middle_names = 'MiddleNames';
-        judgeParticipant.last_name = 'Test';
-        judgeParticipant.username = 'judge@hmcts.net';
-        judgeParticipant.display_name = 'Judge Test';
-        judgeParticipant.contact_email = 'judge@hmcts.net';
-        judgeParticipant.telephone_number = '123123123';
-        judgeParticipant.hearing_role_name = null;
-        judgeParticipant.user_role_name = 'Judge';
-        judgeParticipant.interpreter_language = null;
-        participants.push(judgeParticipant);
+        const result = mapParticipantResponseToVHParticipant(participant);
 
-        const model = mapParticipantResponseToParticipantModel(participants);
-
-        expect(model[0].title).toEqual(participant.title);
-        expect(model[0].first_name).toEqual(participant.first_name);
-        expect(model[0].middle_names).toEqual(participant.middle_names);
-        expect(model[0].last_name).toEqual(participant.last_name);
-        expect(model[0].username).toEqual(participant.username);
-        expect(model[0].display_name).toEqual(participant.display_name);
-        expect(model[0].email).toEqual(participant.contact_email);
-        expect(model[0].phone).toEqual(participant.telephone_number);
-        expect(model[0].hearing_role_name).toEqual(participant.hearing_role_name);
-        expect(model[0].is_judge).toBeFalse();
-        expect(model[0].interpretation_language).toBeNull();
-
-        expect(model[1].title).toEqual(judgeParticipant.title);
-        expect(model[1].first_name).toEqual(judgeParticipant.first_name);
-        expect(model[1].middle_names).toEqual(judgeParticipant.middle_names);
-        expect(model[1].last_name).toEqual(judgeParticipant.last_name);
-        expect(model[1].username).toEqual(judgeParticipant.username);
-        expect(model[1].display_name).toEqual(judgeParticipant.display_name);
-        expect(model[1].email).toEqual(judgeParticipant.contact_email);
-        expect(model[1].phone).toEqual(judgeParticipant.telephone_number);
-        expect(model[1].hearing_role_name).toEqual(judgeParticipant.hearing_role_name);
-        expect(model[1].is_judge).toBeTrue();
-        expect(model[1].interpretation_language).toBeNull();
+        expect(result.id).toBe(participant.id);
+        expect(result.externalReferenceId).toBe(participant.external_reference_id);
+        expect(result.title).toBe(participant.title);
+        expect(result.first_name).toBe(participant.first_name);
+        expect(result.last_name).toBe(participant.last_name);
+        expect(result.middle_names).toBe(participant.middle_names);
+        expect(result.display_name).toBe(participant.display_name);
+        expect(result.username).toBe(participant.username);
+        expect(result.email).toBe(participant.contact_email);
+        expect(result.hearing_role_name).toBe(participant.hearing_role_name);
+        expect(result.hearing_role_code).toBe(participant.hearing_role_code);
+        expect(result.phone).toBe(participant.telephone_number);
+        expect(result.representee).toBe(participant.representee);
+        expect(result.company).toBe(participant.organisation);
+        expect(result.linked_participants).toEqual(mapLinkedParticipantResponseToLinkedParticipantModel(participant.linked_participants));
+        expect(result.user_role_name).toBe(participant.user_role_name);
+        expect(result.contact_email).toBe(participant.contact_email);
+        expect(result.interpretation_language).toEqual(
+            InterpreterSelectedDto.fromAvailableLanguageResponse(participant.interpreter_language)
+        );
+        expect(result.screening).toEqual(mapScreeningResponseToScreeningDto(participant.screening_requirement));
     });
 });
 
@@ -201,15 +199,11 @@ describe('mapEndpointResponseToEndpointModel', () => {
 
 describe('mapLinkedParticipantResponseToLinkedParticipantModel', () => {
     it('should map LinkedParticipantResponse to LinkedParticipantModel', () => {
-        const linkedParticipants: LinkedParticipantResponse[] = [];
-        const linkedParticipant = new LinkedParticipantResponse();
-        linkedParticipant.type = LinkedParticipantType.Interpreter;
-        linkedParticipant.linked_id = '100';
-        linkedParticipants.push(linkedParticipant);
+        const linkedParticipants = createLinkedParticipants();
 
         const model = mapLinkedParticipantResponseToLinkedParticipantModel(linkedParticipants);
-        expect(model[0].linkType).toEqual(linkedParticipant.type);
-        expect(model[0].linkedParticipantId).toEqual(linkedParticipant.linked_id);
+        expect(model[0].linkType).toEqual(linkedParticipants[0].type);
+        expect(model[0].linkedParticipantId).toEqual(linkedParticipants[0].linked_id);
     });
 });
 
@@ -410,6 +404,17 @@ function createJudiciaryParticipants(): JudiciaryParticipantResponse[] {
     return judiciaryParticipants;
 }
 
+function createLinkedParticipants(): LinkedParticipantResponse[] {
+    const linkedParticipants: LinkedParticipantResponse[] = [];
+
+    const linkedParticipant = new LinkedParticipantResponse();
+    linkedParticipant.type = LinkedParticipantType.Interpreter;
+    linkedParticipant.linked_id = '100';
+    linkedParticipants.push(linkedParticipant);
+
+    return linkedParticipants;
+}
+
 function createEndpoints(): EndpointResponse[] {
     const endpoints: EndpointResponse[] = [];
 
@@ -434,7 +439,8 @@ function verifyVHBooking(vhBooking: VHBooking, hearing: HearingDetailsResponse) 
     expect(vhBooking.case_type_service_id).toBe(hearing.service_id);
     expect(vhBooking.case_type).toBe(hearing.case_type_name);
     expect(vhBooking.case).toEqual(mapCaseResponseToCaseModel(hearing.cases)[0]);
-    expect(vhBooking.participants).toEqual(mapParticipantResponseToParticipantModel(hearing.participants));
+    vhBooking.participants.forEach(participant => {});
+    expect(vhBooking.participants).toEqual(hearing.participants.map(participant => mapParticipantResponseToVHParticipant(participant)));
     expect(vhBooking.judiciaryParticipants).toEqual(
         hearing.judiciary_participants.map(judiciaryParticipant => JudicialMemberDto.fromJudiciaryParticipantResponse(judiciaryParticipant))
     );

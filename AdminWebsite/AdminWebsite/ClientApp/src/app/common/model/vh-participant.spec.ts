@@ -7,12 +7,12 @@ describe('VHParticipant', () => {
             // Arrange
             const participant = new VHParticipant({
                 title: 'title',
-                firstName: 'first-name',
-                lastName: 'last-name'
+                first_name: 'first-name',
+                last_name: 'last-name'
             });
 
             // Act & Assert
-            expect(participant.fullName).toEqual(`${participant.title} ${participant.firstName} ${participant.lastName}`);
+            expect(participant.fullName).toEqual(`${participant.title} ${participant.first_name} ${participant.last_name}`);
         });
     });
 
@@ -20,7 +20,7 @@ describe('VHParticipant', () => {
         it('should return true if userRoleName is Representative and representee is not empty', () => {
             // Arrange
             const participant = new VHParticipant({
-                userRoleName: 'Representative',
+                user_role_name: 'Representative',
                 representee: 'representee'
             });
 
@@ -31,7 +31,7 @@ describe('VHParticipant', () => {
         it('should return false if userRoleName is not Representative', () => {
             // Arrange
             const participant = new VHParticipant({
-                userRoleName: 'OtherRole',
+                user_role_name: 'OtherRole',
                 representee: 'representee'
             });
 
@@ -42,7 +42,7 @@ describe('VHParticipant', () => {
         it('should return false if representee is empty', () => {
             // Arrange
             const participant = new VHParticipant({
-                userRoleName: 'Representative',
+                user_role_name: 'Representative',
                 representee: ''
             });
 
@@ -55,7 +55,7 @@ describe('VHParticipant', () => {
         it('should return true if hearingRoleName is Interpreter', () => {
             // Arrange
             const participant = new VHParticipant({
-                hearingRoleName: 'Interpreter'
+                hearing_role_name: 'Interpreter'
             });
 
             // Act & Assert
@@ -65,7 +65,7 @@ describe('VHParticipant', () => {
         it('should return true if hearingRoleCode is Interpreter', () => {
             // Arrange
             const participant = new VHParticipant({
-                hearingRoleCode: HearingRoleCodes.Interpreter
+                hearing_role_code: HearingRoleCodes.Interpreter
             });
 
             // Act & Assert
@@ -75,8 +75,8 @@ describe('VHParticipant', () => {
         it('should return false if hearingRoleName and hearingRoleCode are not Interpreter', () => {
             // Arrange
             const participant = new VHParticipant({
-                hearingRoleName: 'NotInterpreter',
-                hearingRoleCode: 'NotInterpreter'
+                hearing_role_name: 'NotInterpreter',
+                hearing_role_code: 'NotInterpreter'
             });
 
             // Act & Assert
@@ -88,7 +88,7 @@ describe('VHParticipant', () => {
         it('should return true if hearingRoleName is Interpreter', () => {
             // Arrange
             const participant = new VHParticipant({
-                hearingRoleName: 'Interpreter'
+                hearing_role_name: 'Interpreter'
             });
 
             // Act & Assert
@@ -98,7 +98,7 @@ describe('VHParticipant', () => {
         it('should return true if hearingRoleCode is Interpreter', () => {
             // Arrange
             const participant = new VHParticipant({
-                hearingRoleCode: HearingRoleCodes.Interpreter
+                hearing_role_code: HearingRoleCodes.Interpreter
             });
 
             // Act & Assert
@@ -108,7 +108,7 @@ describe('VHParticipant', () => {
         it('should return true if hearingRoleName is Representative', () => {
             // Arrange
             const participant = new VHParticipant({
-                hearingRoleName: 'Representative'
+                hearing_role_name: 'Representative'
             });
 
             // Act & Assert
@@ -118,7 +118,7 @@ describe('VHParticipant', () => {
         it('should return true if hearingRoleCode is Representative', () => {
             // Arrange
             const participant = new VHParticipant({
-                hearingRoleCode: HearingRoleCodes.Representative
+                hearing_role_code: HearingRoleCodes.Representative
             });
 
             // Act & Assert
@@ -128,8 +128,8 @@ describe('VHParticipant', () => {
         it('should return false if hearingRoleName and hearingRoleCode are not Interpreter or Representative', () => {
             // Arrange
             const participant = new VHParticipant({
-                hearingRoleName: 'OtherRole',
-                hearingRoleCode: 'OtherRoleCode'
+                hearing_role_name: 'OtherRole',
+                hearing_role_code: 'OtherRoleCode'
             });
 
             // Act & Assert
@@ -141,7 +141,7 @@ describe('VHParticipant', () => {
         it('should return true if hearingRoleCode is StaffMember', () => {
             // Arrange
             const participant = new VHParticipant({
-                hearingRoleCode: HearingRoleCodes.StaffMember
+                hearing_role_code: HearingRoleCodes.StaffMember
             });
 
             // Act & Assert
@@ -151,11 +151,33 @@ describe('VHParticipant', () => {
         it('should return false if hearingRoleCode is not StaffMember', () => {
             // Arrange
             const participant = new VHParticipant({
-                hearingRoleCode: 'OtherRoleCode'
+                hearing_role_code: 'OtherRoleCode'
             });
 
             // Act & Assert
             expect(participant.isStaffMember).toBeFalsy();
+        });
+    });
+
+    describe('is_judge', () => {
+        it('should return true if hearingRoleName is Judge', () => {
+            // Arrange
+            const participant = new VHParticipant({
+                hearing_role_name: 'Judge'
+            });
+
+            // Act & Assert
+            expect(participant.is_judge).toBeTruthy();
+        });
+
+        it('should return false if hearingRoleName is not Judge', () => {
+            // Arrange
+            const participant = new VHParticipant({
+                hearing_role_name: 'OtherRole'
+            });
+
+            // Act & Assert
+            expect(participant.is_judge).toBeFalsy();
         });
     });
 });

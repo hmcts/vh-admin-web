@@ -8,34 +8,34 @@ export class VHParticipant {
     id?: string;
     externalReferenceId?: string;
     title?: string;
-    firstName?: string;
-    lastName?: string;
-    middleNames?: string;
-    displayName?: string;
+    first_name?: string;
+    last_name?: string;
+    middle_names?: string;
+    display_name?: string;
     username?: string;
     email?: string;
-    hearingRoleName?: string;
-    hearingRoleCode?: string;
+    hearing_role_name?: string;
+    hearing_role_code?: string;
     phone?: string;
     representee?: string;
     company?: string;
-    isExistPerson?: boolean;
+    is_exist_person?: boolean;
     interpreterFor?: string;
-    linkedParticipants?: LinkedParticipantModel[];
-    interpreteeName?: string;
-    isInterpretee?: boolean;
-    userRoleName?: string;
-    isCourtroomAccount?: boolean;
+    linked_participants?: LinkedParticipantModel[];
+    interpretee_name?: string;
+    is_interpretee?: boolean;
+    user_role_name?: string;
+    is_courtroom_account?: boolean;
     addedDuringHearing?: boolean;
-    contactEmail?: string;
+    contact_email?: string;
     isJudiciaryMember?: boolean;
-    interpretationLanguage: InterpreterSelectedDto;
+    interpretation_language: InterpreterSelectedDto;
     screening?: ScreeningDto;
     // flag to indicate if participant is the last in the list and don't need decoration bottom line
-    flag: boolean;
+    flag?: boolean;
 
     // use to set unique id of the html element
-    indexInList: number;
+    indexInList?: number;
 
     constructor(init?: Partial<VHParticipant>) {
         Object.assign(this, init);
@@ -45,31 +45,36 @@ export class VHParticipant {
     }
 
     get fullName(): string {
-        return `${this.title} ${this.firstName} ${this.lastName}`;
+        return `${this.title} ${this.first_name} ${this.last_name}`;
     }
 
     get isRepresenting() {
-        return this.userRoleName && this.userRoleName.indexOf('Representative') > -1 && !!this.representee;
+        return this.user_role_name && this.user_role_name.indexOf('Representative') > -1 && !!this.representee;
     }
 
     get isInterpreter(): boolean {
         return (
-            (this.hearingRoleName && this.hearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER) ||
-            (this.hearingRoleCode && this.hearingRoleCode === HearingRoleCodes.Interpreter)
+            (this.hearing_role_name && this.hearing_role_name.toLowerCase().trim() === HearingRoles.INTERPRETER) ||
+            (this.hearing_role_code && this.hearing_role_code === HearingRoleCodes.Interpreter)
         );
     }
 
     get isRepOrInterpreter(): boolean {
         return (
-            (this.hearingRoleName &&
-                (this.hearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER ||
-                    this.hearingRoleName.toLowerCase().trim() === HearingRoles.REPRESENTATIVE)) ||
-            (this.hearingRoleCode &&
-                (this.hearingRoleCode === HearingRoleCodes.Interpreter || this.hearingRoleCode === HearingRoleCodes.Representative))
+            (this.hearing_role_name &&
+                (this.hearing_role_name.toLowerCase().trim() === HearingRoles.INTERPRETER ||
+                    this.hearing_role_name.toLowerCase().trim() === HearingRoles.REPRESENTATIVE)) ||
+            (this.hearing_role_code &&
+                (this.hearing_role_code === HearingRoleCodes.Interpreter || this.hearing_role_code === HearingRoleCodes.Representative))
         );
     }
 
     get isStaffMember(): boolean {
-        return this.hearingRoleCode && this.hearingRoleCode === HearingRoleCodes.StaffMember;
+        return this.hearing_role_code && this.hearing_role_code === HearingRoleCodes.StaffMember;
+    }
+
+    // Kept in for compatibility with the existing code
+    get is_judge(): boolean {
+        return this.hearing_role_name && this.hearing_role_name.toLowerCase().trim() === HearingRoles.JUDGE;
     }
 }

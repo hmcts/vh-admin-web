@@ -7,32 +7,32 @@ import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MockComponent } from 'ng-mocks';
 import { ScreeningFormComponent } from './screening-form.component';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { ScreeningListComponent } from './screening-list.component';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 function initHearingRequest(): VHBooking {
     const hearing = createVHBooking();
     hearing.hearing_id = '';
     hearing.participants = [
-        {
+        new VHParticipant({
             display_name: 'Jane',
             email: 'jane@doe.com',
             externalReferenceId: '1Jane'
-        } as ParticipantModel,
-        {
+        }),
+        new VHParticipant({
             display_name: 'Johnny',
             email: 'john@doe.com',
             externalReferenceId: '2John'
-        } as ParticipantModel,
-        {
+        }),
+        new VHParticipant({
             display_name: 'Greeno',
             email: 'james@green.com',
             externalReferenceId: '3Green'
-        } as ParticipantModel
+        })
     ];
     hearing.judiciaryParticipants = [];
     hearing.endpoints = [
