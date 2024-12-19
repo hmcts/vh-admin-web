@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HearingRoleCodes, HearingRoles } from '../common/model/hearing-roles.model';
 import { HearingDetailsResponse, ParticipantResponse } from './clients/api-client';
-import { createVHBookingFromDetails, VHBooking } from '../common/model/vh-booking';
+import { VHBooking } from '../common/model/vh-booking';
 import { VHParticipant } from '../common/model/vh-participant';
 
 @Injectable({ providedIn: 'root' })
@@ -11,7 +11,7 @@ export class BookingDetailsService {
     JUDGE = 'Judge';
 
     mapBooking(hearingResponse: HearingDetailsResponse): VHBooking {
-        const model = createVHBookingFromDetails(
+        const model = VHBooking.createForDetails(
             hearingResponse.id,
             hearingResponse.scheduled_date_time,
             hearingResponse.scheduled_duration,

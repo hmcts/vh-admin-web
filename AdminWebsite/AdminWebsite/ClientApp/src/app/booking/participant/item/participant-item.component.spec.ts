@@ -10,6 +10,7 @@ import { Constants } from 'src/app/common/constants';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { VideoSupplier } from 'src/app/services/clients/api-client';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 const router = {
     navigate: jasmine.createSpy('navigate'),
@@ -51,11 +52,11 @@ describe('ParticipantItemComponent', () => {
         fixture = TestBed.createComponent(ParticipantItemComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-        component.hearing = {
+        component.hearing = new VHBooking({
             updated_date: new Date(),
             other_information: '|JudgeEmail|James.Doe@hmcts.net|JudgePhone|123456789',
             supplier: VideoSupplier.Kinly
-        };
+        });
 
         fixture.detectChanges();
     });

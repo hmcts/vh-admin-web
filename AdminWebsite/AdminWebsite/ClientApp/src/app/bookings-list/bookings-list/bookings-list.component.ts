@@ -17,7 +17,6 @@ import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 import { VenuesMenuComponent } from '../../shared/menus/venues-menu/venues-menu.component';
 import { BookingsListItemModel } from 'src/app/common/model/booking-list-item.model';
-import { isCancelled, isCreated } from 'src/app/common/model/vh-booking';
 
 @Component({
     selector: 'app-bookings-list',
@@ -473,13 +472,5 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
     selectedVenueEmitter($event: number[]) {
         this.bookingPersistService.selectedVenueIds = $event;
-    }
-
-    isCancelled(booking: BookingsListItemModel) {
-        return isCancelled(booking.Booking);
-    }
-
-    isCreated(booking: BookingsListItemModel) {
-        return isCreated(booking.Booking);
     }
 }

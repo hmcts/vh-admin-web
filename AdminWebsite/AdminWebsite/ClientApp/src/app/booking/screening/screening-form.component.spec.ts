@@ -4,7 +4,7 @@ import { ScreeningFormComponent as ScreeningFormComponent } from './screening-fo
 import { Logger } from 'src/app/services/logger';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 describe('ScreeningFormComponent', () => {
@@ -14,7 +14,7 @@ describe('ScreeningFormComponent', () => {
     let hearing: VHBooking;
 
     beforeEach(async () => {
-        hearing = createVHBooking();
+        hearing = new VHBooking();
         const participant1 = new VHParticipant();
         participant1.id = '1';
         participant1.email = 'email1';

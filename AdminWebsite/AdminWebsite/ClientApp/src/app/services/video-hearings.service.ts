@@ -36,7 +36,7 @@ import { map, shareReplay } from 'rxjs/operators';
 import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
 import { ScreeningDto } from '../booking/screening/screening.model';
 import { ReferenceDataService } from './reference-data.service';
-import { createVHBooking, VHBooking } from '../common/model/vh-booking';
+import { VHBooking } from '../common/model/vh-booking';
 import { mapHearingToVHBooking } from '../common/model/api-contract-to-client-model-mappers';
 import { VHParticipant } from '../common/model/vh-participant';
 
@@ -72,7 +72,7 @@ export class VideoHearingsService {
     private checkForExistingHearing() {
         const localRequest = sessionStorage.getItem(this.newRequestKey);
         if (localRequest === null) {
-            this.modelHearing = createVHBooking();
+            this.modelHearing = new VHBooking();
         } else {
             this.modelHearing = JSON.parse(localRequest);
         }
@@ -144,7 +144,7 @@ export class VideoHearingsService {
     }
 
     cancelRequest() {
-        this.modelHearing = createVHBooking();
+        this.modelHearing = new VHBooking();
         sessionStorage.removeItem(this.newRequestKey);
         sessionStorage.removeItem(this.bookingHasChangesKey);
     }

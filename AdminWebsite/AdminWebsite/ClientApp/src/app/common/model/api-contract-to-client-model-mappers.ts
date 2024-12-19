@@ -20,7 +20,7 @@ import { EndpointModel } from './endpoint.model';
 import { VHParticipant } from './vh-participant';
 
 export function mapHearingToVHBooking(hearing: HearingDetailsResponse): VHBooking {
-    return {
+    return new VHBooking({
         hearing_id: hearing.id,
         scheduled_date_time: new Date(hearing.scheduled_date_time),
         scheduled_duration: hearing.scheduled_duration,
@@ -54,15 +54,15 @@ export function mapHearingToVHBooking(hearing: HearingDetailsResponse): VHBookin
         allocatedTo: hearing.allocated_to_username,
         confirmedBy: hearing.confirmed_by,
         confirmedDate: hearing.confirmed_date
-    };
+    });
 }
 
 export function mapBookingsHearingResponseToVHBooking(response: BookingsHearingResponse): VHBooking {
-    return {
+    return new VHBooking({
         hearing_id: response.hearing_id,
         scheduled_date_time: response.scheduled_date_time,
         scheduled_duration: response.scheduled_duration,
-        case: mapCaseNameAndNumberToCaseModel(response.hearing_name, response.hearing_number),
+        case: new CaseModel(response.hearing_name, response.hearing_number),
         created_by: response.created_by,
         case_type: response.case_type_name,
         court_room: response.court_room,
@@ -73,13 +73,13 @@ export function mapBookingsHearingResponseToVHBooking(response: BookingsHearingR
         status: response.status,
         audio_recording_required: response.audio_recording_required,
         supplier: response.conference_supplier,
-        judge: mapJudgeNameToJudge(response.judge_name),
+        judge: new JudicialMemberDto(null, null, null, null, null, null, false, response.judge_name),
         groupId: response.group_id,
         courtRoomAccount: response.court_room_account,
         allocatedTo: response.allocated_to,
         confirmedBy: response.confirmed_by,
         confirmedDate: response.confirmed_date
-    };
+    });
 }
 
 export function mapCaseResponseToCaseModel(casesResponse: CaseResponse[]): CaseModel[] {
@@ -97,12 +97,7 @@ export function mapCaseResponseToCaseModel(casesResponse: CaseResponse[]): CaseM
     return cases;
 }
 
-export function mapCaseNameAndNumberToCaseModel(name: string, number: string): CaseModel {
-    const model = new CaseModel();
-    model.name = name;
-    model.number = number;
-    return model;
-}
+
 
 export function mapParticipantResponseToVHParticipant(response: ParticipantResponse): VHParticipant {
     return new VHParticipant({
@@ -167,12 +162,6 @@ export function mapEndpointResponseToEndpointModel(response: EndpointResponse[],
         });
     }
     return endpoints;
-}
-
-export function mapJudgeNameToJudge(judgeName: string): JudicialMemberDto {
-    const judge = new JudicialMemberDto(null, null, null, null, null, null, false);
-    judge.displayName = judgeName;
-    return judge;
 }
 
 function getJudge(hearing: HearingDetailsResponse): JudicialMemberDto {

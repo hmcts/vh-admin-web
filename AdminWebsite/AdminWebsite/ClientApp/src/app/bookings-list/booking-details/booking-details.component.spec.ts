@@ -25,8 +25,8 @@ import { BookingDetailsComponent } from './booking-details.component';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { HearingRoleCodes } from '../../common/model/hearing-roles.model';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
-import { createVHBooking, createVHBookingFromDetails } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 let component: BookingDetailsComponent;
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
@@ -38,7 +38,7 @@ let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
 
 export class BookingDetailsTestData {
     getBookingsDetailsModel() {
-        const booking = createVHBookingFromDetails(
+        const booking = VHBooking.createForDetails(
             '44',
             new Date('2019-11-22 13:58:40.3730067'),
             120,
@@ -151,7 +151,7 @@ let hearingResponse: HearingDetailsResponse;
 const caseModel = new CaseModel();
 caseModel.name = 'X vs Y';
 caseModel.number = 'XX3456234565';
-const hearingModel = createVHBooking();
+const hearingModel = new VHBooking();
 hearingModel.hearing_id = '44';
 hearingModel.case = caseModel;
 hearingModel.scheduled_duration = 120;
@@ -278,13 +278,13 @@ describe('BookingDetailsComponent', () => {
     }));
     describe('edit buttons pressed', () => {
         it('should set edit mode if the single day edit button pressed', fakeAsync(() => {
-            component.booking = createVHBooking();
+            component.booking = new VHBooking();
             component.editHearing();
             expect(component.booking.isMultiDayEdit).toBeFalsy();
             assertUpdatesAfterEditButtonsPressed();
         }));
         it('should set edit mode if the multi day edit button pressed', fakeAsync(() => {
-            component.booking = createVHBooking();
+            component.booking = new VHBooking();
             component.editMultiDaysOfHearing();
             expect(component.booking.isMultiDayEdit).toBeTruthy();
             assertUpdatesAfterEditButtonsPressed();

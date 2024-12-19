@@ -18,7 +18,6 @@ import {
 import { VHBooking } from './vh-booking';
 import {
     mapBookingsHearingResponseToVHBooking,
-    mapCaseNameAndNumberToCaseModel,
     mapCaseResponseToCaseModel,
     mapEndpointResponseToEndpointModel,
     mapHearingToVHBooking,
@@ -29,6 +28,7 @@ import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/model
 import { Constants } from '../constants';
 import { InterpreterSelectedDto } from 'src/app/booking/interpreter-form/interpreter-selected.model';
 import { mapScreeningResponseToScreeningDto } from 'src/app/booking/screening/screening.model';
+import { CaseModel } from './case.model';
 
 const DEFENCE_COUNSEL_ID = 'defence-counsel-id';
 
@@ -112,7 +112,7 @@ describe('mapBookingsHearingResponseToVHBooking', () => {
         expect(result.hearing_id).toBe(response.hearing_id);
         expect(result.scheduled_date_time).toEqual(response.scheduled_date_time);
         expect(result.scheduled_duration).toBe(response.scheduled_duration);
-        expect(result.case).toEqual(mapCaseNameAndNumberToCaseModel(response.hearing_name, response.hearing_number));
+        expect(result.case).toEqual(new CaseModel(response.hearing_name, response.hearing_number));
         expect(result.created_by).toBe(response.created_by);
         expect(result.case_type).toBe(response.case_type_name);
         expect(result.court_room).toBe(response.court_room);

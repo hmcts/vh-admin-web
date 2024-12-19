@@ -55,7 +55,7 @@ export class ScreeningComponent implements OnInit, OnDestroy {
             };
         }
         this.hearingService.updateHearingRequest(this.hearing);
-        this.hearing = { ...this.hearing };
+        this.hearing = this.hearing.clone();
     }
 
     onDeleteEndpointScreening(endpoint: EndpointModel) {
@@ -64,7 +64,7 @@ export class ScreeningComponent implements OnInit, OnDestroy {
                 e.screening = null;
             }
         });
-        this.hearing = { ...this.hearing };
+        this.hearing = this.hearing.clone();
     }
 
     onDeleteParticipantScreening(participant: VHParticipant) {
@@ -73,7 +73,7 @@ export class ScreeningComponent implements OnInit, OnDestroy {
                 p.screening = null;
             }
         });
-        this.hearing = { ...this.hearing };
+        this.hearing = this.hearing.clone();
     }
 
     onContinue() {

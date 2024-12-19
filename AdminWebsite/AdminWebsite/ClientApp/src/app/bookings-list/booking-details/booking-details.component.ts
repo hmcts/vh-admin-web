@@ -12,7 +12,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
-import { hasBookingConfirmationFailed, isCancelled, isCreated, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 import { mapHearingToVHBooking } from 'src/app/common/model/api-contract-to-client-model-mappers';
 import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
@@ -355,17 +355,5 @@ CY: ${this.conferencePhoneNumberWelsh} (ID: ${this.telephoneConferenceId})`;
 
     isMultiDayUpdateAvailable(): boolean {
         return this.hearing.isMultiDay && this.multiDayBookingEnhancementsEnabled && !this.hearing.isLastDayOfMultiDayHearing;
-    }
-
-    get isCancelled(): boolean {
-        return isCancelled(this.hearing);
-    }
-
-    get isCreated(): boolean {
-        return isCreated(this.hearing);
-    }
-
-    get hasBookingConfirmationFailed(): boolean {
-        return hasBookingConfirmationFailed(this.hearing);
     }
 }

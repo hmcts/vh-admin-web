@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ScreeningListItemComponent } from './screening-list-item.component';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { SimpleChange, SimpleChanges } from '@angular/core';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 
@@ -12,7 +12,7 @@ describe('ScreeningListItemComponent', () => {
     let hearing: VHBooking;
 
     beforeEach(async () => {
-        hearing = createVHBooking();
+        hearing = new VHBooking();
         const participantWithoutScreening = new VHParticipant();
         participantWithoutScreening.id = '1';
         participantWithoutScreening.display_name = 'Participant No Screening';

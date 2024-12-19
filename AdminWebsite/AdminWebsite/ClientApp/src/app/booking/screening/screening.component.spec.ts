@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
-import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MockComponent } from 'ng-mocks';
@@ -15,7 +15,7 @@ import { ScreeningListComponent } from './screening-list.component';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 function initHearingRequest(): VHBooking {
-    const hearing = createVHBooking();
+    const hearing = new VHBooking();
     hearing.hearing_id = '';
     hearing.participants = [
         new VHParticipant({

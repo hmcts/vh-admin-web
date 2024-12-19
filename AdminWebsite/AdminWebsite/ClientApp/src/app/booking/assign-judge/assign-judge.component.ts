@@ -131,7 +131,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             this.removeJudge();
         }
 
-        this.hearing = { ...this.hearing };
+        this.hearing = this.hearing.clone();
         this.setTextFieldValues();
     }
 

@@ -4,7 +4,7 @@ import { Logger } from '../../services/logger';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { Subject } from 'rxjs';
-import { durationInHoursAndMinutes, isCreated, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
@@ -46,13 +46,5 @@ export class HearingDetailsComponent implements OnDestroy {
         } catch (e) {
             return this.hearing?.other_information;
         }
-    }
-
-    isCreated(): boolean {
-        return isCreated(this.hearing);
-    }
-
-    get durationInHoursAndMinutes(): string {
-        return durationInHoursAndMinutes(this.hearing);
     }
 }

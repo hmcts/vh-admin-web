@@ -38,8 +38,8 @@ import { VenuesMenuComponent } from '../../shared/menus/venues-menu/venues-menu.
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { JusticeUserMenuStubComponent } from 'src/app/testing/stubs/dropdown-menu/justice-user-menu-stub.component';
 import { BookingStatusComponent } from '../booking-status/booking-status.component';
-import { createVHBookingFromDetails } from 'src/app/common/model/vh-booking';
 import { BookingsListItemModel } from 'src/app/common/model/booking-list-item.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 let component: BookingsListComponent;
 let bookingPersistService: BookingPersistService;
@@ -129,7 +129,7 @@ export class BookingslistTestData {
         const model = new BookingsListModel(dateNoTime);
         const lists: Array<BookingsListItemModel> = [];
         const b1 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '1',
                 new Date('2019-10-22 13:58:40.3730067'),
                 120,
@@ -155,7 +155,7 @@ export class BookingslistTestData {
         b1.Booking.allocatedTo = 'allocated-to';
 
         const b2 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '2',
                 new Date('2019-10-22 13:58:40.3730067'),
                 120,
@@ -181,7 +181,7 @@ export class BookingslistTestData {
         b2.Booking.allocatedTo = 'allocated-to';
 
         const b3 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '3',
                 new Date('2019-10-22 13:58:40.3730067'),
                 120,
@@ -220,7 +220,7 @@ export class BookingslistTestData {
         const model = new BookingsListModel(dateNoTime);
         const lists: Array<BookingsListItemModel> = [];
         const b1 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '1',
                 new Date('2019-10-22 13:58:40.3730067'),
                 120,
@@ -247,7 +247,7 @@ export class BookingslistTestData {
         b1.Booking.allocatedTo = 'allocated-to';
 
         const b2 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '2',
                 new Date('2019-10-22 13:58:40.3730067'),
                 120,
@@ -274,7 +274,7 @@ export class BookingslistTestData {
         b2.Booking.allocatedTo = 'allocated-to';
 
         const b3 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '6',
                 new Date('2019-10-22 13:58:40.3730067'),
                 120,
@@ -316,7 +316,7 @@ export class ArrayBookingslistModelTestData {
         const model = new BookingsListModel(dateNoTime);
         const lists: Array<BookingsListItemModel> = [];
         const b1 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '11',
                 new Date('2019-10-22 13:58:40.3730067'),
                 120,
@@ -343,7 +343,7 @@ export class ArrayBookingslistModelTestData {
         b1.Booking.allocatedTo = 'allocated-to';
 
         const b2 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '12',
                 new Date('2019-10-22 13:58:40.3730067'),
                 120,
@@ -370,7 +370,7 @@ export class ArrayBookingslistModelTestData {
         b2.Booking.allocatedTo = 'allocated-to';
 
         const b3 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '33',
                 new Date('2019-10-22 13:58:40.3730067'),
                 120,
@@ -405,7 +405,7 @@ export class ArrayBookingslistModelTestData {
         const dateNoTime1 = new Date(date1.setHours(0, 0, 0, 0));
         const model1 = new BookingsListModel(dateNoTime1);
         const b11 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '44',
                 new Date('2019-11-22 13:58:40.3730067'),
                 120,
@@ -432,7 +432,7 @@ export class ArrayBookingslistModelTestData {
         b11.Booking.allocatedTo = 'allocated-to';
 
         const b21 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '45',
                 new Date('2019-11-22 13:58:40.3730067'),
                 120,
@@ -459,7 +459,7 @@ export class ArrayBookingslistModelTestData {
         b21.Booking.allocatedTo = 'allocated-to';
 
         const b31 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '46',
                 new Date('2019-11-22 13:58:40.3730067'),
                 120,
@@ -580,7 +580,7 @@ export class BookingPersistServiceSpy {
 
     updateBooking() {
         const booking = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '1',
                 new Date('2019-10-22 13:58:40.3730067'),
                 120,
@@ -1117,7 +1117,7 @@ describe('BookingsListComponent', () => {
     it('should find the record position in the bookings list', () => {
         component.bookings = new ArrayBookingslistModelTestData().getTestData();
         const booking = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '33',
                 new Date('2019-10-22 13:58:40.3730067'),
                 120,
@@ -1149,7 +1149,7 @@ describe('BookingsListComponent', () => {
     it('should set the selected group index and item index to -1 for record is not found in the list', () => {
         component.bookings = new ArrayBookingslistModelTestData().getTestData();
         const booking = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '3',
                 new Date('2019-12-22 13:58:40.3730067'),
                 120,

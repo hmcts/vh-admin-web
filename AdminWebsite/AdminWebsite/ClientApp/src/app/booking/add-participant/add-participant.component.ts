@@ -324,7 +324,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
                 this.hearing.participants.push(newParticipant);
                 this.hearing.participants = [...this.hearing.participants];
-                this.hearing = { ...this.hearing };
+                this.hearing = this.hearing.clone();
 
                 this.populateInterpretedForList();
                 this.videoHearingService.updateHearingRequest(this.hearing);
@@ -392,7 +392,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                     }
                 });
                 this.hearing.participants = [...this.hearing.participants];
-                this.hearing = { ...this.hearing };
+                this.hearing = this.hearing.clone();
                 this.clearForm();
                 this.participantDetails = null;
                 this.form.markAsPristine();
@@ -442,7 +442,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
-        this.hearing = { ...this.hearing };
+        this.hearing = this.hearing.clone();
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.videoHearingService.setBookingHasChanged();
     }
@@ -758,7 +758,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
-        this.hearing = { ...this.hearing };
+        this.hearing = this.hearing.clone();
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.videoHearingService.setBookingHasChanged();
     }

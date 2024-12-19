@@ -16,7 +16,7 @@ import { InterpreterSelectedDto } from '../../interpreter-form/interpreter-selec
 import { VideoSupplier } from 'src/app/services/clients/api-client';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 import { mapJudicialMemberDtoToVHParticipant } from 'src/app/common/model/api-contract-to-client-model-mappers';
-import { cloneWithGetters } from 'src/app/common/helpers/clone-with-getters';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 const router = {
@@ -65,7 +65,7 @@ describe('ParticipantListComponent', () => {
         fixture = TestBed.createComponent(ParticipantListComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-        component.hearing = { updated_date: new Date(), supplier: VideoSupplier.Kinly };
+        component.hearing = new VHBooking({ updated_date: new Date(), supplier: VideoSupplier.Kinly });
         fixture.detectChanges();
     });
 
@@ -142,7 +142,7 @@ describe('ParticipantListComponent', () => {
             joh.roleCode = 'PanelMember';
             const existingJoh = mapJudicialMemberDtoToVHParticipant(joh, false);
             existingJoh.interpretation_language = oldInterpreterLanguage;
-            const updatedJoh = cloneWithGetters(joh);
+            const updatedJoh = joh.clone();
             updatedJoh.interpretationLanguage = newInterpreterLanguage;
 
             component.sortedJudiciaryMembers = [existingJoh];
@@ -338,7 +338,7 @@ describe('ParticipantListComponent-SortParticipants', () => {
         fixture = TestBed.createComponent(ParticipantListComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-        component.hearing = { updated_date: new Date(), supplier: VideoSupplier.Kinly };
+        component.hearing = new VHBooking({ updated_date: new Date(), supplier: VideoSupplier.Kinly });
         fixture.detectChanges();
     });
     it('should produce a sorted list with no duplicates', () => {

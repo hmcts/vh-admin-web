@@ -11,7 +11,7 @@ import {
 } from '../../services/clients/api-client';
 import { v4 as uuid } from 'uuid';
 import { BookingsListItemModel } from 'src/app/common/model/booking-list-item.model';
-import { createVHBookingFromDetails } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 export class ResponseTestData {
     static getHearingResponseTestData(): HearingDetailsResponse {
@@ -118,7 +118,7 @@ export class ResponseTestData {
         const model = new BookingsListModel(new Date('2019-12-22 00:00:00.0000000'));
         const lists: Array<BookingsListItemModel> = [];
         const b1 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '1',
                 new Date('2019-12-22 13:58:40.3730067'),
                 120,
@@ -142,7 +142,7 @@ export class ResponseTestData {
             )
         );
         const b2 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '12',
                 new Date('2019-12-22 13:58:40.3730067'),
                 120,
@@ -166,7 +166,7 @@ export class ResponseTestData {
             )
         );
         const b3 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '33',
                 new Date('2019-12-22 13:58:40.3730067'),
                 120,
@@ -204,7 +204,7 @@ export class ResponseTestData {
         const model = new BookingsListModel(new Date('2019-10-22 00:00:00.0000000'));
         const lists: Array<BookingsListItemModel> = [];
         const b1 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '1',
                 new Date('2019-10-22 13:58:40.3730067'),
                 120,
@@ -228,7 +228,7 @@ export class ResponseTestData {
             )
         );
         const b2 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '12',
                 new Date('2019-10-22 14:58:40.3730067'),
                 120,
@@ -252,7 +252,7 @@ export class ResponseTestData {
             )
         );
         const b3 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '33',
                 new Date('2019-10-22 14:58:40.3730067'),
                 120,
@@ -284,7 +284,7 @@ export class ResponseTestData {
         const lists1: Array<BookingsListItemModel> = [];
         const model1 = new BookingsListModel(new Date('2019-11-22 00:00:00.0000000'));
         const b11 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '44',
                 new Date('2019-11-22 13:58:40.3730067'),
                 120,
@@ -308,7 +308,7 @@ export class ResponseTestData {
             )
         );
         const b21 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '45',
                 new Date('2019-11-22 14:58:40.3730067'),
                 120,
@@ -332,7 +332,7 @@ export class ResponseTestData {
             )
         );
         const b31 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '46',
                 new Date('2019-11-22 15:58:40.3730067'),
                 120,

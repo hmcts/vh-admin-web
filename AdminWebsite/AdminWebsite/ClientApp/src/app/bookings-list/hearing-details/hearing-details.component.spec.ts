@@ -9,8 +9,8 @@ import { Logger } from '../../services/logger';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { createVHBookingFromDetails } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 describe('HearingDetailsComponent', () => {
     let component: HearingDetailsComponent;
@@ -24,7 +24,7 @@ describe('HearingDetailsComponent', () => {
     });
     const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'getConfig']);
     configServiceSpy.getConfig.and.returnValue(clientSettings);
-    const h1 = createVHBookingFromDetails(
+    const h1 = VHBooking.createForDetails(
         '1',
         new Date('2019-10-22 13:58:40.3730067'),
         120,

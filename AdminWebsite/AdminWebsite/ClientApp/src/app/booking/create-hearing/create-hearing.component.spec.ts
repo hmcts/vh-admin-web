@@ -22,19 +22,19 @@ import { createMultiDayHearing } from 'src/app/testing/helpers/hearing.helpers';
 import { VideoSupplier } from 'src/app/services/clients/api-client';
 import { ServiceIds } from '../models/supplier-override';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
-import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 
 function initHearingRequest(): VHBooking {
-    const newHearing = createVHBooking();
+    const newHearing = new VHBooking();
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
     return newHearing;
 }
 
 function initExistingHearingRequest(): VHBooking {
-    const existingRequest = createVHBooking();
+    const existingRequest = new VHBooking();
     existingRequest.hearing_venue_id = 1;
     existingRequest.case_type = 'Generic';
 

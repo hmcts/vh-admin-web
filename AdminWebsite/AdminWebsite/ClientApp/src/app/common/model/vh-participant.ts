@@ -3,6 +3,7 @@ import { ScreeningDto } from 'src/app/booking/screening/screening.model';
 import { LinkedParticipantModel } from './linked-participant.model';
 import { HearingRoleCodes, HearingRoles } from './hearing-roles.model';
 import { v4 as uuid } from 'uuid';
+import { cloneWithGetters } from '../helpers/clone-with-getters';
 
 export class VHParticipant {
     id?: string;
@@ -122,5 +123,9 @@ export class VHParticipant {
             is_interpretee: isInterpretee,
             linked_participants: linkedParticipants
         });
+    }
+
+    clone(): this {
+        return cloneWithGetters(this);
     }
 }

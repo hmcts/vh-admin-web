@@ -37,7 +37,7 @@ import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { TruncatableTextComponent } from 'src/app/shared/truncatable-text/truncatable-text.component';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
-import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 
@@ -55,7 +55,7 @@ function initExistingHearingRequest(): VHBooking {
     newCaseRequest.name = 'Mr. Test User vs HMRC';
     newCaseRequest.number = 'TX/12345/2018';
 
-    const existingRequest = createVHBooking();
+    const existingRequest = new VHBooking();
     existingRequest.case = newCaseRequest;
     existingRequest.hearing_venue_id = 2;
     existingRequest.scheduled_date_time = today;
@@ -87,7 +87,7 @@ function initBadHearingRequest(): VHBooking {
     newCaseRequest.name = 'Mr. Test User vs HMRC';
     newCaseRequest.number = 'TX/12345/2018';
 
-    const existingRequest = createVHBooking();
+    const existingRequest = new VHBooking();
     existingRequest.case = newCaseRequest;
     existingRequest.hearing_venue_id = 2;
     existingRequest.scheduled_date_time = today;

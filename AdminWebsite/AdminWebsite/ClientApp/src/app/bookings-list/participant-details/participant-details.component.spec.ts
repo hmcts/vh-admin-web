@@ -4,7 +4,7 @@ import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ParticipantDetailsComponent } from './participant-details.component';
 import { HearingRoleCodes, HearingRoles } from '../../common/model/hearing-roles.model';
-import { createVHBookingFromDetails, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 describe('ParticipantDetailsComponent', () => {
@@ -21,7 +21,7 @@ describe('ParticipantDetailsComponent', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ParticipantDetailsComponent);
-        hearing = createVHBookingFromDetails(
+        hearing = VHBooking.createForDetails(
             '1',
             new Date('2019-10-22 13:58:40.3730067'),
             120,

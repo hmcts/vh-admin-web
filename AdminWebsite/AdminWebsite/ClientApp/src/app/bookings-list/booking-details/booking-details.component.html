@@ -36,10 +36,10 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <div *ngIf="!isCancelled">
+      <div *ngIf="!hearing.isCancelled">
         <span>
           <button
-            *ngIf="!hasBookingConfirmationFailed && canEditHearing"
+            *ngIf="!hearing.hasBookingConfirmationFailed && canEditHearing"
             class="govuk-button vh-mt20 vh-mr-25"
             data-module="govuk-button"
             id="edit-button"
@@ -48,7 +48,7 @@
             {{ hearing.isMultiDay && this.multiDayBookingEnhancementsEnabled ? 'Edit this day/date only' : 'Edit' }}
           </button>
           <button
-            *ngIf="!hasBookingConfirmationFailed && canEditHearing && this.isMultiDayUpdateAvailable() && !isTotalHearingMoreThanThreshold"
+            *ngIf="!hearing.hasBookingConfirmationFailed && canEditHearing && this.isMultiDayUpdateAvailable() && !isTotalHearingMoreThanThreshold"
             class="govuk-button vh-mt20 vh-mr-25"
             data-module="govuk-button"
             id="edit-multiple-hearings-button"
@@ -57,7 +57,7 @@
             Edit this and upcoming days/dates
           </button>
           <button
-            *ngIf="!hasBookingConfirmationFailed && canCancelHearing"
+            *ngIf="!hearing.hasBookingConfirmationFailed && canCancelHearing"
             class="govuk-button vh-mt20 vh-mr-25 vh-btn-cancel"
             data-module="govuk-button"
             id="cancel-button"

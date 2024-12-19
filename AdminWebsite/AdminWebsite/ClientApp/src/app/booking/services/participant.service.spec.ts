@@ -4,7 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HearingRoleResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { HearingRoleModel } from 'src/app/common/model/hearing-role.model';
-import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 describe('ParticipantService', () => {
@@ -68,7 +68,7 @@ describe('ParticipantService', () => {
         expect(result).toBeTruthy();
     }));
     it('should remove participant', inject([ParticipantService], (service: ParticipantService) => {
-        const hearing: VHBooking = createVHBooking();
+        const hearing: VHBooking = new VHBooking();
         const part1 = new VHParticipant();
         part1.email = 'aa@hmcts.net';
         const participants: VHParticipant[] = [];
@@ -78,7 +78,7 @@ describe('ParticipantService', () => {
         expect(hearing.participants.length).toBe(0);
     }));
     it('should not remove participant, if email is not in the list', inject([ParticipantService], (service: ParticipantService) => {
-        const hearing: VHBooking = createVHBooking();
+        const hearing: VHBooking = new VHBooking();
         const part1 = new VHParticipant();
         part1.email = 'aa@hmcts.net';
         const participants: VHParticipant[] = [];
@@ -88,7 +88,7 @@ describe('ParticipantService', () => {
         expect(hearing.participants.length).toBe(1);
     }));
     it('should remove participant and log a message', inject([ParticipantService], (service: ParticipantService) => {
-        const hearing: VHBooking = createVHBooking();
+        const hearing: VHBooking = new VHBooking();
         hearing.hearing_id = '12345';
         const part1 = new VHParticipant();
         part1.email = 'aa@hmcts.net';

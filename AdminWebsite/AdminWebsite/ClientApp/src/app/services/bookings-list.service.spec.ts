@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { BookingsListModel } from '../common/model/bookings-list.model';
 import { BookingsModel } from '../common/model/bookings.model';
 import { BookingsListItemModel } from '../common/model/booking-list-item.model';
-import { createVHBookingFromDetails } from '../common/model/vh-booking';
+import { VHBooking } from '../common/model/vh-booking';
 
 export class ResponseTestData {
     static getEditingBookings(): Array<BookingsListModel> {
@@ -14,7 +14,7 @@ export class ResponseTestData {
         const model = new BookingsListModel(new Date('2019-12-22 00:00:00.0000000'));
         const lists: Array<BookingsListItemModel> = [];
         const b1 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '1',
                 new Date('2019-12-22 13:58:40.3730067'),
                 120,
@@ -39,7 +39,7 @@ export class ResponseTestData {
             )
         );
         const b2 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '12',
                 new Date('2019-12-22 13:58:40.3730067'),
                 120,
@@ -64,7 +64,7 @@ export class ResponseTestData {
             )
         );
         const b3 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '33',
                 new Date('2019-12-22 13:58:40.3730067'),
                 120,
@@ -103,7 +103,7 @@ export class ResponseTestData {
         const model = new BookingsListModel(new Date('2019-10-22 00:00:00.0000000'));
         const lists: Array<BookingsListItemModel> = [];
         const b1 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '1',
                 new Date('2019-10-22 13:58:40.3730067'),
                 120,
@@ -128,7 +128,7 @@ export class ResponseTestData {
             )
         );
         const b2 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '12',
                 new Date('2019-10-22 14:58:40.3730067'),
                 120,
@@ -153,7 +153,7 @@ export class ResponseTestData {
             )
         );
         const b3 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '33',
                 new Date('2019-10-22 14:58:40.3730067'),
                 120,
@@ -186,7 +186,7 @@ export class ResponseTestData {
         const lists1: Array<BookingsListItemModel> = [];
         const model1 = new BookingsListModel(new Date('2019-11-22 00:00:00.0000000'));
         const b11 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '44',
                 new Date('2019-11-22 13:58:40.3730067'),
                 120,
@@ -211,7 +211,7 @@ export class ResponseTestData {
             )
         );
         const b21 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '45',
                 new Date('2019-11-22 14:58:40.3730067'),
                 120,
@@ -236,7 +236,7 @@ export class ResponseTestData {
             )
         );
         const b31 = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '46',
                 new Date('2019-11-22 15:58:40.3730067'),
                 120,
@@ -414,7 +414,7 @@ describe('Booking list service functionality', () => {
     it('should replace the edited record to the existing correct date group', () => {
         const bookingsList = ResponseTestData.getBookingsTestData();
         const bookingEdited = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '1',
                 new Date('2019-11-22 13:58:40.3730067'),
                 120,
@@ -453,7 +453,7 @@ describe('Booking list service functionality', () => {
     it('should remove from date group record and add a new date group for the edited record', () => {
         const bookingsList = ResponseTestData.getBookingsTestData();
         const bookingEdited = new BookingsListItemModel(
-            createVHBookingFromDetails(
+            VHBooking.createForDetails(
                 '1',
                 new Date('2019-12-22 13:58:40.3730067'),
                 120,

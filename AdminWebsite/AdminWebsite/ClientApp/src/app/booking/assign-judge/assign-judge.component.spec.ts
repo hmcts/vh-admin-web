@@ -22,7 +22,7 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { MockComponent } from 'ng-mocks';
 import { Constants } from 'src/app/common/constants';
-import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 
@@ -51,7 +51,7 @@ function initHearingRequest(): VHBooking {
     participants.push(p1);
     participants.push(p2);
 
-    const newHearing = createVHBooking();
+    const newHearing = new VHBooking();
     newHearing.participants = participants;
 
     newHearing.hearing_venue_id = -1;
@@ -510,7 +510,7 @@ describe('AssignJudgeComponent', () => {
 
     describe('updateJudge', () => {
         beforeEach(() => {
-            component.hearing = createVHBooking();
+            component.hearing = new VHBooking();
             component.canNavigate = null;
 
             component.judgeDisplayNameFld.setValue(initialJudgeDisplayNameFld);

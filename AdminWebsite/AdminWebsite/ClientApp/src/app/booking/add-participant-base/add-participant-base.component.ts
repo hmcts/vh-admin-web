@@ -12,7 +12,6 @@ import { SearchEmailComponent } from '../search-email/search-email.component';
 import { HearingRoleModel } from 'src/app/common/model/hearing-role.model';
 import { InterpreterFormComponent } from '../interpreter-form/interpreter-form.component';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
-import { cloneWithGetters } from 'src/app/common/helpers/clone-with-getters';
 
 @Directive()
 export abstract class AddParticipantBaseDirective extends BookingBaseComponent implements OnInit {
@@ -199,7 +198,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         this.displayErrorNoParticipants = false;
         this.displayAdd();
         this.enableFields();
-        this.participantDetails = cloneWithGetters(participantDetails);
+        this.participantDetails = this.participantDetails.clone();
 
         if (participantDetails.is_exist_person) {
             this.disableLastFirstNames();

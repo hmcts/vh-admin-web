@@ -3,7 +3,7 @@ import { BookingPersistService } from './bookings-persist.service';
 import { v4 as uuid } from 'uuid';
 import { CaseModel } from '../common/model/case.model';
 import { BookingStatus, CaseResponse, HearingDetailsResponse, JudiciaryParticipantResponse, VideoSupplier } from './clients/api-client';
-import { createVHBooking, VHBooking } from '../common/model/vh-booking';
+import { VHBooking } from '../common/model/vh-booking';
 import { BookingsListItemModel } from '../common/model/booking-list-item.model';
 import { mapHearingToVHBooking } from '../common/model/api-contract-to-client-model-mappers';
 
@@ -83,11 +83,11 @@ describe('BookingsPersistService', () => {
 
     describe('#updateBooking', () => {
         it('should not update if there are no loaded hearings', () => {
-            const model: VHBooking = {
+            const model = new VHBooking({
                 updated_date: new Date(),
                 audio_recording_required: true,
                 supplier: VideoSupplier.Kinly
-            };
+            });
             service.updateBooking(model);
             expect(service.bookingList.length).toBe(0);
         });
@@ -95,7 +95,7 @@ describe('BookingsPersistService', () => {
         it('should not update hearing if it is not selected', () => {
             service.bookingList = [MockGroupedBookings([MockBookedHearing(), MockBookedHearing()])];
 
-            const hearing = createVHBooking();
+            const hearing = new VHBooking();
             const updatedCase = new CaseModel();
             updatedCase.name = 'updated case';
             hearing.case = updatedCase;
@@ -111,7 +111,7 @@ describe('BookingsPersistService', () => {
             service.selectedGroupIndex = 0;
             service.selectedItemIndex = 0;
 
-            const hearing = createVHBooking();
+            const hearing = new VHBooking();
             hearing.court_room = 'court room';
             hearing.court_name = 'court';
 

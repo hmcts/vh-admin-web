@@ -21,15 +21,15 @@ import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkl
 import { By } from '@angular/platform-browser';
 import { createMultiDayHearing } from 'src/app/testing/helpers/hearing.helpers';
 import { EditHearingDatesComponent } from './edit-hearing-dates/edit-hearing-dates.component';
-import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
-const newHearing = createVHBooking();
+const newHearing = new VHBooking();
 
 function initExistingHearingRequest(): VHBooking {
     const today = new Date();
     today.setHours(10, 30);
 
-    const existingRequest = createVHBooking();
+    const existingRequest = new VHBooking();
     existingRequest.hearing_venue_id = 1;
     existingRequest.scheduled_date_time = today;
     existingRequest.scheduled_duration = 80;
@@ -528,7 +528,7 @@ describe('HearingScheduleComponent returning to page', () => {
             new HearingVenueResponse({ id: 1, name: 'aa@hmcts.net', code: '123' }),
             new HearingVenueResponse({ id: 2, name: 'aa@hmcts.net1', code: '456' })
         ];
-        component.hearing = createVHBooking();
+        component.hearing = new VHBooking();
         component.hearing.hearing_venue_id = 2;
         component.hearing.court_code = '456';
         component.hearing.court_name = 'aa@hmcts.net1';
@@ -541,7 +541,7 @@ describe('HearingScheduleComponent returning to page', () => {
         const courts = MockValues.Courts.filter(x => x.id !== -1);
         const selectedCourt = courts[0];
         referenceDataServiceServiceSpy.getCourts.and.returnValue(of(courts));
-        const existingHearingRequest = { ...existingRequest };
+        const existingHearingRequest = existingRequest.clone();
         existingHearingRequest.hearing_id = '123455555900';
         existingHearingRequest.court_name = selectedCourt.name;
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingHearingRequest);

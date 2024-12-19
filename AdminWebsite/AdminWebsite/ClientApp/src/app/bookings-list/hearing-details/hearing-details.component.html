@@ -76,7 +76,7 @@
   </div>
 </div>
 
-<div *ngIf="isCreated">
+<div *ngIf="hearing.isCreated">
   <h2 class="govuk-heading-s remove-header-padding">Joining by phone / Video Hearing link</h2>
   <div class="vh-section">
     <div *ngIf="phoneConferenceDetails.length > 0" class="govuk-grid-row">
@@ -105,7 +105,7 @@
     </div>
   </div>
   <div class="govuk-grid-row">
-    <div class="govuk-body vh-sml" id="duration">listed for {{ durationInHoursAndMinutes }}</div>
+    <div class="govuk-body vh-sml" id="duration">listed for {{ hearing.durationInHoursAndMinutes }}</div>
   </div>
 </div>
 
