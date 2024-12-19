@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
-import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { Constants } from '../../common/constants';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 @Component({
     selector: 'app-booking-participant-list',
@@ -10,13 +10,13 @@ import { Constants } from '../../common/constants';
     styleUrls: ['booking-participant-list.component.scss']
 })
 export class BookingParticipantListComponent {
-    private _participants: Array<ParticipantDetailsModel> = [];
+    private _participants: Array<VHParticipant> = [];
     private _judiciaryParticipants: Array<JudiciaryParticipantDetailsModel> = [];
-    sortedParticipants: ParticipantDetailsModel[] = [];
+    sortedParticipants: VHParticipant[] = [];
     sortedJudiciaryMembers: JudiciaryParticipantDetailsModel[] = [];
 
     @Input()
-    set participants(participants: Array<ParticipantDetailsModel>) {
+    set participants(participants: Array<VHParticipant>) {
         this._participants = participants;
         this.sortParticipants();
         this.sortJudiciaryMembers();
@@ -28,49 +28,45 @@ export class BookingParticipantListComponent {
         this.sortJudiciaryMembers();
     }
     @Input()
-    hearing: BookingsDetailsModel;
-    @Input()
-    judges: Array<ParticipantDetailsModel> = [];
+    hearing: VHBooking;
     @Input()
     vh_officer_admin: boolean;
 
-    get participants(): Array<ParticipantDetailsModel> {
+    get participants(): Array<VHParticipant> {
         let indexItem = 0;
         this._participants.forEach(x => {
-            x.IndexInList = indexItem;
+            x.indexInList = indexItem;
             indexItem++;
         });
         return this._participants;
     }
 
     private sortParticipants() {
-        const compareByHearingRoleThenByFirstName = () => (a: ParticipantDetailsModel, b: ParticipantDetailsModel) => {
+        const compareByHearingRoleThenByFirstName = () => (a: VHParticipant, b: VHParticipant) => {
             const swapIndices = a > b ? 1 : 0;
-            const hearingRoleA = a.HearingRoleName;
-            const hearingRoleB = b.HearingRoleName;
+            const hearingRoleA = a.hearing_role_name;
+            const hearingRoleB = b.hearing_role_name;
             if (hearingRoleA === hearingRoleB) {
-                return a.FirstName < b.FirstName ? -1 : swapIndices;
+                return a.first_name < b.first_name ? -1 : swapIndices;
             }
             return hearingRoleA < hearingRoleB ? -1 : swapIndices;
         };
-        const judges = this.participants.filter(participant => participant.HearingRoleName === Constants.Judge);
-        const staffMember = this.participants.filter(participant => participant.HearingRoleName === Constants.HearingRoles.StaffMember);
+        const staffMember = this.participants.filter(participant => participant.hearing_role_name === Constants.HearingRoles.StaffMember);
         const panelMembersAndWingers = this.participants
-            .filter(participant => Constants.JudiciaryRoles.includes(participant.HearingRoleName))
+            .filter(participant => Constants.JudiciaryRoles.includes(participant.hearing_role_name))
             .sort(compareByHearingRoleThenByFirstName());
         const interpreters = this.participants.filter(participant => participant.isInterpreter);
-        const observers = this.participants.filter(participant => Constants.HearingRoles.Observer === participant.HearingRoleName);
+        const observers = this.participants.filter(participant => Constants.HearingRoles.Observer === participant.hearing_role_name);
         const others = this.participants
             .filter(
                 participant =>
-                    !judges.includes(participant) &&
                     !panelMembersAndWingers.includes(participant) &&
                     !staffMember.includes(participant) &&
                     !interpreters.includes(participant) &&
                     !observers.includes(participant)
             )
             .sort(compareByHearingRoleThenByFirstName());
-        const sorted = [...judges, ...panelMembersAndWingers, ...staffMember, ...others, ...observers];
+        const sorted = [...panelMembersAndWingers, ...staffMember, ...others, ...observers];
         this.insertInterpreters(interpreters, sorted);
         this.sortedParticipants = sorted;
     }
@@ -97,15 +93,15 @@ export class BookingParticipantListComponent {
         this.sortedJudiciaryMembers = sortedJohList;
     }
 
-    private insertInterpreters(interpreters: ParticipantDetailsModel[], sorted: ParticipantDetailsModel[]) {
+    private insertInterpreters(interpreters: VHParticipant[], sorted: VHParticipant[]) {
         interpreters.forEach(interpreterParticipant => {
-            let interpretee: ParticipantDetailsModel;
-            if (interpreterParticipant.LinkedParticipants) {
-                const linkedParticipants = interpreterParticipant.LinkedParticipants;
-                interpretee = this._participants.find(p => linkedParticipants.some(lp => lp.linked_id === p.ParticipantId));
+            let interpretee: VHParticipant;
+            if (interpreterParticipant.linked_participants) {
+                const linkedParticipants = interpreterParticipant.linked_participants;
+                interpretee = this._participants.find(p => linkedParticipants.some(lp => lp.linkedParticipantId === p.id));
             }
             if (interpretee) {
-                const insertIndex: number = sorted.findIndex(pdm => pdm.ParticipantId === interpretee.ParticipantId) + 1;
+                const insertIndex: number = sorted.findIndex(pdm => pdm.id === interpretee.id) + 1;
                 sorted.splice(insertIndex, 0, interpreterParticipant);
             } else {
                 sorted.push(interpreterParticipant);

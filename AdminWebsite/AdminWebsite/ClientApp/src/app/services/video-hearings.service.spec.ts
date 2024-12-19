@@ -14,7 +14,6 @@ import {
     VideoSupplier
 } from './clients/api-client';
 import { CaseModel } from '../common/model/case.model';
-import { ParticipantModel } from '../common/model/participant.model';
 import { of } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
@@ -244,8 +243,8 @@ describe('Video hearing service', () => {
     });
 
     it('should map ParticipantModel toParticipantResponse', () => {
-        const participants: ParticipantModel[] = [];
-        const participant = new ParticipantModel();
+        const participants: VHParticipant[] = [];
+        const participant = new VHParticipant();
         participant.title = 'Mr';
         participant.first_name = 'Dan';
         participant.middle_names = 'Ivan';
@@ -914,13 +913,13 @@ describe('Video hearing service', () => {
     describe('mapParticipants', () => {
         it('should map participants', () => {
             // Arrange
-            const participants: ParticipantModel[] = [];
+            const participants: VHParticipant[] = [];
             const language: InterpreterSelectedDto = {
                 signLanguageCode: null,
                 spokenLanguageCode: 'fr',
                 interpreterRequired: true
             };
-            const participant = new ParticipantModel({
+            const participant = new VHParticipant({
                 interpretation_language: language
             });
             participants.push(participant);

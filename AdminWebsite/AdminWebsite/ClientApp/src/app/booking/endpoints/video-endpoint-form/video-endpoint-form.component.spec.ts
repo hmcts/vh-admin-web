@@ -2,17 +2,17 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { VideoEndpointFormComponent } from './video-endpoint-form.component';
 import { VideoAccessPointDto } from '../models/video-access-point.model';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { InterpreterFormComponent } from '../../interpreter-form/interpreter-form.component';
 import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { of } from 'rxjs';
 import { InterpreterSelectedDto } from '../../interpreter-form/interpreter-selected.model';
 import { MockComponent } from 'ng-mocks';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 describe('VideoEndpointFormComponent', () => {
-    const participants: ParticipantModel[] = [
-        {
+    const participants: VHParticipant[] = [
+        new VHParticipant({
             id: '1',
             first_name: 'John',
             last_name: 'Doe',
@@ -20,8 +20,8 @@ describe('VideoEndpointFormComponent', () => {
             display_name: 'John Doe',
             user_role_name: 'Representative',
             interpretation_language: undefined
-        },
-        {
+        }),
+        new VHParticipant({
             id: '2',
             first_name: 'Chris',
             last_name: 'Green',
@@ -29,8 +29,8 @@ describe('VideoEndpointFormComponent', () => {
             display_name: 'Chris Green',
             user_role_name: 'Representative',
             interpretation_language: undefined
-        },
-        {
+        }),
+        new VHParticipant({
             id: '3',
             first_name: 'Jane',
             last_name: 'Smith',
@@ -38,7 +38,7 @@ describe('VideoEndpointFormComponent', () => {
             display_name: 'Jane Smith',
             user_role_name: 'Individual',
             interpretation_language: undefined
-        }
+        })
     ];
 
     let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;

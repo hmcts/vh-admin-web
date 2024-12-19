@@ -5,10 +5,10 @@ import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { SelectedScreeningDto } from './screening.model';
 import { EndpointModel } from '../../common/model/endpoint.model';
-import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Router } from '@angular/router';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-screening',
@@ -67,7 +67,7 @@ export class ScreeningComponent implements OnInit, OnDestroy {
         this.hearing = { ...this.hearing };
     }
 
-    onDeleteParticipantScreening(participant: ParticipantModel) {
+    onDeleteParticipantScreening(participant: VHParticipant) {
         this.hearing.participants.forEach(p => {
             if (p.email === participant.email) {
                 p.screening = null;

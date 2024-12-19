@@ -5,7 +5,6 @@ import { of, Subscription } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { SearchServiceStub } from 'src/app/testing/stubs/service-service-stub';
 import { Constants } from '../../common/constants';
-import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
 import { ClientSettingsResponse, HearingRoleResponse } from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
@@ -195,15 +194,14 @@ function initExistHearingRequest(): VHBooking {
     return newHearing;
 }
 
-let participant = new ParticipantModel();
+let participant = new VHParticipant();
 
 function initParticipant() {
-    participant = new ParticipantModel();
+    participant = new VHParticipant();
     participant.email = 'email@hmcts.net';
     participant.first_name = 'Sam';
     participant.last_name = 'Green';
     participant.phone = '12345';
-    participant.is_judge = false;
     participant.display_name = 'Sam Green';
     participant.title = 'Mr';
     participant.hearing_role_name = 'Representative';
@@ -793,7 +791,7 @@ describe('AddParticipantComponent', () => {
     describe('mapParticipant', () => {
         it('should map when interpreter enhancements flag is enabled', () => {
             // arrange
-            const newParticipant = new ParticipantModel();
+            const newParticipant = new VHParticipant();
             component.role.setValue('Interpreter');
             component.interpreterEnhancementsFlag = true;
 
@@ -805,7 +803,7 @@ describe('AddParticipantComponent', () => {
         });
         it('should map when interpreter enhancements flag is disabled', () => {
             // arrange
-            const newParticipant = new ParticipantModel();
+            const newParticipant = new VHParticipant();
             component.role.setValue('Interpreter');
             newParticipant.interpreterFor = 'interpretee@email.com';
             component.interpreterEnhancementsFlag = false;
@@ -1316,7 +1314,9 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         component.participantsListComponent.canEdit = true;
         const partList = component.participantsListComponent;
         component.selectedParticipantEmail = 'test2@hmcts.net';
-        partList.editParticipant({ email: 'test2@hmcts.net', is_exist_person: false, is_judge: false, interpretation_language: undefined });
+        partList.editParticipant(
+            new VHParticipant({ email: 'test2@hmcts.net', is_exist_person: false, interpretation_language: undefined })
+        );
         flush();
         expect(component.showDetails).toBeTruthy();
     }));
@@ -1326,12 +1326,13 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         component.ngAfterViewInit();
         tick(1000);
         const partList = component.participantsListComponent;
-        partList.removeParticipant({
-            email: 'test2@hmcts.net',
-            is_exist_person: false,
-            is_judge: false,
-            interpretation_language: undefined
-        });
+        partList.removeParticipant(
+            new VHParticipant({
+                email: 'test2@hmcts.net',
+                is_exist_person: false,
+                interpretation_language: undefined
+            })
+        );
         component.selectedParticipantEmail = 'test2@hmcts.net';
         partList.selectedParticipantToRemove.emit();
         tick(1000);

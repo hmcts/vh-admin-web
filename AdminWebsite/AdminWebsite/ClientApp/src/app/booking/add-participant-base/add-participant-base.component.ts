@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { Constants } from 'src/app/common/constants';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { VHBooking } from 'src/app/common/model/vh-booking';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
@@ -12,13 +11,15 @@ import { BookingBaseComponentDirective as BookingBaseComponent } from '../bookin
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { HearingRoleModel } from 'src/app/common/model/hearing-role.model';
 import { InterpreterFormComponent } from '../interpreter-form/interpreter-form.component';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { cloneWithGetters } from 'src/app/common/helpers/clone-with-getters';
 
 @Directive()
 export abstract class AddParticipantBaseDirective extends BookingBaseComponent implements OnInit {
     isShowErrorSummary = false;
     hearingRoles: HearingRoleModel[] = [];
 
-    participantDetails: ParticipantModel;
+    participantDetails: VHParticipant;
     existingParticipant: boolean;
     existingPersonEmails: string[] = [];
     interpreterSelected = false;
@@ -187,7 +188,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         return true;
     }
 
-    public getParticipant(participantDetails: ParticipantModel) {
+    public getParticipant(participantDetails: VHParticipant) {
         if (!this.validateJudgeAndJohMembers()) {
             this.searchEmail.isErrorEmailAssignedToJudge = true;
             this.errorAlternativeEmail = true;
@@ -198,7 +199,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         this.displayErrorNoParticipants = false;
         this.displayAdd();
         this.enableFields();
-        this.participantDetails = { ...participantDetails };
+        this.participantDetails = cloneWithGetters(participantDetails);
 
         if (participantDetails.is_exist_person) {
             this.disableLastFirstNames();
@@ -293,7 +294,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         }
     }
 
-    private setInterpretee(participant: ParticipantModel): string {
+    private setInterpretee(participant: VHParticipant): string {
         let interpreteeEmail = '';
         if (participant.interpreterFor) {
             interpreteeEmail = participant.interpreterFor;
@@ -398,7 +399,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         this.interpreterForm?.forceValidation();
     }
 
-    protected isAnObserver(participant: ParticipantModel): boolean {
+    protected isAnObserver(participant: VHParticipant): boolean {
         return participant.hearing_role_name === Constants.HearingRoles.Observer;
     }
 

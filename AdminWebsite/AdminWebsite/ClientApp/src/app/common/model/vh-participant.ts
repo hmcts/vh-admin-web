@@ -81,4 +81,46 @@ export class VHParticipant {
     get IsEmailEjud(): boolean {
         return this.email?.toLowerCase().includes('judiciary') ?? false;
     }
+
+    static createForDetails(
+        id: string,
+        externalReferenceId: string,
+        title: string,
+        firstName: string,
+        lastName: string,
+        role: string,
+        userName: string,
+        email: string,
+        hearingRoleName: string,
+        hearingRoleCode: string,
+        displayName: string,
+        middleNames: string,
+        organisation: string,
+        representee: string,
+        phone: string,
+        interpretee: string,
+        isInterpretee: boolean,
+        linkedParticipants: LinkedParticipantModel[]
+    ): VHParticipant {
+        return new VHParticipant({
+            id: id,
+            externalReferenceId: externalReferenceId,
+            title: title,
+            first_name: firstName,
+            last_name: lastName,
+            user_role_name: role,
+            username: userName,
+            email: email,
+            hearing_role_name: hearingRoleName,
+            hearing_role_code: hearingRoleCode,
+            display_name: displayName,
+            middle_names: middleNames,
+            company: organisation,
+            representee: representee,
+            phone: phone,
+            interpretee_name: interpretee,
+            is_interpretee: isInterpretee,
+            linked_participants: linkedParticipants
+        });
+    }
 }

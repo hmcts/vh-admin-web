@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { Subject, Subscription, combineLatest } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { RemoveInterpreterPopupComponent } from 'src/app/popups/remove-interpreter-popup/remove-interpreter-popup.component';
 import { Constants } from '../../common/constants';
 import { FormatShortDuration } from '../../common/formatters/format-short-duration';
@@ -27,6 +26,7 @@ import { OtherInformationModel } from '../../common/model/other-information.mode
 import { finalize, takeUntil } from 'rxjs/operators';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-summary',
@@ -524,7 +524,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     private removeInterpreteeAndInterpreter() {
         const interpretee = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
-        let interpreter: ParticipantModel;
+        let interpreter: VHParticipant;
         if (interpretee.linked_participants && interpretee.linked_participants.length > 0) {
             interpreter = this.hearing.participants.find(i => i.id === interpretee.linked_participants[0].linkedParticipantId);
         } else {

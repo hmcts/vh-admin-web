@@ -8,7 +8,6 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { VHBooking } from 'src/app/common/model/vh-booking';
-import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
 import { Logger } from '../../services/logger';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
@@ -26,7 +25,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     judgeLocator = 'judge-email';
     hearing: VHBooking;
     courtAccountJudgeEmail: string;
-    judge: ParticipantModel;
+    judge: VHParticipant;
     otherInformationDetails: OtherInformationModel;
     showAddStaffMemberFld: FormControl;
     isStaffMemberExisting = false;
@@ -207,7 +206,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     get displayEmailField(): boolean {
-        return !!this.judge && !ParticipantModel.IsEmailEjud(this.judge.email);
+        return !!this.judge && !this.judge.IsEmailEjud;
     }
 
     changeDisplayName() {
@@ -359,7 +358,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         }
     }
 
-    private isExistingJudge(judge: ParticipantModel) {
+    private isExistingJudge(judge: VHParticipant) {
         return this.hearing.participants.find(participant => participant.is_judge)?.email === judge.email;
     }
 

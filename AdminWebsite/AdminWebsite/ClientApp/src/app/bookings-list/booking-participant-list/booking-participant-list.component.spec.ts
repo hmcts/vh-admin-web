@@ -2,12 +2,12 @@ import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingParticipantListComponent } from './booking-participant-list.component';
-import { HearingRoleCodes, HearingRoles } from '../../common/model/hearing-roles.model';
-import { LinkedParticipant } from '../../services/clients/api-client';
+import { HearingRoleCodes } from '../../common/model/hearing-roles.model';
 import { ParticipantDetailsComponent } from '../participant-details/participant-details.component';
 import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { LinkedParticipantModel } from 'src/app/common/model/linked-participant.model';
 
 describe('BookingParticipantListComponent', () => {
     let component: BookingParticipantListComponent;
@@ -33,7 +33,7 @@ describe('BookingParticipantListComponent', () => {
     });
 
     it('should display participants list', done => {
-        const pr1 = new ParticipantDetailsModel(
+        const pr1 = VHParticipant.createForDetails(
             '1',
             'externalRefId',
             'Mrs',
@@ -53,7 +53,7 @@ describe('BookingParticipantListComponent', () => {
             false,
             null
         );
-        const participantsList: Array<ParticipantDetailsModel> = [];
+        const participantsList: Array<VHParticipant> = [];
         participantsList.push(pr1);
         participantsList.push(pr1);
         participantsList.push(pr1);
@@ -70,37 +70,24 @@ describe('BookingParticipantListComponent', () => {
     });
 
     it('should display judges list', done => {
-        const pr1 = new ParticipantDetailsModel(
-            '1',
-            'externalRefId',
+        const judge = new JudiciaryParticipantDetailsModel(
             'Mrs',
             'Alan',
             'Brake',
-            'Judge',
-            'email.p1@hmcts.net',
-            'email1@hmcts.net',
-            'Judge',
-            null,
             'Alan Brake',
-            '',
-            'ABC Solicitors',
-            'Respondent',
+            'email1@hmcts.net',
             '12345678',
-            'interpretee',
-            false,
-            null
+            'Alan.Brake',
+            'Judge',
+            'Alan Brake'
         );
-        const participantsList: Array<ParticipantDetailsModel> = [];
-        participantsList.push(pr1);
-        participantsList.push(pr1);
-
-        component.judges = participantsList;
+        component.judiciaryParticipants = [judge];
 
         fixture.whenStable().then(() => {
             fixture.detectChanges();
             const divElementRole = debugElement.queryAll(By.css('.judge-detail'));
             expect(divElementRole.length).toBeGreaterThan(0);
-            expect(divElementRole.length).toBe(2);
+            expect(divElementRole.length).toBe(1);
             done();
         });
     });
@@ -108,60 +95,46 @@ describe('BookingParticipantListComponent', () => {
     it('should produce a sorted list with specific hierarchy and grouping', done => {
         // setup
         function parseTestInput(inputParticipants) {
-            const participantsArray: ParticipantDetailsModel[] = [];
+            const participantsArray: VHParticipant[] = [];
             inputParticipants.forEach((p, i) => {
-                participantsArray.push({
-                    FirstName: p.FirstName,
-                    ExternalReferenceId: p.ExternalReferenceId ?? undefined,
-                    isJudge: p.isJudge ?? false,
-                    HearingRoleCode: p.HearingRoleCode,
-                    HearingRoleName: p.HearingRoleName,
-                    LinkedParticipants: p.LinkedParticipants ?? null,
-                    ParticipantId: `${i + 1}`,
-                    Company: '',
-                    DisplayName: '',
-                    Email: '',
-                    Flag: false,
-                    IndexInList: 0,
-                    IsInterpretee: false,
-                    Interpretee: p.Interpretee,
-                    LastName: '',
-                    MiddleNames: '',
-                    Phone: '',
-                    Representee: '',
-                    Title: '',
-                    UserName: '',
-                    UserRoleName: '',
-                    get fullName(): string {
-                        return '';
-                    },
-                    get isInterpretee(): boolean {
-                        return false;
-                    },
-                    get isInterpreter(): boolean {
-                        return this.HearingRoleName && this.HearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER;
-                    },
-                    get isRepOrInterpreter(): boolean {
-                        return false;
-                    },
-                    get isRepresenting(): boolean {
-                        return undefined;
-                    },
-                    InterpretationLanguage: null,
-                    Screening: null
-                });
+                participantsArray.push(
+                    new VHParticipant({
+                        first_name: p.FirstName,
+                        externalReferenceId: p.ExternalReferenceId ?? undefined,
+                        hearing_role_code: p.HearingRoleCode,
+                        hearing_role_name: p.HearingRoleName,
+                        linked_participants: p.LinkedParticipants ?? null,
+                        id: `${i + 1}`,
+                        company: '',
+                        display_name: '',
+                        email: '',
+                        flag: false,
+                        indexInList: 0,
+                        interpretee_name: p.Interpretee,
+                        last_name: '',
+                        middle_names: '',
+                        phone: '',
+                        representee: '',
+                        title: '',
+                        username: '',
+                        user_role_name: '',
+                        is_interpretee: false,
+                        interpretation_language: null,
+                        screening: null
+                    })
+                );
             });
             return participantsArray;
         }
         // input
-        const linked_participantList1: LinkedParticipant[] = [];
-        const linked_interpretee = new LinkedParticipant();
-        linked_interpretee.linked_id = '2';
+        const linked_participantList1: LinkedParticipantModel[] = [];
+        const linked_interpretee = new LinkedParticipantModel();
+        linked_interpretee.linkedParticipantId = '2';
         linked_participantList1.push(linked_interpretee);
 
-        const linked_participantList2: LinkedParticipant[] = [];
-        const linked_interpreter = new LinkedParticipant();
-        linked_interpreter.linked_id = '1';
+        const linked_participantList2: LinkedParticipantModel[] = [];
+        const linked_interpreter = new LinkedParticipantModel();
+        linked_interpreter.linkedParticipantId = '1';
         linked_participantList2.push(linked_interpreter);
 
         const participantsInputArray = [
@@ -172,7 +145,6 @@ describe('BookingParticipantListComponent', () => {
                 Interpretee: 'interpretee'
             },
             { HearingRoleName: 'Interpreter', FirstName: 'A', LinkedParticipants: linked_participantList2 },
-            { isJudge: true, HearingRoleName: 'Judge', FirstName: 'L' },
             { HearingRoleName: 'Winger', FirstName: 'J' },
             { HearingRoleName: 'Staff Member', FirstName: 'I' },
             { HearingRoleName: 'Panel Member', FirstName: 'H' },
@@ -187,7 +159,6 @@ describe('BookingParticipantListComponent', () => {
         component.participants = parseTestInput(participantsInputArray);
         // expected output
         const expectedOutput = [
-            { HearingRoleName: 'Judge', FirstName: 'L' },
             { HearingRoleName: 'Panel Member', FirstName: 'H' },
             { HearingRoleName: 'Winger', FirstName: 'J' },
             { HearingRoleName: 'Staff Member', FirstName: 'I' },
@@ -203,8 +174,8 @@ describe('BookingParticipantListComponent', () => {
         ];
 
         for (let i = 0; i < expectedOutput.length; i++) {
-            expect(component.sortedParticipants[i].FirstName).toEqual(expectedOutput[i].FirstName);
-            expect(component.sortedParticipants[i].HearingRoleName).toEqual(expectedOutput[i].HearingRoleName);
+            expect(component.sortedParticipants[i].first_name).toEqual(expectedOutput[i].FirstName);
+            expect(component.sortedParticipants[i].hearing_role_name).toEqual(expectedOutput[i].HearingRoleName);
         }
         done();
     });

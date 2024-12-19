@@ -2,7 +2,6 @@ import { TestBed, inject } from '@angular/core/testing';
 import { ParticipantService } from './participant.service';
 import { HttpClientModule } from '@angular/common/http';
 import { HearingRoleResponse } from '../../services/clients/api-client';
-import { ParticipantModel } from '../../common/model/participant.model';
 import { Logger } from '../../services/logger';
 import { HearingRoleModel } from 'src/app/common/model/hearing-role.model';
 import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
@@ -43,27 +42,27 @@ describe('ParticipantService', () => {
         ]);
     }));
     it('should check email duplication and return false', inject([ParticipantService], (service: ParticipantService) => {
-        const part1 = new ParticipantModel();
+        const part1 = new VHParticipant();
         part1.email = 'aa@hmcts.net';
-        const participants: ParticipantModel[] = [];
+        const participants: VHParticipant[] = [];
         participants.push(part1);
         const result = service.checkDuplication('bb@hmcts.net', participants);
         expect(result).toBeFalsy();
     }));
     it('should check duplication returns false as no participants', inject([ParticipantService], (service: ParticipantService) => {
-        const participants: ParticipantModel[] = [];
+        const participants: VHParticipant[] = [];
         const result = service.checkDuplication('bb@hmcts.net', participants);
         expect(result).toBeFalsy();
     }));
     it('should throw exception if email is invalid', inject([ParticipantService], (service: ParticipantService) => {
         const email = undefined;
-        const participants: ParticipantModel[] = [];
+        const participants: VHParticipant[] = [];
         expect(() => service.checkDuplication(email, participants)).toThrowError(`Cannot check for duplication on undefined email`);
     }));
     it('should check email duplication and return true', inject([ParticipantService], (service: ParticipantService) => {
-        const part1 = new ParticipantModel();
+        const part1 = new VHParticipant();
         part1.email = 'aa@hmcts.net';
-        const participants: ParticipantModel[] = [];
+        const participants: VHParticipant[] = [];
         participants.push(part1);
         const result = service.checkDuplication('aa@hmcts.net', participants);
         expect(result).toBeTruthy();

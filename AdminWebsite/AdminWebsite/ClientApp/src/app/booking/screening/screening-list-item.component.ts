@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { VHBooking } from 'src/app/common/model/vh-booking';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { ScreeningDto, ScreeningType } from './screening.model';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-screening-list-item',
@@ -12,7 +12,7 @@ import { EndpointModel } from 'src/app/common/model/endpoint.model';
 export class ScreeningListItemComponent implements OnChanges {
     @Output() deleteScreening = new EventEmitter<void>();
 
-    @Input() participant: ParticipantModel;
+    @Input() participant: VHParticipant;
     @Input() endpoint: EndpointModel;
     @Input() hearing: VHBooking;
 
@@ -29,7 +29,7 @@ export class ScreeningListItemComponent implements OnChanges {
         }
     }
 
-    initModelForParticipant(hearing: VHBooking, participant: ParticipantModel): ScreeningItemViewModel {
+    initModelForParticipant(hearing: VHBooking, participant: VHParticipant): ScreeningItemViewModel {
         const protectFromMapped = this.initProtectFromViewModel(hearing, participant.screening);
         return {
             displayName: participant.display_name,

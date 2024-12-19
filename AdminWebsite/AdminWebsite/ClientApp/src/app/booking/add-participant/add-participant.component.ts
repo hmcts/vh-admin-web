@@ -5,7 +5,6 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from '../../common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { IDropDownModel } from '../../common/model/drop-down.model';
-import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
 import { HearingRoleResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
@@ -45,7 +44,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     $subscriptions: Subscription[] = [];
     destroyed$ = new Subject<void>();
 
-    interpreteeList: ParticipantModel[] = [];
+    interpreteeList: VHParticipant[] = [];
     showConfirmRemoveInterpretee = false;
     forceInterpretationLanguageSelection = false;
     interpreterSelection: InterpreterSelectedDto;
@@ -448,7 +447,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         this.videoHearingService.setBookingHasChanged();
     }
 
-    mapParticipant(newParticipant: ParticipantModel) {
+    mapParticipant(newParticipant: VHParticipant) {
         newParticipant.first_name = this.firstName.value;
         newParticipant.last_name = this.lastName.value;
         newParticipant.phone = this.phone.value;
@@ -486,17 +485,17 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
     }
 
-    private getUserRoleName(newParticipant: ParticipantModel): string {
+    private getUserRoleName(newParticipant: VHParticipant): string {
         return this.hearingRoles.find(h => h.name === newParticipant.hearing_role_name)?.userRole;
     }
 
-    private addUpdateLinkedParticipant(newParticipant: ParticipantModel): LinkedParticipantModel[] {
+    private addUpdateLinkedParticipant(newParticipant: VHParticipant): LinkedParticipantModel[] {
         return newParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER && !this.interpreterEnhancementsFlag
             ? this.updateLinkedParticipantList(newParticipant)
             : [];
     }
 
-    private updateLinkedParticipantList(newParticipant: ParticipantModel): LinkedParticipantModel[] {
+    private updateLinkedParticipantList(newParticipant: VHParticipant): LinkedParticipantModel[] {
         if (this.editMode) {
             return this.updateNewParticipantToLinkedParticipant(newParticipant);
         } else {
@@ -504,7 +503,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
     }
 
-    private updateNewParticipantToLinkedParticipant(newParticipant: ParticipantModel): LinkedParticipantModel[] {
+    private updateNewParticipantToLinkedParticipant(newParticipant: VHParticipant): LinkedParticipantModel[] {
         if (this.localEditMode) {
             const linkedParticipant = newParticipant.linked_participants[0];
             const interpretee = this.hearing.participants.find(p => p.id === linkedParticipant.linkedParticipantId);
@@ -519,7 +518,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
     }
 
-    private addNewParticipantToLinkedParticipant(newParticipant: ParticipantModel): LinkedParticipantModel[] {
+    private addNewParticipantToLinkedParticipant(newParticipant: VHParticipant): LinkedParticipantModel[] {
         const linkedParticipant = new LinkedParticipantModel();
         linkedParticipant.linkType = LinkedParticipantType.Interpreter;
         linkedParticipant.participantEmail = newParticipant.email;
@@ -721,17 +720,16 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
             p => p.user_role_name === 'Individual' && p.hearing_role_name !== Constants.HearingRoles.Interpreter && !this.isAnObserver(p)
         );
 
-        const interpreteeModel: ParticipantModel = {
+        const interpreteeModel = new VHParticipant({
             id: this.constants.PleaseSelect,
             first_name: this.constants.PleaseSelect,
             last_name: '',
             email: this.constants.PleaseSelect,
             is_exist_person: false,
-            is_judge: false,
             is_courtroom_account: false,
             isJudiciaryMember: false,
             interpretation_language: null
-        };
+        });
 
         this.interpreteeList.unshift(interpreteeModel);
     }
@@ -749,7 +747,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
             this.clearForm();
         }
         const interpretee = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
-        let interpreter: ParticipantModel;
+        let interpreter: VHParticipant;
         if (interpretee.linked_participants && interpretee.linked_participants.length > 0) {
             interpreter = this.hearing.participants.find(i => i.id === interpretee.linked_participants[0].linkedParticipantId);
         } else {
@@ -765,7 +763,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         this.videoHearingService.setBookingHasChanged();
     }
 
-    private addLinkedParticipant(newParticipant: ParticipantModel): void {
+    private addLinkedParticipant(newParticipant: VHParticipant): void {
         if (newParticipant.interpreterFor) {
             const interpretee = this.getInterpretee(newParticipant.interpreterFor);
             newParticipant.interpretee_name = interpretee.display_name;
@@ -778,7 +776,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
     }
 
-    private updateLinkedParticipant(newParticipant: ParticipantModel): void {
+    private updateLinkedParticipant(newParticipant: VHParticipant): void {
         this.hearing.linked_participants = [];
         this.addLinkedParticipant(newParticipant);
     }
@@ -792,7 +790,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
     }
 
-    private getInterpretee(email: string): ParticipantModel {
+    private getInterpretee(email: string): VHParticipant {
         return this.hearing.participants.find(p => p.email === email);
     }
 }

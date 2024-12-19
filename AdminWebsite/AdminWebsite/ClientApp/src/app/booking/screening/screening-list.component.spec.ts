@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ScreeningListComponent } from './screening-list.component';
 import { createVHBooking, VHBooking } from 'src/app/common/model/vh-booking';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { SimpleChange, SimpleChanges } from '@angular/core';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
@@ -82,7 +81,7 @@ describe('ScreeningListComponent', () => {
     describe('onParticipantScreeningDeleted', () => {
         it('should emit deleteParticipantScreening event', () => {
             // Arrange
-            const participant = new ParticipantModel();
+            const participant = new VHParticipant();
             spyOn(component.deleteParticipantScreening, 'emit');
 
             // Act

@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
-import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { faUserShield } from '@fortawesome/free-solid-svg-icons';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 @Component({
     selector: 'app-booking-participant-details',
@@ -11,9 +11,9 @@ import { faUserShield } from '@fortawesome/free-solid-svg-icons';
 })
 export class ParticipantDetailsComponent {
     @Input()
-    participant: ParticipantDetailsModel = null;
+    participant: VHParticipant = null;
     @Input()
-    hearing: BookingsDetailsModel;
+    hearing: VHBooking;
     @Input()
     vh_officer_admin: boolean;
 
@@ -22,10 +22,10 @@ export class ParticipantDetailsComponent {
     constructor() {}
 
     get judgeEmail() {
-        return OtherInformationModel.init(this.hearing.OtherInformation).JudgeEmail;
+        return OtherInformationModel.init(this.hearing.other_information).JudgeEmail;
     }
 
     get judgePhone() {
-        return OtherInformationModel.init(this.hearing.OtherInformation).JudgePhone;
+        return OtherInformationModel.init(this.hearing.other_information).JudgePhone;
     }
 }

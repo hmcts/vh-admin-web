@@ -1,11 +1,11 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { ParticipantDetailsModel } from 'src/app/common/model/participant-details.model';
-import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ActivatedRoute } from '@angular/router';
 import { Logger } from '../../services/logger';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { Subject } from 'rxjs';
+import { durationInHoursAndMinutes, isCreated, VHBooking } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-hearing-details',
@@ -13,8 +13,8 @@ import { Subject } from 'rxjs';
     styleUrls: ['hearing-details.component.css']
 })
 export class HearingDetailsComponent implements OnDestroy {
-    @Input() hearing: BookingsDetailsModel = null;
-    @Input() participants: Array<ParticipantDetailsModel> = [];
+    @Input() hearing: VHBooking = null;
+    @Input() participants: Array<VHParticipant> = [];
 
     @Input() set phoneDetails(value: string) {
         this.phoneConferenceDetails = value;
@@ -32,19 +32,27 @@ export class HearingDetailsComponent implements OnDestroy {
 
     getDefenceAdvocateByContactEmail(defenceAdvocateContactEmail: string): string {
         let represents = '';
-        const participant = this.participants.find(p => p.Email === defenceAdvocateContactEmail);
+        const participant = this.participants.find(p => p.email === defenceAdvocateContactEmail);
         if (participant) {
-            represents = participant.DisplayName + ', representing ' + participant.Representee;
+            represents = participant.display_name + ', representing ' + participant.representee;
         }
         return represents;
     }
 
     getOtherInformationText(): string {
         try {
-            const otherInfo = OtherInformationModel.init(this.hearing?.OtherInformation);
+            const otherInfo = OtherInformationModel.init(this.hearing?.other_information);
             return otherInfo.OtherInformation;
         } catch (e) {
-            return this.hearing?.OtherInformation;
+            return this.hearing?.other_information;
         }
+    }
+
+    isCreated(): boolean {
+        return isCreated(this.hearing);
+    }
+
+    get durationInHoursAndMinutes(): string {
+        return durationInHoursAndMinutes(this.hearing);
     }
 }

@@ -4,7 +4,6 @@ import { first } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { VHBooking } from 'src/app/common/model/vh-booking';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
@@ -13,6 +12,7 @@ import { BookingBaseComponentDirective as BookingBaseComponent } from '../bookin
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { VideoAccessPointDto } from './models/video-access-point.model';
 import { FormGroup } from '@angular/forms';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-endpoints',
@@ -26,7 +26,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     attemptingCancellation = false;
     attemptingDiscardChanges = false;
 
-    participants: ParticipantModel[] = [];
+    participants: VHParticipant[] = [];
 
     multiDayBookingEnhancementsEnabled: boolean;
     specialMeasureEnabled = false;

@@ -8,13 +8,13 @@
       <div>
         <div class="vh-title">
           <h1 class="govuk-heading-l">
-            <app-truncatable-text [id]="'hearingNumber'" [text]="hearing?.HearingCaseNumber" [maxLimit]="50"></app-truncatable-text>
+            <app-truncatable-text [id]="'hearingNumber'" [text]="hearing?.case.number" [maxLimit]="50"></app-truncatable-text>
           </h1>
         </div>
         <div class="vh-booking-detail-status">
           <app-booking-status [bookingDetails]="hearing"></app-booking-status>
         </div>
-        <div *ngIf="hearing.isCancelled" id="lblCancelledDetails" class="vh-cancelled-reason">{{ hearing.CancelReason }}</div>
+        <div *ngIf="hearing.isCancelled" id="lblCancelledDetails" class="vh-cancelled-reason">{{ hearing.cancelReason }}</div>
       </div>
     </div>
   </div>
@@ -28,7 +28,6 @@
         [hearing]="hearing"
         [participants]="participants"
         [judiciaryParticipants]="judicialMembers"
-        [judges]="judges"
         [vh_officer_admin]="isVhOfficerAdmin"
       >
       </app-booking-participant-list>
@@ -37,10 +36,10 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <div *ngIf="!hearing.isCancelled">
+      <div *ngIf="!isCancelled">
         <span>
           <button
-            *ngIf="!hearing.hasBookingConfirmationFailed && canEditHearing"
+            *ngIf="!hasBookingConfirmationFailed && canEditHearing"
             class="govuk-button vh-mt20 vh-mr-25"
             data-module="govuk-button"
             id="edit-button"
@@ -49,12 +48,7 @@
             {{ hearing.isMultiDay && this.multiDayBookingEnhancementsEnabled ? 'Edit this day/date only' : 'Edit' }}
           </button>
           <button
-            *ngIf="
-              !hearing.hasBookingConfirmationFailed &&
-              canEditHearing &&
-              this.isMultiDayUpdateAvailable() &&
-              !isTotalHearingMoreThanThreshold
-            "
+            *ngIf="!hasBookingConfirmationFailed && canEditHearing && this.isMultiDayUpdateAvailable() && !isTotalHearingMoreThanThreshold"
             class="govuk-button vh-mt20 vh-mr-25"
             data-module="govuk-button"
             id="edit-multiple-hearings-button"
@@ -63,7 +57,7 @@
             Edit this and upcoming days/dates
           </button>
           <button
-            *ngIf="!hearing.hasBookingConfirmationFailed && canCancelHearing"
+            *ngIf="!hasBookingConfirmationFailed && canCancelHearing"
             class="govuk-button vh-mt20 vh-mr-25 vh-btn-cancel"
             data-module="govuk-button"
             id="cancel-button"
@@ -74,7 +68,7 @@
         </span>
 
         <button
-          *ngIf="hearing.hasBookingConfirmationFailed && canRetryConfirmation && judgeExists"
+          *ngIf="hasBookingConfirmationFailed && canRetryConfirmation && judgeExists"
           data-module="govuk-button"
           class="govuk-button govuk-button--warning"
           id="retry-confirm-button"

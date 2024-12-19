@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
@@ -9,6 +8,7 @@ import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Constants } from 'src/app/common/constants';
 import { HearingRoleCodes } from '../../../common/model/hearing-roles.model';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-participant-item',
@@ -18,14 +18,14 @@ import { HearingRoleCodes } from '../../../common/model/hearing-roles.model';
 export class ParticipantItemComponent implements OnInit {
     private readonly loggerPrefix = '[ParticipantList - Item] -';
 
-    @Input() participant: ParticipantModel;
+    @Input() participant: VHParticipant;
     @Input() hearing: VHBooking;
     @Input() canEdit = false;
     @Input() isSummaryPage = false;
     @Input() interpreterEnhancementsEnabled = false;
 
-    @Output() edit = new EventEmitter<ParticipantModel>();
-    @Output() remove = new EventEmitter<ParticipantModel>();
+    @Output() edit = new EventEmitter<VHParticipant>();
+    @Output() remove = new EventEmitter<VHParticipant>();
 
     staffMemberRole = Constants.HearingRoles.StaffMember;
     showParticipantActions: boolean;
@@ -44,7 +44,7 @@ export class ParticipantItemComponent implements OnInit {
             this.router.url.includes(PageUrls.AddJudicialOfficeHolders) || this.router.url.includes(PageUrls.Summary);
     }
 
-    getJudgeUser(participant: ParticipantModel): string {
+    getJudgeUser(participant: VHParticipant): string {
         return participant.username;
     }
 
@@ -56,7 +56,7 @@ export class ParticipantItemComponent implements OnInit {
         return otherInformation.JudgeEmail;
     }
 
-    getJudgePhone(participant: ParticipantModel): string {
+    getJudgePhone(participant: VHParticipant): string {
         if (this.participant.isJudiciaryMember) {
             return this.participant.phone; // ejud data does not have phone number
         }
@@ -68,7 +68,7 @@ export class ParticipantItemComponent implements OnInit {
         this.bookingService.setEditMode();
     }
 
-    editParticipant(participant: ParticipantModel) {
+    editParticipant(participant: VHParticipant) {
         this.editJudge();
 
         if (this.isSummaryPage && !this.participant.isJudiciaryMember) {
@@ -86,7 +86,7 @@ export class ParticipantItemComponent implements OnInit {
         }
     }
 
-    removeParticipant(participant: ParticipantModel) {
+    removeParticipant(participant: VHParticipant) {
         this.logger.debug(`${this.loggerPrefix} Removing participant`, { participant: participant.email });
         this.remove.emit(participant);
     }

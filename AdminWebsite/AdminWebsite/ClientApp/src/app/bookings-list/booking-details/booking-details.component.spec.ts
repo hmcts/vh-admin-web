@@ -3,17 +3,19 @@ import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
-import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { CaseModel } from '../../common/model/case.model';
-import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingService } from '../../services/booking.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import {
     BookingStatus,
+    CaseResponse,
     HearingDetailsResponse,
+    JudiciaryParticipantResponse,
+    ParticipantResponse,
     PhoneConferenceResponse,
     UpdateBookingStatusResponse,
-    UserProfileResponse
+    UserProfileResponse,
+    VideoSupplier
 } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
@@ -23,7 +25,8 @@ import { BookingDetailsComponent } from './booking-details.component';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { HearingRoleCodes } from '../../common/model/hearing-roles.model';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
-import { createVHBooking } from 'src/app/common/model/vh-booking';
+import { createVHBooking, createVHBookingFromDetails } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 let component: BookingDetailsComponent;
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
@@ -35,7 +38,7 @@ let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
 
 export class BookingDetailsTestData {
     getBookingsDetailsModel() {
-        return new BookingsDetailsModel(
+        const booking = createVHBookingFromDetails(
             '44',
             new Date('2019-11-22 13:58:40.3730067'),
             120,
@@ -55,15 +58,16 @@ export class BookingDetailsTestData {
             'reason',
             'Financial Remedy',
             'judge.green@hmcts.net',
-            '1234567',
-            'Not Allocated'
+            '1234567'
         );
+        booking.allocatedTo = 'Not Allocated';
+        return booking;
     }
 
     getParticipants() {
-        const participants: Array<ParticipantDetailsModel> = [];
-        const judges: Array<ParticipantDetailsModel> = [];
-        const p1 = new ParticipantDetailsModel(
+        const participants: Array<VHParticipant> = [];
+        const judges: Array<VHParticipant> = [];
+        const p1 = VHParticipant.createForDetails(
             '1',
             'externalRefId',
             'Mrs',
@@ -83,7 +87,8 @@ export class BookingDetailsTestData {
             false,
             null
         );
-        const p2 = new ParticipantDetailsModel(
+
+        const p2 = VHParticipant.createForDetails(
             '2',
             'externalRefId',
             'Mrs',
@@ -103,7 +108,7 @@ export class BookingDetailsTestData {
             false,
             null
         );
-        const p3 = new ParticipantDetailsModel(
+        const p3 = VHParticipant.createForDetails(
             '2',
             'externalRefId',
             'Mrs',
@@ -141,7 +146,7 @@ export class BookingDetailsTestData {
     }
 }
 
-const hearingResponse = new HearingDetailsResponse();
+let hearingResponse: HearingDetailsResponse;
 
 const caseModel = new CaseModel();
 caseModel.name = 'X vs Y';
@@ -157,19 +162,6 @@ hearingModel.scheduled_date_time = now;
 hearingModel.audio_recording_required = true;
 
 const cancel_reason = 'Online abandonment (incomplete registration)';
-class BookingDetailsServiceMock {
-    mapBooking(response) {
-        return new BookingDetailsTestData().getBookingsDetailsModel();
-    }
-
-    mapBookingParticipants() {
-        return new BookingDetailsTestData().getParticipants();
-    }
-
-    mapBookingEndpoints(response) {
-        return new BookingDetailsTestData().getEndpoints();
-    }
-}
 
 describe('BookingDetailsComponent', () => {
     videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
@@ -207,6 +199,7 @@ describe('BookingDetailsComponent', () => {
     let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 
     beforeEach(() => {
+        hearingResponse = createHearingDetailsResponse();
         videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
         videoHearingServiceSpy.cancelBooking.and.returnValue(of(defaultUpdateBookingStatusResponse));
         videoHearingServiceSpy.cancelMultiDayBooking.and.returnValue(of(defaultUpdateBookingStatusResponse));
@@ -219,10 +212,8 @@ describe('BookingDetailsComponent', () => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
-        const bookingPersistServiceMock = new BookingDetailsServiceMock() as any;
         component = new BookingDetailsComponent(
             videoHearingServiceSpy,
-            bookingPersistServiceMock,
             userIdentityServiceSpy,
             routerSpy,
             bookingServiceSpy,
@@ -240,10 +231,10 @@ describe('BookingDetailsComponent', () => {
         tick(1000);
         expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
         expect(component.hearing).toBeTruthy();
-        expect(component.hearing.HearingId).toBe('44');
-        expect(component.hearing.Duration).toBe(120);
-        expect(component.hearing.HearingCaseNumber).toBe('XX3456234565');
-        expect(component.hearing.AudioRecordingRequired).toBeTruthy();
+        expect(component.hearing.hearing_id).toBe('44');
+        expect(component.hearing.scheduled_duration).toBe(120);
+        expect(component.hearing.case.number).toBe('XX3456234565');
+        expect(component.hearing.audio_recording_required).toBeTruthy();
         discardPeriodicTasks();
     }));
 
@@ -255,8 +246,8 @@ describe('BookingDetailsComponent', () => {
         expect(component.booking.hearing_id).toBe('44');
         expect(component.booking.scheduled_duration).toBe(120);
         expect(component.booking.case.number).toBe('XX3456234565');
-        expect(component.hearing.AudioRecordingRequired).toBeTruthy();
-        expect(component.hearing.AllocatedTo).toBe('Not Allocated');
+        expect(component.hearing.audio_recording_required).toBeTruthy();
+        expect(component.hearing.allocatedTo).toBe('Not Allocated');
         discardPeriodicTasks();
     }));
 
@@ -268,11 +259,11 @@ describe('BookingDetailsComponent', () => {
     it('should get judge details', fakeAsync(() => {
         component.ngOnInit();
         tick(1000);
-        expect(component.judges).toBeTruthy();
-        expect(component.judges.length).toBe(1);
-        expect(component.judges[0].UserRoleName).toBe('Judge');
-        expect(component.judges[0].ParticipantId).toBe('1');
-        expect(component.judges[0].FirstName).toBe('Alan');
+        const judges = component.judicialMembers?.filter(j => j.roleCode === 'Judge');
+        expect(judges).toBeTruthy();
+        expect(judges.length).toBe(1);
+        expect(judges[0].roleCode).toBe('Judge');
+        expect(judges[0].firstName).toBe('Alan');
         discardPeriodicTasks();
     }));
 
@@ -281,8 +272,8 @@ describe('BookingDetailsComponent', () => {
         tick(1000);
         expect(component.participants).toBeTruthy();
         expect(component.participants.length).toBe(2);
-        expect(component.participants[0].UserRoleName).toBe('Citizen');
-        expect(component.participants[0].ParticipantId).toBe('2');
+        expect(component.participants[0].user_role_name).toBe('Citizen');
+        expect(component.participants[0].id).toBe('2');
         discardPeriodicTasks();
     }));
     describe('edit buttons pressed', () => {
@@ -404,13 +395,13 @@ describe('BookingDetailsComponent', () => {
         expect(component.phoneDetails).toBe(`ENG: 12345 (ID: 7777)
 CY: 54321 (ID: 7777)`);
         expect(component.booking.telephone_conference_id).toBe('7777');
-        expect(component.hearing.TelephoneConferenceId).toBe('7777');
+        expect(component.hearing.telephone_conference_id).toBe('7777');
         discardPeriodicTasks();
     }));
     it('should get conference phone details', fakeAsync(() => {
         component.ngOnInit();
         tick(1000);
-        component.hearing.Status = 'Created';
+        component.hearing.status = 'Created';
         videoHearingServiceSpy.getTelephoneConferenceId.and.returnValue(
             of(new PhoneConferenceResponse({ telephone_conference_id: '7777' }))
         );
@@ -424,13 +415,13 @@ CY: 54321 (ID: 7777)`);
         expect(component.telephoneConferenceId).toBe('7777');
         expect(component.conferencePhoneNumber).toBe('12345');
         expect(component.booking.telephone_conference_id).toBe('7777');
-        expect(component.hearing.TelephoneConferenceId).toBe('7777');
+        expect(component.hearing.telephone_conference_id).toBe('7777');
         discardPeriodicTasks();
     }));
     it('should throw exception by getting the conference phone details for closed hearing', fakeAsync(() => {
         component.ngOnInit();
         tick(1000);
-        component.hearing.Status = 'Created';
+        component.hearing.status = 'Created';
         videoHearingServiceSpy.getTelephoneConferenceId.and.throwError('Not Found');
         component.getConferencePhoneDetails();
         expect(component.phoneDetails.length).toBe(0);
@@ -566,7 +557,7 @@ CY: 54321 (ID: 7777)`);
             expect(videoHearingServiceSpy.rebookHearing).toHaveBeenCalledWith(component.hearingId);
             expect(videoHearingServiceSpy.getStatus).toHaveBeenCalledTimes(11);
             expect(component.showConfirmingFailed).toBeTruthy();
-            expect(component.hearing.Status).toBe(BookingStatus.Failed);
+            expect(component.hearing.status).toBe(BookingStatus.Failed);
             expect(component.showConfirming).toBeFalsy();
 
             discardPeriodicTasks();
@@ -601,40 +592,138 @@ CY: 54321 (ID: 7777)`);
 
     describe('isMultiDayUpdateAvailable', () => {
         it('should return true when all conditions are met', fakeAsync(() => {
+            hearingResponse.group_id = '123';
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
             component.ngOnInit();
             tick(1000);
-            component.hearing.GroupId = '123';
-            component.multiDayBookingEnhancementsEnabled = true;
             expect(component.isMultiDayUpdateAvailable()).toBeTruthy();
             discardPeriodicTasks();
         }));
 
         it('should return false when hearing is not multi day', fakeAsync(() => {
+            hearingResponse.group_id = null;
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
             component.ngOnInit();
             tick(1000);
-            component.hearing.GroupId = null;
-            component.multiDayBookingEnhancementsEnabled = true;
             expect(component.isMultiDayUpdateAvailable()).toBeFalsy();
             discardPeriodicTasks();
         }));
 
         it('should return false when multi day booking enhancements are not enabled', fakeAsync(() => {
+            hearingResponse.group_id = '123';
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
             component.ngOnInit();
             tick(1000);
-            component.hearing.GroupId = '123';
-            component.multiDayBookingEnhancementsEnabled = false;
             expect(component.isMultiDayUpdateAvailable()).toBeFalsy();
             discardPeriodicTasks();
         }));
 
         it('should return false when last day of multi day hearing', fakeAsync(() => {
+            hearingResponse.group_id = '123';
+            hearingResponse.multi_day_hearing_last_day_scheduled_date_time = hearingResponse.scheduled_date_time;
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
             component.ngOnInit();
             tick(1000);
-            component.hearing.GroupId = '123';
-            component.hearing.MultiDayHearingLastDayScheduledDateTime = component.hearing.StartTime;
-            component.multiDayBookingEnhancementsEnabled = true;
             expect(component.isMultiDayUpdateAvailable()).toBeFalsy();
             discardPeriodicTasks();
         }));
     });
 });
+
+function createHearingDetailsResponse(): HearingDetailsResponse {
+    return new HearingDetailsResponse({
+        id: '44',
+        scheduled_date_time: new Date(),
+        scheduled_duration: 120,
+        hearing_venue_code: 'venue-code',
+        hearing_venue_name: 'venue-name',
+        service_id: 'service-id',
+        case_type_name: 'case-type-name',
+        cases: createCaseResponses(),
+        participants: createParticipantResponses(),
+        judiciary_participants: createJudiciaryParticipantResponses(),
+        hearing_room_name: 'room-name',
+        other_information: '|OtherInformation|Other info',
+        created_date: new Date(),
+        created_by: 'created-by@email.com',
+        updated_by: 'System',
+        updated_date: new Date(),
+        confirmed_by: 'System',
+        confirmed_date: new Date(),
+        status: BookingStatus.Created,
+        audio_recording_required: true,
+        cancel_reason: 'cancel-reason',
+        endpoints: [],
+        group_id: null,
+        conference_supplier: VideoSupplier.Vodafone,
+        allocated_to_username: 'Not Allocated'
+    });
+}
+
+function createCaseResponses(): CaseResponse[] {
+    const cases: CaseResponse[] = [];
+    const caseResponse = new CaseResponse({
+        number: 'XX3456234565',
+        name: 'X vs Y',
+        is_lead_case: true
+    });
+    cases.push(caseResponse);
+
+    return cases;
+}
+
+function createJudiciaryParticipantResponses(): JudiciaryParticipantResponse[] {
+    const judiciaryParticipants: JudiciaryParticipantResponse[] = [];
+    const judge = new JudiciaryParticipantResponse();
+    judge.title = 'Mr';
+    judge.first_name = 'Alan';
+    judge.last_name = 'Brake';
+    judge.full_name = 'Alan Brake';
+    judge.email = 'email1@hmcts.net';
+    judge.work_phone = '12345678';
+    judge.personal_code = 'judge-personal-code';
+    judge.role_code = 'Judge';
+    judge.display_name = 'Alan Brake';
+    judge.is_generic = true;
+    judiciaryParticipants.push(judge);
+
+    return judiciaryParticipants;
+}
+
+function createParticipantResponses(): ParticipantResponse[] {
+    const participants: ParticipantResponse[] = [];
+    const p1 = new ParticipantResponse({
+        id: '2',
+        external_reference_id: 'externalRefId',
+        title: 'Mrs',
+        first_name: 'Roy',
+        last_name: 'Bark',
+        user_role_name: 'Citizen',
+        username: 'email.p2@hmcts.net',
+        contact_email: 'email2@hmcts.net',
+        hearing_role_name: 'Litigant in person',
+        hearing_role_code: HearingRoleCodes.Applicant,
+        display_name: 'Roy Bark',
+        organisation: 'ABC Solicitors',
+        telephone_number: '12345678'
+    });
+    const p2 = new ParticipantResponse({
+        id: '2',
+        external_reference_id: 'externalRefId',
+        title: 'Mrs',
+        first_name: 'Fill',
+        last_name: 'Green',
+        user_role_name: 'Professional',
+        username: 'email.p3@hmcts.net',
+        contact_email: 'email3@hmcts.net',
+        hearing_role_name: 'Litigant in person',
+        hearing_role_code: HearingRoleCodes.Applicant,
+        display_name: 'Fill',
+        organisation: 'ABC Solicitors',
+        telephone_number: '12345678'
+    });
+    participants.push(p1);
+    participants.push(p2);
+
+    return participants;
+}

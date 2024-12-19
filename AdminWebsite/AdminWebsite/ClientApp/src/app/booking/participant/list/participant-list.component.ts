@@ -1,12 +1,13 @@
 import { Component, DoCheck, EventEmitter, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { Constants } from 'src/app/common/constants';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { LinkedParticipantType } from 'src/app/services/clients/api-client';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { VHBooking } from 'src/app/common/model/vh-booking';
 import { HearingRoleCodes } from '../../../common/model/hearing-roles.model';
 import { FeatureFlags, LaunchDarklyService } from '../../../services/launch-darkly.service';
 import { takeUntil } from 'rxjs/operators';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { mapJudicialMemberDtoToVHParticipant } from 'src/app/common/model/api-contract-to-client-model-mappers';
 
 @Component({
     selector: 'app-participant-list',
@@ -19,8 +20,8 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
     @Input() canEdit = false;
 
     interpreterEnhancementsEnabled = false;
-    sortedParticipants: ParticipantModel[] = [];
-    sortedJudiciaryMembers: ParticipantModel[] = [];
+    sortedParticipants: VHParticipant[] = [];
+    sortedJudiciaryMembers: VHParticipant[] = [];
 
     $selectedForEdit = new EventEmitter<string>();
     $selectedForRemove = new EventEmitter<string>();
@@ -78,7 +79,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
         }
 
         const judicialJudge = [this.hearing.judiciaryParticipants.filter(j => j.roleCode === 'Judge')][0]?.map(h =>
-            ParticipantModel.fromJudicialMember(h, true)
+            mapJudicialMemberDtoToVHParticipant(h, true)
         );
         const judicialPanelMembers = this.getJudicialPanelMembers();
 
@@ -110,11 +111,11 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
         this.sortParticipants();
     }
 
-    editParticipant(participant: ParticipantModel) {
+    editParticipant(participant: VHParticipant) {
         this.$selectedForEdit.emit(participant.email);
     }
 
-    removeParticipant(participant: ParticipantModel) {
+    removeParticipant(participant: VHParticipant) {
         this.$selectedForRemove.emit(participant.email);
     }
 
@@ -144,7 +145,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
     }
 
     private sortByDisplayName() {
-        return (a: ParticipantModel, b: ParticipantModel) => {
+        return (a: VHParticipant, b: VHParticipant) => {
             if (a.display_name < b.display_name) {
                 return -1;
             }
@@ -156,7 +157,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
     }
 
     private compareByHearingRoleThenByFirstName() {
-        return (a: ParticipantModel, b: ParticipantModel) => {
+        return (a: VHParticipant, b: VHParticipant) => {
             const swapIndices = a > b ? 1 : 0;
             const hearingRoleCodeA = a.hearing_role_code;
             const hearingRoleCodeB = b.hearing_role_code;
@@ -178,7 +179,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
         };
     }
 
-    private getOthers(staffMembers: ParticipantModel[], panelMembers: ParticipantModel[], observers: ParticipantModel[]) {
+    private getOthers(staffMembers: VHParticipant[], panelMembers: VHParticipant[], observers: VHParticipant[]) {
         return this.hearing.participants
             .filter(
                 participant =>
@@ -198,12 +199,12 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
             .sort(this.compareByHearingRoleThenByFirstName());
     }
 
-    private getJudicialPanelMembers(): ParticipantModel[] {
+    private getJudicialPanelMembers(): VHParticipant[] {
         if (this.hearing.judiciaryParticipants) {
             return this.hearing.judiciaryParticipants
                 .filter(j => j.roleCode === 'PanelMember')
                 .sort((a, b) => a.displayName.localeCompare(b.displayName))
-                .map(h => ParticipantModel.fromJudicialMember(h, false));
+                .map(h => mapJudicialMemberDtoToVHParticipant(h, false));
         }
     }
 
@@ -223,7 +224,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
         return this.hearing.participants.filter(participant => participant.is_judge).sort(this.compareByHearingRoleThenByFirstName());
     }
 
-    private insertInterpreters(sortedList: ParticipantModel[]) {
+    private insertInterpreters(sortedList: VHParticipant[]) {
         this.clearInterpreteeList();
         const interpreters = this.hearing.participants.filter(
             participant =>
@@ -231,7 +232,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
                 participant.hearing_role_code === HearingRoleCodes.Interpreter
         );
         interpreters.forEach(interpreterParticipant => {
-            let interpretee: ParticipantModel;
+            let interpretee: VHParticipant;
             if (interpreterParticipant.interpreterFor) {
                 interpretee = this.hearing.participants.find(p => p.email === interpreterParticipant.interpreterFor);
             } else if (interpreterParticipant.linked_participants) {
@@ -255,7 +256,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
         this.hearing.participants.filter(participant => participant.is_interpretee).forEach(i => (i.is_interpretee = false));
     }
 
-    canEditParticipant(participant: ParticipantModel): boolean {
+    canEditParticipant(participant: VHParticipant): boolean {
         if (!this.canEdit || this.videoHearingsService.isConferenceClosed()) {
             return false;
         }

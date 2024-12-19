@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { VHBooking } from 'src/app/common/model/vh-booking';
-import { ParticipantModel } from '../../common/model/participant.model';
 import { HearingRoleResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { HearingRoleModel } from '../../common/model/hearing-role.model';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Injectable({
     providedIn: 'root'
@@ -16,7 +16,7 @@ export class ParticipantService {
         return hearingRoles.map(x => new HearingRoleModel(x.name, x.user_role, x.code));
     }
 
-    public checkDuplication(email: string, participants: ParticipantModel[]): boolean {
+    public checkDuplication(email: string, participants: VHParticipant[]): boolean {
         if (!email) {
             const error = new Error(`Cannot check for duplication on undefined email`);
             this.logger.error(`${this.loggerPrefix} Cannot check for duplication on undefined email`, error);

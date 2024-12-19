@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
-import { ParticipantModel } from '../../common/model/participant.model';
 import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from '../../services/booking.service';
@@ -371,7 +370,7 @@ describe('AssignJudgeComponent', () => {
     const otherInformationDetailsJudgePhone = 'OtherInformationDetailsJudgePhone';
 
     describe('saveJudgeAndStaffMember', () => {
-        let testJudge: ParticipantModel;
+        let testJudge: VHParticipant;
         beforeEach(() => {
             // setup judge so that isJudgeSelected returns true
             testJudge = Object.assign({}, judge);

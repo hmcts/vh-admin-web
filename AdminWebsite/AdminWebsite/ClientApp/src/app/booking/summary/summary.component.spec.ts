@@ -995,21 +995,23 @@ describe('SummaryComponent  with multi days request', () => {
         component.hearing.participants = participants;
 
         const participantList = component.participantsListComponent;
-        participantList.removeParticipant({
-            email: 'firstname.lastname@email.com',
-            is_exist_person: false,
-            is_judge: false,
-            interpretation_language: undefined
-        });
+        participantList.removeParticipant(
+            new VHParticipant({
+                email: 'firstname.lastname@email.com',
+                is_exist_person: false,
+                interpretation_language: undefined
+            })
+        );
         participantList.selectedParticipant.emit();
         tick(600);
         expect(component.showConfirmRemoveInterpretee).toBe(true);
-        participantList.removeParticipant({
-            email: 'firstname1.lastname1@email.com',
-            is_exist_person: false,
-            is_judge: false,
-            interpretation_language: undefined
-        });
+        participantList.removeParticipant(
+            new VHParticipant({
+                email: 'firstname1.lastname1@email.com',
+                is_exist_person: false,
+                interpretation_language: undefined
+            })
+        );
         participantList.selectedParticipant.emit();
         tick(600);
         expect(component.showConfirmationRemoveParticipant).toBe(true);

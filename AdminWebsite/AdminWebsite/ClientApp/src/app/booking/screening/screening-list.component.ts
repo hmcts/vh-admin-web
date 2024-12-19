@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { VHBooking } from 'src/app/common/model/vh-booking';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-screening-list',
@@ -9,12 +9,12 @@ import { ParticipantModel } from 'src/app/common/model/participant.model';
     styleUrls: ['./screening-list.component.scss']
 })
 export class ScreeningListComponent implements OnChanges {
-    participantsWithScreening: ParticipantModel[] = [];
+    participantsWithScreening: VHParticipant[] = [];
     endpointsWithScreening: EndpointModel[] = [];
 
     @Input() hearing: VHBooking;
     @Output() deleteEndpointScreening = new EventEmitter<EndpointModel>();
-    @Output() deleteParticipantScreening = new EventEmitter<ParticipantModel>();
+    @Output() deleteParticipantScreening = new EventEmitter<VHParticipant>();
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.hearing) {
@@ -28,7 +28,7 @@ export class ScreeningListComponent implements OnChanges {
         this.deleteEndpointScreening.emit(endpoint);
     }
 
-    onParticipantScreeningDeleted(participant: ParticipantModel) {
+    onParticipantScreeningDeleted(participant: VHParticipant) {
         this.deleteParticipantScreening.emit(participant);
     }
 }

@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { EndpointLink, VideoAccessPointDto } from '../models/video-access-point.model';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Constants } from 'src/app/common/constants';
 import { InterpreterSelectedDto } from '../../interpreter-form/interpreter-selected.model';
 import { InterpreterFormComponent } from '../../interpreter-form/interpreter-form.component';
 import { FeatureFlags } from 'src/app/services/launch-darkly.service';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-video-endpoint-form',
@@ -15,7 +15,7 @@ export class VideoEndpointFormComponent {
     errorMessages = Constants.Error;
     featureFlags = FeatureFlags;
 
-    availableRepresentatives: ParticipantModel[] = [];
+    availableRepresentatives: VHParticipant[] = [];
     constants = Constants;
 
     form: FormGroup<VideoEndpointForm>;
@@ -46,7 +46,7 @@ export class VideoEndpointFormComponent {
 
     @Input() existingVideoEndpoints: VideoAccessPointDto[] = [];
 
-    @Input() set participants(value: ParticipantModel[]) {
+    @Input() set participants(value: VHParticipant[]) {
         this._participants = value;
 
         this.availableRepresentatives = this._participants.filter(p => p.user_role_name === this.constants.Representative && p.email);
@@ -56,7 +56,7 @@ export class VideoEndpointFormComponent {
 
     @ViewChild('interpreterForm') interpreterForm: InterpreterFormComponent;
 
-    private _participants: ParticipantModel[];
+    private _participants: VHParticipant[];
 
     constructor(private readonly formBuilder: FormBuilder) {
         this.createForm();

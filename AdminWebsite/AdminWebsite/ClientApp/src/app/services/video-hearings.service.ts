@@ -27,7 +27,6 @@ import {
     UpdateBookingStatusResponse,
     UpdateHearingInGroupRequest
 } from './clients/api-client';
-import { ParticipantModel } from '../common/model/participant.model';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel } from '../common/model/linked-participant.model';
 import { Constants } from '../common/constants';
@@ -39,6 +38,7 @@ import { ScreeningDto } from '../booking/screening/screening.model';
 import { ReferenceDataService } from './reference-data.service';
 import { createVHBooking, VHBooking } from '../common/model/vh-booking';
 import { mapHearingToVHBooking } from '../common/model/api-contract-to-client-model-mappers';
+import { VHParticipant } from '../common/model/vh-participant';
 
 @Injectable({
     providedIn: 'root'
@@ -249,7 +249,7 @@ export class VideoHearingsService {
         return editMultiDayRequest;
     }
 
-    mapParticipantModelToEditParticipantRequest(participants: ParticipantModel[]): EditParticipantRequest[] {
+    mapParticipantModelToEditParticipantRequest(participants: VHParticipant[]): EditParticipantRequest[] {
         let list: Array<EditParticipantRequest> = [];
         if (participants && participants.length > 0) {
             list = participants.map(x => this.mappingToEditParticipantRequest(x));
@@ -265,7 +265,7 @@ export class VideoHearingsService {
         return list;
     }
 
-    mappingToEditParticipantRequest(participant: ParticipantModel): EditParticipantRequest {
+    mappingToEditParticipantRequest(participant: VHParticipant): EditParticipantRequest {
         const editParticipant = new EditParticipantRequest();
         editParticipant.id = participant.id;
         editParticipant.external_reference_id = participant.externalReferenceId;
@@ -362,7 +362,7 @@ export class VideoHearingsService {
         });
     }
 
-    mapParticipants(newRequest: ParticipantModel[]): ParticipantRequest[] {
+    mapParticipants(newRequest: VHParticipant[]): ParticipantRequest[] {
         const participants: ParticipantRequest[] = [];
         let participant: ParticipantRequest;
         if (newRequest && newRequest.length > 0) {
@@ -491,7 +491,7 @@ export class VideoHearingsService {
         );
     }
 
-    getJudge(): ParticipantModel {
+    getJudge(): VHParticipant {
         return this.modelHearing.participants.find(x => x.is_judge);
     }
 

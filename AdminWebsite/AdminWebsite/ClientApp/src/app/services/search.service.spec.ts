@@ -3,9 +3,10 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 import { BHClient, JudgeAccountType, JudgeResponse, PersonResponseV2 } from './clients/api-client';
-import { ParticipantModel } from '../common/model/participant.model';
 import { Constants } from '../common/constants';
 import { LaunchDarklyService } from './launch-darkly.service';
+import { VHParticipant } from '../common/model/vh-participant';
+import * as ApiContractToClientModelMappers from '../common/model/api-contract-to-client-model-mappers';
 
 let service: SearchService;
 
@@ -70,40 +71,42 @@ ejudJudge.account_type = JudgeAccountType.Judiciary;
 
 const judgeList: JudgeResponse[] = [judge1, judge2, ejudJudge];
 
-const judgeParticipant1 = new ParticipantModel();
+const judgeParticipant1 = new VHParticipant();
 judgeParticipant1.first_name = 'judgeParticipant1FirstName';
 judgeParticipant1.last_name = 'judgeParticipant1LastName';
 judgeParticipant1.display_name = 'judgeParticipant1DisplayName';
 judgeParticipant1.email = 'judgeParticipant1Email';
 
-const judgeParticipant2 = new ParticipantModel();
+const judgeParticipant2 = new VHParticipant();
 judgeParticipant2.first_name = 'judgeParticipant2FirstName';
 judgeParticipant2.last_name = 'judgeParticipant2LastName';
 judgeParticipant2.display_name = 'judgeParticipant2DisplayName';
 judgeParticipant2.email = 'judgeParticipant2Email';
 
-const judgeParticipant3 = new ParticipantModel();
+const judgeParticipant3 = new VHParticipant();
 judgeParticipant2.first_name = 'judgeParticipant2FirstName';
 judgeParticipant2.last_name = 'judgeParticipant2LastName';
 judgeParticipant2.display_name = null;
 judgeParticipant2.email = 'judgeEjud';
 
-const judgeParticipantList: ParticipantModel[] = [judgeParticipant1, judgeParticipant2, judgeParticipant3];
+const judgeParticipantList: VHParticipant[] = [judgeParticipant1, judgeParticipant2, judgeParticipant3];
 
-const participant1 = new ParticipantModel();
+const participant1 = new VHParticipant();
 participant1.first_name = 'participant1FirstName';
 participant1.last_name = 'participant1LastName';
 participant1.display_name = 'participant1DisplayName';
 participant1.email = 'participant1Email';
 
-const participant2 = new ParticipantModel();
+const participant2 = new VHParticipant();
 participant2.first_name = 'participant2FirstName';
 participant2.last_name = 'participant2LastName';
 participant2.display_name = 'participant2DisplayName';
 participant2.email = 'participant2Email';
-const participantList: ParticipantModel[] = [participant1, participant2];
+const participantList: VHParticipant[] = [participant1, participant2];
 let clientApiSpy: jasmine.SpyObj<BHClient>;
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+let mapPersonResponseToVHParticipantSpy: jasmine.Spy;
+let mapJudgeResponseToVHParticipantSpy: jasmine.Spy;
 
 describe('SearchService', () => {
     beforeEach(() => {
@@ -112,8 +115,12 @@ describe('SearchService', () => {
         clientApiSpy.postPersonBySearchTerm.and.returnValue(of(personList));
         clientApiSpy.postJudgesBySearchTerm.and.returnValue(of(judgeList));
 
-        spyOn(ParticipantModel, 'fromPersonResponse').and.returnValue(participant1);
-        spyOn(ParticipantModel, 'fromJudgeResponse').and.returnValue(judgeParticipant1);
+        mapPersonResponseToVHParticipantSpy = spyOn(ApiContractToClientModelMappers, 'mapPersonResponseToVHParticipant').and.returnValue(
+            participant1
+        );
+        mapJudgeResponseToVHParticipantSpy = spyOn(ApiContractToClientModelMappers, 'mapJudgeResponseToVHParticipant').and.returnValue(
+            judgeParticipant1
+        );
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
@@ -143,9 +150,9 @@ describe('SearchService', () => {
             expect(service.searchEntries).toHaveBeenCalledTimes(1);
             expect(service.searchJudgeAccounts).toHaveBeenCalledTimes(0);
 
-            expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledTimes(personList.length);
+            expect(ApiContractToClientModelMappers.mapPersonResponseToVHParticipant).toHaveBeenCalledTimes(personList.length);
             personList.forEach(person => {
-                expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledWith(person);
+                expect(ApiContractToClientModelMappers.mapPersonResponseToVHParticipant).toHaveBeenCalledWith(person);
             });
         });
 
@@ -160,9 +167,9 @@ describe('SearchService', () => {
 
             expect(service.searchEntries).toHaveBeenCalledTimes(0);
 
-            expect(ParticipantModel.fromJudgeResponse).toHaveBeenCalledTimes(judgeList.length);
+            expect(mapJudgeResponseToVHParticipantSpy).toHaveBeenCalledTimes(judgeList.length);
             judgeList.forEach(judge => {
-                expect(ParticipantModel.fromJudgeResponse).toHaveBeenCalledWith(judge);
+                expect(mapJudgeResponseToVHParticipantSpy).toHaveBeenCalledWith(judge);
             });
         });
     });

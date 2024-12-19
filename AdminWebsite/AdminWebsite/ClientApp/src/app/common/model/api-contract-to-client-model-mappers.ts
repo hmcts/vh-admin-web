@@ -4,7 +4,10 @@ import {
     ParticipantResponse,
     LinkedParticipantResponse,
     EndpointResponse,
-    BookingsHearingResponse
+    BookingsHearingResponse,
+    PersonResponseV2,
+    JudgeAccountType,
+    JudgeResponse
 } from 'src/app/services/clients/api-client';
 import { Constants } from 'src/app/common/constants';
 import { VHBooking } from './vh-booking';
@@ -47,7 +50,10 @@ export function mapHearingToVHBooking(hearing: HearingDetailsResponse): VHBookin
         judge: getJudge(hearing),
         isLastDayOfMultiDayHearing:
             hearing.scheduled_date_time.getTime() === hearing.multi_day_hearing_last_day_scheduled_date_time?.getTime(),
-        groupId: hearing.group_id
+        groupId: hearing.group_id,
+        allocatedTo: hearing.allocated_to_username,
+        confirmedBy: hearing.confirmed_by,
+        confirmedDate: hearing.confirmed_date
     };
 }
 
@@ -70,7 +76,9 @@ export function mapBookingsHearingResponseToVHBooking(response: BookingsHearingR
         judge: mapJudgeNameToJudge(response.judge_name),
         groupId: response.group_id,
         courtRoomAccount: response.court_room_account,
-        allocatedTo: response.allocated_to
+        allocatedTo: response.allocated_to,
+        confirmedBy: response.confirmed_by,
+        confirmedDate: response.confirmed_date
     };
 }
 
@@ -100,7 +108,7 @@ export function mapParticipantResponseToVHParticipant(response: ParticipantRespo
     return new VHParticipant({
         id: response.id,
         externalReferenceId: response.external_reference_id,
-        title: response.title,
+        title: response.title ?? '',
         first_name: response.first_name,
         last_name: response.last_name,
         middle_names: response.middle_names,
@@ -173,4 +181,57 @@ function getJudge(hearing: HearingDetailsResponse): JudicialMemberDto {
         return JudicialMemberDto.fromJudiciaryParticipantResponse(judge);
     }
     return null;
+}
+
+export function mapPersonResponseToVHParticipant(person: PersonResponseV2): VHParticipant {
+    return person
+        ? new VHParticipant({
+              id: person.id,
+              title: person.title ?? '',
+              first_name: person.first_name,
+              middle_names: person.middle_names,
+              last_name: person.last_name,
+              email: person.contact_email ?? person.username,
+              phone: person.telephone_number,
+              representee: '',
+              company: person.organisation,
+              isJudiciaryMember: false,
+              interpretation_language: null
+          })
+        : null;
+}
+
+export function mapJudgeResponseToVHParticipant(judge: JudgeResponse): VHParticipant {
+    return judge
+        ? new VHParticipant({
+              first_name: judge.first_name,
+              last_name: judge.last_name,
+              display_name: judge.display_name,
+              email: judge.contact_email ?? judge.email,
+              username: judge.email,
+              is_courtroom_account: judge.account_type === JudgeAccountType.Courtroom,
+              isJudiciaryMember: false,
+              interpretation_language: null
+          })
+        : null;
+}
+
+export function mapJudicialMemberDtoToVHParticipant(judicialMember: JudicialMemberDto, isJudge = false) {
+    const hearingRoleName = isJudge ? 'Judge' : 'Panel Member';
+    const userRoleName = isJudge ? 'Judge' : 'PanelMember';
+    const hearingRoleCode = isJudge ? 'Judge' : 'PanelMember';
+    return new VHParticipant({
+        first_name: judicialMember.firstName,
+        last_name: judicialMember.lastName,
+        hearing_role_name: hearingRoleName,
+        username: judicialMember.email,
+        email: judicialMember.email,
+        is_exist_person: true,
+        user_role_name: userRoleName,
+        isJudiciaryMember: true,
+        hearing_role_code: hearingRoleCode,
+        phone: judicialMember.telephone,
+        display_name: judicialMember.displayName,
+        interpretation_language: judicialMember.interpretationLanguage
+    });
 }

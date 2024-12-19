@@ -19,6 +19,10 @@ export class JudicialMemberDto {
         public isGeneric: boolean
     ) {}
 
+    get isJudge(): boolean {
+        return this.roleCode === 'Judge';
+    }
+
     static fromJudiciaryParticipantResponse(response: JudiciaryParticipantResponse): JudicialMemberDto {
         const dto = new JudicialMemberDto(
             response.first_name,

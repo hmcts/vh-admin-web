@@ -2,15 +2,15 @@ import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ParticipantDetailsModel } from 'src/app/common/model/participant-details.model';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
-import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { HearingDetailsComponent } from './hearing-details.component';
 import { ClientSettingsResponse } from 'src/app/services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { createVHBookingFromDetails } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 describe('HearingDetailsComponent', () => {
     let component: HearingDetailsComponent;
@@ -24,7 +24,7 @@ describe('HearingDetailsComponent', () => {
     });
     const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'getConfig']);
     configServiceSpy.getConfig.and.returnValue(clientSettings);
-    const h1 = new BookingsDetailsModel(
+    const h1 = createVHBookingFromDetails(
         '1',
         new Date('2019-10-22 13:58:40.3730067'),
         120,
@@ -44,9 +44,9 @@ describe('HearingDetailsComponent', () => {
         'reason1',
         'Financial Remedy',
         'judge.green@hmcts.net',
-        '1234567',
-        'true'
+        '1234567'
     );
+    h1.allocatedTo = 'Not Allocated';
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [HearingDetailsComponent, LongDatetimePipe],
@@ -60,7 +60,7 @@ describe('HearingDetailsComponent', () => {
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
         component.hearing = h1;
-        component.hearing.OtherInformation = JSON.stringify(OtherInformationModel.init(component.hearing.OtherInformation));
+        component.hearing.other_information = JSON.stringify(OtherInformationModel.init(component.hearing.other_information));
 
         fixture.detectChanges();
     });
@@ -85,8 +85,8 @@ describe('HearingDetailsComponent', () => {
     });
 
     it('it should display the participant and representee', () => {
-        const participants: Array<ParticipantDetailsModel> = [];
-        const participant = new ParticipantDetailsModel(
+        const participants: Array<VHParticipant> = [];
+        const participant = VHParticipant.createForDetails(
             '123-123',
             '123-123',
             'Judge',
@@ -108,12 +108,12 @@ describe('HearingDetailsComponent', () => {
         );
         participants.push(participant);
         component.participants = participants;
-        const result = component.getDefenceAdvocateByContactEmail(participant.Email);
+        const result = component.getDefenceAdvocateByContactEmail(participant.email);
         expect(result).toBe('display_name, representing representee');
     });
     it('it should display the participant and representee', () => {
-        const participants: Array<ParticipantDetailsModel> = [];
-        const participant = new ParticipantDetailsModel(
+        const participants: Array<VHParticipant> = [];
+        const participant = VHParticipant.createForDetails(
             '123-123',
             '123-123',
             'Judge',
