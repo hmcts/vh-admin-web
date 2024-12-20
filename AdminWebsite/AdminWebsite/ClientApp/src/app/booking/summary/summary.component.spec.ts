@@ -388,11 +388,11 @@ describe('SummaryComponent with valid request', () => {
         lp.linkedParticipantEmail = 'firstname1.lastname1@email.com';
         const lps: LinkedParticipantModel[] = [];
         lps.push(lp);
-        component.hearing.linkedOarticipants = lps;
+        component.hearing.linkedParticipants = lps;
         component.selectedParticipantEmail = 'firstname.lastname@email.com';
 
         component.handleContinueRemoveInterpreter();
-        expect(component.hearing.linkedOarticipants).toEqual([]);
+        expect(component.hearing.linkedParticipants).toEqual([]);
         expect(component.hearing.participants).toEqual([]);
     });
 
@@ -422,11 +422,11 @@ describe('SummaryComponent with valid request', () => {
         lp.linkedParticipantEmail = 'firstname1.lastname1@email.com';
         const lps: LinkedParticipantModel[] = [];
         lps.push(lp);
-        component.hearing.linkedOarticipants = lps;
+        component.hearing.linkedParticipants = lps;
 
         component.selectedParticipantEmail = 'firstname1.lastname1@email.com';
         component.handleContinueRemoveInterpreter();
-        expect(component.hearing.linkedOarticipants).toEqual([]);
+        expect(component.hearing.linkedParticipants).toEqual([]);
         expect(component.hearing.participants.length).toBe(1);
         expect(component.hearing.participants[0].firstName).toBe('firstname');
     });
@@ -901,11 +901,11 @@ describe('SummaryComponent  with existing request', () => {
         lp3.linkedParticipantId = '200';
         const lps: LinkedParticipantModel[] = [];
         lps.push(lp3);
-        component.hearing.linkedOarticipants = lps;
+        component.hearing.linkedParticipants = lps;
 
         component.selectedParticipantEmail = 'firstname1.lastname1@email.com';
         component.handleContinueRemoveInterpreter();
-        expect(component.hearing.linkedOarticipants).toEqual([]);
+        expect(component.hearing.linkedParticipants).toEqual([]);
         expect(component.hearing.participants.length).toBe(0);
     });
 });

@@ -772,21 +772,21 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                 linkedParticipantEmail: interpretee.email,
                 linkType: LinkedParticipantType.Interpreter
             };
-            this.hearing.linkedOarticipants.push(linkedParticipant);
+            this.hearing.linkedParticipants.push(linkedParticipant);
         }
     }
 
     private updateLinkedParticipant(newParticipant: VHParticipant): void {
-        this.hearing.linkedOarticipants = [];
+        this.hearing.linkedParticipants = [];
         this.addLinkedParticipant(newParticipant);
     }
 
     private removeLinkedParticipant(email: string): void {
         // removes both the linked participants.
-        const interpreterExists = this.hearing.linkedOarticipants.some(p => p.participantEmail === email);
-        const interpreteeExists = this.hearing.linkedOarticipants.some(p => p.linkedParticipantEmail === email);
+        const interpreterExists = this.hearing.linkedParticipants.some(p => p.participantEmail === email);
+        const interpreteeExists = this.hearing.linkedParticipants.some(p => p.linkedParticipantEmail === email);
         if (interpreterExists || interpreteeExists) {
-            this.hearing.linkedOarticipants = [];
+            this.hearing.linkedParticipants = [];
         }
     }
 

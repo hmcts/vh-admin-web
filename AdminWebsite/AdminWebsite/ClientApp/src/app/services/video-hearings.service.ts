@@ -326,7 +326,7 @@ export class VideoHearingsService {
         newHearingRequest.other_information = newRequest.otherInformation;
         newHearingRequest.audio_recording_required = newRequest.audioRecordingRequired;
         newHearingRequest.endpoints = this.mapEndpoints(newRequest.endpoints);
-        newHearingRequest.linked_participants = this.mapLinkedParticipants(newRequest.linkedOarticipants);
+        newHearingRequest.linked_participants = this.mapLinkedParticipants(newRequest.linkedParticipants);
         newHearingRequest.judiciary_participants = this.mapJudicialMemberDtoToJudiciaryParticipantRequest(newRequest.judiciaryParticipants);
         newHearingRequest.conference_supplier = newRequest.supplier;
 

@@ -515,10 +515,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     private removeLinkedParticipant(email: string): void {
         // removes both the linked participants.
-        const interpreterExists = this.hearing.linkedOarticipants.find(p => p.participantEmail === email);
-        const interpreteeExists = this.hearing.linkedOarticipants.find(p => p.linkedParticipantEmail === email);
+        const interpreterExists = this.hearing.linkedParticipants.find(p => p.participantEmail === email);
+        const interpreteeExists = this.hearing.linkedParticipants.find(p => p.linkedParticipantEmail === email);
         if (interpreterExists || interpreteeExists) {
-            this.hearing.linkedOarticipants = [];
+            this.hearing.linkedParticipants = [];
         }
     }
 

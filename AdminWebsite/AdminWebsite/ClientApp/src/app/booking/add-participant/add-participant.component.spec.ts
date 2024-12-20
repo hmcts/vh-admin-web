@@ -661,10 +661,10 @@ describe('AddParticipantComponent', () => {
         lp.participantEmail = 'firstname.lastname-interpreter@email.com';
         lp.linkedParticipantEmail = 'firstname.lastname-interpretee@email.com';
         linkedParticipants.push(lp);
-        component.hearing.linkedOarticipants = linkedParticipants;
+        component.hearing.linkedParticipants = linkedParticipants;
         component.selectedParticipantEmail = 'firstname.lastname-interpreter@email.com';
         component.handleContinueRemoveInterpreter();
-        expect(component.hearing.linkedOarticipants.length).toBe(0);
+        expect(component.hearing.linkedParticipants.length).toBe(0);
         expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
     });
     it('should clear the linked participant model if interpretee is removed', () => {
@@ -693,10 +693,10 @@ describe('AddParticipantComponent', () => {
         lp.participantEmail = 'firstname.lastname-interpreter@email.com';
         lp.linkedParticipantEmail = 'firstname.lastname-interpretee@email.com';
         linkedParticipants.push(lp);
-        component.hearing.linkedOarticipants = linkedParticipants;
+        component.hearing.linkedParticipants = linkedParticipants;
         component.selectedParticipantEmail = 'firstname.lastname-interpretee@email.com';
         component.handleContinueRemoveInterpreter();
-        expect(component.hearing.linkedOarticipants.length).toBe(0);
+        expect(component.hearing.linkedParticipants.length).toBe(0);
         expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
     });
     it('should call the update hearing service on udpdate click', () => {
@@ -1196,10 +1196,10 @@ describe('AddParticipantComponent edit mode', () => {
         lp.linkedParticipantId = '100';
         lp.participantId = '300';
         linkedParticipants.push(lp);
-        component.hearing.linkedOarticipants = linkedParticipants;
+        component.hearing.linkedParticipants = linkedParticipants;
         component.selectedParticipantEmail = 'firstname.lastname-interpretee@email.com';
         component.handleContinueRemoveInterpreter();
-        expect(component.hearing.linkedOarticipants.length).toBe(0);
+        expect(component.hearing.linkedParticipants.length).toBe(0);
         expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
     });
 
@@ -1374,7 +1374,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         interpreterLp.participantId = component.hearing.participants[3].id; // interpreter
         interpreterLPs.push(participantLp);
         component.hearing.participants[1].linkedParticipants = interpreterLPs;
-        component.hearing.linkedOarticipants = participantsLPs;
+        component.hearing.linkedParticipants = participantsLPs;
 
         // Act
         component.updateParticipantAction();

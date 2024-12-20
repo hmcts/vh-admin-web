@@ -32,7 +32,7 @@ export class VHBooking {
     isMultiDayEdit?: boolean;
     endHearingDateTime?: Date;
     telephoneConferenceId?: string;
-    linkedOarticipants?: LinkedParticipantModel[];
+    linkedParticipants?: LinkedParticipantModel[];
     hearingDates?: Date[];
     isConfirmed?: boolean;
     isMultiDay?: boolean;
@@ -57,7 +57,7 @@ export class VHBooking {
         this.participants = init.participants ?? [];
         this.judiciaryParticipants = init.judiciaryParticipants ?? [];
         this.endpoints = init.endpoints ?? [];
-        this.linkedOarticipants = init.linkedOarticipants ?? [];
+        this.linkedParticipants = init.linkedParticipants ?? [];
         this.hearingDates = init.hearingDates ?? [];
         this.updatedDate = init.updatedDate ?? new Date();
         this.supplier = init.supplier ?? VideoSupplier.Vodafone;
