@@ -69,7 +69,6 @@ export class VHParticipant {
         return this.hearingRoleCode && this.hearingRoleCode === HearingRoleCodes.StaffMember;
     }
 
-    // Kept in for compatibility with the existing code
     get isJudge(): boolean {
         return this.hearingRoleName && this.hearingRoleName.toLowerCase().trim() === HearingRoles.JUDGE;
     }
