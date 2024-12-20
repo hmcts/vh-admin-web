@@ -42,9 +42,9 @@
         {{ hearingDate | appLongDatetime }}
       </div>
       <ng-template #multiDaysHearing>
-        <ng-container *ngIf="hearing.hearing_dates.length; else dateRange">
-          {{ hearing.hearing_dates[0] | date : 'h:mma' | lowercase }}
-          <app-multi-day-hearing-schedule [hearingDates]="hearing.hearing_dates"></app-multi-day-hearing-schedule>
+        <ng-container *ngIf="hearing.hearingDates.length; else dateRange">
+          {{ hearing.hearingDates[0] | date : 'h:mma' | lowercase }}
+          <app-multi-day-hearing-schedule [hearingDates]="hearing.hearingDates"></app-multi-day-hearing-schedule>
         </ng-container>
         <ng-template #dateRange>
           <div id="hearingStartDate">{{ hearingDate | date : 'EEEE dd MMMM yyyy' }} -</div>
