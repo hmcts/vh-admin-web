@@ -45,7 +45,6 @@ export class VHBooking {
     groupId?: string;
     confirmedBy?: string;
     confirmedDate?: Date;
-    cancelReason?: string;
     courtRoomAccount?: string;
     allocatedTo?: string;
 
@@ -101,7 +100,6 @@ export class VHBooking {
         confirmedDate: Date,
         status: string,
         audioRecordingRequired: boolean,
-        cancelReason: string,
         caseType: string,
         courtRoomAccount: string,
         telephoneConferenceId: string
@@ -122,7 +120,6 @@ export class VHBooking {
             confirmedDate: confirmedDate,
             status: status,
             audioRecordingRequired: audioRecordingRequired,
-            cancelReason: cancelReason,
             caseType: caseType,
             courtRoomAccount: courtRoomAccount,
             telephoneConferenceId: telephoneConferenceId

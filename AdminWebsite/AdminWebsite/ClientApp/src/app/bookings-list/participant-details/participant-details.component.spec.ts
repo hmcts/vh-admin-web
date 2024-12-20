@@ -38,7 +38,6 @@ describe('ParticipantDetailsComponent', () => {
             null,
             'Booked',
             true,
-            'reason1',
             'Financial Remedy',
             'judge.green@hmcts.net',
             '1234567'
@@ -69,7 +68,6 @@ describe('ParticipantDetailsComponent', () => {
             false,
             null
         );
-        pr.indexInList = 0;
         component.participant = pr;
 
         fixture.detectChanges();

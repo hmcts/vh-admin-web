@@ -55,7 +55,6 @@ export class BookingDetailsTestData {
             null,
             'Booked',
             true,
-            'reason',
             'Financial Remedy',
             'judge.green@hmcts.net',
             '1234567'

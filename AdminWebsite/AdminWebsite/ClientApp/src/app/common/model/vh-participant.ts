@@ -32,11 +32,6 @@ export class VHParticipant {
     isJudiciaryMember?: boolean;
     interpretation_language: InterpreterSelectedDto;
     screening?: ScreeningDto;
-    // flag to indicate if participant is the last in the list and don't need decoration bottom line
-    flag?: boolean;
-
-    // use to set unique id of the html element
-    indexInList?: number;
 
     constructor(init?: Partial<VHParticipant>) {
         Object.assign(this, init);

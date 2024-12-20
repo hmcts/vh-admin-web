@@ -146,7 +146,6 @@ export class BookingslistTestData {
                 null,
                 'Booked',
                 true,
-                'reason1',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -172,7 +171,6 @@ export class BookingslistTestData {
                 null,
                 'Booked',
                 true,
-                'reason2',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -199,7 +197,6 @@ export class BookingslistTestData {
                 null,
                 'Booked',
                 true,
-                'reason3',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -238,7 +235,6 @@ export class BookingslistTestData {
                 null,
                 'Booked',
                 true,
-                'reason4',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -265,7 +261,6 @@ export class BookingslistTestData {
                 null,
                 'Booked',
                 true,
-                'reason5',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -292,7 +287,6 @@ export class BookingslistTestData {
                 null,
                 'Booked',
                 true,
-                'reason6',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -334,7 +328,6 @@ export class ArrayBookingslistModelTestData {
                 null,
                 'Booked',
                 true,
-                'reason7',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -361,7 +354,6 @@ export class ArrayBookingslistModelTestData {
                 null,
                 'Booked',
                 true,
-                'reason8',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -388,7 +380,6 @@ export class ArrayBookingslistModelTestData {
                 null,
                 'Booked',
                 true,
-                'reason9',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -423,7 +414,6 @@ export class ArrayBookingslistModelTestData {
                 null,
                 'Booked',
                 true,
-                'reason10',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -450,7 +440,6 @@ export class ArrayBookingslistModelTestData {
                 null,
                 'Booked',
                 true,
-                'reason11',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -477,7 +466,6 @@ export class ArrayBookingslistModelTestData {
                 null,
                 'Booked',
                 true,
-                'reason12',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -598,7 +586,6 @@ export class BookingPersistServiceSpy {
                 null,
                 'Booked',
                 true,
-                'reason13',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -1135,7 +1122,6 @@ describe('BookingsListComponent', () => {
                 null,
                 'Booked',
                 true,
-                'reason14',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -1167,7 +1153,6 @@ describe('BookingsListComponent', () => {
                 null,
                 'Booked',
                 true,
-                'reason15',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'

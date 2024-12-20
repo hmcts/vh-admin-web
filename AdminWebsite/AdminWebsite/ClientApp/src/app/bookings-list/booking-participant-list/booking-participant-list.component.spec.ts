@@ -108,8 +108,6 @@ describe('BookingParticipantListComponent', () => {
                         company: '',
                         displayName: '',
                         email: '',
-                        flag: false,
-                        indexInList: 0,
                         interpreteeName: p.Interpretee,
                         lastName: '',
                         middleNames: '',

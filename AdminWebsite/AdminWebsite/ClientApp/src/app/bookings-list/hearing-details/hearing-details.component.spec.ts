@@ -41,7 +41,6 @@ describe('HearingDetailsComponent', () => {
         null,
         'Booked',
         true,
-        'reason1',
         'Financial Remedy',
         'judge.green@hmcts.net',
         '1234567'

@@ -135,7 +135,6 @@ export class ResponseTestData {
                 null,
                 'Booked',
                 true,
-                'reason1',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -159,7 +158,6 @@ export class ResponseTestData {
                 null,
                 'Booked',
                 true,
-                'reason2',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -183,7 +181,6 @@ export class ResponseTestData {
                 null,
                 'Booked',
                 true,
-                'reason3',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -221,7 +218,6 @@ export class ResponseTestData {
                 null,
                 'Booked',
                 true,
-                'reason11',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -245,7 +241,6 @@ export class ResponseTestData {
                 null,
                 'Booked',
                 true,
-                'reason12',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -269,7 +264,6 @@ export class ResponseTestData {
                 null,
                 'Booked',
                 true,
-                'reason13',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -301,7 +295,6 @@ export class ResponseTestData {
                 null,
                 'Booked',
                 true,
-                'reason21',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -325,7 +318,6 @@ export class ResponseTestData {
                 null,
                 'Booked',
                 true,
-                'reason32',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'
@@ -349,7 +341,6 @@ export class ResponseTestData {
                 null,
                 'Booked',
                 true,
-                'reason33',
                 'Financial Remedy',
                 'judge.green@hmcts.net',
                 '1234567'

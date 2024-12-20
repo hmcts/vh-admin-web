@@ -35,7 +35,6 @@ export class BookingParticipantListComponent {
     get participants(): Array<VHParticipant> {
         let indexItem = 0;
         this._participants.forEach(x => {
-            x.indexInList = indexItem;
             indexItem++;
         });
         return this._participants;

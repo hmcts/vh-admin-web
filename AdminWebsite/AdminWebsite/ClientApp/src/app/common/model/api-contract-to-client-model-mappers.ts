@@ -113,18 +113,11 @@ export function mapParticipantResponseToVHParticipant(response: ParticipantRespo
         phone: response.telephone_number,
         representee: response.representee,
         company: response.organisation,
-        //isExistPerson: false,
         linkedParticipants: mapLinkedParticipantResponseToLinkedParticipantModel(response.linked_participants),
         userRoleName: response.user_role_name,
-        //isCourtroomAccount: false,
-        //addedDuringHearing: false,
-        //isStaffMember: false,
         contactEmail: response.contact_email, // Do we still need this as it duplicates email
-        //isJudiciaryMember: false,
         interpretation_language: InterpreterSelectedDto.fromAvailableLanguageResponse(response.interpreter_language),
         screening: mapScreeningResponseToScreeningDto(response.screening_requirement)
-        //flag: false,
-        //indexInList: 0
     });
 }
 
