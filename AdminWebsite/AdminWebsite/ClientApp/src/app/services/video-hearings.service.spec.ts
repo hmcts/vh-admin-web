@@ -4,11 +4,9 @@ import {
     BHClient,
     BookingStatus,
     CancelMultiDayHearingRequest,
-    CaseResponse,
     ClientSettingsResponse,
     EditMultiDayHearingRequest,
     HearingDetailsResponse,
-    JudiciaryParticipantResponse,
     MultiHearingRequest,
     UpdateHearingInGroupRequest,
     VideoSupplier

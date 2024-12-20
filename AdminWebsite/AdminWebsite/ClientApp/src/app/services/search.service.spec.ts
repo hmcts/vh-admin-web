@@ -6,7 +6,7 @@ import { BHClient, JudgeAccountType, JudgeResponse, PersonResponseV2 } from './c
 import { Constants } from '../common/constants';
 import { LaunchDarklyService } from './launch-darkly.service';
 import { VHParticipant } from '../common/model/vh-participant';
-import * as ApiContractToClientModelMappers from '../common/model/api-contract-to-client-model-mappers';
+import { mapJudgeResponseToVHParticipant, mapPersonResponseToVHParticipant } from '../common/model/api-contract-to-client-model-mappers';
 
 let service: SearchService;
 
@@ -105,8 +105,6 @@ participant2.email = 'participant2Email';
 const participantList: VHParticipant[] = [participant1, participant2];
 let clientApiSpy: jasmine.SpyObj<BHClient>;
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-let mapPersonResponseToVHParticipantSpy: jasmine.Spy;
-let mapJudgeResponseToVHParticipantSpy: jasmine.Spy;
 
 describe('SearchService', () => {
     beforeEach(() => {
@@ -114,13 +112,6 @@ describe('SearchService', () => {
 
         clientApiSpy.postPersonBySearchTerm.and.returnValue(of(personList));
         clientApiSpy.postJudgesBySearchTerm.and.returnValue(of(judgeList));
-
-        mapPersonResponseToVHParticipantSpy = spyOn(ApiContractToClientModelMappers, 'mapPersonResponseToVHParticipant').and.returnValue(
-            participant1
-        );
-        mapJudgeResponseToVHParticipantSpy = spyOn(ApiContractToClientModelMappers, 'mapJudgeResponseToVHParticipant').and.returnValue(
-            judgeParticipant1
-        );
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
@@ -143,33 +134,42 @@ describe('SearchService', () => {
 
         it('should call searchEntries and map response when role is not judge or judiciary ', () => {
             const terms = validSearchTerms;
+            const mappedParticipants: VHParticipant[] = [];
+
             service.participantSearch(terms, roleRegular).subscribe(participants => {
                 expect(participants.length).toEqual(participantList.length);
+                mappedParticipants.push(...participants);
             });
             expect(service.searchEntries).toHaveBeenCalledWith(terms);
             expect(service.searchEntries).toHaveBeenCalledTimes(1);
             expect(service.searchJudgeAccounts).toHaveBeenCalledTimes(0);
 
-            expect(ApiContractToClientModelMappers.mapPersonResponseToVHParticipant).toHaveBeenCalledTimes(personList.length);
+            expect(mappedParticipants.length).toBe(personList.length);
             personList.forEach(person => {
-                expect(ApiContractToClientModelMappers.mapPersonResponseToVHParticipant).toHaveBeenCalledWith(person);
+                const expectedMappedParticipant = mapPersonResponseToVHParticipant(person);
+                const matchingParticipant = mappedParticipants.find(p => compareWithoutExternalReferenceId(p, expectedMappedParticipant));
+                expect(matchingParticipant).toBeTruthy();
             });
         });
 
         it('should call searchJudgeAccounts and map response when role is judge ', () => {
             const terms = validSearchTerms;
+            const mappedParticipants: VHParticipant[] = [];
 
             service.participantSearch(terms, roleJudge).subscribe(participants => {
                 expect(participants.length).toEqual(judgeParticipantList.length);
+                mappedParticipants.push(...participants);
             });
             expect(service.searchJudgeAccounts).toHaveBeenCalledWith(terms);
             expect(service.searchJudgeAccounts).toHaveBeenCalledTimes(1);
 
             expect(service.searchEntries).toHaveBeenCalledTimes(0);
 
-            expect(mapJudgeResponseToVHParticipantSpy).toHaveBeenCalledTimes(judgeList.length);
+            expect(mappedParticipants.length).toBe(judgeList.length);
             judgeList.forEach(judge => {
-                expect(mapJudgeResponseToVHParticipantSpy).toHaveBeenCalledWith(judge);
+                const expectedMappedParticipant = mapJudgeResponseToVHParticipant(judge);
+                const matchingParticipant = mappedParticipants.find(p => compareWithoutExternalReferenceId(p, expectedMappedParticipant));
+                expect(matchingParticipant).toBeTruthy();
             });
         });
     });
@@ -207,3 +207,10 @@ describe('SearchService', () => {
         expect(list.length).toBeGreaterThan(0);
     });
 });
+
+// The participant's external reference id is auto-generated so will not match in the assertion
+function compareWithoutExternalReferenceId(obj1: any, obj2: any): boolean {
+    const { externalReferenceId: _, ...rest1 } = obj1;
+    const { externalReferenceId: __, ...rest2 } = obj2;
+    return JSON.stringify(rest1) === JSON.stringify(rest2);
+}

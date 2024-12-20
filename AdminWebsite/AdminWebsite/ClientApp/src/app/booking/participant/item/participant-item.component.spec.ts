@@ -26,11 +26,11 @@ describe('ParticipantItemComponent', () => {
     let debugElement: DebugElement;
 
     bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['setEditMode', 'setParticipantEmail']);
-    const participant: any = {
+    const participant = new VHParticipant({
         title: 'Mrs',
-        first_name: 'Sam',
+        firstName: 'Sam',
         isJudiciaryMember: false
-    };
+    });
 
     beforeEach(waitForAsync(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
@@ -141,22 +141,22 @@ describe('ParticipantItemComponent', () => {
     });
 
     it('should return true if participant is a judge', () => {
-        participant.is_judge = true;
-        participant.is_exist_person = true;
+        participant.hearingRoleName = Constants.HearingRoles.Judge;
+        participant.isExistPerson = true;
         component.participant = participant;
         fixture.detectChanges();
         expect(component.isJudge).toBeTruthy();
     });
 
     it('should return true if participant is a staff member', () => {
-        participant.hearing_role_name = Constants.HearingRoles.StaffMember;
+        participant.hearingRoleName = Constants.HearingRoles.StaffMember;
         component.participant = participant;
         fixture.detectChanges();
         expect(component.isStaffMember).toBeTruthy();
     });
 
     it('should return false if participant is not a staff member', () => {
-        participant.hearing_role_name = Constants.HearingRoles.PanelMember;
+        participant.hearingRoleName = Constants.HearingRoles.PanelMember;
         component.participant = participant;
         fixture.detectChanges();
         expect(component.isStaffMember).toBeFalsy();

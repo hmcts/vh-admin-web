@@ -52,15 +52,15 @@ export class VHBooking {
     constructor(init?: Partial<VHBooking>) {
         Object.assign(this, init);
 
-        this.hearingId = init.hearingId ?? '';
-        this.scheduledDuration = init.scheduledDuration ?? 0;
-        this.participants = init.participants ?? [];
-        this.judiciaryParticipants = init.judiciaryParticipants ?? [];
-        this.endpoints = init.endpoints ?? [];
-        this.linkedParticipants = init.linkedParticipants ?? [];
-        this.hearingDates = init.hearingDates ?? [];
-        this.updatedDate = init.updatedDate ?? new Date();
-        this.supplier = init.supplier ?? VideoSupplier.Vodafone;
+        this.hearingId = init?.hearingId ?? '';
+        this.scheduledDuration = init?.scheduledDuration ?? 0;
+        this.participants = init?.participants ?? [];
+        this.judiciaryParticipants = init?.judiciaryParticipants ?? [];
+        this.endpoints = init?.endpoints ?? [];
+        this.linkedParticipants = init?.linkedParticipants ?? [];
+        this.hearingDates = init?.hearingDates ?? [];
+        this.updatedDate = init?.updatedDate ?? new Date();
+        this.supplier = init?.supplier ?? VideoSupplier.Vodafone;
     }
 
     get durationInHoursAndMinutes() {

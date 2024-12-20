@@ -198,7 +198,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         this.displayErrorNoParticipants = false;
         this.displayAdd();
         this.enableFields();
-        this.participantDetails = this.participantDetails.clone();
+        this.participantDetails = participantDetails.clone();
 
         if (participantDetails.isExistPerson) {
             this.disableLastFirstNames();
