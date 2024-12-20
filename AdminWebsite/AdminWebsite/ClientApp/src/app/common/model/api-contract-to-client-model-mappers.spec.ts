@@ -7,10 +7,13 @@ import {
     EndpointResponse,
     HearingDetailsResponse,
     InterprepretationType,
+    JudgeAccountType,
+    JudgeResponse,
     JudiciaryParticipantResponse,
     LinkedParticipantResponse,
     LinkedParticipantType,
     ParticipantResponse,
+    PersonResponseV2,
     ScreeningResponse,
     ScreeningType,
     VideoSupplier
@@ -21,14 +24,18 @@ import {
     mapCaseResponseToCaseModel,
     mapEndpointResponseToEndpointModel,
     mapHearingToVHBooking,
+    mapJudgeResponseToVHParticipant,
+    mapJudicialMemberDtoToVHParticipant,
     mapLinkedParticipantResponseToLinkedParticipantModel,
-    mapParticipantResponseToVHParticipant
+    mapParticipantResponseToVHParticipant,
+    mapPersonResponseToVHParticipant
 } from './api-contract-to-client-model-mappers';
 import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 import { Constants } from '../constants';
 import { InterpreterSelectedDto } from 'src/app/booking/interpreter-form/interpreter-selected.model';
 import { mapScreeningResponseToScreeningDto } from 'src/app/booking/screening/screening.model';
 import { CaseModel } from './case.model';
+import { VHParticipant } from './vh-participant';
 
 const DEFENCE_COUNSEL_ID = 'defence-counsel-id';
 
@@ -130,6 +137,7 @@ describe('mapBookingsHearingResponseToVHBooking', () => {
 
 describe('mapParticipantResponseToVHParticipant', () => {
     it('should map ParticipantResponse to VHParticipant', () => {
+        // Arrange
         const participant = new ParticipantResponse();
         participant.id = 'id';
         participant.external_reference_id = 'external-ref-id';
@@ -157,8 +165,10 @@ describe('mapParticipantResponseToVHParticipant', () => {
             type: ScreeningType.Specific
         });
 
+        // Act
         const result = mapParticipantResponseToVHParticipant(participant);
 
+        // Assert
         expect(result.id).toBe(participant.id);
         expect(result.externalReferenceId).toBe(participant.external_reference_id);
         expect(result.title).toBe(participant.title);
@@ -185,13 +195,17 @@ describe('mapParticipantResponseToVHParticipant', () => {
 
 describe('mapEndpointResponseToEndpointModel', () => {
     it('should map EndpointResponse to EndpointModel', () => {
+        // Arrange
         const endpoints: EndpointResponse[] = [];
         const endpoint = new EndpointResponse();
         endpoint.display_name = 'endpoint 001';
         endpoint.interpreter_language = null;
         endpoints.push(endpoint);
 
+        // Act
         const model = mapEndpointResponseToEndpointModel(endpoints, []);
+
+        // Assert
         expect(model[0].displayName).toEqual(endpoint.display_name);
         expect(model[0].interpretationLanguage).toBeNull();
     });
@@ -199,12 +213,183 @@ describe('mapEndpointResponseToEndpointModel', () => {
 
 describe('mapLinkedParticipantResponseToLinkedParticipantModel', () => {
     it('should map LinkedParticipantResponse to LinkedParticipantModel', () => {
+        // Arrange
         const linkedParticipants = createLinkedParticipants();
 
+        // Act
         const model = mapLinkedParticipantResponseToLinkedParticipantModel(linkedParticipants);
+
+        // Assert
         expect(model[0].linkType).toEqual(linkedParticipants[0].type);
         expect(model[0].linkedParticipantId).toEqual(linkedParticipants[0].linked_id);
     });
+});
+
+describe('mapPersonResponseToVHParticipant', () => {
+    let personResponse: PersonResponseV2;
+
+    beforeEach(() => {
+        personResponse = new PersonResponseV2({
+            id: 'id',
+            title: 'title',
+            first_name: 'firstName',
+            middle_names: 'middleNames',
+            last_name: 'lastName',
+            contact_email: 'contactEmail@email.com',
+            telephone_number: 'telephoneNumber',
+            username: 'username',
+            organisation: 'organisation'
+        });
+    });
+
+    it('should map PersonResponse to VHParticipant', () => {
+        // Arrange & Act
+        const result = mapPersonResponseToVHParticipant(personResponse);
+
+        // Assert
+        expect(result.id).toBe(personResponse.id);
+        expect(result.title).toBe(personResponse.title);
+        expect(result.firstName).toBe(personResponse.first_name);
+        expect(result.middleNames).toBe(personResponse.middle_names);
+        expect(result.lastName).toBe(personResponse.last_name);
+        expect(result.email).toBe(personResponse.contact_email);
+        expect(result.phone).toBe(personResponse.telephone_number);
+        expect(result.representee).toBe('');
+        expect(result.company).toBe(personResponse.organisation);
+        expect(result.isJudiciaryMember).toBeFalse();
+        expect(result.interpretation_language).toBeNull();
+    });
+
+    it('should map PersonResponse to VHParticipant without title', () => {
+        // Arrange
+        personResponse.title = null;
+
+        // Act
+        const result = mapPersonResponseToVHParticipant(personResponse);
+
+        // Assert
+        expect(result.title).toBe('');
+    });
+
+    it('should map PersonResponse to VHParticipant without contact email', () => {
+        // Arrange
+        personResponse.contact_email = null;
+
+        // Act
+        const result = mapPersonResponseToVHParticipant(personResponse);
+
+        // Assert
+        expect(result.email).toBe(personResponse.username);
+    });
+});
+
+describe('mapJudgeResponseToVHParticipant', () => {
+    let judgeResponse: JudgeResponse;
+
+    beforeEach(() => {
+        judgeResponse = new JudgeResponse({
+            first_name: 'firstName',
+            last_name: 'lastName',
+            display_name: 'displayName',
+            email: 'email',
+            contact_email: '',
+            account_type: JudgeAccountType.Courtroom
+        });
+    });
+
+    it('should map JudgeResponse to VHParticipant', () => {
+        // Arrange & Act
+        const result = mapJudgeResponseToVHParticipant(judgeResponse);
+
+        // Assert
+        expect(result.firstName).toBe(judgeResponse.first_name);
+        expect(result.lastName).toBe(judgeResponse.last_name);
+        expect(result.displayName).toBe(judgeResponse.display_name);
+        expect(result.email).toBe(judgeResponse.contact_email);
+        expect(result.username).toBe(judgeResponse.email);
+        expect(result.isCourtroomAccount).toBeTrue();
+        expect(result.isJudiciaryMember).toBeFalse();
+        expect(result.interpretation_language).toBeNull();
+    });
+
+    it('should map JudgeResponse to VHParticipant without contact email', () => {
+        // Arrange
+        judgeResponse.contact_email = null;
+
+        // Act
+        const result = mapJudgeResponseToVHParticipant(judgeResponse);
+
+        // Assert
+        expect(result.email).toBe(judgeResponse.email);
+    });
+
+    it('should map JudgeResponse to VHParticipant for non-courtroom account type', () => {
+        // Arrange
+        judgeResponse.account_type = JudgeAccountType.Judiciary;
+
+        // Act
+        const result = mapJudgeResponseToVHParticipant(judgeResponse);
+
+        // Assert
+        expect(result.isCourtroomAccount).toBeFalse();
+    });
+});
+
+describe('mapJudicialMemberDtoToVHParticipant', () => {
+    let dto: JudicialMemberDto;
+
+    beforeEach(() => {
+        dto = new JudicialMemberDto('firstName', 'lastName', 'fullName', 'email', 'telephone', 'personalCode', true, 'displayName');
+        dto.roleCode = 'Judge';
+        const availableLanguage = new AvailableLanguageResponse({
+            code: 'code',
+            description: 'description',
+            type: InterprepretationType.Verbal
+        });
+        dto.interpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(availableLanguage);
+    });
+
+    it('should map JudicialMemberDto to VHParticipant when isJudge is true', () => {
+        // Arrange
+        dto.roleCode = 'Judge';
+        const isJudge = true;
+
+        // Act
+        const result = mapJudicialMemberDtoToVHParticipant(dto, isJudge);
+
+        // Assert
+        verifyVHParticipantFromJudicialMemberDto(result, dto);
+        expect(result.hearingRoleName).toBe('Judge');
+        expect(result.userRoleName).toBe('Judge');
+        expect(result.hearingRoleCode).toBe('Judge');
+    });
+
+    it('should map JudicialMemberDto to VHParticipant when isJudge is false', () => {
+        // Arrange
+        dto.roleCode = 'PanelMember';
+        const isJudge = false;
+
+        // Act
+        const result = mapJudicialMemberDtoToVHParticipant(dto, isJudge);
+
+        // Assert
+        verifyVHParticipantFromJudicialMemberDto(result, dto);
+        expect(result.hearingRoleName).toBe('Panel Member');
+        expect(result.userRoleName).toBe('PanelMember');
+        expect(result.hearingRoleCode).toBe('PanelMember');
+    });
+
+    function verifyVHParticipantFromJudicialMemberDto(vhParticipant: VHParticipant, judicialMemberDto: JudicialMemberDto) {
+        expect(vhParticipant.firstName).toBe(judicialMemberDto.firstName);
+        expect(vhParticipant.lastName).toBe(judicialMemberDto.lastName);
+        expect(vhParticipant.username).toBe(judicialMemberDto.email);
+        expect(vhParticipant.email).toBe(judicialMemberDto.email);
+        expect(vhParticipant.isExistPerson).toBeTrue();
+        expect(vhParticipant.isJudiciaryMember).toBeTrue();
+        expect(vhParticipant.phone).toBe(judicialMemberDto.telephone);
+        expect(vhParticipant.displayName).toBe(judicialMemberDto.displayName);
+        expect(vhParticipant.interpretation_language).toEqual(judicialMemberDto.interpretationLanguage);
+    }
 });
 
 function createSingleDayHearing(): HearingDetailsResponse {
@@ -457,4 +642,7 @@ function verifyVHBooking(vhBooking: VHBooking, hearing: HearingDetailsResponse) 
     expect(vhBooking.supplier).toBe(hearing.conference_supplier);
     const expectedJudge = vhBooking.judiciaryParticipants.find(jp => jp.roleCode === Constants.Judge) ?? null;
     expect(vhBooking.judge).toEqual(expectedJudge);
+    expect(vhBooking.allocatedTo).toBe(hearing.allocated_to_username);
+    expect(vhBooking.confirmedBy).toBe(hearing.confirmed_by);
+    expect(vhBooking.confirmedDate).toEqual(hearing.confirmed_date);
 }
