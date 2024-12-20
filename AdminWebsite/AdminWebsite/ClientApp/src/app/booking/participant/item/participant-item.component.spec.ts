@@ -53,8 +53,8 @@ describe('ParticipantItemComponent', () => {
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
         component.hearing = new VHBooking({
-            updated_date: new Date(),
-            other_information: '|JudgeEmail|James.Doe@hmcts.net|JudgePhone|123456789',
+            updatedDate: new Date(),
+            otherInformation: '|JudgeEmail|James.Doe@hmcts.net|JudgePhone|123456789',
             supplier: VideoSupplier.Kinly
         });
 
@@ -75,13 +75,13 @@ describe('ParticipantItemComponent', () => {
         component.isSummaryPage = true;
         component.participant = new VHParticipant({
             representee: 'rep',
-            is_exist_person: false,
+            isExistPerson: false,
             isJudiciaryMember: false,
             interpretation_language: undefined
         });
         const pat = new VHParticipant({
             email: 'email@hmcts.net',
-            is_exist_person: false,
+            isExistPerson: false,
             isJudiciaryMember: false,
             interpretation_language: undefined
         });
@@ -96,15 +96,15 @@ describe('ParticipantItemComponent', () => {
         component.isSummaryPage = true;
         component.participant = new VHParticipant({
             representee: 'rep',
-            hearing_role_name: Constants.HearingRoles.Judge,
-            is_exist_person: false,
+            hearingRoleName: Constants.HearingRoles.Judge,
+            isExistPerson: false,
             isJudiciaryMember: true,
             interpretation_language: undefined
         });
         const pat = new VHParticipant({
             email: 'email@hmcts.net',
-            is_exist_person: false,
-            hearing_role_name: Constants.HearingRoles.Judge,
+            isExistPerson: false,
+            hearingRoleName: Constants.HearingRoles.Judge,
             isJudiciaryMember: true,
             interpretation_language: undefined
         });
@@ -119,7 +119,7 @@ describe('ParticipantItemComponent', () => {
         component.isSummaryPage = false;
         const pat = new VHParticipant({
             email: 'email@hmcts.net',
-            is_exist_person: false,
+            isExistPerson: false,
             isJudiciaryMember: false,
             interpretation_language: undefined
         });
@@ -132,7 +132,7 @@ describe('ParticipantItemComponent', () => {
     it('should return true if participant has a representative', () => {
         component.participant = new VHParticipant({
             representee: 'rep',
-            is_exist_person: false,
+            isExistPerson: false,
             isJudiciaryMember: false,
             interpretation_language: undefined
         });
@@ -164,8 +164,8 @@ describe('ParticipantItemComponent', () => {
 
     it('should return true if participant is an observer', () => {
         component.participant = new VHParticipant({
-            hearing_role_name: 'Observer',
-            is_exist_person: false,
+            hearingRoleName: 'Observer',
+            isExistPerson: false,
             isJudiciaryMember: false,
             interpretation_language: undefined
         });
@@ -175,8 +175,8 @@ describe('ParticipantItemComponent', () => {
 
     it('should return true if participant is a panel member', () => {
         component.participant = new VHParticipant({
-            hearing_role_name: 'Panel Member',
-            is_exist_person: false,
+            hearingRoleName: 'Panel Member',
+            isExistPerson: false,
             isJudiciaryMember: false,
             interpretation_language: undefined
         });
@@ -185,8 +185,8 @@ describe('ParticipantItemComponent', () => {
     });
     it('should get judge email', () => {
         component.participant = new VHParticipant({
-            hearing_role_name: 'Judge',
-            is_exist_person: false,
+            hearingRoleName: 'Judge',
+            isExistPerson: false,
             isJudiciaryMember: false,
             interpretation_language: undefined
         });
@@ -195,8 +195,8 @@ describe('ParticipantItemComponent', () => {
     });
     it('should get judge phone', () => {
         component.participant = new VHParticipant({
-            hearing_role_name: 'Judge',
-            is_exist_person: false,
+            hearingRoleName: 'Judge',
+            isExistPerson: false,
             isJudiciaryMember: false,
             interpretation_language: undefined
         });
@@ -206,8 +206,8 @@ describe('ParticipantItemComponent', () => {
 
     it('should return true if participant is an interpreter', () => {
         component.participant = new VHParticipant({
-            hearing_role_name: 'Interpreter',
-            is_exist_person: false,
+            hearingRoleName: 'Interpreter',
+            isExistPerson: false,
             interpretation_language: undefined
         });
         fixture.detectChanges();

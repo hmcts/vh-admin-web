@@ -104,7 +104,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
         this.hearing.endpoints = newEndpointsArray;
         this.videoHearingService.updateHearingRequest(this.hearing);
-        this.logger.debug(`${this.loggerPrefix} Updated hearing request`, { hearing: this.hearing?.hearing_id, payload: this.hearing });
+        this.logger.debug(`${this.loggerPrefix} Updated hearing request`, { hearing: this.hearing?.hearingId, payload: this.hearing });
     }
 
     cancelBooking(): void {
@@ -181,7 +181,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
     private checkForExistingRequest(): void {
         this.hearing = this.videoHearingService.getCurrentRequest();
-        this.participants = this.hearing.participants.filter(p => p.user_role_name === this.constants.Representative);
+        this.participants = this.hearing.participants.filter(p => p.userRoleName === this.constants.Representative);
         this.videoEndpoints = this.hearing.endpoints.map(e => {
             const defenceAdvocate = this.participants.find(p => p.email === e.defenceAdvocate);
             return {
@@ -190,7 +190,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
                 displayName: e.displayName,
                 defenceAdvocate: defenceAdvocate
                     ? {
-                          displayName: defenceAdvocate?.display_name,
+                          displayName: defenceAdvocate?.display_Name,
                           email: defenceAdvocate?.email
                       }
                     : null,

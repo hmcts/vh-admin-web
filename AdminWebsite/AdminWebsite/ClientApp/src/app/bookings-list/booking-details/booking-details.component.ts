@@ -107,9 +107,9 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     setTimeObserver() {
         if (this.booking) {
-            const endofday = new Date(this.booking.scheduled_date_time);
+            const endofday = new Date(this.booking.scheduledDateTime);
             endofday.setHours(23, 59);
-            this.isConfirmationTimeValid = this.booking.scheduled_date_time.valueOf() <= endofday.valueOf();
+            this.isConfirmationTimeValid = this.booking.scheduledDateTime.valueOf() <= endofday.valueOf();
             if (!this.isConfirmationTimeValid && this.timeSubscription) {
                 this.timeSubscription.unsubscribe();
             }
@@ -132,7 +132,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         if (!this.booking || this.booking.status !== BookingStatus.Failed) {
             return false;
         }
-        const scheduledTime = moment(this.booking.scheduled_date_time);
+        const scheduledTime = moment(this.booking.scheduledDateTime);
         return scheduledTime.isAfter(moment(new Date()));
     }
 
@@ -159,7 +159,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     setBookingInStorage() {
         this.bookingService.resetEditMode();
-        this.bookingService.setExistingCaseType(this.booking.case_type);
+        this.bookingService.setExistingCaseType(this.booking.caseType);
         this.videoHearingService.updateHearingRequest(this.booking);
     }
 
@@ -342,8 +342,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     updateWithConferencePhoneDetails() {
         if (this.telephoneConferenceId && this.conferencePhoneNumber) {
-            this.booking.telephone_conference_id = this.telephoneConferenceId;
-            this.hearing.telephone_conference_id = this.telephoneConferenceId;
+            this.booking.telephoneConferenceId = this.telephoneConferenceId;
+            this.hearing.telephoneConferenceId = this.telephoneConferenceId;
             this.phoneDetails = `ENG: ${this.conferencePhoneNumber} (ID: ${this.telephoneConferenceId})
 CY: ${this.conferencePhoneNumberWelsh} (ID: ${this.telephoneConferenceId})`;
         }

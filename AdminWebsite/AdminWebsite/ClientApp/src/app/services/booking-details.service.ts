@@ -36,7 +36,7 @@ export class BookingDetailsService {
         model.groupId = hearingResponse.group_id;
         model.multiDayHearingLastDayScheduledDateTime = hearingResponse.multi_day_hearing_last_day_scheduled_date_time;
 
-        model.other_information = hearingResponse.other_information;
+        model.otherInformation = hearingResponse.other_information;
         model.allocatedTo = hearingResponse.allocated_to_username;
         return model;
     }

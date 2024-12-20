@@ -28,15 +28,15 @@ import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 
 function initHearingRequest(): VHBooking {
     const newHearing = new VHBooking();
-    newHearing.hearing_venue_id = -1;
-    newHearing.scheduled_duration = 0;
+    newHearing.hearingVenueId = -1;
+    newHearing.scheduledDuration = 0;
     return newHearing;
 }
 
 function initExistingHearingRequest(): VHBooking {
     const existingRequest = new VHBooking();
-    existingRequest.hearing_venue_id = 1;
-    existingRequest.case_type = 'Generic';
+    existingRequest.hearingVenueId = 1;
+    existingRequest.caseType = 'Generic';
 
     return existingRequest;
 }
@@ -393,8 +393,8 @@ describe('CreateHearingComponent with existing request in session', () => {
     });
     it('should return true if participants have been added', () => {
         component.hearing.participants = [
-            new VHParticipant({ is_exist_person: true, interpretation_language: undefined }),
-            new VHParticipant({ hearing_role_name: HearingRoles.JUDGE, is_exist_person: true, interpretation_language: undefined })
+            new VHParticipant({ isExistPerson: true, interpretation_language: undefined }),
+            new VHParticipant({ hearingRoleName: HearingRoles.JUDGE, isExistPerson: true, interpretation_language: undefined })
         ];
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(true);
     });
@@ -402,7 +402,7 @@ describe('CreateHearingComponent with existing request in session', () => {
         component.hearing.participants = [];
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(false);
         component.hearing.participants = [
-            new VHParticipant({ hearing_role_name: HearingRoles.JUDGE, is_exist_person: true, interpretation_language: undefined })
+            new VHParticipant({ hearingRoleName: HearingRoles.JUDGE, isExistPerson: true, interpretation_language: undefined })
         ];
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(false);
     });

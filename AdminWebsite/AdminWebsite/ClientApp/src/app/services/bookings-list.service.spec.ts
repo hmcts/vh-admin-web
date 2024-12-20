@@ -359,12 +359,12 @@ describe('bookings list service', () => {
         expect(model.Hearings[0].BookingsDate.getDate()).toBe(22);
 
         expect(model.Hearings[0].BookingsDetails.length).toBe(2);
-        expect(model.Hearings[0].BookingsDetails[0].Booking.court_room).toBe('12A');
-        expect(model.Hearings[0].BookingsDetails[0].Booking.scheduled_duration).toBe(45);
-        expect(model.Hearings[0].BookingsDetails[0].Booking.court_name).toBe('court address');
+        expect(model.Hearings[0].BookingsDetails[0].Booking.courtRoom).toBe('12A');
+        expect(model.Hearings[0].BookingsDetails[0].Booking.scheduledDuration).toBe(45);
+        expect(model.Hearings[0].BookingsDetails[0].Booking.courtName).toBe('court address');
         expect(model.Hearings[0].BookingsDetails[0].Booking.case.name).toBe('A vs B');
         expect(model.Hearings[0].BookingsDetails[0].Booking.case.number).toBe('123A');
-        expect(model.Hearings[0].BookingsDetails[0].Booking.audio_recording_required).toBe(true);
+        expect(model.Hearings[0].BookingsDetails[0].Booking.audioRecordingRequired).toBe(true);
         expect(model.Hearings[0].BookingsDetails[0].Booking.groupId).toBe('123');
     });
 

@@ -15,8 +15,8 @@ export class RecordingGuardService {
 
     mandatoryRecordingForHearingRole(participants: VHParticipant[]) {
         return (
-            participants.some(pat => this.mandatoryRecordingRoles.includes(pat.hearing_role_name?.trim())) ||
-            participants.some(pat => this.mandatoryRecordingRoleCodes.includes(pat.hearing_role_code?.trim()))
+            participants.some(pat => this.mandatoryRecordingRoles.includes(pat.hearingRoleName?.trim())) ||
+            participants.some(pat => this.mandatoryRecordingRoleCodes.includes(pat.hearingRoleCode?.trim()))
         );
     }
 }

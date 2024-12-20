@@ -65,7 +65,7 @@ export class BookingsListService {
     }
 
     replaceBookingRecord(booking: BookingsListItemModel, bookings: Array<BookingsListModel>) {
-        const dateOnly = new Date(booking.Booking.scheduled_date_time.valueOf());
+        const dateOnly = new Date(booking.Booking.scheduledDateTime.valueOf());
         const dateNoTime = new Date(dateOnly.setHours(0, 0, 0, 0));
         const bookingModel = new BookingsListModel(dateNoTime);
         bookingModel.BookingsDetails = [booking];
@@ -88,7 +88,7 @@ export class BookingsListService {
         const subSet = bookings.findIndex(s => s.BookingsDate.toString() === element.BookingsDate.toString());
         if (subSet > -1) {
             element.BookingsDetails.forEach(item => {
-                const record = bookings[subSet].BookingsDetails.find(x => x.Booking.hearing_id === item.Booking.hearing_id);
+                const record = bookings[subSet].BookingsDetails.find(x => x.Booking.hearingId === item.Booking.hearingId);
                 if (!record) {
                     this.insertBookingIntoGroup(item, bookings[subSet]);
                 }
@@ -107,7 +107,7 @@ export class BookingsListService {
         hearings.forEach(hearing => {
             for (let j = 0; j < bookings.length; j++) {
                 for (let i = 0; i < bookings[j].BookingsDetails.length; i++) {
-                    if (bookings[j].BookingsDetails[i].Booking.hearing_id === hearing.Booking.hearing_id) {
+                    if (bookings[j].BookingsDetails[i].Booking.hearingId === hearing.Booking.hearingId) {
                         bookings[j].BookingsDetails.splice(i, 1);
                     }
                     if (!bookings[j].BookingsDetails || bookings[j].BookingsDetails.length === 0) {
@@ -125,8 +125,8 @@ export class BookingsListService {
     private insertBookingIntoGroup(element: BookingsListItemModel, groupBookings: BookingsListModel) {
         groupBookings.BookingsDetails.push(element);
         groupBookings.BookingsDetails.sort((a, b) => {
-            const dateA = moment(a.Booking.scheduled_date_time);
-            const dateB = moment(b.Booking.scheduled_date_time);
+            const dateA = moment(a.Booking.scheduledDateTime);
+            const dateB = moment(b.Booking.scheduledDateTime);
             if (dateA.isBefore(dateB)) {
                 return -1;
             }

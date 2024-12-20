@@ -8,32 +8,32 @@ import { VHParticipant } from './vh-participant';
 import { cloneWithGetters } from '../helpers/clone-with-getters';
 
 export class VHBooking {
-    hearing_id?: string;
-    scheduled_date_time?: Date;
-    scheduled_duration?: number;
+    hearingId?: string;
+    scheduledDateTime?: Date;
+    scheduledDuration?: number;
     case?: CaseModel;
     participants?: VHParticipant[];
     judiciaryParticipants?: JudicialMemberDto[];
-    created_by?: string;
-    case_type?: string;
-    case_type_service_id?: string;
-    other_information?: string;
-    court_room?: string;
-    hearing_venue_id?: number;
-    case_type_id?: number;
-    court_name?: string;
-    court_code?: string;
-    created_date?: Date;
-    updated_by?: string;
-    updated_date: Date;
+    createdBy?: string;
+    caseType?: string;
+    caseTypeServiceId?: string;
+    otherInformation?: string;
+    courtRoom?: string;
+    hearingVenueId?: number;
+    caseTypeId?: number;
+    courtName?: string;
+    courtCode?: string;
+    createdDate?: Date;
+    updatedBy?: string;
+    updatedDate: Date;
     status?: string;
-    audio_recording_required?: boolean;
+    audioRecordingRequired?: boolean;
     endpoints?: EndpointModel[];
     isMultiDayEdit?: boolean;
-    end_hearing_date_time?: Date;
-    telephone_conference_id?: string;
-    linked_participants?: LinkedParticipantModel[];
-    hearing_dates?: Date[];
+    endHearingDateTime?: Date;
+    telephoneConferenceId?: string;
+    linkedOarticipants?: LinkedParticipantModel[];
+    hearingDates?: Date[];
     isConfirmed?: boolean;
     isMultiDay?: boolean;
     multiDayHearingLastDayScheduledDateTime?: Date;
@@ -52,37 +52,38 @@ export class VHBooking {
     constructor(init?: Partial<VHBooking>) {
         Object.assign(this, init);
 
-        this.hearing_id = init.hearing_id ?? '';
-        this.scheduled_duration = init.scheduled_duration ?? 0;
+        this.hearingId = init.hearingId ?? '';
+        this.scheduledDuration = init.scheduledDuration ?? 0;
         this.participants = init.participants ?? [];
         this.judiciaryParticipants = init.judiciaryParticipants ?? [];
         this.endpoints = init.endpoints ?? [];
-        this.linked_participants = init.linked_participants ?? [];
-        this.hearing_dates = init.hearing_dates ?? [];
-        this.updated_date = init.updated_date ?? new Date();
-        this.supplier = init.supplier ?? VideoSupplier.Vodafone
+        this.linkedOarticipants = init.linkedOarticipants ?? [];
+        this.hearingDates = init.hearingDates ?? [];
+        this.updatedDate = init.updatedDate ?? new Date();
+        this.supplier = init.supplier ?? VideoSupplier.Vodafone;
     }
 
     get durationInHoursAndMinutes() {
-        return FormatShortDuration(this.scheduled_duration);
+        return FormatShortDuration(this.scheduledDuration);
     }
-    
+
     get isCancelled(): boolean {
         return this.status === 'Cancelled';
     }
-    
+
     get isCreated(): boolean {
         return this.status === 'Created';
     }
-    
+
     get hasBookingConfirmationFailed(): boolean {
         return this.status === 'Failed';
     }
-    
+
     get hasConfirmationWithNoJudge(): boolean {
         return this.status === 'ConfirmedWithoutJudge';
     }
 
+    // Kept in from the migration to the consolidated models. Can replace with calls to the constructor in time
     static createForDetails(
         hearingId: string,
         startTime: Date,
@@ -106,25 +107,25 @@ export class VHBooking {
         telephoneConferenceId: string
     ) {
         return new VHBooking({
-            hearing_id: hearingId,
-            scheduled_date_time: startTime,
-            scheduled_duration: duration,
+            hearingId: hearingId,
+            scheduledDateTime: startTime,
+            scheduledDuration: duration,
             case: new CaseModel(hearingCaseName, hearingCaseNumber),
             judge: new JudicialMemberDto(null, null, null, null, null, null, false, judgeName),
-            court_room: courtRoom,
-            court_name: courtAddress,
-            created_by: createdBy,
-            created_date: createdDate,
-            updated_by: lastEditBy,
-            updated_date: lastEditDate,
+            courtRoom: courtRoom,
+            courtName: courtAddress,
+            createdBy: createdBy,
+            createdDate: createdDate,
+            updatedBy: lastEditBy,
+            updatedDate: lastEditDate,
             confirmedBy: confirmedBy,
             confirmedDate: confirmedDate,
             status: status,
-            audio_recording_required: audioRecordingRequired,
+            audioRecordingRequired: audioRecordingRequired,
             cancelReason: cancelReason,
-            case_type: caseType,
+            caseType: caseType,
             courtRoomAccount: courtRoomAccount,
-            telephone_conference_id: telephoneConferenceId
+            telephoneConferenceId: telephoneConferenceId
         });
     }
 

@@ -22,10 +22,10 @@ export class ParticipantDetailsComponent {
     constructor() {}
 
     get judgeEmail() {
-        return OtherInformationModel.init(this.hearing.other_information).JudgeEmail;
+        return OtherInformationModel.init(this.hearing.otherInformation).JudgeEmail;
     }
 
     get judgePhone() {
-        return OtherInformationModel.init(this.hearing.other_information).JudgePhone;
+        return OtherInformationModel.init(this.hearing.otherInformation).JudgePhone;
     }
 }

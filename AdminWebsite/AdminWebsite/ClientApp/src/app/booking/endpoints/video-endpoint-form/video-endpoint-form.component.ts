@@ -49,7 +49,7 @@ export class VideoEndpointFormComponent {
     @Input() set participants(value: VHParticipant[]) {
         this._participants = value;
 
-        this.availableRepresentatives = this._participants.filter(p => p.user_role_name === this.constants.Representative && p.email);
+        this.availableRepresentatives = this._participants.filter(p => p.userRoleName === this.constants.Representative && p.email);
     }
     @Output() endpointAdded = new EventEmitter<VideoAccessPointDto>();
     @Output() endpointUpdated = new EventEmitter<{ original: VideoAccessPointDto; updated: VideoAccessPointDto }>();
@@ -86,7 +86,7 @@ export class VideoEndpointFormComponent {
             const representative = this.availableRepresentatives.find(p => p.email === this.form.value.linkedRepresentative);
             defenceAdvocate = {
                 email: representative.email,
-                displayName: representative.display_name
+                displayName: representative.display_Name
             };
         }
         const dto: VideoAccessPointDto = {

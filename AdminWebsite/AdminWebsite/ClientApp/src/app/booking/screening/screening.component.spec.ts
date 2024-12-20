@@ -16,20 +16,20 @@ import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 function initHearingRequest(): VHBooking {
     const hearing = new VHBooking();
-    hearing.hearing_id = '';
+    hearing.hearingId = '';
     hearing.participants = [
         new VHParticipant({
-            display_name: 'Jane',
+            display_Name: 'Jane',
             email: 'jane@doe.com',
             externalReferenceId: '1Jane'
         }),
         new VHParticipant({
-            display_name: 'Johnny',
+            display_Name: 'Johnny',
             email: 'john@doe.com',
             externalReferenceId: '2John'
         }),
         new VHParticipant({
-            display_name: 'Greeno',
+            display_Name: 'Greeno',
             email: 'james@green.com',
             externalReferenceId: '3Green'
         })
@@ -95,7 +95,7 @@ describe('ScreeningComponent', () => {
 
             // Act
             component.onScreeningSaved({
-                participantDisplayName: participant.display_name,
+                participantDisplayName: participant.display_Name,
                 measureType: 'All',
                 protectFrom: []
             });
@@ -116,7 +116,7 @@ describe('ScreeningComponent', () => {
 
             // Act
             component.onScreeningSaved({
-                participantDisplayName: participant.display_name,
+                participantDisplayName: participant.display_Name,
                 measureType: 'Specific',
                 protectFrom: [{ externalReferenceId: '4Silver' }, { externalReferenceId: '2John' }]
             });

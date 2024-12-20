@@ -82,7 +82,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                     updatedBooking.Booking.hearingsInGroup.forEach(updatedHearingInGroup => {
                         const listItemModel = this.bookingPersistService.bookingList
                             .flatMap(listItem => listItem.BookingsDetails)
-                            .find(detail => detail.Booking.hearing_id === updatedHearingInGroup.hearing_id);
+                            .find(detail => detail.Booking.hearingId === updatedHearingInGroup.hearingId);
 
                         if (listItemModel) {
                             this.replaceBookingRecord(listItemModel);
@@ -111,20 +111,20 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.bookingList[this.bookingPersistService.selectedGroupIndex].BookingsDetails[
                 this.bookingPersistService.selectedItemIndex
             ];
-        this.logger.debug(`${this.loggerPrefix} Getting edited booking from storage`, { hearing: selectedRecord.Booking.hearing_id });
-        const response = await lastValueFrom(this.videoHearingService.getHearingById(selectedRecord.Booking.hearing_id));
-        this.logger.debug(`${this.loggerPrefix} Mapping hearing to edit hearing model`, { hearing: selectedRecord.Booking.hearing_id });
+        this.logger.debug(`${this.loggerPrefix} Getting edited booking from storage`, { hearing: selectedRecord.Booking.hearingId });
+        const response = await lastValueFrom(this.videoHearingService.getHearingById(selectedRecord.Booking.hearingId));
+        this.logger.debug(`${this.loggerPrefix} Mapping hearing to edit hearing model`, { hearing: selectedRecord.Booking.hearingId });
         return this.videoHearingService.mapHearingDetailsResponseToHearingModel(response);
     }
 
     resetBookingIndex(booking: BookingsListItemModel) {
-        this.logger.debug(`${this.loggerPrefix} Resseting the booking index`, { hearing: booking.Booking.hearing_id });
-        const dateOnly = new Date(booking.Booking.scheduled_date_time.valueOf());
+        this.logger.debug(`${this.loggerPrefix} Resseting the booking index`, { hearing: booking.Booking.hearingId });
+        const dateOnly = new Date(booking.Booking.scheduledDateTime.valueOf());
         const dateNoTime = new Date(dateOnly.setHours(0, 0, 0, 0));
         this.selectedGroupIndex = this.bookings.findIndex(s => s.BookingsDate.toString() === dateNoTime.toString());
         if (this.selectedGroupIndex > -1) {
             this.selectedItemIndex = this.bookings[this.selectedGroupIndex].BookingsDetails.findIndex(
-                x => x.Booking.hearing_id === booking.Booking.hearing_id
+                x => x.Booking.hearingId === booking.Booking.hearingId
             );
         } else {
             this.selectedItemIndex = -1;
@@ -298,7 +298,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     private replaceBookingRecord(booking: BookingsListItemModel) {
         if (booking.IsStartTimeChanged) {
             this.logger.debug(`${this.loggerPrefix} Start time has changed. Replacing booking record.`, {
-                hearing: booking.Booking.hearing_id
+                hearing: booking.Booking.hearingId
             });
             this.bookingsListService.replaceBookingRecord(booking, this.bookingPersistService.bookingList);
         }
@@ -330,7 +330,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             indexHearing < this.bookings[groupByDate].BookingsDetails.length
         ) {
             this.bookings[groupByDate].BookingsDetails[indexHearing].Selected = true;
-            this.selectedHearingId = this.bookings[groupByDate].BookingsDetails[indexHearing].Booking.hearing_id;
+            this.selectedHearingId = this.bookings[groupByDate].BookingsDetails[indexHearing].Booking.hearingId;
             this.selectedGroupIndex = groupByDate;
             this.selectedItemIndex = indexHearing;
         }

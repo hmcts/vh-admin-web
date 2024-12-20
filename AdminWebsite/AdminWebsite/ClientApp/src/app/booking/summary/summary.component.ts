@@ -94,11 +94,11 @@ export class SummaryComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.logger.debug(`${this.loggerPrefix} On step Summary`, { step: 'Summary' });
         this.checkForExistingRequest();
-        this.otherInformation = OtherInformationModel.init(this.hearing.other_information);
+        this.otherInformation = OtherInformationModel.init(this.hearing.otherInformation);
         this.retrieveHearingSummary();
-        this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.case_type);
+        this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.caseType);
         this.interpreterPresent = this.recordingGuardService.mandatoryRecordingForHearingRole(this.hearing.participants);
-        this.hearing.audio_recording_required = this.isAudioRecordingRequired();
+        this.hearing.audioRecordingRequired = this.isAudioRecordingRequired();
         this.retrieveHearingSummary();
         if (this.participantsListComponent) {
             this.participantsListComponent.isEditMode = this.isExistingBooking;
@@ -110,7 +110,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
             );
         }
         this.judgeAssigned =
-            this.hearing.participants.filter(e => e.is_judge).length > 0 ||
+            this.hearing.participants.filter(e => e.isJudge).length > 0 ||
             this.hearing.judiciaryParticipants?.some(e => e.roleCode === 'Judge');
 
         const multiDayBookingEnhancementsFlag$ = this.featureService
@@ -134,7 +134,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     private checkForExistingRequest() {
         this.hearing = this.hearingService.getCurrentRequest();
-        this.isExistingBooking = this.hearing.hearing_id && this.hearing.hearing_id.length > 0;
+        this.isExistingBooking = this.hearing.hearingId && this.hearing.hearingId.length > 0;
         this.bookinConfirmed = this.hearing.status === 'Created';
     }
 
@@ -150,7 +150,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         if (this.interpreterPresent) {
             return true;
         }
-        return this.hearing.audio_recording_required;
+        return this.hearing.audioRecordingRequired;
     }
 
     private confirmRemoveParticipant() {
@@ -158,12 +158,12 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
         if (participant) {
             const title = participant?.title ? `${participant.title}` : '';
-            this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
+            this.removerFullName = participant ? `${title} ${participant.firstName} ${participant.lastName}` : '';
 
             const isInterpretee =
-                (participant.linked_participants &&
-                    participant.linked_participants.length > 0 &&
-                    participant.hearing_role_name.toLowerCase() !== HearingRoles.INTERPRETER) ||
+                (participant.linkedParticipants &&
+                    participant.linkedParticipants.length > 0 &&
+                    participant.hearingRoleName.toLowerCase() !== HearingRoles.INTERPRETER) ||
                 this.hearing.participants.some(p => p.interpreterFor === participant.email);
             if (isInterpretee) {
                 this.showConfirmRemoveInterpretee = true;
@@ -195,10 +195,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
             x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase()
         );
         if (indexOfParticipant > -1) {
-            if (this.hearing.hearing_id && this.hearing.participants[indexOfParticipant].id) {
+            if (this.hearing.hearingId && this.hearing.participants[indexOfParticipant].id) {
                 const id = this.hearing.participants[indexOfParticipant].id;
                 this.logger.info(`${this.loggerPrefix} Participant removed from hearing.`, {
-                    hearingId: this.hearing.hearing_id,
+                    hearingId: this.hearing.hearingId,
                     participantId: id
                 });
             }
@@ -221,14 +221,14 @@ export class SummaryComponent implements OnInit, OnDestroy {
     private retrieveHearingSummary() {
         this.caseNumber = this.hearing.case ? this.hearing.case.number : '';
         this.caseName = this.hearing.case ? this.hearing.case.name : '';
-        this.hearingDate = this.hearing.scheduled_date_time;
-        this.hearingDuration = `listed for ${FormatShortDuration(this.hearing.scheduled_duration)}`;
-        this.courtRoomAddress = this.formatCourtRoom(this.hearing.court_name, this.hearing.court_room);
-        this.audioChoice = this.hearing.audio_recording_required ? 'Yes' : 'No';
-        this.caseType = this.hearing.case_type;
+        this.hearingDate = this.hearing.scheduledDateTime;
+        this.hearingDuration = `listed for ${FormatShortDuration(this.hearing.scheduledDuration)}`;
+        this.courtRoomAddress = this.formatCourtRoom(this.hearing.courtName, this.hearing.courtRoom);
+        this.audioChoice = this.hearing.audioRecordingRequired ? 'Yes' : 'No';
+        this.caseType = this.hearing.caseType;
         this.endpoints = this.hearing.endpoints;
         this.multiDays = this.hearing.isMultiDayEdit;
-        this.endHearingDate = this.hearing.end_hearing_date_time;
+        this.endHearingDate = this.hearing.endHearingDateTime;
 
         if (
             this.hearing.isMultiDayEdit &&
@@ -280,9 +280,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.bookingsSaving = true;
         this.showWaitSaving = true;
         this.showErrorSaving = false;
-        if (this.hearing.hearing_id && this.hearing.hearing_id.length > 0) {
+        if (this.hearing.hearingId && this.hearing.hearingId.length > 0) {
             this.logger.info(`${this.loggerPrefix} Attempting to update an existing hearing.`, {
-                hearingId: this.hearing.hearing_id,
+                hearingId: this.hearing.hearingId,
                 caseName: this.hearing.case.name,
                 caseNumber: this.hearing.case.number
             });
@@ -324,8 +324,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 caseNumber: this.hearing.case.number
             });
 
-            const isMultipleIndividualHearingDates = this.hearing.hearing_dates && this.hearing.hearing_dates.length > 1;
-            const isHearingDateRange = !this.hearing.hearing_dates || this.hearing.hearing_dates.length === 0;
+            const isMultipleIndividualHearingDates = this.hearing.hearingDates && this.hearing.hearingDates.length > 1;
+            const isHearingDateRange = !this.hearing.hearingDates || this.hearing.hearingDates.length === 0;
 
             if (isMultipleIndividualHearingDates) {
                 this.logger.info(`${this.loggerPrefix} Hearing has multiple, individual days. Booking remaining days`, {
@@ -336,8 +336,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 await this.hearingService.cloneMultiHearings(
                     hearingDetailsResponse.id,
                     new MultiHearingRequest({
-                        hearing_dates: this.hearing.hearing_dates.map(date => new Date(date)),
-                        scheduled_duration: this.hearing.scheduled_duration
+                        hearing_dates: this.hearing.hearingDates.map(date => new Date(date)),
+                        scheduled_duration: this.hearing.scheduledDuration
                     })
                 );
             } else if (isHearingDateRange) {
@@ -349,9 +349,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 await this.hearingService.cloneMultiHearings(
                     hearingDetailsResponse.id,
                     new MultiHearingRequest({
-                        start_date: new Date(this.hearing.scheduled_date_time),
-                        end_date: new Date(this.hearing.end_hearing_date_time),
-                        scheduled_duration: this.hearing.scheduled_duration
+                        start_date: new Date(this.hearing.scheduledDateTime),
+                        end_date: new Date(this.hearing.endHearingDateTime),
+                        scheduled_duration: this.hearing.scheduledDuration
                     })
                 );
             } else {
@@ -385,8 +385,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     private setDurationOfMultiHearing() {
-        if (this.hearing.isMultiDayEdit && this.hearing.scheduled_duration === 0) {
-            this.hearing.scheduled_duration = 480;
+        if (this.hearing.isMultiDayEdit && this.hearing.scheduledDuration === 0) {
+            this.hearing.scheduledDuration = 480;
         }
     }
 
@@ -428,7 +428,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         });
 
         if (hearingDetailsResponse.status === BookingStatus.Failed.toString()) {
-            this.hearing.hearing_id = hearingDetailsResponse.id;
+            this.hearing.hearingId = hearingDetailsResponse.id;
             this.setError(new Error(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `));
             return;
         }
@@ -450,8 +450,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     private handleUpdateHearingError(error: any) {
-        this.logger.error(`${this.loggerPrefix} Failed to update hearing with ID: ${this.hearing.hearing_id}.`, error, {
-            hearing: this.hearing.hearing_id,
+        this.logger.error(`${this.loggerPrefix} Failed to update hearing with ID: ${this.hearing.hearingId}.`, error, {
+            hearing: this.hearing.hearingId,
             payload: this.hearing
         });
         this.setError(error);
@@ -499,7 +499,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         let represents = '';
         const participant = this.hearing.participants.find(p => p.email === defenceAdvocateConactEmail);
         if (participant) {
-            represents = participant.display_name + ', representing ' + participant.representee;
+            represents = participant.display_Name + ', representing ' + participant.representee;
         }
         return represents;
     }
@@ -515,18 +515,18 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     private removeLinkedParticipant(email: string): void {
         // removes both the linked participants.
-        const interpreterExists = this.hearing.linked_participants.find(p => p.participantEmail === email);
-        const interpreteeExists = this.hearing.linked_participants.find(p => p.linkedParticipantEmail === email);
+        const interpreterExists = this.hearing.linkedOarticipants.find(p => p.participantEmail === email);
+        const interpreteeExists = this.hearing.linkedOarticipants.find(p => p.linkedParticipantEmail === email);
         if (interpreterExists || interpreteeExists) {
-            this.hearing.linked_participants = [];
+            this.hearing.linkedOarticipants = [];
         }
     }
 
     private removeInterpreteeAndInterpreter() {
         const interpretee = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
         let interpreter: VHParticipant;
-        if (interpretee.linked_participants && interpretee.linked_participants.length > 0) {
-            interpreter = this.hearing.participants.find(i => i.id === interpretee.linked_participants[0].linkedParticipantId);
+        if (interpretee.linkedParticipants && interpretee.linkedParticipants.length > 0) {
+            interpreter = this.hearing.participants.find(i => i.id === interpretee.linkedParticipants[0].linkedParticipantId);
         } else {
             interpreter = this.hearing.participants.find(i => i.interpreterFor === this.selectedParticipantEmail);
         }

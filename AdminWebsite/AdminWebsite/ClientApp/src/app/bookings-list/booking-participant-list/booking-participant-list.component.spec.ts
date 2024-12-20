@@ -99,26 +99,26 @@ describe('BookingParticipantListComponent', () => {
             inputParticipants.forEach((p, i) => {
                 participantsArray.push(
                     new VHParticipant({
-                        first_name: p.FirstName,
+                        firstName: p.FirstName,
                         externalReferenceId: p.ExternalReferenceId ?? undefined,
-                        hearing_role_code: p.HearingRoleCode,
-                        hearing_role_name: p.HearingRoleName,
-                        linked_participants: p.LinkedParticipants ?? null,
+                        hearingRoleCode: p.HearingRoleCode,
+                        hearingRoleName: p.HearingRoleName,
+                        linkedParticipants: p.LinkedParticipants ?? null,
                         id: `${i + 1}`,
                         company: '',
-                        display_name: '',
+                        display_Name: '',
                         email: '',
                         flag: false,
                         indexInList: 0,
-                        interpretee_name: p.Interpretee,
-                        last_name: '',
-                        middle_names: '',
+                        interpreteeName: p.Interpretee,
+                        lastName: '',
+                        middleNames: '',
                         phone: '',
                         representee: '',
                         title: '',
                         username: '',
-                        user_role_name: '',
-                        is_interpretee: false,
+                        userRoleName: '',
+                        isInterpretee: false,
                         interpretation_language: null,
                         screening: null
                     })
@@ -174,8 +174,8 @@ describe('BookingParticipantListComponent', () => {
         ];
 
         for (let i = 0; i < expectedOutput.length; i++) {
-            expect(component.sortedParticipants[i].first_name).toEqual(expectedOutput[i].FirstName);
-            expect(component.sortedParticipants[i].hearing_role_name).toEqual(expectedOutput[i].HearingRoleName);
+            expect(component.sortedParticipants[i].firstName).toEqual(expectedOutput[i].FirstName);
+            expect(component.sortedParticipants[i].hearingRoleName).toEqual(expectedOutput[i].HearingRoleName);
         }
         done();
     });

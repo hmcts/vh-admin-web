@@ -95,27 +95,27 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     }
 
     isExistingHearingOrParticipantsAdded(): boolean {
-        return !!this.hearing && (!!this.isExistingHearing || this.hearing.participants.some(p => !p.is_judge));
+        return !!this.hearing && (!!this.isExistingHearing || this.hearing.participants.some(p => !p.isJudge));
     }
 
     private checkForExistingRequestOrCreateNew() {
         this.hearing = this.hearingService.getCurrentRequest();
-        this.isExistingHearing = this.hearing?.hearing_id && this.hearing?.hearing_id?.length > 0;
+        this.isExistingHearing = this.hearing?.hearingId && this.hearing?.hearingId?.length > 0;
         this.logger.debug(`${this.loggerPrefix} Checking for existing hearing.`);
 
-        this.selectedCaseType = this.hearing.case_type;
-        this.selectedCaseTypeServiceId = this.hearing.case_type_service_id;
-        if (this.hearing.case_type) {
-            this.selectedCaseType = this.hearing.case_type;
+        this.selectedCaseType = this.hearing.caseType;
+        this.selectedCaseTypeServiceId = this.hearing.caseTypeServiceId;
+        if (this.hearing.caseType) {
+            this.selectedCaseType = this.hearing.caseType;
             return;
         } else {
             this.selectedCaseType = Constants.PleaseSelect;
         }
 
-        if (this.hearing.case_type) {
-            this.selectedCaseType = this.hearing.case_type;
+        if (this.hearing.caseType) {
+            this.selectedCaseType = this.hearing.caseType;
             this.logger.debug(`${this.loggerPrefix} Updating selected Service to current hearing Service.`, {
-                hearing: this.hearing.hearing_id
+                hearing: this.hearing.hearingId
             });
             this.hasSaved = true;
         } else {
@@ -192,7 +192,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     isFirstDayOfMultiDay(): boolean {
         const firstDay = this.hearing.hearingsInGroup[0];
-        const isFirstDay = this.hearing.hearing_id === firstDay.hearing_id;
+        const isFirstDay = this.hearing.hearingId === firstDay.hearingId;
         return isFirstDay;
     }
 
@@ -247,13 +247,13 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     }
 
     private updateHearingRequest() {
-        this.hearing.case_type = this.selectedCaseType;
+        this.hearing.caseType = this.selectedCaseType;
         const hearingCase = new CaseModel();
         hearingCase.name = this.form.value.caseName;
         hearingCase.number = this.form.value.caseNumber;
         this.hearing.case = hearingCase;
-        this.hearing.case_type_id = this.isExistingHearing ? this.hearing.case_type_id : this.form.getRawValue().caseType;
-        this.hearing.case_type_service_id = this.selectedCaseTypeServiceId;
+        this.hearing.caseTypeId = this.isExistingHearing ? this.hearing.caseTypeId : this.form.getRawValue().caseType;
+        this.hearing.caseTypeServiceId = this.selectedCaseTypeServiceId;
         this.hearing.supplier = this.form.getRawValue().supplier ?? this.retrieveDefaultSupplier();
         this.hearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Updated hearing request details`, { hearing: this.hearing });

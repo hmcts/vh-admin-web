@@ -52,7 +52,7 @@ export class ParticipantItemComponent implements OnInit {
         if (this.participant.isJudiciaryMember) {
             return null; // username and email are the same, no need to show it twice
         }
-        const otherInformation = OtherInformationModel.init(this.hearing.other_information);
+        const otherInformation = OtherInformationModel.init(this.hearing.otherInformation);
         return otherInformation.JudgeEmail;
     }
 
@@ -60,7 +60,7 @@ export class ParticipantItemComponent implements OnInit {
         if (this.participant.isJudiciaryMember) {
             return this.participant.phone; // ejud data does not have phone number
         }
-        const otherInformation = OtherInformationModel.init(this.hearing.other_information);
+        const otherInformation = OtherInformationModel.init(this.hearing.otherInformation);
         return otherInformation.JudgePhone ?? participant.phone;
     }
 
@@ -96,26 +96,26 @@ export class ParticipantItemComponent implements OnInit {
     }
 
     get isJudge() {
-        return this.participant?.is_judge;
+        return this.participant?.isJudge;
     }
 
     get isStaffMember() {
-        return this.participant?.hearing_role_name === Constants.HearingRoles.StaffMember;
+        return this.participant?.hearingRoleName === Constants.HearingRoles.StaffMember;
     }
 
     get isObserverOrPanelMember() {
         return (
-            ['Observer', 'Panel Member'].includes(this.participant?.hearing_role_name) ||
-            [HearingRoleCodes.Observer, 'PanelMember'].includes(this.participant?.hearing_role_code)
+            ['Observer', 'Panel Member'].includes(this.participant?.hearingRoleName) ||
+            [HearingRoleCodes.Observer, 'PanelMember'].includes(this.participant?.hearingRoleCode)
         );
     }
 
     get isInterpreter() {
-        return this.participant.hearing_role_name === 'Interpreter' || this.participant.hearing_role_code === HearingRoleCodes.Interpreter;
+        return this.participant.hearingRoleName === 'Interpreter' || this.participant.hearingRoleCode === HearingRoleCodes.Interpreter;
     }
 
     get isInterpretee() {
-        return this.participant.is_interpretee;
+        return this.participant.isInterpretee;
     }
 
     canEditJudge(): boolean {

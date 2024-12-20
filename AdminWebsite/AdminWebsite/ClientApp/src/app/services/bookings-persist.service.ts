@@ -35,7 +35,7 @@ export class BookingPersistService {
             this._bookingList[this._selectedGroupIndex].BookingsDetails.length > this._selectedItemIndex
         ) {
             const hearingUpdate = this._bookingList[this._selectedGroupIndex].BookingsDetails[this.selectedItemIndex];
-            if (hearingUpdate.Booking.hearing_id === hearing.hearing_id) {
+            if (hearingUpdate.Booking.hearingId === hearing.hearingId) {
                 this.updateBookingRecord(hearingUpdate, hearing);
 
                 if (hearingUpdate.Booking.isMultiDay) {
@@ -47,9 +47,9 @@ export class BookingPersistService {
     }
 
     private updateBookingRecord(hearingUpdate: BookingsListItemModel, hearing: VHBooking) {
-        const newStartDate = new Date(hearing.scheduled_date_time);
+        const newStartDate = new Date(hearing.scheduledDateTime);
 
-        hearingUpdate.IsStartTimeChanged = hearingUpdate.Booking.scheduled_date_time.toString() !== newStartDate.toString();
+        hearingUpdate.IsStartTimeChanged = hearingUpdate.Booking.scheduledDateTime.toString() !== newStartDate.toString();
         hearingUpdate.Selected = true;
         hearingUpdate.Booking = hearing;
 
@@ -60,14 +60,13 @@ export class BookingPersistService {
         const hearingsInGroupUpdate: BookingsListItemModel[] = this._bookingList.flatMap(booking =>
             booking.BookingsDetails.filter(
                 bookingDetail =>
-                    bookingDetail.Booking.groupId === hearingUpdate.Booking.groupId &&
-                    bookingDetail.Booking.hearing_id !== hearing.hearing_id
+                    bookingDetail.Booking.groupId === hearingUpdate.Booking.groupId && bookingDetail.Booking.hearingId !== hearing.hearingId
             )
         );
 
         if (hearingsInGroupUpdate) {
             hearingsInGroupUpdate.forEach(hearingInGroupToUpdate => {
-                const hearingInGroup = hearing.hearingsInGroup.find(x => x.hearing_id === hearingInGroupToUpdate.Booking.hearing_id);
+                const hearingInGroup = hearing.hearingsInGroup.find(x => x.hearingId === hearingInGroupToUpdate.Booking.hearingId);
                 this.updateBookingRecord(hearingInGroupToUpdate, hearingInGroup);
             });
         }
@@ -89,8 +88,8 @@ export class BookingPersistService {
             return judiciaryJudge ? judiciaryJudge.displayName : '';
         }
 
-        const judge = hearing.participants.find(x => x.is_judge);
-        return judge ? judge.display_name : '';
+        const judge = hearing.participants.find(x => x.isJudge);
+        return judge ? judge.display_Name : '';
     }
 
     set bookingList(value: Array<BookingsListModel>) {

@@ -127,16 +127,16 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
         const selectedResult = new VHParticipant();
         selectedResult.email = result.email;
-        selectedResult.first_name = result.first_name;
-        selectedResult.last_name = result.last_name;
+        selectedResult.firstName = result.firstName;
+        selectedResult.lastName = result.lastName;
         selectedResult.title = result.title;
         selectedResult.phone = result.phone;
         selectedResult.company = result.company;
-        selectedResult.is_exist_person = true;
+        selectedResult.isExistPerson = true;
         selectedResult.username = result.username;
-        selectedResult.display_name = result.display_name;
-        selectedResult.is_courtroom_account = result.is_courtroom_account;
-        selectedResult.contact_email = result.contact_email;
+        selectedResult.display_Name = result.display_Name;
+        selectedResult.isCourtroomAccount = result.isCourtroomAccount;
+        selectedResult.contactEmail = result.contactEmail;
         this.isShowResult = false;
         this.findParticipant.emit(selectedResult);
     }

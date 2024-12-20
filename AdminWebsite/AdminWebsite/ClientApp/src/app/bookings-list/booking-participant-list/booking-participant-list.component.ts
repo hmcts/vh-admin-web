@@ -44,19 +44,19 @@ export class BookingParticipantListComponent {
     private sortParticipants() {
         const compareByHearingRoleThenByFirstName = () => (a: VHParticipant, b: VHParticipant) => {
             const swapIndices = a > b ? 1 : 0;
-            const hearingRoleA = a.hearing_role_name;
-            const hearingRoleB = b.hearing_role_name;
+            const hearingRoleA = a.hearingRoleName;
+            const hearingRoleB = b.hearingRoleName;
             if (hearingRoleA === hearingRoleB) {
-                return a.first_name < b.first_name ? -1 : swapIndices;
+                return a.firstName < b.firstName ? -1 : swapIndices;
             }
             return hearingRoleA < hearingRoleB ? -1 : swapIndices;
         };
-        const staffMember = this.participants.filter(participant => participant.hearing_role_name === Constants.HearingRoles.StaffMember);
+        const staffMember = this.participants.filter(participant => participant.hearingRoleName === Constants.HearingRoles.StaffMember);
         const panelMembersAndWingers = this.participants
-            .filter(participant => Constants.JudiciaryRoles.includes(participant.hearing_role_name))
+            .filter(participant => Constants.JudiciaryRoles.includes(participant.hearingRoleName))
             .sort(compareByHearingRoleThenByFirstName());
         const interpreters = this.participants.filter(participant => participant.isInterpreter);
-        const observers = this.participants.filter(participant => Constants.HearingRoles.Observer === participant.hearing_role_name);
+        const observers = this.participants.filter(participant => Constants.HearingRoles.Observer === participant.hearingRoleName);
         const others = this.participants
             .filter(
                 participant =>
@@ -96,8 +96,8 @@ export class BookingParticipantListComponent {
     private insertInterpreters(interpreters: VHParticipant[], sorted: VHParticipant[]) {
         interpreters.forEach(interpreterParticipant => {
             let interpretee: VHParticipant;
-            if (interpreterParticipant.linked_participants) {
-                const linkedParticipants = interpreterParticipant.linked_participants;
+            if (interpreterParticipant.linkedParticipants) {
+                const linkedParticipants = interpreterParticipant.linkedParticipants;
                 interpretee = this._participants.find(p => linkedParticipants.some(lp => lp.linkedParticipantId === p.id));
             }
             if (interpretee) {

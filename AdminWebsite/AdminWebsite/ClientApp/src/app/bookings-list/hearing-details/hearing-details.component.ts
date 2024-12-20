@@ -34,17 +34,17 @@ export class HearingDetailsComponent implements OnDestroy {
         let represents = '';
         const participant = this.participants.find(p => p.email === defenceAdvocateContactEmail);
         if (participant) {
-            represents = participant.display_name + ', representing ' + participant.representee;
+            represents = participant.display_Name + ', representing ' + participant.representee;
         }
         return represents;
     }
 
     getOtherInformationText(): string {
         try {
-            const otherInfo = OtherInformationModel.init(this.hearing?.other_information);
+            const otherInfo = OtherInformationModel.init(this.hearing?.otherInformation);
             return otherInfo.OtherInformation;
         } catch (e) {
-            return this.hearing?.other_information;
+            return this.hearing?.otherInformation;
         }
     }
 }

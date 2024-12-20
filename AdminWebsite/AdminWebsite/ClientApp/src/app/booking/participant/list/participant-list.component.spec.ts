@@ -32,16 +32,16 @@ describe('ParticipantListComponent', () => {
 
     const pat1 = new VHParticipant();
     pat1.title = 'Mrs';
-    pat1.first_name = 'Sam';
-    pat1.display_name = 'Sam';
+    pat1.firstName = 'Sam';
+    pat1.display_Name = 'Sam';
     pat1.addedDuringHearing = false;
-    pat1.hearing_role_code = HearingRoleCodes.Applicant;
+    pat1.hearingRoleCode = HearingRoleCodes.Applicant;
     const pat2 = new VHParticipant();
     pat2.title = 'Mr';
-    pat2.first_name = 'John';
-    pat2.display_name = 'Doe';
+    pat2.firstName = 'John';
+    pat2.display_Name = 'Doe';
     pat2.addedDuringHearing = false;
-    pat2.hearing_role_code = HearingRoleCodes.Applicant;
+    pat2.hearingRoleCode = HearingRoleCodes.Applicant;
 
     const participants: any[] = [pat1, pat2];
     const ldServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
@@ -65,7 +65,7 @@ describe('ParticipantListComponent', () => {
         fixture = TestBed.createComponent(ParticipantListComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-        component.hearing = new VHBooking({ updated_date: new Date(), supplier: VideoSupplier.Kinly });
+        component.hearing = new VHBooking({ updatedDate: new Date(), supplier: VideoSupplier.Kinly });
         fixture.detectChanges();
     });
 
@@ -73,13 +73,13 @@ describe('ParticipantListComponent', () => {
         it('should call sortParticipants when participant list changes', () => {
             const sortSpy = spyOn(component, 'sortParticipants');
             component.hearing.participants = [
-                new VHParticipant({ display_name: 'B', interpretation_language: undefined }),
-                new VHParticipant({ display_name: 'A', interpretation_language: undefined }),
-                new VHParticipant({ display_name: 'C', interpretation_language: undefined })
+                new VHParticipant({ display_Name: 'B', interpretation_language: undefined }),
+                new VHParticipant({ display_Name: 'A', interpretation_language: undefined }),
+                new VHParticipant({ display_Name: 'C', interpretation_language: undefined })
             ];
             component.sortedParticipants = [
-                new VHParticipant({ display_name: 'A', interpretation_language: undefined }),
-                new VHParticipant({ display_name: 'B', interpretation_language: undefined })
+                new VHParticipant({ display_Name: 'A', interpretation_language: undefined }),
+                new VHParticipant({ display_Name: 'B', interpretation_language: undefined })
             ];
             component.ngDoCheck();
             expect(sortSpy).toHaveBeenCalled();
@@ -88,12 +88,12 @@ describe('ParticipantListComponent', () => {
         it('should not call sortParticipants when participant list does not change', () => {
             const sortSpy = spyOn(component, 'sortParticipants');
             component.hearing.participants = [
-                new VHParticipant({ display_name: 'A', interpretation_language: undefined, externalReferenceId: '1' }),
-                new VHParticipant({ display_name: 'B', interpretation_language: undefined, externalReferenceId: '2' })
+                new VHParticipant({ display_Name: 'A', interpretation_language: undefined, externalReferenceId: '1' }),
+                new VHParticipant({ display_Name: 'B', interpretation_language: undefined, externalReferenceId: '2' })
             ];
             component.sortedParticipants = [
-                new VHParticipant({ display_name: 'A', interpretation_language: undefined, externalReferenceId: '1' }),
-                new VHParticipant({ display_name: 'B', interpretation_language: undefined, externalReferenceId: '2' })
+                new VHParticipant({ display_Name: 'A', interpretation_language: undefined, externalReferenceId: '1' }),
+                new VHParticipant({ display_Name: 'B', interpretation_language: undefined, externalReferenceId: '2' })
             ];
             component.ngDoCheck();
             expect(sortSpy).not.toHaveBeenCalled();
@@ -121,11 +121,11 @@ describe('ParticipantListComponent', () => {
             component.hearing.judiciaryParticipants = [johPm2, johJudge, johPm1];
             component.sortedJudiciaryMembers = [];
             component.ngDoCheck();
-            expect(component.sortedJudiciaryMembers[0].hearing_role_code).toEqual('Judge');
-            expect(component.sortedJudiciaryMembers[1].hearing_role_code).toEqual('PanelMember');
-            expect(component.sortedJudiciaryMembers[1].display_name).toEqual(johPm1.displayName);
-            expect(component.sortedJudiciaryMembers[2].hearing_role_code).toEqual('PanelMember');
-            expect(component.sortedJudiciaryMembers[2].display_name).toEqual(johPm2.displayName);
+            expect(component.sortedJudiciaryMembers[0].hearingRoleCode).toEqual('Judge');
+            expect(component.sortedJudiciaryMembers[1].hearingRoleCode).toEqual('PanelMember');
+            expect(component.sortedJudiciaryMembers[1].display_Name).toEqual(johPm1.displayName);
+            expect(component.sortedJudiciaryMembers[2].hearingRoleCode).toEqual('PanelMember');
+            expect(component.sortedJudiciaryMembers[2].display_Name).toEqual(johPm2.displayName);
         });
 
         it('should call sortJudiciaryMembers when interpreter language changes', () => {
@@ -196,8 +196,8 @@ describe('ParticipantListComponent', () => {
             component.ngDoCheck();
 
             expect(sortJudiciaryMembersCalled).toBe(false);
-            expect(component.sortedJudiciaryMembers[0].hearing_role_code).toEqual('Judge');
-            expect(component.sortedJudiciaryMembers[1].hearing_role_code).toEqual('PanelMember');
+            expect(component.sortedJudiciaryMembers[0].hearingRoleCode).toEqual('Judge');
+            expect(component.sortedJudiciaryMembers[1].hearingRoleCode).toEqual('PanelMember');
         });
     });
 
@@ -225,7 +225,7 @@ describe('ParticipantListComponent', () => {
             component.removeParticipant(
                 new VHParticipant({
                     email: 'email@hmcts.net',
-                    is_exist_person: false,
+                    isExistPerson: false,
                     interpretation_language: undefined
                 })
             );
@@ -285,29 +285,29 @@ describe('ParticipantListComponent', () => {
         it('should sort judiciary members with Judge at the beginning', () => {
             component.hearing.judiciaryParticipants = [panelMember, judge];
             component.sortJudiciaryMembers();
-            expect(component.sortedJudiciaryMembers[0].hearing_role_code).toEqual('Judge');
-            expect(component.sortedJudiciaryMembers[1].hearing_role_code).toEqual('PanelMember');
+            expect(component.sortedJudiciaryMembers[0].hearingRoleCode).toEqual('Judge');
+            expect(component.sortedJudiciaryMembers[1].hearingRoleCode).toEqual('PanelMember');
         });
 
         it('should sort judiciary members with Judge at the beginning even if Judge is last in the original list', () => {
             component.hearing.judiciaryParticipants = [judge, panelMember];
             component.sortJudiciaryMembers();
-            expect(component.sortedJudiciaryMembers[0].hearing_role_code).toEqual('Judge');
-            expect(component.sortedJudiciaryMembers[1].hearing_role_code).toEqual('PanelMember');
+            expect(component.sortedJudiciaryMembers[0].hearingRoleCode).toEqual('Judge');
+            expect(component.sortedJudiciaryMembers[1].hearingRoleCode).toEqual('PanelMember');
         });
 
         it('should not change the order if all judiciary members are Judges', () => {
             component.hearing.judiciaryParticipants = [judge, judge];
             component.sortJudiciaryMembers();
-            expect(component.sortedJudiciaryMembers[0].hearing_role_code).toEqual('Judge');
-            expect(component.sortedJudiciaryMembers[1].hearing_role_code).toEqual('Judge');
+            expect(component.sortedJudiciaryMembers[0].hearingRoleCode).toEqual('Judge');
+            expect(component.sortedJudiciaryMembers[1].hearingRoleCode).toEqual('Judge');
         });
 
         it('should not change the order if there are no Judges', () => {
             component.hearing.judiciaryParticipants = [panelMember, panelMember];
             component.sortJudiciaryMembers();
-            expect(component.sortedJudiciaryMembers[0].hearing_role_code).toEqual('PanelMember');
-            expect(component.sortedJudiciaryMembers[1].hearing_role_code).toEqual('PanelMember');
+            expect(component.sortedJudiciaryMembers[0].hearingRoleCode).toEqual('PanelMember');
+            expect(component.sortedJudiciaryMembers[1].hearingRoleCode).toEqual('PanelMember');
         });
     });
 });
@@ -338,7 +338,7 @@ describe('ParticipantListComponent-SortParticipants', () => {
         fixture = TestBed.createComponent(ParticipantListComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-        component.hearing = new VHBooking({ updated_date: new Date(), supplier: VideoSupplier.Kinly });
+        component.hearing = new VHBooking({ updatedDate: new Date(), supplier: VideoSupplier.Kinly });
         fixture.detectChanges();
     });
     it('should produce a sorted list with no duplicates', () => {
@@ -379,12 +379,12 @@ describe('ParticipantListComponent-SortParticipants', () => {
         participantsArr.forEach((p, i) => {
             component.hearing.participants.push(
                 new VHParticipant({
-                    is_exist_person: true,
-                    hearing_role_name: p.hearing_role_name,
-                    display_name: p.display_name,
-                    linked_participants: p.linked_participant,
+                    isExistPerson: true,
+                    hearingRoleName: p.hearing_role_name,
+                    display_Name: p.display_name,
+                    linkedParticipants: p.linked_participant,
                     id: `${i + 1}`,
-                    is_courtroom_account: false,
+                    isCourtroomAccount: false,
                     interpretation_language: undefined
                 })
             );
@@ -393,13 +393,13 @@ describe('ParticipantListComponent-SortParticipants', () => {
         component.ngOnInit();
 
         expect(component.sortedParticipants.length).toBe(11);
-        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Judge').length).toBe(2);
-        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Winger').length).toBe(2);
-        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Staff Member').length).toBe(1);
-        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Panel Member').length).toBe(1);
-        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Observer').length).toBe(1);
-        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Litigant in Person').length).toBe(3);
-        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Interpreter').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearingRoleName === 'Judge').length).toBe(2);
+        expect(component.sortedParticipants.filter(p => p.hearingRoleName === 'Winger').length).toBe(2);
+        expect(component.sortedParticipants.filter(p => p.hearingRoleName === 'Staff Member').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearingRoleName === 'Panel Member').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearingRoleName === 'Observer').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearingRoleName === 'Litigant in Person').length).toBe(3);
+        expect(component.sortedParticipants.filter(p => p.hearingRoleName === 'Interpreter').length).toBe(1);
     });
 
     it('should produce a sorted list with specific hierarchy and grouping', () => {
@@ -446,8 +446,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
         participantsArr.forEach((p, i) => {
             component.hearing.participants.push(
                 new VHParticipant({
-                    hearing_role_name: p.hearing_role_name,
-                    first_name: p.first_name,
+                    hearingRoleName: p.hearing_role_name,
+                    firstName: p.first_name,
                     email: p.email,
                     interpreterFor: p.interpreterFor,
                     interpretation_language: undefined,
@@ -462,8 +462,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expectedResult.push(
             new VHParticipant({
                 email: undefined,
-                hearing_role_name: 'Panel Member',
-                first_name: 'H',
+                hearingRoleName: 'Panel Member',
+                firstName: 'H',
                 interpreterFor: undefined,
                 interpretation_language: undefined,
                 externalReferenceId: '4'
@@ -472,8 +472,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expectedResult.push(
             new VHParticipant({
                 email: undefined,
-                hearing_role_name: 'Winger',
-                first_name: 'J',
+                hearingRoleName: 'Winger',
+                firstName: 'J',
                 interpreterFor: undefined,
                 interpretation_language: undefined,
                 externalReferenceId: '2'
@@ -483,8 +483,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expectedResult.push(
             new VHParticipant({
                 email: undefined,
-                hearing_role_name: 'Staff Member',
-                first_name: 'I',
+                hearingRoleName: 'Staff Member',
+                firstName: 'I',
                 interpreterFor: undefined,
                 interpretation_language: undefined,
                 externalReferenceId: '3'
@@ -494,8 +494,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expectedResult.push(
             new VHParticipant({
                 email: undefined,
-                hearing_role_name: 'Litigant in Person',
-                first_name: 'A',
+                hearingRoleName: 'Litigant in Person',
+                firstName: 'A',
                 interpreterFor: undefined,
                 interpretation_language: undefined,
                 externalReferenceId: '11'
@@ -505,8 +505,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expectedResult.push(
             new VHParticipant({
                 email: undefined,
-                hearing_role_name: 'Litigant in Person',
-                first_name: 'B',
+                hearingRoleName: 'Litigant in Person',
+                firstName: 'B',
                 interpreterFor: undefined,
                 interpretation_language: undefined,
                 externalReferenceId: '10'
@@ -516,9 +516,9 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expectedResult.push(
             new VHParticipant({
                 email: 'interpretees@email.co.uk',
-                hearing_role_name: 'Litigant in Person',
-                first_name: 'C',
-                is_interpretee: true,
+                hearingRoleName: 'Litigant in Person',
+                firstName: 'C',
+                isInterpretee: true,
                 interpreterFor: undefined,
                 interpretation_language: undefined,
                 externalReferenceId: '9'
@@ -527,10 +527,10 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expectedResult.push(
             new VHParticipant({
                 email: undefined,
-                hearing_role_name: 'Interpreter',
-                first_name: 'A',
+                hearingRoleName: 'Interpreter',
+                firstName: 'A',
                 interpreterFor: 'interpretees@email.co.uk',
-                interpretee_name: undefined,
+                interpreteeName: undefined,
                 interpretation_language: undefined,
                 externalReferenceId: '12'
             })
@@ -539,8 +539,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expectedResult.push(
             new VHParticipant({
                 email: undefined,
-                hearing_role_name: 'Litigant in Person',
-                first_name: 'D',
+                hearingRoleName: 'Litigant in Person',
+                firstName: 'D',
                 interpreterFor: undefined,
                 interpretation_language: undefined,
                 externalReferenceId: '8'
@@ -550,8 +550,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expectedResult.push(
             new VHParticipant({
                 email: undefined,
-                hearing_role_name: 'Litigant in Person',
-                first_name: 'E',
+                hearingRoleName: 'Litigant in Person',
+                firstName: 'E',
                 interpreterFor: undefined,
                 interpretation_language: undefined,
                 externalReferenceId: '7'
@@ -560,8 +560,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expectedResult.push(
             new VHParticipant({
                 email: undefined,
-                hearing_role_name: 'Litigant in Person',
-                first_name: 'F',
+                hearingRoleName: 'Litigant in Person',
+                firstName: 'F',
                 interpreterFor: undefined,
                 interpretation_language: undefined,
                 externalReferenceId: '6'
@@ -570,8 +570,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expectedResult.push(
             new VHParticipant({
                 email: undefined,
-                hearing_role_name: 'None',
-                first_name: 'K',
+                hearingRoleName: 'None',
+                firstName: 'K',
                 interpreterFor: undefined,
                 interpretation_language: undefined,
                 externalReferenceId: '1'
@@ -580,8 +580,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expectedResult.push(
             new VHParticipant({
                 email: undefined,
-                hearing_role_name: 'Observer',
-                first_name: 'G',
+                hearingRoleName: 'Observer',
+                firstName: 'G',
                 interpreterFor: undefined,
                 interpretation_language: undefined,
                 externalReferenceId: '5'
@@ -608,70 +608,70 @@ describe('ParticipantListComponent-SortParticipants', () => {
 
         const participantsArr = [
             new VHParticipant({
-                hearing_role_name: 'Judge',
-                display_name: 'Judge1',
-                linked_participants: null,
+                hearingRoleName: 'Judge',
+                display_Name: 'Judge1',
+                linkedParticipants: null,
                 interpretation_language: undefined
             }),
             new VHParticipant({
-                hearing_role_name: 'Judge',
-                display_name: 'Judge2',
-                linked_participants: null,
+                hearingRoleName: 'Judge',
+                display_Name: 'Judge2',
+                linkedParticipants: null,
                 interpretation_language: undefined
             }),
             new VHParticipant({
-                hearing_role_name: 'Winger',
-                display_name: 'Winger1',
-                linked_participants: null,
+                hearingRoleName: 'Winger',
+                display_Name: 'Winger1',
+                linkedParticipants: null,
                 interpretation_language: undefined
             }),
             new VHParticipant({
-                hearing_role_name: 'Winger',
-                display_name: 'Winger2',
-                linked_participants: null,
+                hearingRoleName: 'Winger',
+                display_Name: 'Winger2',
+                linkedParticipants: null,
                 interpretation_language: undefined
             }),
             new VHParticipant({
-                hearing_role_name: 'Staff Member',
-                display_name: 'Staff Member',
-                linked_participants: null,
+                hearingRoleName: 'Staff Member',
+                display_Name: 'Staff Member',
+                linkedParticipants: null,
                 interpretation_language: undefined
             }),
             new VHParticipant({
-                hearing_role_name: 'Panel Member',
-                display_name: 'Panel Member',
-                linked_participants: null,
+                hearingRoleName: 'Panel Member',
+                display_Name: 'Panel Member',
+                linkedParticipants: null,
                 interpretation_language: undefined
             }),
             new VHParticipant({
-                hearing_role_name: 'Observer',
-                display_name: 'Observer',
-                linked_participants: null,
+                hearingRoleName: 'Observer',
+                display_Name: 'Observer',
+                linkedParticipants: null,
                 interpretation_language: undefined
             }),
             new VHParticipant({
-                hearing_role_name: 'Litigant in Person',
-                display_name: 'Litigant in Person1',
-                linked_participants: linked_participantList1,
+                hearingRoleName: 'Litigant in Person',
+                display_Name: 'Litigant in Person1',
+                linkedParticipants: linked_participantList1,
                 id: '7',
                 interpretation_language: undefined
             }),
             new VHParticipant({
-                hearing_role_name: 'Litigant in Person',
-                display_name: 'Litigant in Person2',
-                linked_participants: null,
+                hearingRoleName: 'Litigant in Person',
+                display_Name: 'Litigant in Person2',
+                linkedParticipants: null,
                 interpretation_language: undefined
             }),
             new VHParticipant({
-                hearing_role_name: 'Litigant in Person',
-                display_name: 'Litigant in Person3',
-                linked_participants: null,
+                hearingRoleName: 'Litigant in Person',
+                display_Name: 'Litigant in Person3',
+                linkedParticipants: null,
                 interpretation_language: undefined
             }),
             new VHParticipant({
-                hearing_role_name: 'Interpreter',
-                display_name: 'Interpreter1',
-                linked_participants: linked_participantList,
+                hearingRoleName: 'Interpreter',
+                display_Name: 'Interpreter1',
+                linkedParticipants: linked_participantList,
                 id: '9',
                 interpretation_language: undefined
             })
@@ -691,8 +691,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             // Act
             component.hearing.participants.push(
                 new VHParticipant({
-                    hearing_role_name: 'Winger',
-                    display_name: 'Winger3',
+                    hearingRoleName: 'Winger',
+                    display_Name: 'Winger3',
                     interpretation_language: undefined
                 })
             );
@@ -749,13 +749,13 @@ describe('ParticipantListComponent-SortParticipants', () => {
         participantsArr.forEach((p, i) => {
             component.hearing.participants.push(
                 new VHParticipant({
-                    is_exist_person: true,
-                    hearing_role_name: p.hearing_role_name,
-                    display_name: p.display_name,
+                    isExistPerson: true,
+                    hearingRoleName: p.hearing_role_name,
+                    display_Name: p.display_name,
                     interpreterFor: p.interpreterFor,
                     email: p.email,
                     id: `${i + 1},`,
-                    is_courtroom_account: false,
+                    isCourtroomAccount: false,
                     interpretation_language: undefined
                 })
             );
@@ -763,8 +763,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
         component.ngOnInit();
 
         expect(component.sortedParticipants.length).toBe(3);
-        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Judge').length).toBe(1);
-        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Litigant in Person').length).toBe(1);
-        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Interpreter').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearingRoleName === 'Judge').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearingRoleName === 'Litigant in Person').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearingRoleName === 'Interpreter').length).toBe(1);
     });
 });

@@ -84,7 +84,7 @@ export class VideoHearingsService {
 
         if (request) {
             const model: VHBooking = JSON.parse(request);
-            existingHearing = model.hearing_id && model.hearing_id.length > 0;
+            existingHearing = model.hearingId && model.hearingId.length > 0;
         }
 
         const keyChanges = sessionStorage.getItem(this.bookingHasChangesKey);
@@ -125,10 +125,10 @@ export class VideoHearingsService {
         const localRequest = this.getCurrentRequest();
 
         return (
-            localRequest.scheduled_date_time &&
-            localRequest.scheduled_duration > 0 &&
+            localRequest.scheduledDateTime &&
+            localRequest.scheduledDuration > 0 &&
             localRequest.participants.length > 1 &&
-            localRequest.hearing_venue_id > 0
+            localRequest.hearingVenueId > 0
         );
     }
 
@@ -167,14 +167,14 @@ export class VideoHearingsService {
 
         if (newRequest.isMultiDayEdit) {
             bookingRequest.is_multi_day = true;
-            if (newRequest.hearing_dates.length) {
+            if (newRequest.hearingDates.length) {
                 bookingRequest.multi_hearing_details = new MultiHearingRequest({
-                    hearing_dates: newRequest.hearing_dates.map(hearingDate => new Date(hearingDate))
+                    hearing_dates: newRequest.hearingDates.map(hearingDate => new Date(hearingDate))
                 });
             } else {
                 bookingRequest.multi_hearing_details = new MultiHearingRequest({
-                    start_date: new Date(newRequest.scheduled_date_time),
-                    end_date: new Date(newRequest.end_hearing_date_time)
+                    start_date: new Date(newRequest.scheduledDateTime),
+                    end_date: new Date(newRequest.endHearingDateTime)
                 });
             }
         }
@@ -192,12 +192,12 @@ export class VideoHearingsService {
 
     updateHearing(booking: VHBooking): Observable<HearingDetailsResponse> {
         const hearingRequest = this.mapExistingHearing(booking);
-        return this.bhClient.editHearing(booking.hearing_id, hearingRequest);
+        return this.bhClient.editHearing(booking.hearingId, hearingRequest);
     }
 
     updateMultiDayHearing(booking: VHBooking): Observable<HearingDetailsResponse> {
         const request = this.mapExistingHearingToEditMultiDayHearingRequest(booking);
-        return this.bhClient.editMultiDayHearing(booking.hearing_id, request);
+        return this.bhClient.editMultiDayHearing(booking.hearingId, request);
     }
 
     mapExistingHearing(booking: VHBooking): EditHearingRequest {
@@ -207,14 +207,14 @@ export class VideoHearingsService {
             hearing.case = new EditCaseRequest({ name: booking.case.name, number: booking.case.number });
         }
 
-        hearing.hearing_room_name = booking.court_room;
-        hearing.hearing_venue_name = booking.court_name;
-        hearing.hearing_venue_code = booking.court_code;
-        hearing.other_information = booking.other_information;
-        hearing.scheduled_date_time = new Date(booking.scheduled_date_time);
-        hearing.scheduled_duration = booking.scheduled_duration;
+        hearing.hearing_room_name = booking.courtRoom;
+        hearing.hearing_venue_name = booking.courtName;
+        hearing.hearing_venue_code = booking.courtCode;
+        hearing.other_information = booking.otherInformation;
+        hearing.scheduled_date_time = new Date(booking.scheduledDateTime);
+        hearing.scheduled_duration = booking.scheduledDuration;
         hearing.participants = this.mapParticipantModelToEditParticipantRequest(booking.participants);
-        hearing.audio_recording_required = booking.audio_recording_required;
+        hearing.audio_recording_required = booking.audioRecordingRequired;
         hearing.endpoints = this.mapEndpointModelToEditEndpointRequest(booking.endpoints);
         if (booking.judiciaryParticipants?.length > 0) {
             hearing.judiciary_participants = this.mapJudicialMemberDtoToJudiciaryParticipantRequest(booking.judiciaryParticipants);
@@ -241,8 +241,8 @@ export class VideoHearingsService {
         editMultiDayRequest.hearings_in_group = booking.hearingsInGroup.map(
             hearing =>
                 new UpdateHearingInGroupRequest({
-                    hearing_id: hearing.hearing_id,
-                    scheduled_date_time: hearing.scheduled_date_time
+                    hearing_id: hearing.hearingId,
+                    scheduled_date_time: hearing.scheduledDateTime
                 })
         );
 
@@ -270,17 +270,17 @@ export class VideoHearingsService {
         editParticipant.id = participant.id;
         editParticipant.external_reference_id = participant.externalReferenceId;
         editParticipant.contact_email = participant.email;
-        editParticipant.display_name = participant.display_name;
-        editParticipant.first_name = participant.first_name;
-        editParticipant.last_name = participant.last_name;
-        editParticipant.hearing_role_name = participant.hearing_role_name;
-        editParticipant.hearing_role_code = participant.hearing_role_code;
-        editParticipant.middle_names = participant.middle_names;
+        editParticipant.display_name = participant.display_Name;
+        editParticipant.first_name = participant.firstName;
+        editParticipant.last_name = participant.lastName;
+        editParticipant.hearing_role_name = participant.hearingRoleName;
+        editParticipant.hearing_role_code = participant.hearingRoleCode;
+        editParticipant.middle_names = participant.middleNames;
         editParticipant.representee = participant.representee;
         editParticipant.telephone_number = participant.phone;
         editParticipant.title = participant.title;
         editParticipant.organisation_name = participant.company;
-        editParticipant.linked_participants = this.mapLinkedParticipantModelToEditLinkedParticipantRequest(participant.linked_participants);
+        editParticipant.linked_participants = this.mapLinkedParticipantModelToEditLinkedParticipantRequest(participant.linkedParticipants);
         editParticipant.interpreter_language_code = this.mapInterpreterLanguageCode(participant.interpretation_language);
         editParticipant.screening_requirements = this.mapScreeningRequirementDtoToRequest(participant.screening);
         return editParticipant;
@@ -317,16 +317,16 @@ export class VideoHearingsService {
     mapHearing(newRequest: VHBooking): BookingDetailsRequest {
         const newHearingRequest = new BookingDetailsRequest();
         newHearingRequest.cases = this.mapCases(newRequest);
-        newHearingRequest.case_type_service_id = newRequest.case_type_service_id;
-        newHearingRequest.scheduled_date_time = new Date(newRequest.scheduled_date_time);
-        newHearingRequest.scheduled_duration = newRequest.scheduled_duration;
-        newHearingRequest.hearing_venue_code = newRequest.court_code;
-        newHearingRequest.hearing_room_name = newRequest.court_room;
+        newHearingRequest.case_type_service_id = newRequest.caseTypeServiceId;
+        newHearingRequest.scheduled_date_time = new Date(newRequest.scheduledDateTime);
+        newHearingRequest.scheduled_duration = newRequest.scheduledDuration;
+        newHearingRequest.hearing_venue_code = newRequest.courtCode;
+        newHearingRequest.hearing_room_name = newRequest.courtRoom;
         newHearingRequest.participants = this.mapParticipants(newRequest.participants);
-        newHearingRequest.other_information = newRequest.other_information;
-        newHearingRequest.audio_recording_required = newRequest.audio_recording_required;
+        newHearingRequest.other_information = newRequest.otherInformation;
+        newHearingRequest.audio_recording_required = newRequest.audioRecordingRequired;
         newHearingRequest.endpoints = this.mapEndpoints(newRequest.endpoints);
-        newHearingRequest.linked_participants = this.mapLinkedParticipants(newRequest.linked_participants);
+        newHearingRequest.linked_participants = this.mapLinkedParticipants(newRequest.linkedOarticipants);
         newHearingRequest.judiciary_participants = this.mapJudicialMemberDtoToJudiciaryParticipantRequest(newRequest.judiciaryParticipants);
         newHearingRequest.conference_supplier = newRequest.supplier;
 
@@ -370,14 +370,14 @@ export class VideoHearingsService {
                 participant = new ParticipantRequest();
                 participant.external_reference_id = p.externalReferenceId;
                 participant.title = p.title;
-                participant.first_name = p.first_name;
-                participant.middle_names = p.middle_names;
-                participant.last_name = p.last_name;
+                participant.first_name = p.firstName;
+                participant.middle_names = p.middleNames;
+                participant.last_name = p.lastName;
                 participant.username = p.username;
-                participant.display_name = p.display_name;
+                participant.display_name = p.display_Name;
                 participant.contact_email = p.email;
                 participant.telephone_number = p.phone;
-                participant.hearing_role_code = p.hearing_role_code;
+                participant.hearing_role_code = p.hearingRoleCode;
                 participant.representee = p.representee;
                 participant.organisation_name = p.company;
                 participant.interpreter_language_code = this.mapInterpreterLanguageCode(p.interpretation_language);
@@ -487,22 +487,22 @@ export class VideoHearingsService {
 
     canAddJudge(username: string): boolean {
         return !this.modelHearing.participants.some(
-            x => x.username?.toLowerCase() === username.toLowerCase() && this.judiciaryRoles.includes(x.hearing_role_name)
+            x => x.username?.toLowerCase() === username.toLowerCase() && this.judiciaryRoles.includes(x.hearingRoleName)
         );
     }
 
     getJudge(): VHParticipant {
-        return this.modelHearing.participants.find(x => x.is_judge);
+        return this.modelHearing.participants.find(x => x.isJudge);
     }
 
     isConferenceClosed(): boolean {
-        return this.modelHearing.status === BookingStatus.Created && this.modelHearing.telephone_conference_id === '';
+        return this.modelHearing.status === BookingStatus.Created && this.modelHearing.telephoneConferenceId === '';
     }
 
     isHearingAboutToStart(): boolean {
-        if (this.modelHearing.scheduled_date_time && this.modelHearing.isConfirmed) {
+        if (this.modelHearing.scheduledDateTime && this.modelHearing.isConfirmed) {
             const currentDateTime = new Date().getTime();
-            const difference = moment(this.modelHearing.scheduled_date_time).diff(moment(currentDateTime), 'minutes');
+            const difference = moment(this.modelHearing.scheduledDateTime).diff(moment(currentDateTime), 'minutes');
             return difference < 30;
         } else {
             return false;
@@ -512,7 +512,7 @@ export class VideoHearingsService {
     addJudiciaryJudge(judicialMember: JudicialMemberDto) {
         const judgeIndex = this.modelHearing.judiciaryParticipants.findIndex(holder => holder.roleCode === 'Judge');
         //Hearings booked with V1 of the API will not have a judiciaryParticipants array
-        const participantJudgeIndex = this.modelHearing.participants.findIndex(holder => holder.user_role_name === 'Judge');
+        const participantJudgeIndex = this.modelHearing.participants.findIndex(holder => holder.userRoleName === 'Judge');
         if (participantJudgeIndex !== -1) {
             //remove judge from participants
             this.modelHearing.participants.splice(participantJudgeIndex, 1);

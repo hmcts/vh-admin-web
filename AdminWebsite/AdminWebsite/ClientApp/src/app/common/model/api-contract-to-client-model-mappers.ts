@@ -21,26 +21,26 @@ import { VHParticipant } from './vh-participant';
 
 export function mapHearingToVHBooking(hearing: HearingDetailsResponse): VHBooking {
     return new VHBooking({
-        hearing_id: hearing.id,
-        scheduled_date_time: new Date(hearing.scheduled_date_time),
-        scheduled_duration: hearing.scheduled_duration,
+        hearingId: hearing.id,
+        scheduledDateTime: new Date(hearing.scheduled_date_time),
+        scheduledDuration: hearing.scheduled_duration,
         case: mapCaseResponseToCaseModel(hearing.cases)[0],
         participants: hearing.participants?.map(participant => mapParticipantResponseToVHParticipant(participant)),
         judiciaryParticipants: hearing.judiciary_participants?.map(judiciaryParticipant =>
             JudicialMemberDto.fromJudiciaryParticipantResponse(judiciaryParticipant)
         ),
-        created_by: hearing.created_by,
-        case_type: hearing.case_type_name,
-        case_type_service_id: hearing.service_id,
-        other_information: hearing.other_information,
-        court_room: hearing.hearing_room_name,
-        court_name: hearing.hearing_venue_name,
-        court_code: hearing.hearing_venue_code,
-        created_date: new Date(hearing.created_date),
-        updated_by: hearing.updated_by,
-        updated_date: new Date(hearing.updated_date),
+        createdBy: hearing.created_by,
+        caseType: hearing.case_type_name,
+        caseTypeServiceId: hearing.service_id,
+        otherInformation: hearing.other_information,
+        courtRoom: hearing.hearing_room_name,
+        courtName: hearing.hearing_venue_name,
+        courtCode: hearing.hearing_venue_code,
+        createdDate: new Date(hearing.created_date),
+        updatedBy: hearing.updated_by,
+        updatedDate: new Date(hearing.updated_date),
         status: hearing.status,
-        audio_recording_required: hearing.audio_recording_required,
+        audioRecordingRequired: hearing.audio_recording_required,
         endpoints: mapEndpointResponseToEndpointModel(hearing.endpoints, hearing.participants),
         isMultiDay: hearing.group_id !== null && hearing.group_id !== undefined,
         multiDayHearingLastDayScheduledDateTime: hearing.multi_day_hearing_last_day_scheduled_date_time,
@@ -59,19 +59,19 @@ export function mapHearingToVHBooking(hearing: HearingDetailsResponse): VHBookin
 
 export function mapBookingsHearingResponseToVHBooking(response: BookingsHearingResponse): VHBooking {
     return new VHBooking({
-        hearing_id: response.hearing_id,
-        scheduled_date_time: response.scheduled_date_time,
-        scheduled_duration: response.scheduled_duration,
+        hearingId: response.hearing_id,
+        scheduledDateTime: response.scheduled_date_time,
+        scheduledDuration: response.scheduled_duration,
         case: new CaseModel(response.hearing_name, response.hearing_number),
-        created_by: response.created_by,
-        case_type: response.case_type_name,
-        court_room: response.court_room,
-        court_name: response.court_address,
-        created_date: response.created_date,
-        updated_by: response.last_edit_by,
-        updated_date: response.last_edit_date,
+        createdBy: response.created_by,
+        caseType: response.case_type_name,
+        courtRoom: response.court_room,
+        courtName: response.court_address,
+        createdDate: response.created_date,
+        updatedBy: response.last_edit_by,
+        updatedDate: response.last_edit_date,
         status: response.status,
-        audio_recording_required: response.audio_recording_required,
+        audioRecordingRequired: response.audio_recording_required,
         supplier: response.conference_supplier,
         judge: new JudicialMemberDto(null, null, null, null, null, null, false, response.judge_name),
         groupId: response.group_id,
@@ -97,31 +97,29 @@ export function mapCaseResponseToCaseModel(casesResponse: CaseResponse[]): CaseM
     return cases;
 }
 
-
-
 export function mapParticipantResponseToVHParticipant(response: ParticipantResponse): VHParticipant {
     return new VHParticipant({
         id: response.id,
         externalReferenceId: response.external_reference_id,
         title: response.title ?? '',
-        first_name: response.first_name,
-        last_name: response.last_name,
-        middle_names: response.middle_names,
-        display_name: response.display_name,
+        firstName: response.first_name,
+        lastName: response.last_name,
+        middleNames: response.middle_names,
+        display_Name: response.display_name,
         username: response.username,
         email: response.contact_email,
-        hearing_role_name: response.hearing_role_name,
-        hearing_role_code: response.hearing_role_code,
+        hearingRoleName: response.hearing_role_name,
+        hearingRoleCode: response.hearing_role_code,
         phone: response.telephone_number,
         representee: response.representee,
         company: response.organisation,
         //isExistPerson: false,
-        linked_participants: mapLinkedParticipantResponseToLinkedParticipantModel(response.linked_participants),
-        user_role_name: response.user_role_name,
+        linkedParticipants: mapLinkedParticipantResponseToLinkedParticipantModel(response.linked_participants),
+        userRoleName: response.user_role_name,
         //isCourtroomAccount: false,
         //addedDuringHearing: false,
         //isStaffMember: false,
-        contact_email: response.contact_email, // Do we still need this as it duplicates email
+        contactEmail: response.contact_email, // Do we still need this as it duplicates email
         //isJudiciaryMember: false,
         interpretation_language: InterpreterSelectedDto.fromAvailableLanguageResponse(response.interpreter_language),
         screening: mapScreeningResponseToScreeningDto(response.screening_requirement)
@@ -177,9 +175,9 @@ export function mapPersonResponseToVHParticipant(person: PersonResponseV2): VHPa
         ? new VHParticipant({
               id: person.id,
               title: person.title ?? '',
-              first_name: person.first_name,
-              middle_names: person.middle_names,
-              last_name: person.last_name,
+              firstName: person.first_name,
+              middleNames: person.middle_names,
+              lastName: person.last_name,
               email: person.contact_email ?? person.username,
               phone: person.telephone_number,
               representee: '',
@@ -193,12 +191,12 @@ export function mapPersonResponseToVHParticipant(person: PersonResponseV2): VHPa
 export function mapJudgeResponseToVHParticipant(judge: JudgeResponse): VHParticipant {
     return judge
         ? new VHParticipant({
-              first_name: judge.first_name,
-              last_name: judge.last_name,
-              display_name: judge.display_name,
+              firstName: judge.first_name,
+              lastName: judge.last_name,
+              display_Name: judge.display_name,
               email: judge.contact_email ?? judge.email,
               username: judge.email,
-              is_courtroom_account: judge.account_type === JudgeAccountType.Courtroom,
+              isCourtroomAccount: judge.account_type === JudgeAccountType.Courtroom,
               isJudiciaryMember: false,
               interpretation_language: null
           })
@@ -210,17 +208,17 @@ export function mapJudicialMemberDtoToVHParticipant(judicialMember: JudicialMemb
     const userRoleName = isJudge ? 'Judge' : 'PanelMember';
     const hearingRoleCode = isJudge ? 'Judge' : 'PanelMember';
     return new VHParticipant({
-        first_name: judicialMember.firstName,
-        last_name: judicialMember.lastName,
-        hearing_role_name: hearingRoleName,
+        firstName: judicialMember.firstName,
+        lastName: judicialMember.lastName,
+        hearingRoleName: hearingRoleName,
         username: judicialMember.email,
         email: judicialMember.email,
-        is_exist_person: true,
-        user_role_name: userRoleName,
+        isExistPerson: true,
+        userRoleName: userRoleName,
         isJudiciaryMember: true,
-        hearing_role_code: hearingRoleCode,
+        hearingRoleCode: hearingRoleCode,
         phone: judicialMember.telephone,
-        display_name: judicialMember.displayName,
+        display_Name: judicialMember.displayName,
         interpretation_language: judicialMember.interpretationLanguage
     });
 }

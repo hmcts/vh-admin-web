@@ -31,7 +31,7 @@ export class ScreeningFormComponent {
             .map(
                 participant =>
                     ({
-                        displayName: participant.display_name,
+                        displayName: participant.display_Name,
                         externalReferenceId: participant.externalReferenceId,
                         isNewlyAdded: participant.id === null || participant.id === undefined
                     } as GenericParticipantsModel)
@@ -45,7 +45,7 @@ export class ScreeningFormComponent {
                     isNewlyAdded: endpoint.id === null || endpoint.id === undefined
                 } as GenericParticipantsModel)
         );
-        this.isEditMode = !!hearing.hearing_id;
+        this.isEditMode = !!hearing.hearingId;
         this.allParticipants = [...mappedParticipants, ...mappedEndpoints].filter(participant =>
             this.includeParticipantInScreeningOptions(participant)
         );

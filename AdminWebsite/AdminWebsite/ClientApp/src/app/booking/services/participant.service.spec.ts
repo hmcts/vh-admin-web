@@ -89,7 +89,7 @@ describe('ParticipantService', () => {
     }));
     it('should remove participant and log a message', inject([ParticipantService], (service: ParticipantService) => {
         const hearing: VHBooking = new VHBooking();
-        hearing.hearing_id = '12345';
+        hearing.hearingId = '12345';
         const part1 = new VHParticipant();
         part1.email = 'aa@hmcts.net';
         part1.id = '123';

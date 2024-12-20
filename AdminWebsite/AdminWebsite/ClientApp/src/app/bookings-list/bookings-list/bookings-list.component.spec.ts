@@ -1268,7 +1268,7 @@ describe('BookingsListComponent', () => {
         it('should show allocated label to', () => {
             component.ngOnInit();
             fixture.detectChanges();
-            const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookingData.BookingsDetails[0].Booking.hearing_id));
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookingData.BookingsDetails[0].Booking.hearingId));
             expect(divToHide).toBeTruthy();
         });
     });

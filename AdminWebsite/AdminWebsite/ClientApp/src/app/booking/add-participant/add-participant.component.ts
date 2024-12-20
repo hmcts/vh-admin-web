@@ -177,7 +177,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         this.searchEmail.participantDetails = this.participantDetails;
         this.searchEmail.isValidEmail = true;
         const participantHasId = this.participantDetails.id && this.participantDetails.id.length > 0;
-        this.emailDisabled = participantHasId || this.participantDetails.is_exist_person;
+        this.emailDisabled = participantHasId || this.participantDetails.isExistPerson;
     }
 
     initialiseForm() {
@@ -219,10 +219,10 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     private repopulateParticipantToEdit() {
         const selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
         if (selectedParticipant) {
-            this.interpreterSelected = selectedParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER;
+            this.interpreterSelected = selectedParticipant.hearingRoleName.toLowerCase() === HearingRoles.INTERPRETER;
 
             this.logger.debug(`${this.loggerPrefix} Repopulating participant to edit.`, {
-                hearing: this.hearing.hearing_id,
+                hearing: this.hearing.hearingId,
                 participant: selectedParticipant.id
             });
 
@@ -233,11 +233,11 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     private checkForExistingRequest() {
         this.hearing = this.videoHearingService.getCurrentRequest();
         if (this.hearing) {
-            this.logger.debug(`${this.loggerPrefix} Found existing hearing.`, { hearing: this.hearing.hearing_id });
-            const anyParticipants = this.hearing.participants.find(x => !x.is_judge);
+            this.logger.debug(`${this.loggerPrefix} Found existing hearing.`, { hearing: this.hearing.hearingId });
+            const anyParticipants = this.hearing.participants.find(x => !x.isJudge);
             if (this.editMode) {
-                this.logger.debug(`${this.loggerPrefix} Mapping existing participants.`, { hearing: this.hearing.hearing_id });
-                this.bookingHasParticipants = anyParticipants && !anyParticipants.is_judge;
+                this.logger.debug(`${this.loggerPrefix} Mapping existing participants.`, { hearing: this.hearing.hearingId });
+                this.bookingHasParticipants = anyParticipants && !anyParticipants.isJudge;
             }
         }
     }
@@ -329,9 +329,9 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                 this.populateInterpretedForList();
                 this.videoHearingService.updateHearingRequest(this.hearing);
                 this.logger.debug(`${this.loggerPrefix} Saved participant to booking. Clearing form.`, {
-                    hearing: this.hearing?.hearing_id,
+                    hearing: this.hearing?.hearingId,
                     participant: newParticipant.id,
-                    existingPerson: newParticipant.is_exist_person,
+                    existingPerson: newParticipant.isExistPerson,
                     email: newParticipant.email,
                     username: newParticipant.username
                 });
@@ -346,14 +346,14 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                 this.showDetails = false;
             } else {
                 this.logger.warn(`${this.loggerPrefix} Cannot save existing participant to booking`, {
-                    hearing: this.hearing?.hearing_id,
+                    hearing: this.hearing?.hearingId,
                     participant: newParticipant.id,
-                    existingPerson: newParticipant.is_exist_person,
+                    existingPerson: newParticipant.isExistPerson,
                     email: newParticipant.email,
                     username: newParticipant.username
                 });
                 this.showConfirmationPopup = true;
-                this.confirmationMessage = `You have already added ${newParticipant.first_name} ${newParticipant.last_name} to this hearing`;
+                this.confirmationMessage = `You have already added ${newParticipant.firstName} ${newParticipant.lastName} to this hearing`;
             }
         } else {
             this.isShowErrorSummary = true;
@@ -418,14 +418,14 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         if (this.selectedParticipantEmail) {
             const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
             const title = participant?.title ? `${participant.title}` : '';
-            this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
-            const anyParticipants = this.hearing.participants.filter(x => !x.is_judge);
+            this.removerFullName = participant ? `${title} ${participant.firstName} ${participant.lastName}` : '';
+            const anyParticipants = this.hearing.participants.filter(x => !x.isJudge);
             this.bookingHasParticipants = anyParticipants && anyParticipants.length > 1;
 
             const isInterpretee =
-                (participant.linked_participants &&
-                    participant.linked_participants.length > 0 &&
-                    participant.hearing_role_name.toLowerCase() !== HearingRoles.INTERPRETER) ||
+                (participant.linkedParticipants &&
+                    participant.linkedParticipants.length > 0 &&
+                    participant.hearingRoleName.toLowerCase() !== HearingRoles.INTERPRETER) ||
                 this.hearing.participants.some(p => p.interpreterFor === participant.email);
             if (isInterpretee) {
                 this.showConfirmRemoveInterpretee = true;
@@ -448,16 +448,16 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     mapParticipant(newParticipant: VHParticipant) {
-        newParticipant.first_name = this.firstName.value;
-        newParticipant.last_name = this.lastName.value;
+        newParticipant.firstName = this.firstName.value;
+        newParticipant.lastName = this.lastName.value;
         newParticipant.phone = this.phone.value;
         newParticipant.title = this.title.value === this.constants.PleaseSelect ? null : this.title.value;
 
-        newParticipant.hearing_role_name = this.role.value;
-        newParticipant.hearing_role_code = this.hearingRoles.find(h => h.name === this.role.value)?.code;
+        newParticipant.hearingRoleName = this.role.value;
+        newParticipant.hearingRoleCode = this.hearingRoles.find(h => h.name === this.role.value)?.code;
 
         newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
-        newParticipant.display_name = this.displayName.value;
+        newParticipant.display_Name = this.displayName.value;
         if (this.isRoleRepresentative(this.role.value)) {
             newParticipant.company = this.companyName.value;
         } else {
@@ -465,10 +465,10 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
         newParticipant.username = this.participantDetails ? this.participantDetails.username : '';
         newParticipant.representee = this.representing.value;
-        newParticipant.is_exist_person = this.existingPersonEmails.findIndex(x => x === newParticipant.email) > -1;
+        newParticipant.isExistPerson = this.existingPersonEmails.findIndex(x => x === newParticipant.email) > -1;
         newParticipant.interpreterFor = this.interpreterFor.value === this.constants.PleaseSelect ? null : this.interpreterFor.value;
-        newParticipant.linked_participants = this.addUpdateLinkedParticipant(newParticipant);
-        newParticipant.user_role_name = this.getUserRoleName(newParticipant);
+        newParticipant.linkedParticipants = this.addUpdateLinkedParticipant(newParticipant);
+        newParticipant.userRoleName = this.getUserRoleName(newParticipant);
         newParticipant.addedDuringHearing = this.participantDetails?.addedDuringHearing;
         if (this.interpreterSelection?.interpreterRequired) {
             newParticipant.interpretation_language = {
@@ -486,11 +486,11 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     private getUserRoleName(newParticipant: VHParticipant): string {
-        return this.hearingRoles.find(h => h.name === newParticipant.hearing_role_name)?.userRole;
+        return this.hearingRoles.find(h => h.name === newParticipant.hearingRoleName)?.userRole;
     }
 
     private addUpdateLinkedParticipant(newParticipant: VHParticipant): LinkedParticipantModel[] {
-        return newParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER && !this.interpreterEnhancementsFlag
+        return newParticipant.hearingRoleName.toLowerCase() === HearingRoles.INTERPRETER && !this.interpreterEnhancementsFlag
             ? this.updateLinkedParticipantList(newParticipant)
             : [];
     }
@@ -505,9 +505,9 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
     private updateNewParticipantToLinkedParticipant(newParticipant: VHParticipant): LinkedParticipantModel[] {
         if (this.localEditMode) {
-            const linkedParticipant = newParticipant.linked_participants[0];
+            const linkedParticipant = newParticipant.linkedParticipants[0];
             const interpretee = this.hearing.participants.find(p => p.id === linkedParticipant.linkedParticipantId);
-            interpretee.linked_participants = [];
+            interpretee.linkedParticipants = [];
             linkedParticipant.linkedParticipantId = this.getInterpreteeId(newParticipant.interpreterFor);
             linkedParticipant.linkedParticipantEmail = newParticipant.interpreterFor;
             linkedParticipant.participantEmail = newParticipant.email;
@@ -717,16 +717,16 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
     populateInterpretedForList() {
         this.interpreteeList = this.hearing.participants.filter(
-            p => p.user_role_name === 'Individual' && p.hearing_role_name !== Constants.HearingRoles.Interpreter && !this.isAnObserver(p)
+            p => p.userRoleName === 'Individual' && p.hearingRoleName !== Constants.HearingRoles.Interpreter && !this.isAnObserver(p)
         );
 
         const interpreteeModel = new VHParticipant({
             id: this.constants.PleaseSelect,
-            first_name: this.constants.PleaseSelect,
-            last_name: '',
+            firstName: this.constants.PleaseSelect,
+            lastName: '',
             email: this.constants.PleaseSelect,
-            is_exist_person: false,
-            is_courtroom_account: false,
+            isExistPerson: false,
+            isCourtroomAccount: false,
             isJudiciaryMember: false,
             interpretation_language: null
         });
@@ -748,8 +748,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
         const interpretee = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
         let interpreter: VHParticipant;
-        if (interpretee.linked_participants && interpretee.linked_participants.length > 0) {
-            interpreter = this.hearing.participants.find(i => i.id === interpretee.linked_participants[0].linkedParticipantId);
+        if (interpretee.linkedParticipants && interpretee.linkedParticipants.length > 0) {
+            interpreter = this.hearing.participants.find(i => i.id === interpretee.linkedParticipants[0].linkedParticipantId);
         } else {
             interpreter = this.hearing.participants.find(i => i.interpreterFor === this.selectedParticipantEmail);
         }
@@ -766,27 +766,27 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     private addLinkedParticipant(newParticipant: VHParticipant): void {
         if (newParticipant.interpreterFor) {
             const interpretee = this.getInterpretee(newParticipant.interpreterFor);
-            newParticipant.interpretee_name = interpretee.display_name;
+            newParticipant.interpreteeName = interpretee.display_Name;
             const linkedParticipant: LinkedParticipantModel = {
                 participantEmail: newParticipant.email,
                 linkedParticipantEmail: interpretee.email,
                 linkType: LinkedParticipantType.Interpreter
             };
-            this.hearing.linked_participants.push(linkedParticipant);
+            this.hearing.linkedOarticipants.push(linkedParticipant);
         }
     }
 
     private updateLinkedParticipant(newParticipant: VHParticipant): void {
-        this.hearing.linked_participants = [];
+        this.hearing.linkedOarticipants = [];
         this.addLinkedParticipant(newParticipant);
     }
 
     private removeLinkedParticipant(email: string): void {
         // removes both the linked participants.
-        const interpreterExists = this.hearing.linked_participants.some(p => p.participantEmail === email);
-        const interpreteeExists = this.hearing.linked_participants.some(p => p.linkedParticipantEmail === email);
+        const interpreterExists = this.hearing.linkedOarticipants.some(p => p.participantEmail === email);
+        const interpreteeExists = this.hearing.linkedOarticipants.some(p => p.linkedParticipantEmail === email);
         if (interpreterExists || interpreteeExists) {
-            this.hearing.linked_participants = [];
+            this.hearing.linkedOarticipants = [];
         }
     }
 

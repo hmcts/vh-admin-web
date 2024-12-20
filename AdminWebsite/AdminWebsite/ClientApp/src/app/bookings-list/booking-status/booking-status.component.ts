@@ -1,7 +1,5 @@
 import { Component, Input } from '@angular/core';
-import {
-    VHBooking
-} from 'src/app/common/model/vh-booking';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 @Component({
     selector: 'app-booking-status',
     templateUrl: './booking-status.component.html',

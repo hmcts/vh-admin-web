@@ -84,8 +84,8 @@ describe('BookingsPersistService', () => {
     describe('#updateBooking', () => {
         it('should not update if there are no loaded hearings', () => {
             const model = new VHBooking({
-                updated_date: new Date(),
-                audio_recording_required: true,
+                updatedDate: new Date(),
+                audioRecordingRequired: true,
                 supplier: VideoSupplier.Kinly
             });
             service.updateBooking(model);
@@ -99,7 +99,7 @@ describe('BookingsPersistService', () => {
             const updatedCase = new CaseModel();
             updatedCase.name = 'updated case';
             hearing.case = updatedCase;
-            hearing.hearing_id = service.bookingList[0].BookingsDetails[0].Booking.hearing_id;
+            hearing.hearingId = service.bookingList[0].BookingsDetails[0].Booking.hearingId;
             service.updateBooking(hearing);
 
             expect(service.bookingList[0].BookingsDetails[0].Booking.case.name).not.toBe(updatedCase.name);
@@ -112,14 +112,14 @@ describe('BookingsPersistService', () => {
             service.selectedItemIndex = 0;
 
             const hearing = new VHBooking();
-            hearing.court_room = 'court room';
-            hearing.court_name = 'court';
+            hearing.courtRoom = 'court room';
+            hearing.courtName = 'court';
 
             const updatedCase = new CaseModel();
             updatedCase.name = 'updated case';
             hearing.case = updatedCase;
 
-            hearing.hearing_id = service.bookingList[0].BookingsDetails[0].Booking.hearing_id;
+            hearing.hearingId = service.bookingList[0].BookingsDetails[0].Booking.hearingId;
             service.updateBooking(hearing);
 
             const updatedHearing = service.bookingList[0].BookingsDetails[0];
@@ -137,19 +137,19 @@ describe('BookingsPersistService', () => {
             const newScheduledDurationValue = 180;
 
             const hearing = { ...multiDays[0] };
-            hearing.Booking.scheduled_duration = newScheduledDurationValue;
+            hearing.Booking.scheduledDuration = newScheduledDurationValue;
             hearing.Booking.hearingsInGroup = multiDays.map(x => {
                 const hearingInGroup = { ...x };
-                hearingInGroup.Booking.scheduled_duration = newScheduledDurationValue;
+                hearingInGroup.Booking.scheduledDuration = newScheduledDurationValue;
                 return hearingInGroup.Booking;
             });
 
-            hearing.Booking.hearing_id = service.bookingList[0].BookingsDetails[0].Booking.hearing_id;
+            hearing.Booking.hearingId = service.bookingList[0].BookingsDetails[0].Booking.hearingId;
             service.updateBooking(hearing.Booking);
 
             const updatedHearings = service.bookingList[0].BookingsDetails;
             updatedHearings.forEach(h => {
-                expect(h.Booking.scheduled_duration).toBe(newScheduledDurationValue);
+                expect(h.Booking.scheduledDuration).toBe(newScheduledDurationValue);
             });
         });
 

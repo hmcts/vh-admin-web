@@ -9,26 +9,26 @@ export class VHParticipant {
     id?: string;
     externalReferenceId?: string;
     title?: string;
-    first_name?: string;
-    last_name?: string;
-    middle_names?: string;
-    display_name?: string;
+    firstName?: string;
+    lastName?: string;
+    middleNames?: string;
+    display_Name?: string;
     username?: string;
     email?: string;
-    hearing_role_name?: string;
-    hearing_role_code?: string;
+    hearingRoleName?: string;
+    hearingRoleCode?: string;
     phone?: string;
     representee?: string;
     company?: string;
-    is_exist_person?: boolean;
+    isExistPerson?: boolean;
     interpreterFor?: string;
-    linked_participants?: LinkedParticipantModel[];
-    interpretee_name?: string;
-    is_interpretee?: boolean;
-    user_role_name?: string;
-    is_courtroom_account?: boolean;
+    linkedParticipants?: LinkedParticipantModel[];
+    interpreteeName?: string;
+    isInterpretee?: boolean;
+    userRoleName?: string;
+    isCourtroomAccount?: boolean;
     addedDuringHearing?: boolean;
-    contact_email?: string;
+    contactEmail?: string;
     isJudiciaryMember?: boolean;
     interpretation_language: InterpreterSelectedDto;
     screening?: ScreeningDto;
@@ -46,43 +46,44 @@ export class VHParticipant {
     }
 
     get fullName(): string {
-        return `${this.title} ${this.first_name} ${this.last_name}`;
+        return `${this.title} ${this.firstName} ${this.lastName}`;
     }
 
     get isRepresenting() {
-        return this.user_role_name && this.user_role_name.indexOf('Representative') > -1 && !!this.representee;
+        return this.userRoleName && this.userRoleName.indexOf('Representative') > -1 && !!this.representee;
     }
 
     get isInterpreter(): boolean {
         return (
-            (this.hearing_role_name && this.hearing_role_name.toLowerCase().trim() === HearingRoles.INTERPRETER) ||
-            (this.hearing_role_code && this.hearing_role_code === HearingRoleCodes.Interpreter)
+            (this.hearingRoleName && this.hearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER) ||
+            (this.hearingRoleCode && this.hearingRoleCode === HearingRoleCodes.Interpreter)
         );
     }
 
     get isRepOrInterpreter(): boolean {
         return (
-            (this.hearing_role_name &&
-                (this.hearing_role_name.toLowerCase().trim() === HearingRoles.INTERPRETER ||
-                    this.hearing_role_name.toLowerCase().trim() === HearingRoles.REPRESENTATIVE)) ||
-            (this.hearing_role_code &&
-                (this.hearing_role_code === HearingRoleCodes.Interpreter || this.hearing_role_code === HearingRoleCodes.Representative))
+            (this.hearingRoleName &&
+                (this.hearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER ||
+                    this.hearingRoleName.toLowerCase().trim() === HearingRoles.REPRESENTATIVE)) ||
+            (this.hearingRoleCode &&
+                (this.hearingRoleCode === HearingRoleCodes.Interpreter || this.hearingRoleCode === HearingRoleCodes.Representative))
         );
     }
 
     get isStaffMember(): boolean {
-        return this.hearing_role_code && this.hearing_role_code === HearingRoleCodes.StaffMember;
+        return this.hearingRoleCode && this.hearingRoleCode === HearingRoleCodes.StaffMember;
     }
 
     // Kept in for compatibility with the existing code
-    get is_judge(): boolean {
-        return this.hearing_role_name && this.hearing_role_name.toLowerCase().trim() === HearingRoles.JUDGE;
+    get isJudge(): boolean {
+        return this.hearingRoleName && this.hearingRoleName.toLowerCase().trim() === HearingRoles.JUDGE;
     }
 
     get IsEmailEjud(): boolean {
         return this.email?.toLowerCase().includes('judiciary') ?? false;
     }
 
+    // Kept in from the migration to the consolidated models. Can replace with calls to the constructor in time
     static createForDetails(
         id: string,
         externalReferenceId: string,
@@ -107,21 +108,21 @@ export class VHParticipant {
             id: id,
             externalReferenceId: externalReferenceId,
             title: title,
-            first_name: firstName,
-            last_name: lastName,
-            user_role_name: role,
+            firstName: firstName,
+            lastName: lastName,
+            userRoleName: role,
             username: userName,
             email: email,
-            hearing_role_name: hearingRoleName,
-            hearing_role_code: hearingRoleCode,
-            display_name: displayName,
-            middle_names: middleNames,
+            hearingRoleName: hearingRoleName,
+            hearingRoleCode: hearingRoleCode,
+            display_Name: displayName,
+            middleNames: middleNames,
             company: organisation,
             representee: representee,
             phone: phone,
-            interpretee_name: interpretee,
-            is_interpretee: isInterpretee,
-            linked_participants: linkedParticipants
+            interpreteeName: interpretee,
+            isInterpretee: isInterpretee,
+            linkedParticipants: linkedParticipants
         });
     }
 

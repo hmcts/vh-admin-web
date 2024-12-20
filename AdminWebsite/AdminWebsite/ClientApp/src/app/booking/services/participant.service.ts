@@ -35,10 +35,10 @@ export class ParticipantService {
     public removeParticipant(hearing: VHBooking, email: string) {
         const indexOfParticipant = hearing.participants.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
         if (indexOfParticipant > -1) {
-            if (hearing.hearing_id && hearing.participants[indexOfParticipant].id) {
+            if (hearing.hearingId && hearing.participants[indexOfParticipant].id) {
                 const id = hearing.participants[indexOfParticipant].id;
-                this.logger.info(`${this.loggerPrefix} Participant Id: ${id} is removed from hearing Id: ${hearing.hearing_id}`, {
-                    hearing: hearing.hearing_id,
+                this.logger.info(`${this.loggerPrefix} Participant Id: ${id} is removed from hearing Id: ${hearing.hearingId}`, {
+                    hearing: hearing.hearingId,
                     participant: id
                 });
             }

@@ -92,81 +92,81 @@ let interpretee: AbstractControl;
 const participants: VHParticipant[] = [];
 
 const p1 = new VHParticipant();
-p1.first_name = 'John';
-p1.last_name = 'Doe';
-p1.display_name = 'John Doe';
+p1.firstName = 'John';
+p1.lastName = 'Doe';
+p1.display_Name = 'John Doe';
 p1.title = 'Mr.';
 p1.email = 'test1@hmcts.net';
 p1.phone = '32332';
-p1.hearing_role_name = 'Judge';
+p1.hearingRoleName = 'Judge';
 p1.company = 'CN';
 
-p1.user_role_name = 'Judge';
+p1.userRoleName = 'Judge';
 p1.username = 'judge@user.name';
 
 const p2 = new VHParticipant();
-p2.first_name = 'Jane';
-p2.last_name = 'Doe';
-p2.display_name = 'Jane Doe';
+p2.firstName = 'Jane';
+p2.lastName = 'Doe';
+p2.display_Name = 'Jane Doe';
 p2.title = 'Mr.';
 p2.email = 'test2@hmcts.net';
 p2.phone = '32332';
-p2.hearing_role_name = 'Representative';
+p2.hearingRoleName = 'Representative';
 p2.company = 'CN';
 p2.representee = 'representee';
-p2.user_role_name = 'Representative';
+p2.userRoleName = 'Representative';
 p1.username = 'judge@user.name';
 
 const p3 = new VHParticipant();
-p3.first_name = 'Chris';
-p3.last_name = 'Green';
-p3.display_name = 'Chris Green';
+p3.firstName = 'Chris';
+p3.lastName = 'Green';
+p3.display_Name = 'Chris Green';
 p3.title = 'Mr.';
 p3.email = 'test3@hmcts.net';
 p3.phone = '32332';
-p3.hearing_role_name = 'Representative';
+p3.hearingRoleName = 'Representative';
 p3.company = 'CN';
-p3.is_exist_person = true;
+p3.isExistPerson = true;
 p3.id = '1234';
 p3.representee = 'representee';
-p3.user_role_name = 'Representative';
+p3.userRoleName = 'Representative';
 
 const p4 = new VHParticipant();
-p4.first_name = 'Test';
-p4.last_name = 'Participant';
-p4.display_name = 'Test Participant';
+p4.firstName = 'Test';
+p4.lastName = 'Participant';
+p4.display_Name = 'Test Participant';
 p4.title = 'Mr.';
 p4.email = 'test4@hmcts.net';
 p4.phone = '32332';
-p4.hearing_role_name = 'Litigant in person';
+p4.hearingRoleName = 'Litigant in person';
 p4.company = 'CN';
 p4.id = '1234';
-p4.user_role_name = 'Individual';
+p4.userRoleName = 'Individual';
 
 const p5 = new VHParticipant();
-p5.first_name = 'Test7';
-p5.last_name = 'Participant7';
-p5.display_name = 'Test Participant7';
+p5.firstName = 'Test7';
+p5.lastName = 'Participant7';
+p5.display_Name = 'Test Participant7';
 p5.title = 'Mr.';
 p5.email = 'test7@hmcts.net';
 p5.phone = '32332';
-p5.hearing_role_name = 'Interpreter';
+p5.hearingRoleName = 'Interpreter';
 p5.company = 'CN';
 p5.id = '1234666';
-p5.user_role_name = 'Individual';
+p5.userRoleName = 'Individual';
 p5.interpreterFor = 'test4@hmcts.net';
 
 const p6 = new VHParticipant();
-p6.first_name = 'Test8';
-p6.last_name = 'Participant8';
-p6.display_name = 'Test Participant8';
+p6.firstName = 'Test8';
+p6.lastName = 'Participant8';
+p6.display_Name = 'Test Participant8';
 p6.title = 'Mr.';
 p6.email = 'test8@hmcts.net';
 p6.phone = '32332';
-p6.hearing_role_name = 'Litigant in Person';
+p6.hearingRoleName = 'Litigant in Person';
 p6.company = 'CN';
 p6.id = '1234555';
-p6.user_role_name = 'Individual';
+p6.userRoleName = 'Individual';
 
 participants.push(p1);
 participants.push(p2);
@@ -175,19 +175,19 @@ participants.push(p4);
 
 function initHearingRequest(): VHBooking {
     const newHearing = new VHBooking();
-    newHearing.hearing_venue_id = -1;
-    newHearing.scheduled_duration = 0;
+    newHearing.hearingVenueId = -1;
+    newHearing.scheduledDuration = 0;
     newHearing.participants = participants;
-    newHearing.case_type = 'Test Service';
-    newHearing.case_type_service_id = 'AA1';
+    newHearing.caseType = 'Test Service';
+    newHearing.caseTypeServiceId = 'AA1';
     return newHearing;
 }
 
 function initExistHearingRequest(): VHBooking {
     const newHearing = new VHBooking();
-    newHearing.hearing_id = '12345';
-    newHearing.hearing_venue_id = 1;
-    newHearing.scheduled_duration = 20;
+    newHearing.hearingId = '12345';
+    newHearing.hearingVenueId = 1;
+    newHearing.scheduledDuration = 20;
     newHearing.participants = participants;
     newHearing.participants.push(p5);
     newHearing.participants.push(p6);
@@ -199,15 +199,15 @@ let participant = new VHParticipant();
 function initParticipant() {
     participant = new VHParticipant();
     participant.email = 'email@hmcts.net';
-    participant.first_name = 'Sam';
-    participant.last_name = 'Green';
+    participant.firstName = 'Sam';
+    participant.lastName = 'Green';
     participant.phone = '12345';
-    participant.display_name = 'Sam Green';
+    participant.display_Name = 'Sam Green';
     participant.title = 'Mr';
-    participant.hearing_role_name = 'Representative';
+    participant.hearingRoleName = 'Representative';
     participant.company = 'CN';
     participant.representee = 'test representee';
-    participant.user_role_name = 'Individual';
+    participant.userRoleName = 'Individual';
 }
 
 const routerSpy: jasmine.SpyObj<Router> = {
@@ -390,18 +390,18 @@ describe('AddParticipantComponent', () => {
         component.isRoleSelected = true;
         component.form.get('role').setValue('Representative');
 
-        const originalFirstName = participant.first_name;
-        const originalLastName = participant.last_name;
-        participant.first_name = participant.first_name + ' ';
-        participant.last_name = participant.last_name + ' ';
+        const originalFirstName = participant.firstName;
+        const originalLastName = participant.lastName;
+        participant.firstName = participant.firstName + ' ';
+        participant.lastName = participant.lastName + ' ';
         component.getParticipant(participant);
-        expect(role.value).toBe(participant.hearing_role_name);
+        expect(role.value).toBe(participant.hearingRoleName);
         expect(firstName.value).toBe(originalFirstName);
         expect(lastName.value).toBe(originalLastName);
         expect(email.value).toBe(participant.email);
         expect(phone.value).toBe(participant.phone);
         expect(title.value).toBe(participant.title);
-        expect(displayName.value).toBe(participant.display_name);
+        expect(displayName.value).toBe(participant.display_Name);
         expect(companyName.value).toBe(participant.company);
         expect(component.displayNextButton).toBeFalsy();
         expect(component.displayClearButton).toBeTruthy();
@@ -411,7 +411,7 @@ describe('AddParticipantComponent', () => {
     it('should populate the form fields when values are null', () => {
         participant.email = null;
         participant.phone = null;
-        participant.display_name = null;
+        participant.display_Name = null;
         participant.company = null;
         participant.representee = null;
         component.getParticipant(participant);
@@ -591,24 +591,24 @@ describe('AddParticipantComponent', () => {
         tick(1000);
         const observer01 = new VHParticipant();
         observer01.id = 'Observer Observer';
-        observer01.first_name = 'firstName';
-        observer01.last_name = 'lastName';
-        observer01.hearing_role_name = 'Observer';
-        observer01.user_role_name = 'Individual';
+        observer01.firstName = 'firstName';
+        observer01.lastName = 'lastName';
+        observer01.hearingRoleName = 'Observer';
+        observer01.userRoleName = 'Individual';
         component.hearing.participants.push(observer01);
         const observer03 = new VHParticipant();
         observer03.id = 'Vets UK Observer';
-        observer03.first_name = 'firstName';
-        observer03.last_name = 'lastName';
-        observer03.hearing_role_name = 'Observer';
-        observer03.user_role_name = 'Individual';
+        observer03.firstName = 'firstName';
+        observer03.lastName = 'lastName';
+        observer03.hearingRoleName = 'Observer';
+        observer03.userRoleName = 'Individual';
         component.hearing.participants.push(observer03);
         const observer04 = new VHParticipant();
         observer04.id = 'None Observer';
-        observer04.first_name = 'firstName';
-        observer04.last_name = 'lastName';
-        observer04.hearing_role_name = 'Observer';
-        observer04.user_role_name = 'Individual';
+        observer04.firstName = 'firstName';
+        observer04.lastName = 'lastName';
+        observer04.hearingRoleName = 'Observer';
+        observer04.userRoleName = 'Individual';
         component.hearing.participants.push(observer04);
         component.populateInterpretedForList();
         expect(component.interpreteeList.find(i => i.id === observer01.id)).toBeUndefined();
@@ -640,18 +640,18 @@ describe('AddParticipantComponent', () => {
         component.ngOnInit();
 
         const pa1 = new VHParticipant();
-        pa1.first_name = 'firstname';
-        pa1.last_name = 'lastname-interpretee';
-        pa1.display_name = 'firstname lastname-interpretee';
+        pa1.firstName = 'firstname';
+        pa1.lastName = 'lastname-interpretee';
+        pa1.display_Name = 'firstname lastname-interpretee';
         pa1.email = 'firstname.lastname-interpretee@email.com';
-        pa1.hearing_role_name = 'Litigant in Person';
+        pa1.hearingRoleName = 'Litigant in Person';
 
         const pa2 = new VHParticipant();
-        pa2.first_name = 'firstname';
-        pa2.last_name = 'lastname-interpreter';
-        pa1.display_name = 'firstname lastname-interpreter';
+        pa2.firstName = 'firstname';
+        pa2.lastName = 'lastname-interpreter';
+        pa1.display_Name = 'firstname lastname-interpreter';
         pa2.email = 'firstname.lastname-interpreter@email.com';
-        pa2.hearing_role_name = 'Interpreter';
+        pa2.hearingRoleName = 'Interpreter';
         pa2.interpreterFor = 'firstname.lastname-interpretee@email.com';
         component.hearing.participants.push(pa1);
         component.hearing.participants.push(pa2);
@@ -661,10 +661,10 @@ describe('AddParticipantComponent', () => {
         lp.participantEmail = 'firstname.lastname-interpreter@email.com';
         lp.linkedParticipantEmail = 'firstname.lastname-interpretee@email.com';
         linkedParticipants.push(lp);
-        component.hearing.linked_participants = linkedParticipants;
+        component.hearing.linkedOarticipants = linkedParticipants;
         component.selectedParticipantEmail = 'firstname.lastname-interpreter@email.com';
         component.handleContinueRemoveInterpreter();
-        expect(component.hearing.linked_participants.length).toBe(0);
+        expect(component.hearing.linkedOarticipants.length).toBe(0);
         expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
     });
     it('should clear the linked participant model if interpretee is removed', () => {
@@ -672,18 +672,18 @@ describe('AddParticipantComponent', () => {
         component.ngOnInit();
 
         const part1 = new VHParticipant();
-        part1.first_name = 'firstname';
-        part1.last_name = 'lastname-interpretee';
-        part1.display_name = 'firstname lastname-interpretee';
+        part1.firstName = 'firstname';
+        part1.lastName = 'lastname-interpretee';
+        part1.display_Name = 'firstname lastname-interpretee';
         part1.email = 'firstname.lastname-interpretee@email.com';
-        part1.hearing_role_name = 'Litigant in Person';
+        part1.hearingRoleName = 'Litigant in Person';
 
         const part2 = new VHParticipant();
-        part2.first_name = 'firstname';
-        part2.last_name = 'lastname-interpreter';
-        part2.display_name = 'firstname lastname-interpreter';
+        part2.firstName = 'firstname';
+        part2.lastName = 'lastname-interpreter';
+        part2.display_Name = 'firstname lastname-interpreter';
         part2.email = 'firstname.lastname-interpreter@email.com';
-        part2.hearing_role_name = 'Interpreter';
+        part2.hearingRoleName = 'Interpreter';
         part2.interpreterFor = 'firstname.lastname-interpretee@email.com';
         component.hearing.participants.push(part1);
         component.hearing.participants.push(part2);
@@ -693,10 +693,10 @@ describe('AddParticipantComponent', () => {
         lp.participantEmail = 'firstname.lastname-interpreter@email.com';
         lp.linkedParticipantEmail = 'firstname.lastname-interpretee@email.com';
         linkedParticipants.push(lp);
-        component.hearing.linked_participants = linkedParticipants;
+        component.hearing.linkedOarticipants = linkedParticipants;
         component.selectedParticipantEmail = 'firstname.lastname-interpretee@email.com';
         component.handleContinueRemoveInterpreter();
-        expect(component.hearing.linked_participants.length).toBe(0);
+        expect(component.hearing.linkedOarticipants.length).toBe(0);
         expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
     });
     it('should call the update hearing service on udpdate click', () => {
@@ -799,7 +799,7 @@ describe('AddParticipantComponent', () => {
             component.mapParticipant(newParticipant);
 
             // assert
-            expect(newParticipant.linked_participants.length).toBe(0);
+            expect(newParticipant.linkedParticipants.length).toBe(0);
         });
         it('should map when interpreter enhancements flag is disabled', () => {
             // arrange
@@ -812,7 +812,7 @@ describe('AddParticipantComponent', () => {
             component.mapParticipant(newParticipant);
 
             // assert
-            expect(newParticipant.linked_participants.length).toBe(1);
+            expect(newParticipant.linkedParticipants.length).toBe(1);
         });
     });
 });
@@ -904,12 +904,12 @@ describe('AddParticipantComponent edit mode', () => {
 
         component.form.setValue({
             title: 'Mr',
-            firstName: participant.first_name,
-            lastName: participant.last_name,
+            firstName: participant.firstName,
+            lastName: participant.lastName,
             role: 'Panel Member',
             email: participant.email,
             phone: participant.phone,
-            displayName: participant.display_name,
+            displayName: participant.display_Name,
             companyName: participant.company,
             companyNameIndividual: participant.company,
             representing: participant.representee,
@@ -1042,7 +1042,7 @@ describe('AddParticipantComponent edit mode', () => {
         interpretee.setValue('test4@email.com');
         component.updateParticipant();
         const updatedParticipant = component.hearing.participants.find(x => x.email === 'mock@hmcts.net');
-        expect(updatedParticipant.display_name).toBe('Sam Green');
+        expect(updatedParticipant.display_Name).toBe('Sam Green');
     });
     it('should before save booking check if all fields available', () => {
         component.actionsBeforeSave();
@@ -1065,11 +1065,11 @@ describe('AddParticipantComponent edit mode', () => {
         component.form.setValue({
             role: 'Representative',
             title: 'Ms',
-            firstName: participant.first_name,
-            lastName: participant.last_name,
+            firstName: participant.firstName,
+            lastName: participant.lastName,
             email: participant.email,
             phone: participant.phone,
-            displayName: participant.display_name,
+            displayName: participant.display_Name,
             companyName: participant.company,
             companyNameIndividual: participant.company,
             representing: participant.representee,
@@ -1090,11 +1090,11 @@ describe('AddParticipantComponent edit mode', () => {
         component.form.setValue({
             role: '',
             title: Constants.PleaseSelect,
-            firstName: participant.first_name,
-            lastName: participant.last_name,
+            firstName: participant.firstName,
+            lastName: participant.lastName,
             email: participant.email,
             phone: participant.phone,
-            displayName: participant.display_name,
+            displayName: participant.display_Name,
             companyName: participant.company,
             companyNameIndividual: participant.company,
             representing: participant.representee,
@@ -1112,7 +1112,7 @@ describe('AddParticipantComponent edit mode', () => {
         fixture.detectChanges();
         expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
         expect(component.hearing).toBeTruthy();
-        expect(component.hearing.hearing_id).toBeTruthy();
+        expect(component.hearing.hearingId).toBeTruthy();
         expect(component.bookingHasParticipants).toBeTruthy();
     });
 
@@ -1171,19 +1171,19 @@ describe('AddParticipantComponent edit mode', () => {
         component.ngOnInit();
 
         const part1 = new VHParticipant();
-        part1.first_name = 'firstname';
-        part1.last_name = 'lastname-interpretee';
-        part1.display_name = 'firstname lastname-interpretee';
+        part1.firstName = 'firstname';
+        part1.lastName = 'lastname-interpretee';
+        part1.display_Name = 'firstname lastname-interpretee';
         part1.email = 'firstname.lastname-interpretee@email.com';
-        part1.hearing_role_name = 'Litigant in Person';
+        part1.hearingRoleName = 'Litigant in Person';
         part1.id = '100';
 
         const part2 = new VHParticipant();
-        part2.first_name = 'firstname';
-        part2.last_name = 'lastname-interpreter';
-        part2.display_name = 'firstname lastname-interpreter';
+        part2.firstName = 'firstname';
+        part2.lastName = 'lastname-interpreter';
+        part2.display_Name = 'firstname lastname-interpreter';
         part2.email = 'firstname.lastname-interpreter@email.com';
-        part2.hearing_role_name = 'Interpreter';
+        part2.hearingRoleName = 'Interpreter';
         part2.interpreterFor = 'firstname.lastname-interpretee@email.com';
         part2.id = '300';
         component.hearing.participants.push(part1);
@@ -1196,10 +1196,10 @@ describe('AddParticipantComponent edit mode', () => {
         lp.linkedParticipantId = '100';
         lp.participantId = '300';
         linkedParticipants.push(lp);
-        component.hearing.linked_participants = linkedParticipants;
+        component.hearing.linkedOarticipants = linkedParticipants;
         component.selectedParticipantEmail = 'firstname.lastname-interpretee@email.com';
         component.handleContinueRemoveInterpreter();
-        expect(component.hearing.linked_participants.length).toBe(0);
+        expect(component.hearing.linkedOarticipants.length).toBe(0);
         expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
     });
 
@@ -1221,7 +1221,7 @@ describe('AddParticipantComponent edit mode', () => {
         interpretee.setValue('test8@email.com');
         component.updateParticipant();
         const updatedParticipant = component.hearing.participants.find(x => x.email === 'test8@hmcts.net');
-        expect(updatedParticipant.display_name).toBe('Test Participant8');
+        expect(updatedParticipant.display_Name).toBe('Test Participant8');
     });
 });
 describe('AddParticipantComponent edit mode no participants added', () => {
@@ -1314,9 +1314,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         component.participantsListComponent.canEdit = true;
         const partList = component.participantsListComponent;
         component.selectedParticipantEmail = 'test2@hmcts.net';
-        partList.editParticipant(
-            new VHParticipant({ email: 'test2@hmcts.net', is_exist_person: false, interpretation_language: undefined })
-        );
+        partList.editParticipant(new VHParticipant({ email: 'test2@hmcts.net', isExistPerson: false, interpretation_language: undefined }));
         flush();
         expect(component.showDetails).toBeTruthy();
     }));
@@ -1329,7 +1327,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         partList.removeParticipant(
             new VHParticipant({
                 email: 'test2@hmcts.net',
-                is_exist_person: false,
+                isExistPerson: false,
                 interpretation_language: undefined
             })
         );
@@ -1341,16 +1339,16 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     }));
     it('should map the lp of the new participant with new participant email and lp email along with ids', () => {
         // Arrange
-        participant.hearing_role_name = HearingRoles.INTERPRETER;
+        participant.hearingRoleName = HearingRoles.INTERPRETER;
         component.isRoleSelected = true;
         component.form.setValue({
             role: 'Representative',
             title: 'Ms',
-            firstName: participant.first_name,
-            lastName: participant.last_name,
+            firstName: participant.firstName,
+            lastName: participant.lastName,
             email: participant.email,
             phone: participant.phone,
-            displayName: participant.display_name,
+            displayName: participant.display_Name,
             companyName: participant.company,
             companyNameIndividual: participant.company,
             representing: participant.representee,
@@ -1375,15 +1373,15 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         interpreterLp.linkedParticipantId = component.hearing.participants[1].id; // participant
         interpreterLp.participantId = component.hearing.participants[3].id; // interpreter
         interpreterLPs.push(participantLp);
-        component.hearing.participants[1].linked_participants = interpreterLPs;
-        component.hearing.linked_participants = participantsLPs;
+        component.hearing.participants[1].linkedParticipants = interpreterLPs;
+        component.hearing.linkedOarticipants = participantsLPs;
 
         // Act
         component.updateParticipantAction();
 
         // Assert
         expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
-        expect(component.hearing.participants[1].linked_participants[0].linkedParticipantId).toBe(component.hearing.participants[3].id);
+        expect(component.hearing.participants[1].linkedParticipants[0].linkedParticipantId).toBe(component.hearing.participants[3].id);
     });
     it('should display add button if participant has no email set', fakeAsync(() => {
         component.ngAfterContentInit();
@@ -1409,16 +1407,16 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     });
     it('should set hearing role value from the input field', () => {
         participant.id = undefined;
-        participant.hearing_role_name = undefined;
+        participant.hearingRoleName = undefined;
         component.isRoleSelected = true;
         component.participantDetails = participant;
 
         component.resetPartyAndRole();
-        expect(component.participantDetails.hearing_role_name).toBeTruthy();
-        expect(component.participantDetails.hearing_role_name).toEqual(Constants.PleaseSelect);
+        expect(component.participantDetails.hearingRoleName).toBeTruthy();
+        expect(component.participantDetails.hearingRoleName).toEqual(Constants.PleaseSelect);
     });
     it('should disable first and last names fields if the person exist in data store', () => {
-        participant.is_exist_person = true;
+        participant.isExistPerson = true;
         component.participantDetails = participant;
         component.getParticipant(participant);
 
@@ -1426,7 +1424,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         expect(component.form.get('lastName').disabled).toBeTruthy();
     });
     it('should set values correctly when no participant found', () => {
-        participant.is_exist_person = true;
+        participant.isExistPerson = true;
         component.participantDetails = participant;
         component.getParticipant(participant);
 
@@ -1660,8 +1658,8 @@ describe('AddParticipantComponent set representer', () => {
     });
     it('should show an error if panel member who has the same eJudiciary account as a judge', () => {
         const hearing = initHearingRequest();
-        const judge = hearing.participants.find(x => x.is_judge);
-        participant.hearing_role_name = 'Panel Member';
+        const judge = hearing.participants.find(x => x.isJudge);
+        participant.hearingRoleName = 'Panel Member';
         participant.username = judge.username;
         component.hearing = hearing;
         component.participantDetails = participant;

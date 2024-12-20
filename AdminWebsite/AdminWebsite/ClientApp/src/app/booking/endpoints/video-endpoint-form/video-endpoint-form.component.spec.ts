@@ -14,29 +14,29 @@ describe('VideoEndpointFormComponent', () => {
     const participants: VHParticipant[] = [
         new VHParticipant({
             id: '1',
-            first_name: 'John',
-            last_name: 'Doe',
+            firstName: 'John',
+            lastName: 'Doe',
             email: 'john@doe.com',
-            display_name: 'John Doe',
-            user_role_name: 'Representative',
+            display_Name: 'John Doe',
+            userRoleName: 'Representative',
             interpretation_language: undefined
         }),
         new VHParticipant({
             id: '2',
-            first_name: 'Chris',
-            last_name: 'Green',
+            firstName: 'Chris',
+            lastName: 'Green',
             email: 'chris@green,com',
-            display_name: 'Chris Green',
-            user_role_name: 'Representative',
+            display_Name: 'Chris Green',
+            userRoleName: 'Representative',
             interpretation_language: undefined
         }),
         new VHParticipant({
             id: '3',
-            first_name: 'Jane',
-            last_name: 'Smith',
+            firstName: 'Jane',
+            lastName: 'Smith',
             email: 'jane@smith.com',
-            display_name: 'Jane Smith',
-            user_role_name: 'Individual',
+            display_Name: 'Jane Smith',
+            userRoleName: 'Individual',
             interpretation_language: undefined
         })
     ];
@@ -150,7 +150,7 @@ describe('VideoEndpointFormComponent', () => {
                 displayName: 'Test Endpoint',
                 defenceAdvocate: {
                     email: rep.email,
-                    displayName: rep.display_name
+                    displayName: rep.display_Name
                 },
                 interpretationLanguage: undefined,
                 screening: undefined,

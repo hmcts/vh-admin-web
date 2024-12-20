@@ -48,7 +48,12 @@
             {{ hearing.isMultiDay && this.multiDayBookingEnhancementsEnabled ? 'Edit this day/date only' : 'Edit' }}
           </button>
           <button
-            *ngIf="!hearing.hasBookingConfirmationFailed && canEditHearing && this.isMultiDayUpdateAvailable() && !isTotalHearingMoreThanThreshold"
+            *ngIf="
+              !hearing.hasBookingConfirmationFailed &&
+              canEditHearing &&
+              this.isMultiDayUpdateAvailable() &&
+              !isTotalHearingMoreThanThreshold
+            "
             class="govuk-button vh-mt20 vh-mr-25"
             data-module="govuk-button"
             id="edit-multiple-hearings-button"

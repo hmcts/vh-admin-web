@@ -60,7 +60,7 @@ describe('HearingDetailsComponent', () => {
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
         component.hearing = h1;
-        component.hearing.other_information = JSON.stringify(OtherInformationModel.init(component.hearing.other_information));
+        component.hearing.otherInformation = JSON.stringify(OtherInformationModel.init(component.hearing.otherInformation));
 
         fixture.detectChanges();
     });

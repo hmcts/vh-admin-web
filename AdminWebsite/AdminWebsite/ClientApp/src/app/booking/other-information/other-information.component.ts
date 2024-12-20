@@ -49,7 +49,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
 
     ngOnInit() {
         this.checkForExistingRequest();
-        this.switchOffRecording = this.recordingGuard.switchOffRecording(this.hearing.case_type);
+        this.switchOffRecording = this.recordingGuard.switchOffRecording(this.hearing.caseType);
         this.interpreterPresent = this.recordingGuard.mandatoryRecordingForHearingRole(this.hearing.participants);
         this.initForm();
         super.ngOnInit();
@@ -76,30 +76,30 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
 
     private setInitialAudio() {
         if (this.switchOffRecording) {
-            this.hearing.audio_recording_required = false;
+            this.hearing.audioRecordingRequired = false;
             return false;
         }
 
         if (this.interpreterPresent) {
-            this.hearing.audio_recording_required = true;
+            this.hearing.audioRecordingRequired = true;
             return true;
         }
 
-        return this.hearing?.audio_recording_required !== null && this.hearing?.audio_recording_required !== undefined
-            ? this.hearing.audio_recording_required
+        return this.hearing?.audioRecordingRequired !== null && this.hearing?.audioRecordingRequired !== undefined
+            ? this.hearing.audioRecordingRequired
             : true;
     }
 
     private checkForExistingRequest() {
         this.hearing = this.videoHearingService.getCurrentRequest();
-        this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
+        this.otherInformationDetails = OtherInformationModel.init(this.hearing.otherInformation);
         this.otherInformationText = this.otherInformationDetails.OtherInformation;
     }
 
     next() {
-        this.hearing.audio_recording_required = this.audioChoice.value;
+        this.hearing.audioRecordingRequired = this.audioChoice.value;
         this.otherInformationOnBlur();
-        this.hearing.other_information = this.pipeStringifier.encode(this.otherInformationDetails);
+        this.hearing.otherInformation = this.pipeStringifier.encode(this.otherInformationDetails);
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Updated audio recording status and hearing other information.`, { hearing: this.hearing });
         this.form.markAsPristine();

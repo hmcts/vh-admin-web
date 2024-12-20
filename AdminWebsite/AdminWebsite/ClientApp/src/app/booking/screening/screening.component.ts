@@ -40,7 +40,7 @@ export class ScreeningComponent implements OnInit, OnDestroy {
     onScreeningSaved(seletecdMeasuresDto: SelectedScreeningDto) {
         this.logger.debug(`${this.loggerPrefix} screening saved`, seletecdMeasuresDto);
 
-        const participant = this.hearing.participants.find(p => p.display_name === seletecdMeasuresDto.participantDisplayName);
+        const participant = this.hearing.participants.find(p => p.display_Name === seletecdMeasuresDto.participantDisplayName);
         const endpoint = this.hearing.endpoints.find(e => e.displayName === seletecdMeasuresDto.participantDisplayName);
         if (participant) {
             participant.screening = {

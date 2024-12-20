@@ -43,7 +43,7 @@ describe('ParticipantDetailsComponent', () => {
             'judge.green@hmcts.net',
             '1234567'
         );
-        hearing.other_information = '|JudgeEmail|judge@hmcts.net|JudgePhone|123456789|OtherInformation|info';
+        hearing.otherInformation = '|JudgeEmail|judge@hmcts.net|JudgePhone|123456789|OtherInformation|info';
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
     });
@@ -115,11 +115,11 @@ describe('ParticipantDetailsComponent', () => {
             false,
             null
         );
-        pr.hearing_role_name = HearingRoles.JUDGE;
+        pr.hearingRoleName = HearingRoles.JUDGE;
 
         component.participant = pr;
         component.hearing = hearing;
         fixture.detectChanges();
-        expect(component.participant.is_judge).toBe(true);
+        expect(component.participant.isJudge).toBe(true);
     });
 });

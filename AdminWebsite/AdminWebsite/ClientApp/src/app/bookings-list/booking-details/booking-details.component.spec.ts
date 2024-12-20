@@ -152,14 +152,14 @@ const caseModel = new CaseModel();
 caseModel.name = 'X vs Y';
 caseModel.number = 'XX3456234565';
 const hearingModel = new VHBooking();
-hearingModel.hearing_id = '44';
+hearingModel.hearingId = '44';
 hearingModel.case = caseModel;
-hearingModel.scheduled_duration = 120;
+hearingModel.scheduledDuration = 120;
 let now = new Date();
 now.setMonth(now.getMonth());
 now = new Date(now);
-hearingModel.scheduled_date_time = now;
-hearingModel.audio_recording_required = true;
+hearingModel.scheduledDateTime = now;
+hearingModel.audioRecordingRequired = true;
 
 const cancel_reason = 'Online abandonment (incomplete registration)';
 
@@ -231,10 +231,10 @@ describe('BookingDetailsComponent', () => {
         tick(1000);
         expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
         expect(component.hearing).toBeTruthy();
-        expect(component.hearing.hearing_id).toBe('44');
-        expect(component.hearing.scheduled_duration).toBe(120);
+        expect(component.hearing.hearingId).toBe('44');
+        expect(component.hearing.scheduledDuration).toBe(120);
         expect(component.hearing.case.number).toBe('XX3456234565');
-        expect(component.hearing.audio_recording_required).toBeTruthy();
+        expect(component.hearing.audioRecordingRequired).toBeTruthy();
         discardPeriodicTasks();
     }));
 
@@ -243,10 +243,10 @@ describe('BookingDetailsComponent', () => {
         tick(1000);
         expect(videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel).toHaveBeenCalled();
         expect(component.booking).toBeTruthy();
-        expect(component.booking.hearing_id).toBe('44');
-        expect(component.booking.scheduled_duration).toBe(120);
+        expect(component.booking.hearingId).toBe('44');
+        expect(component.booking.scheduledDuration).toBe(120);
         expect(component.booking.case.number).toBe('XX3456234565');
-        expect(component.hearing.audio_recording_required).toBeTruthy();
+        expect(component.hearing.audioRecordingRequired).toBeTruthy();
         expect(component.hearing.allocatedTo).toBe('Not Allocated');
         discardPeriodicTasks();
     }));
@@ -272,7 +272,7 @@ describe('BookingDetailsComponent', () => {
         tick(1000);
         expect(component.participants).toBeTruthy();
         expect(component.participants.length).toBe(2);
-        expect(component.participants[0].user_role_name).toBe('Citizen');
+        expect(component.participants[0].userRoleName).toBe('Citizen');
         expect(component.participants[0].id).toBe('2');
         discardPeriodicTasks();
     }));
@@ -317,7 +317,7 @@ describe('BookingDetailsComponent', () => {
     it('should set confirmation button be visible if hearing start time less than 30 min', fakeAsync(() => {
         component.ngOnInit();
         tick(1000);
-        component.booking.scheduled_date_time = new Date(Date.now());
+        component.booking.scheduledDateTime = new Date(Date.now());
         component.timeSubscription = new Observable<any>().subscribe();
         component.setTimeObserver();
         expect(component.isConfirmationTimeValid).toBeTruthy();
@@ -394,8 +394,8 @@ describe('BookingDetailsComponent', () => {
 
         expect(component.phoneDetails).toBe(`ENG: 12345 (ID: 7777)
 CY: 54321 (ID: 7777)`);
-        expect(component.booking.telephone_conference_id).toBe('7777');
-        expect(component.hearing.telephone_conference_id).toBe('7777');
+        expect(component.booking.telephoneConferenceId).toBe('7777');
+        expect(component.hearing.telephoneConferenceId).toBe('7777');
         discardPeriodicTasks();
     }));
     it('should get conference phone details', fakeAsync(() => {
@@ -414,8 +414,8 @@ CY: 54321 (ID: 7777)`);
         tick(1000);
         expect(component.telephoneConferenceId).toBe('7777');
         expect(component.conferencePhoneNumber).toBe('12345');
-        expect(component.booking.telephone_conference_id).toBe('7777');
-        expect(component.hearing.telephone_conference_id).toBe('7777');
+        expect(component.booking.telephoneConferenceId).toBe('7777');
+        expect(component.hearing.telephoneConferenceId).toBe('7777');
         discardPeriodicTasks();
     }));
     it('should throw exception by getting the conference phone details for closed hearing', fakeAsync(() => {
@@ -495,7 +495,7 @@ CY: 54321 (ID: 7777)`);
         date.setHours(date.getHours() - 1);
 
         component.booking.status = BookingStatus.Failed;
-        component.booking.scheduled_date_time = date;
+        component.booking.scheduledDateTime = date;
         expect(component.canRetryConfirmation).toBeFalsy();
     });
 
@@ -504,7 +504,7 @@ CY: 54321 (ID: 7777)`);
         const date = new Date();
         date.setHours(date.getHours() + 1);
         component.booking.status = BookingStatus.Failed;
-        component.booking.scheduled_date_time = date;
+        component.booking.scheduledDateTime = date;
 
         expect(component.canRetryConfirmation).toBeTruthy();
     });

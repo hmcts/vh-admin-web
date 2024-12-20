@@ -18,17 +18,17 @@ describe('SearchEmailComponent', () => {
     let searchField: ElementRef;
 
     const participant1 = new VHParticipant();
-    participant1.first_name = 'FirstName1';
-    participant1.last_name = 'LastName1';
-    participant1.display_name = 'DisplayName1';
+    participant1.firstName = 'FirstName1';
+    participant1.lastName = 'LastName1';
+    participant1.display_Name = 'DisplayName1';
     participant1.email = 'Email1';
     participant1.username = 'Username1';
     participant1.title = 'Title1';
 
     const participant2 = new VHParticipant();
-    participant2.first_name = 'FirstName2';
-    participant2.last_name = 'LastName2';
-    participant2.display_name = 'DisplayName2';
+    participant2.firstName = 'FirstName2';
+    participant2.lastName = 'LastName2';
+    participant2.display_Name = 'DisplayName2';
     participant2.email = 'Email2';
     participant2.username = 'Username2';
     participant2.title = 'Title2';
@@ -37,12 +37,12 @@ describe('SearchEmailComponent', () => {
 
     const participantModel = new VHParticipant();
     participantModel.email = 'aa@hmcts.net';
-    participantModel.first_name = 'Ann';
-    participantModel.last_name = 'Smith';
+    participantModel.firstName = 'Ann';
+    participantModel.lastName = 'Smith';
     participantModel.title = 'Mrs';
-    participantModel.hearing_role_name = 'Litigant in person';
+    participantModel.hearingRoleName = 'Litigant in person';
     participantModel.phone = '12345678';
-    participantModel.display_name = 'Ann';
+    participantModel.display_Name = 'Ann';
 
     const configSettings = new ClientSettingsResponse();
     configSettings.test_username_stem = '@hmcts.net';
@@ -181,12 +181,12 @@ describe('SearchEmailComponent', () => {
         const participantsList: VHParticipant[] = [];
         const participant = new VHParticipant();
         participant.email = 'citizen.one@hmcts.net';
-        participant.first_name = 'citizen';
-        participant.last_name = 'one';
+        participant.firstName = 'citizen';
+        participant.lastName = 'one';
         participantModel.title = 'Mr.';
-        participantModel.hearing_role_name = 'Litigant in person';
+        participantModel.hearingRoleName = 'Litigant in person';
         participantModel.phone = '12345678';
-        participantModel.display_name = 'Citizen One';
+        participantModel.display_Name = 'Citizen One';
         participantsList.push(participant);
         component.results = participantsList;
 
@@ -299,8 +299,8 @@ describe('SearchEmailComponent', () => {
     it('should emit event email is changed if searched email does not exist in non-empty results', () => {
         const existingParticipant = new VHParticipant({
             email: 'YOSXJDKSD@hmcts.net',
-            first_name: 'YOSXJDKSD',
-            last_name: 'YOSXJDKSD'
+            firstName: 'YOSXJDKSD',
+            lastName: 'YOSXJDKSD'
         });
 
         const existingParticipants: VHParticipant[] = [];
@@ -318,8 +318,8 @@ describe('SearchEmailComponent', () => {
     it('should not emit event email is changed if searched email is invalid and does not exist in non-empty results', () => {
         const existingParticipant = new VHParticipant({
             email: 'YOSXJDKSD@hmcts.net',
-            first_name: 'YOSXJDKSD',
-            last_name: 'YOSXJDKSD'
+            firstName: 'YOSXJDKSD',
+            lastName: 'YOSXJDKSD'
         });
 
         const existingParticipants: VHParticipant[] = [];

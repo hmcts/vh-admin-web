@@ -72,35 +72,35 @@ ejudJudge.account_type = JudgeAccountType.Judiciary;
 const judgeList: JudgeResponse[] = [judge1, judge2, ejudJudge];
 
 const judgeParticipant1 = new VHParticipant();
-judgeParticipant1.first_name = 'judgeParticipant1FirstName';
-judgeParticipant1.last_name = 'judgeParticipant1LastName';
-judgeParticipant1.display_name = 'judgeParticipant1DisplayName';
+judgeParticipant1.firstName = 'judgeParticipant1FirstName';
+judgeParticipant1.lastName = 'judgeParticipant1LastName';
+judgeParticipant1.display_Name = 'judgeParticipant1DisplayName';
 judgeParticipant1.email = 'judgeParticipant1Email';
 
 const judgeParticipant2 = new VHParticipant();
-judgeParticipant2.first_name = 'judgeParticipant2FirstName';
-judgeParticipant2.last_name = 'judgeParticipant2LastName';
-judgeParticipant2.display_name = 'judgeParticipant2DisplayName';
+judgeParticipant2.firstName = 'judgeParticipant2FirstName';
+judgeParticipant2.lastName = 'judgeParticipant2LastName';
+judgeParticipant2.display_Name = 'judgeParticipant2DisplayName';
 judgeParticipant2.email = 'judgeParticipant2Email';
 
 const judgeParticipant3 = new VHParticipant();
-judgeParticipant2.first_name = 'judgeParticipant2FirstName';
-judgeParticipant2.last_name = 'judgeParticipant2LastName';
-judgeParticipant2.display_name = null;
+judgeParticipant2.firstName = 'judgeParticipant2FirstName';
+judgeParticipant2.lastName = 'judgeParticipant2LastName';
+judgeParticipant2.display_Name = null;
 judgeParticipant2.email = 'judgeEjud';
 
 const judgeParticipantList: VHParticipant[] = [judgeParticipant1, judgeParticipant2, judgeParticipant3];
 
 const participant1 = new VHParticipant();
-participant1.first_name = 'participant1FirstName';
-participant1.last_name = 'participant1LastName';
-participant1.display_name = 'participant1DisplayName';
+participant1.firstName = 'participant1FirstName';
+participant1.lastName = 'participant1LastName';
+participant1.display_Name = 'participant1DisplayName';
 participant1.email = 'participant1Email';
 
 const participant2 = new VHParticipant();
-participant2.first_name = 'participant2FirstName';
-participant2.last_name = 'participant2LastName';
-participant2.display_name = 'participant2DisplayName';
+participant2.firstName = 'participant2FirstName';
+participant2.lastName = 'participant2LastName';
+participant2.display_Name = 'participant2DisplayName';
 participant2.email = 'participant2Email';
 const participantList: VHParticipant[] = [participant1, participant2];
 let clientApiSpy: jasmine.SpyObj<BHClient>;
