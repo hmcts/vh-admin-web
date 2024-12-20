@@ -17,7 +17,7 @@ describe('VideoEndpointFormComponent', () => {
             firstName: 'John',
             lastName: 'Doe',
             email: 'john@doe.com',
-            display_Name: 'John Doe',
+            displayName: 'John Doe',
             userRoleName: 'Representative',
             interpretation_language: undefined
         }),
@@ -26,7 +26,7 @@ describe('VideoEndpointFormComponent', () => {
             firstName: 'Chris',
             lastName: 'Green',
             email: 'chris@green,com',
-            display_Name: 'Chris Green',
+            displayName: 'Chris Green',
             userRoleName: 'Representative',
             interpretation_language: undefined
         }),
@@ -35,7 +35,7 @@ describe('VideoEndpointFormComponent', () => {
             firstName: 'Jane',
             lastName: 'Smith',
             email: 'jane@smith.com',
-            display_Name: 'Jane Smith',
+            displayName: 'Jane Smith',
             userRoleName: 'Individual',
             interpretation_language: undefined
         })
@@ -150,7 +150,7 @@ describe('VideoEndpointFormComponent', () => {
                 displayName: 'Test Endpoint',
                 defenceAdvocate: {
                     email: rep.email,
-                    displayName: rep.display_Name
+                    displayName: rep.displayName
                 },
                 interpretationLanguage: undefined,
                 screening: undefined,

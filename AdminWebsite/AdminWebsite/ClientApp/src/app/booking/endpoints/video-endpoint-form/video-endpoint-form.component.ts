@@ -86,7 +86,7 @@ export class VideoEndpointFormComponent {
             const representative = this.availableRepresentatives.find(p => p.email === this.form.value.linkedRepresentative);
             defenceAdvocate = {
                 email: representative.email,
-                displayName: representative.display_Name
+                displayName: representative.displayName
             };
         }
         const dto: VideoAccessPointDto = {

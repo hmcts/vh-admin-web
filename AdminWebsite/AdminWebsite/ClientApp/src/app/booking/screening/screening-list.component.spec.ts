@@ -15,11 +15,11 @@ describe('ScreeningListComponent', () => {
         hearing = new VHBooking();
         const participantWithoutScreening = new VHParticipant();
         participantWithoutScreening.id = '1';
-        participantWithoutScreening.display_Name = 'Participant No Screening';
+        participantWithoutScreening.displayName = 'Participant No Screening';
 
         const participantWithScreening = new VHParticipant();
         participantWithScreening.id = '2';
-        participantWithScreening.display_Name = 'Participant With Screening';
+        participantWithScreening.displayName = 'Participant With Screening';
         participantWithScreening.screening = {
             measureType: 'All',
             protectFrom: []

@@ -19,17 +19,17 @@ function initHearingRequest(): VHBooking {
     hearing.hearingId = '';
     hearing.participants = [
         new VHParticipant({
-            display_Name: 'Jane',
+            displayName: 'Jane',
             email: 'jane@doe.com',
             externalReferenceId: '1Jane'
         }),
         new VHParticipant({
-            display_Name: 'Johnny',
+            displayName: 'Johnny',
             email: 'john@doe.com',
             externalReferenceId: '2John'
         }),
         new VHParticipant({
-            display_Name: 'Greeno',
+            displayName: 'Greeno',
             email: 'james@green.com',
             externalReferenceId: '3Green'
         })
@@ -95,7 +95,7 @@ describe('ScreeningComponent', () => {
 
             // Act
             component.onScreeningSaved({
-                participantDisplayName: participant.display_Name,
+                participantDisplayName: participant.displayName,
                 measureType: 'All',
                 protectFrom: []
             });
@@ -116,7 +116,7 @@ describe('ScreeningComponent', () => {
 
             // Act
             component.onScreeningSaved({
-                participantDisplayName: participant.display_Name,
+                participantDisplayName: participant.displayName,
                 measureType: 'Specific',
                 protectFrom: [{ externalReferenceId: '4Silver' }, { externalReferenceId: '2John' }]
             });

@@ -106,7 +106,7 @@ describe('BookingParticipantListComponent', () => {
                         linkedParticipants: p.LinkedParticipants ?? null,
                         id: `${i + 1}`,
                         company: '',
-                        display_Name: '',
+                        displayName: '',
                         email: '',
                         flag: false,
                         indexInList: 0,

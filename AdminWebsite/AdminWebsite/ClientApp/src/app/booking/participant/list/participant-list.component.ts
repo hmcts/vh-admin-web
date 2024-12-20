@@ -57,7 +57,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
             this.sortedJudiciaryMembers
                 ?.map(j => ({
                     email: j.email,
-                    displayName: j.display_Name,
+                    displayName: j.displayName,
                     role: j.hearingRoleCode,
                     interpretationLanguage: j.interpretation_language
                 }))
@@ -146,10 +146,10 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
 
     private sortByDisplayName() {
         return (a: VHParticipant, b: VHParticipant) => {
-            if (a.display_Name < b.display_Name) {
+            if (a.displayName < b.displayName) {
                 return -1;
             }
-            if (a.display_Name > b.display_Name) {
+            if (a.displayName > b.displayName) {
                 return 1;
             }
             return 0;
@@ -244,7 +244,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
             if (interpretee) {
                 interpretee.isInterpretee = true;
                 const insertIndex: number = sortedList.findIndex(pm => pm.email === interpretee.email) + 1;
-                interpreterParticipant.interpreteeName = interpretee?.display_Name;
+                interpreterParticipant.interpreteeName = interpretee?.displayName;
                 sortedList.splice(insertIndex, 0, interpreterParticipant);
             } else {
                 sortedList.push(interpreterParticipant);

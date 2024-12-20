@@ -18,12 +18,12 @@ describe('ScreeningFormComponent', () => {
         const participant1 = new VHParticipant();
         participant1.id = '1';
         participant1.email = 'email1';
-        participant1.display_Name = 'Participant1';
+        participant1.displayName = 'Participant1';
 
         const participant2 = new VHParticipant();
         participant2.id = '2';
         participant2.email = 'email2';
-        participant2.display_Name = 'Participant2';
+        participant2.displayName = 'Participant2';
 
         const endpoint1 = new EndpointModel(null);
         endpoint1.id = '3';
@@ -133,7 +133,7 @@ describe('ScreeningFormComponent', () => {
 
             // Assert
             expect(component.isEditMode).toBeTrue();
-            expect(component.allParticipants.filter(p => p.displayName === newlyAddedParticipant.display_Name)).toEqual([]);
+            expect(component.allParticipants.filter(p => p.displayName === newlyAddedParticipant.displayName)).toEqual([]);
             expect(component.allParticipants.filter(p => p.displayName === newlyAddedEndpoint.displayName)).toEqual([]);
             expect(component.allParticipants.length).toBe(2);
             expect(component.newParticipantRemovedFromOptions).toBeTrue();

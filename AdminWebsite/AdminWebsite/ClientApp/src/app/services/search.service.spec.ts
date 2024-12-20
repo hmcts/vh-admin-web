@@ -74,19 +74,19 @@ const judgeList: JudgeResponse[] = [judge1, judge2, ejudJudge];
 const judgeParticipant1 = new VHParticipant();
 judgeParticipant1.firstName = 'judgeParticipant1FirstName';
 judgeParticipant1.lastName = 'judgeParticipant1LastName';
-judgeParticipant1.display_Name = 'judgeParticipant1DisplayName';
+judgeParticipant1.displayName = 'judgeParticipant1DisplayName';
 judgeParticipant1.email = 'judgeParticipant1Email';
 
 const judgeParticipant2 = new VHParticipant();
 judgeParticipant2.firstName = 'judgeParticipant2FirstName';
 judgeParticipant2.lastName = 'judgeParticipant2LastName';
-judgeParticipant2.display_Name = 'judgeParticipant2DisplayName';
+judgeParticipant2.displayName = 'judgeParticipant2DisplayName';
 judgeParticipant2.email = 'judgeParticipant2Email';
 
 const judgeParticipant3 = new VHParticipant();
 judgeParticipant2.firstName = 'judgeParticipant2FirstName';
 judgeParticipant2.lastName = 'judgeParticipant2LastName';
-judgeParticipant2.display_Name = null;
+judgeParticipant2.displayName = null;
 judgeParticipant2.email = 'judgeEjud';
 
 const judgeParticipantList: VHParticipant[] = [judgeParticipant1, judgeParticipant2, judgeParticipant3];
@@ -94,13 +94,13 @@ const judgeParticipantList: VHParticipant[] = [judgeParticipant1, judgeParticipa
 const participant1 = new VHParticipant();
 participant1.firstName = 'participant1FirstName';
 participant1.lastName = 'participant1LastName';
-participant1.display_Name = 'participant1DisplayName';
+participant1.displayName = 'participant1DisplayName';
 participant1.email = 'participant1Email';
 
 const participant2 = new VHParticipant();
 participant2.firstName = 'participant2FirstName';
 participant2.lastName = 'participant2LastName';
-participant2.display_Name = 'participant2DisplayName';
+participant2.displayName = 'participant2DisplayName';
 participant2.email = 'participant2Email';
 const participantList: VHParticipant[] = [participant1, participant2];
 let clientApiSpy: jasmine.SpyObj<BHClient>;

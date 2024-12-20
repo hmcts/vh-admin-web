@@ -190,7 +190,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
                 displayName: e.displayName,
                 defenceAdvocate: defenceAdvocate
                     ? {
-                          displayName: defenceAdvocate?.display_Name,
+                          displayName: defenceAdvocate?.displayName,
                           email: defenceAdvocate?.email
                       }
                     : null,

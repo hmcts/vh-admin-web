@@ -94,7 +94,7 @@ const participants: VHParticipant[] = [];
 const p1 = new VHParticipant();
 p1.firstName = 'John';
 p1.lastName = 'Doe';
-p1.display_Name = 'John Doe';
+p1.displayName = 'John Doe';
 p1.title = 'Mr.';
 p1.email = 'test1@hmcts.net';
 p1.phone = '32332';
@@ -107,7 +107,7 @@ p1.username = 'judge@user.name';
 const p2 = new VHParticipant();
 p2.firstName = 'Jane';
 p2.lastName = 'Doe';
-p2.display_Name = 'Jane Doe';
+p2.displayName = 'Jane Doe';
 p2.title = 'Mr.';
 p2.email = 'test2@hmcts.net';
 p2.phone = '32332';
@@ -120,7 +120,7 @@ p1.username = 'judge@user.name';
 const p3 = new VHParticipant();
 p3.firstName = 'Chris';
 p3.lastName = 'Green';
-p3.display_Name = 'Chris Green';
+p3.displayName = 'Chris Green';
 p3.title = 'Mr.';
 p3.email = 'test3@hmcts.net';
 p3.phone = '32332';
@@ -134,7 +134,7 @@ p3.userRoleName = 'Representative';
 const p4 = new VHParticipant();
 p4.firstName = 'Test';
 p4.lastName = 'Participant';
-p4.display_Name = 'Test Participant';
+p4.displayName = 'Test Participant';
 p4.title = 'Mr.';
 p4.email = 'test4@hmcts.net';
 p4.phone = '32332';
@@ -146,7 +146,7 @@ p4.userRoleName = 'Individual';
 const p5 = new VHParticipant();
 p5.firstName = 'Test7';
 p5.lastName = 'Participant7';
-p5.display_Name = 'Test Participant7';
+p5.displayName = 'Test Participant7';
 p5.title = 'Mr.';
 p5.email = 'test7@hmcts.net';
 p5.phone = '32332';
@@ -159,7 +159,7 @@ p5.interpreterFor = 'test4@hmcts.net';
 const p6 = new VHParticipant();
 p6.firstName = 'Test8';
 p6.lastName = 'Participant8';
-p6.display_Name = 'Test Participant8';
+p6.displayName = 'Test Participant8';
 p6.title = 'Mr.';
 p6.email = 'test8@hmcts.net';
 p6.phone = '32332';
@@ -202,7 +202,7 @@ function initParticipant() {
     participant.firstName = 'Sam';
     participant.lastName = 'Green';
     participant.phone = '12345';
-    participant.display_Name = 'Sam Green';
+    participant.displayName = 'Sam Green';
     participant.title = 'Mr';
     participant.hearingRoleName = 'Representative';
     participant.company = 'CN';
@@ -401,7 +401,7 @@ describe('AddParticipantComponent', () => {
         expect(email.value).toBe(participant.email);
         expect(phone.value).toBe(participant.phone);
         expect(title.value).toBe(participant.title);
-        expect(displayName.value).toBe(participant.display_Name);
+        expect(displayName.value).toBe(participant.displayName);
         expect(companyName.value).toBe(participant.company);
         expect(component.displayNextButton).toBeFalsy();
         expect(component.displayClearButton).toBeTruthy();
@@ -411,7 +411,7 @@ describe('AddParticipantComponent', () => {
     it('should populate the form fields when values are null', () => {
         participant.email = null;
         participant.phone = null;
-        participant.display_Name = null;
+        participant.displayName = null;
         participant.company = null;
         participant.representee = null;
         component.getParticipant(participant);
@@ -642,14 +642,14 @@ describe('AddParticipantComponent', () => {
         const pa1 = new VHParticipant();
         pa1.firstName = 'firstname';
         pa1.lastName = 'lastname-interpretee';
-        pa1.display_Name = 'firstname lastname-interpretee';
+        pa1.displayName = 'firstname lastname-interpretee';
         pa1.email = 'firstname.lastname-interpretee@email.com';
         pa1.hearingRoleName = 'Litigant in Person';
 
         const pa2 = new VHParticipant();
         pa2.firstName = 'firstname';
         pa2.lastName = 'lastname-interpreter';
-        pa1.display_Name = 'firstname lastname-interpreter';
+        pa1.displayName = 'firstname lastname-interpreter';
         pa2.email = 'firstname.lastname-interpreter@email.com';
         pa2.hearingRoleName = 'Interpreter';
         pa2.interpreterFor = 'firstname.lastname-interpretee@email.com';
@@ -674,14 +674,14 @@ describe('AddParticipantComponent', () => {
         const part1 = new VHParticipant();
         part1.firstName = 'firstname';
         part1.lastName = 'lastname-interpretee';
-        part1.display_Name = 'firstname lastname-interpretee';
+        part1.displayName = 'firstname lastname-interpretee';
         part1.email = 'firstname.lastname-interpretee@email.com';
         part1.hearingRoleName = 'Litigant in Person';
 
         const part2 = new VHParticipant();
         part2.firstName = 'firstname';
         part2.lastName = 'lastname-interpreter';
-        part2.display_Name = 'firstname lastname-interpreter';
+        part2.displayName = 'firstname lastname-interpreter';
         part2.email = 'firstname.lastname-interpreter@email.com';
         part2.hearingRoleName = 'Interpreter';
         part2.interpreterFor = 'firstname.lastname-interpretee@email.com';
@@ -909,7 +909,7 @@ describe('AddParticipantComponent edit mode', () => {
             role: 'Panel Member',
             email: participant.email,
             phone: participant.phone,
-            displayName: participant.display_Name,
+            displayName: participant.displayName,
             companyName: participant.company,
             companyNameIndividual: participant.company,
             representing: participant.representee,
@@ -1042,7 +1042,7 @@ describe('AddParticipantComponent edit mode', () => {
         interpretee.setValue('test4@email.com');
         component.updateParticipant();
         const updatedParticipant = component.hearing.participants.find(x => x.email === 'mock@hmcts.net');
-        expect(updatedParticipant.display_Name).toBe('Sam Green');
+        expect(updatedParticipant.displayName).toBe('Sam Green');
     });
     it('should before save booking check if all fields available', () => {
         component.actionsBeforeSave();
@@ -1069,7 +1069,7 @@ describe('AddParticipantComponent edit mode', () => {
             lastName: participant.lastName,
             email: participant.email,
             phone: participant.phone,
-            displayName: participant.display_Name,
+            displayName: participant.displayName,
             companyName: participant.company,
             companyNameIndividual: participant.company,
             representing: participant.representee,
@@ -1094,7 +1094,7 @@ describe('AddParticipantComponent edit mode', () => {
             lastName: participant.lastName,
             email: participant.email,
             phone: participant.phone,
-            displayName: participant.display_Name,
+            displayName: participant.displayName,
             companyName: participant.company,
             companyNameIndividual: participant.company,
             representing: participant.representee,
@@ -1173,7 +1173,7 @@ describe('AddParticipantComponent edit mode', () => {
         const part1 = new VHParticipant();
         part1.firstName = 'firstname';
         part1.lastName = 'lastname-interpretee';
-        part1.display_Name = 'firstname lastname-interpretee';
+        part1.displayName = 'firstname lastname-interpretee';
         part1.email = 'firstname.lastname-interpretee@email.com';
         part1.hearingRoleName = 'Litigant in Person';
         part1.id = '100';
@@ -1181,7 +1181,7 @@ describe('AddParticipantComponent edit mode', () => {
         const part2 = new VHParticipant();
         part2.firstName = 'firstname';
         part2.lastName = 'lastname-interpreter';
-        part2.display_Name = 'firstname lastname-interpreter';
+        part2.displayName = 'firstname lastname-interpreter';
         part2.email = 'firstname.lastname-interpreter@email.com';
         part2.hearingRoleName = 'Interpreter';
         part2.interpreterFor = 'firstname.lastname-interpretee@email.com';
@@ -1221,7 +1221,7 @@ describe('AddParticipantComponent edit mode', () => {
         interpretee.setValue('test8@email.com');
         component.updateParticipant();
         const updatedParticipant = component.hearing.participants.find(x => x.email === 'test8@hmcts.net');
-        expect(updatedParticipant.display_Name).toBe('Test Participant8');
+        expect(updatedParticipant.displayName).toBe('Test Participant8');
     });
 });
 describe('AddParticipantComponent edit mode no participants added', () => {
@@ -1348,7 +1348,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             lastName: participant.lastName,
             email: participant.email,
             phone: participant.phone,
-            displayName: participant.display_Name,
+            displayName: participant.displayName,
             companyName: participant.company,
             companyNameIndividual: participant.company,
             representing: participant.representee,

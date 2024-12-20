@@ -105,7 +105,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         const staffMemberExists = this.hearing?.participants.find(x => x.hearingRoleName === Constants.HearingRoles.StaffMember);
 
         this.showAddStaffMemberFld = new FormControl(!!staffMemberExists);
-        this.judgeDisplayNameFld = new FormControl(this.judge?.display_Name, {
+        this.judgeDisplayNameFld = new FormControl(this.judge?.displayName, {
             validators: [Validators.required, Validators.pattern(Constants.TextInputPatternDisplayName), Validators.maxLength(255)],
             updateOn: 'blur'
         });
@@ -161,7 +161,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             }),
             this.judgeDisplayNameFld.valueChanges.subscribe(name => {
                 if (this.judge) {
-                    this.judge.display_Name = name;
+                    this.judge.displayName = name;
                 }
             }),
             this.judgeEmailFld.valueChanges.subscribe(email => {
@@ -213,10 +213,10 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         const text = SanitizeInputText(this.judgeDisplayNameFld.value);
         this.judgeDisplayNameFld.setValue(text);
 
-        if (this.judge?.display_Name) {
+        if (this.judge?.displayName) {
             const judge = this.hearing.participants.find(x => x.isJudge);
             if (judge) {
-                this.hearing.participants.find(x => x.isJudge).display_Name = this.judge.display_Name;
+                this.hearing.participants.find(x => x.isJudge).displayName = this.judge.displayName;
             }
         }
     }
@@ -245,13 +245,13 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.logger.debug(`${this.loggerPrefix} Attempting to save judge.`);
 
         if (this.judge?.email) {
-            if (!this.judge.display_Name) {
+            if (!this.judge.displayName) {
                 this.logger.warn(`${this.loggerPrefix} No judge selected. Display name not set.`);
                 this.failedSubmission = true;
                 return;
             }
 
-            if (!this.hearingService.canAddJudge(this.judge.display_Name)) {
+            if (!this.hearingService.canAddJudge(this.judge.displayName)) {
                 this.logger.warn(`${this.loggerPrefix} Judge could not be a panel member or winger in the same hearing.`);
                 this.isJudgeParticipantError = true;
                 this.failedSubmission = true;
@@ -364,7 +364,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     private setTextFieldValues() {
         if (this.isJudgeSelected) {
-            this.judgeDisplayNameFld.setValue(this.judge.display_Name);
+            this.judgeDisplayNameFld.setValue(this.judge.displayName);
             let judgeEmail = '';
             if (this.displayEmailField) {
                 judgeEmail = this.otherInformationDetails.JudgeEmail;

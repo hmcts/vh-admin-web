@@ -45,7 +45,7 @@ function initExistingHearingRequest(): VHBooking {
     const pat1 = new VHParticipant();
     pat1.email = 'aa@hmcts.net';
     pat1.representee = 'citizen 01';
-    pat1.display_Name = 'solicitor 01';
+    pat1.displayName = 'solicitor 01';
     pat1.id = '123123-123';
 
     const today = new Date();

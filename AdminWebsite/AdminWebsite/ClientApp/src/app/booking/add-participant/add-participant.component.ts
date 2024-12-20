@@ -457,7 +457,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         newParticipant.hearingRoleCode = this.hearingRoles.find(h => h.name === this.role.value)?.code;
 
         newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
-        newParticipant.display_Name = this.displayName.value;
+        newParticipant.displayName = this.displayName.value;
         if (this.isRoleRepresentative(this.role.value)) {
             newParticipant.company = this.companyName.value;
         } else {
@@ -766,7 +766,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     private addLinkedParticipant(newParticipant: VHParticipant): void {
         if (newParticipant.interpreterFor) {
             const interpretee = this.getInterpretee(newParticipant.interpreterFor);
-            newParticipant.interpreteeName = interpretee.display_Name;
+            newParticipant.interpreteeName = interpretee.displayName;
             const linkedParticipant: LinkedParticipantModel = {
                 participantEmail: newParticipant.email,
                 linkedParticipantEmail: interpretee.email,

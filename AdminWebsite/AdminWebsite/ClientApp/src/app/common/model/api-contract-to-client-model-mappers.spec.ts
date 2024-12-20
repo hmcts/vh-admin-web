@@ -165,7 +165,7 @@ describe('mapParticipantResponseToVHParticipant', () => {
         expect(result.firstName).toBe(participant.first_name);
         expect(result.lastName).toBe(participant.last_name);
         expect(result.middleNames).toBe(participant.middle_names);
-        expect(result.display_Name).toBe(participant.display_name);
+        expect(result.displayName).toBe(participant.display_name);
         expect(result.username).toBe(participant.username);
         expect(result.email).toBe(participant.contact_email);
         expect(result.hearingRoleName).toBe(participant.hearing_role_name);

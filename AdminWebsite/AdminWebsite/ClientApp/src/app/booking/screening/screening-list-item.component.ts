@@ -32,7 +32,7 @@ export class ScreeningListItemComponent implements OnChanges {
     initModelForParticipant(hearing: VHBooking, participant: VHParticipant): ScreeningItemViewModel {
         const protectFromMapped = this.initProtectFromViewModel(hearing, participant.screening);
         return {
-            displayName: participant.display_Name,
+            displayName: participant.displayName,
             measureType: participant.screening?.measureType,
             protectFrom: protectFromMapped
         };
@@ -59,7 +59,7 @@ export class ScreeningListItemComponent implements OnChanges {
             if (matchedParticipant) {
                 return {
                     contactEmail: matchedParticipant.email,
-                    displayName: matchedParticipant.display_Name
+                    displayName: matchedParticipant.displayName
                 };
             }
             const matchedEndpoint = hearing.endpoints.find(x => x.externalReferenceId === p.externalReferenceId);

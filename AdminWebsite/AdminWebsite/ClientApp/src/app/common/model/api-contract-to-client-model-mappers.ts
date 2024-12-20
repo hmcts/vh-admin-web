@@ -105,7 +105,7 @@ export function mapParticipantResponseToVHParticipant(response: ParticipantRespo
         firstName: response.first_name,
         lastName: response.last_name,
         middleNames: response.middle_names,
-        display_Name: response.display_name,
+        displayName: response.display_name,
         username: response.username,
         email: response.contact_email,
         hearingRoleName: response.hearing_role_name,
@@ -193,7 +193,7 @@ export function mapJudgeResponseToVHParticipant(judge: JudgeResponse): VHPartici
         ? new VHParticipant({
               firstName: judge.first_name,
               lastName: judge.last_name,
-              display_Name: judge.display_name,
+              displayName: judge.display_name,
               email: judge.contact_email ?? judge.email,
               username: judge.email,
               isCourtroomAccount: judge.account_type === JudgeAccountType.Courtroom,
@@ -218,7 +218,7 @@ export function mapJudicialMemberDtoToVHParticipant(judicialMember: JudicialMemb
         isJudiciaryMember: true,
         hearingRoleCode: hearingRoleCode,
         phone: judicialMember.telephone,
-        display_Name: judicialMember.displayName,
+        displayName: judicialMember.displayName,
         interpretation_language: judicialMember.interpretationLanguage
     });
 }

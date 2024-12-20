@@ -270,7 +270,7 @@ export class VideoHearingsService {
         editParticipant.id = participant.id;
         editParticipant.external_reference_id = participant.externalReferenceId;
         editParticipant.contact_email = participant.email;
-        editParticipant.display_name = participant.display_Name;
+        editParticipant.display_name = participant.displayName;
         editParticipant.first_name = participant.firstName;
         editParticipant.last_name = participant.lastName;
         editParticipant.hearing_role_name = participant.hearingRoleName;
@@ -374,7 +374,7 @@ export class VideoHearingsService {
                 participant.middle_names = p.middleNames;
                 participant.last_name = p.lastName;
                 participant.username = p.username;
-                participant.display_name = p.display_Name;
+                participant.display_name = p.displayName;
                 participant.contact_email = p.email;
                 participant.telephone_number = p.phone;
                 participant.hearing_role_code = p.hearingRoleCode;

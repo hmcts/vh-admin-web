@@ -29,7 +29,7 @@ import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 function initHearingRequest(): VHBooking {
     const participants: VHParticipant[] = [];
     const p1 = new VHParticipant();
-    p1.display_Name = 'display name1';
+    p1.displayName = 'display name1';
     p1.email = 'test1@hmcts.net';
     p1.contactEmail = 'test1@hmcts.net';
     p1.firstName = 'first';
@@ -39,7 +39,7 @@ function initHearingRequest(): VHBooking {
     p1.hearingRoleName = 'Judge';
 
     const p2 = new VHParticipant();
-    p2.display_Name = 'display name2';
+    p2.displayName = 'display name2';
     p2.email = 'test2@hmcts.net';
     p2.contactEmail = 'test2@hmcts.net';
     p2.firstName = 'first2';
@@ -297,8 +297,8 @@ describe('AssignJudgeComponent', () => {
             component.judgeDisplayNameFld.setValue('<script>' + displayNameSanitized + '</script>');
             component.changeDisplayName();
             expect(component.judgeDisplayNameFld.value).toBe(displayNameSanitized);
-            expect(component.judge.display_Name).toBe(displayNameSanitized);
-            expect(component.hearing.participants.find(x => x.isJudge).display_Name).toBe(displayNameSanitized);
+            expect(component.judge.displayName).toBe(displayNameSanitized);
+            expect(component.hearing.participants.find(x => x.isJudge).displayName).toBe(displayNameSanitized);
         });
 
         it('should unsubscribe all subcriptions on destroy component', () => {
@@ -351,14 +351,14 @@ describe('AssignJudgeComponent', () => {
     const judge = new VHParticipant();
     judge.username = 'JudgeUserName';
     judge.email = 'JudgeEmail';
-    judge.display_Name = 'JudgeDisplayName';
+    judge.displayName = 'JudgeDisplayName';
     judge.phone = 'JudgePhone';
     judge.isCourtroomAccount = true;
 
     const alternateJudge = new VHParticipant();
     alternateJudge.username = 'AlternateJudgeUserName';
     alternateJudge.email = 'AlternateJudgeEmail';
-    alternateJudge.display_Name = 'AlternateJudgeDisplayName';
+    alternateJudge.displayName = 'AlternateJudgeDisplayName';
     alternateJudge.phone = 'AlternateJudgePhone';
     alternateJudge.hearingRoleName = Constants.HearingRoles.Judge;
 
@@ -401,7 +401,7 @@ describe('AssignJudgeComponent', () => {
         });
 
         it('should set correct validation errors if display name is null', () => {
-            component.judge.display_Name = null;
+            component.judge.displayName = null;
 
             component.saveJudge();
             expect(component.isJudgeParticipantError).toBe(false);
@@ -410,7 +410,7 @@ describe('AssignJudgeComponent', () => {
         });
 
         it('should set correct validation errors if display name is null', () => {
-            component.judge.display_Name = null;
+            component.judge.displayName = null;
 
             component.saveJudge();
             expect(component.isJudgeParticipantError).toBe(false);
@@ -551,7 +551,7 @@ describe('AssignJudgeComponent', () => {
                 beforeEach(() => {
                     const updatedJudgeDisplayName = 'UpdatedJudgeDisplayName';
                     videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
-                    component.judge.display_Name = updatedJudgeDisplayName;
+                    component.judge.displayName = updatedJudgeDisplayName;
                 });
 
                 it('should add judge account when none present', () => {
@@ -569,7 +569,7 @@ describe('AssignJudgeComponent', () => {
 
                     expect(updatedJudges.length).toBe(1);
                     expect(component.courtAccountJudgeEmail).toEqual(judge.username);
-                    expect(component.judgeDisplayNameFld.value).toEqual(judge.display_Name);
+                    expect(component.judgeDisplayNameFld.value).toEqual(judge.displayName);
                     expect(updatedJudges[0]).toBe(judge);
                     expect(updatedJudges[0].hearingRoleCode).toBe(Constants.HearingRoleCodes.Judge);
 
@@ -578,7 +578,7 @@ describe('AssignJudgeComponent', () => {
                 });
             });
             afterEach(() => {
-                expect(component.judgeDisplayNameFld.value).toEqual(judge.display_Name);
+                expect(component.judgeDisplayNameFld.value).toEqual(judge.displayName);
                 expect(component.judgeEmailFld.value).toEqual(otherInformationDetailsJudgeEmail);
                 expect(component.judgePhoneFld.value).toEqual(otherInformationDetailsJudgePhone);
             });

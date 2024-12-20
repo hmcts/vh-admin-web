@@ -89,7 +89,7 @@ export class BookingPersistService {
         }
 
         const judge = hearing.participants.find(x => x.isJudge);
-        return judge ? judge.display_Name : '';
+        return judge ? judge.displayName : '';
     }
 
     set bookingList(value: Array<BookingsListModel>) {

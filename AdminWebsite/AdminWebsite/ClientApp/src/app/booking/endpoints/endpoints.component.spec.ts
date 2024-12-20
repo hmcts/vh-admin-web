@@ -25,7 +25,7 @@ function initHearingRequest(): VHBooking {
             firstName: 'John',
             lastName: 'Doe',
             email: 'john@doe.com',
-            display_Name: 'John Doe',
+            displayName: 'John Doe',
             userRoleName: 'Representative',
             interpretation_language: undefined
         }),
@@ -34,7 +34,7 @@ function initHearingRequest(): VHBooking {
             firstName: 'Chris',
             lastName: 'Green',
             email: 'chris@green,com',
-            display_Name: 'Chris Green',
+            displayName: 'Chris Green',
             userRoleName: 'Representative',
             interpretation_language: undefined
         }),
@@ -43,7 +43,7 @@ function initHearingRequest(): VHBooking {
             firstName: 'Jane',
             lastName: 'Smith',
             email: 'jane@smith.com',
-            display_Name: 'Jane Smith',
+            displayName: 'Jane Smith',
             userRoleName: 'Individual',
             interpretation_language: undefined
         })

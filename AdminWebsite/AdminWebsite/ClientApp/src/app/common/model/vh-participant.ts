@@ -12,7 +12,7 @@ export class VHParticipant {
     firstName?: string;
     lastName?: string;
     middleNames?: string;
-    display_Name?: string;
+    displayName?: string;
     username?: string;
     email?: string;
     hearingRoleName?: string;
@@ -115,7 +115,7 @@ export class VHParticipant {
             email: email,
             hearingRoleName: hearingRoleName,
             hearingRoleCode: hearingRoleCode,
-            display_Name: displayName,
+            displayName: displayName,
             middleNames: middleNames,
             company: organisation,
             representee: representee,

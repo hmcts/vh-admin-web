@@ -34,7 +34,7 @@ export class HearingDetailsComponent implements OnDestroy {
         let represents = '';
         const participant = this.participants.find(p => p.email === defenceAdvocateContactEmail);
         if (participant) {
-            represents = participant.display_Name + ', representing ' + participant.representee;
+            represents = participant.displayName + ', representing ' + participant.representee;
         }
         return represents;
     }

@@ -250,7 +250,7 @@ describe('Video hearing service', () => {
         participant.middleNames = 'Ivan';
         participant.lastName = 'Smith';
         participant.username = 'dan@hmcts.net';
-        participant.display_Name = 'Dan Smith';
+        participant.displayName = 'Dan Smith';
         participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
         participant.hearingRoleName = 'Litigant in person';
@@ -263,7 +263,7 @@ describe('Video hearing service', () => {
         expect(model[0].middle_names).toEqual(participant.middleNames);
         expect(model[0].last_name).toEqual(participant.lastName);
         expect(model[0].username).toEqual(participant.username);
-        expect(model[0].display_name).toEqual(participant.display_Name);
+        expect(model[0].display_name).toEqual(participant.displayName);
         expect(model[0].contact_email).toEqual(participant.email);
         expect(model[0].telephone_number).toEqual(participant.phone);
     });
@@ -276,7 +276,7 @@ describe('Video hearing service', () => {
         participant.middleNames = 'Ivan';
         participant.lastName = 'Smith';
         participant.username = 'dan@hmcts.net';
-        participant.display_Name = 'Dan Smith';
+        participant.displayName = 'Dan Smith';
         participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
         participant.hearingRoleName = 'Litigant in person';
@@ -350,7 +350,7 @@ describe('Video hearing service', () => {
         participant.middleNames = 'Ivan';
         participant.lastName = 'Smith';
         participant.username = 'dan@hmcts.net';
-        participant.display_Name = 'Dan Smith';
+        participant.displayName = 'Dan Smith';
         participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
         participant.hearingRoleName = 'Litigant in person';
@@ -760,7 +760,7 @@ describe('Video hearing service', () => {
             new VHParticipant({
                 id: 'e09882e8-345c-4bbb-b412-af6f4f622a24',
                 email: 'app.litigant@email.com',
-                display_Name: 'Litigant',
+                displayName: 'Litigant',
                 hearingRoleCode: 'APPL'
             })
         );

@@ -220,7 +220,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
             lastName: this.participantDetails.lastName?.trim(),
             email: this.participantDetails.email?.trim() || '',
             phone: this.participantDetails.phone?.trim() || '',
-            displayName: this.participantDetails.display_Name?.trim() || '',
+            displayName: this.participantDetails.displayName?.trim() || '',
             companyName: this.participantDetails.company?.trim() || '',
             companyNameIndividual: this.participantDetails.company?.trim() || '',
             representing: this.participantDetails.representee?.trim() || '',

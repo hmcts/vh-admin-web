@@ -31,7 +31,7 @@ export class ScreeningFormComponent {
             .map(
                 participant =>
                     ({
-                        displayName: participant.display_Name,
+                        displayName: participant.displayName,
                         externalReferenceId: participant.externalReferenceId,
                         isNewlyAdded: participant.id === null || participant.id === undefined
                     } as GenericParticipantsModel)

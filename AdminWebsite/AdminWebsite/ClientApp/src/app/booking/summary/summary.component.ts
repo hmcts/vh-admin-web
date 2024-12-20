@@ -499,7 +499,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         let represents = '';
         const participant = this.hearing.participants.find(p => p.email === defenceAdvocateConactEmail);
         if (participant) {
-            represents = participant.display_Name + ', representing ' + participant.representee;
+            represents = participant.displayName + ', representing ' + participant.representee;
         }
         return represents;
     }

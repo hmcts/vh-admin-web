@@ -20,7 +20,7 @@ describe('SearchEmailComponent', () => {
     const participant1 = new VHParticipant();
     participant1.firstName = 'FirstName1';
     participant1.lastName = 'LastName1';
-    participant1.display_Name = 'DisplayName1';
+    participant1.displayName = 'DisplayName1';
     participant1.email = 'Email1';
     participant1.username = 'Username1';
     participant1.title = 'Title1';
@@ -28,7 +28,7 @@ describe('SearchEmailComponent', () => {
     const participant2 = new VHParticipant();
     participant2.firstName = 'FirstName2';
     participant2.lastName = 'LastName2';
-    participant2.display_Name = 'DisplayName2';
+    participant2.displayName = 'DisplayName2';
     participant2.email = 'Email2';
     participant2.username = 'Username2';
     participant2.title = 'Title2';
@@ -42,7 +42,7 @@ describe('SearchEmailComponent', () => {
     participantModel.title = 'Mrs';
     participantModel.hearingRoleName = 'Litigant in person';
     participantModel.phone = '12345678';
-    participantModel.display_Name = 'Ann';
+    participantModel.displayName = 'Ann';
 
     const configSettings = new ClientSettingsResponse();
     configSettings.test_username_stem = '@hmcts.net';
@@ -186,7 +186,7 @@ describe('SearchEmailComponent', () => {
         participantModel.title = 'Mr.';
         participantModel.hearingRoleName = 'Litigant in person';
         participantModel.phone = '12345678';
-        participantModel.display_Name = 'Citizen One';
+        participantModel.displayName = 'Citizen One';
         participantsList.push(participant);
         component.results = participantsList;
 
