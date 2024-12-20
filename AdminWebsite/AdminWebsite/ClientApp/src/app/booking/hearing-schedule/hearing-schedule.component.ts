@@ -423,7 +423,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
         this.refDataService.getCourts().subscribe({
             next: data => {
-                this.availableCourts = data;
+                this.availableCourts = [...data];
                 this.logger.debug(`${this.loggerPrefix} Updating list of available courts.`, { courts: data.length });
                 const pleaseSelect = new HearingVenueResponse();
                 pleaseSelect.name = Constants.PleaseSelect;
