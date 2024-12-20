@@ -3,11 +3,6 @@ import { Router } from '@angular/router';
 import * as moment from 'moment';
 import { interval, lastValueFrom, Subject, Subscription, takeUntil } from 'rxjs';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
-import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
-import { HearingModel } from '../../common/model/hearing.model';
-import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
-import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
-import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import { BookingStatus, HearingDetailsResponse, UpdateBookingStatusResponse, UserProfileResponse } from '../../services/clients/api-client';
@@ -17,6 +12,10 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { VHBooking } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { mapHearingToVHBooking } from 'src/app/common/model/api-contract-to-client-model-mappers';
+import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 
 @Component({
     selector: 'app-booking-details',
@@ -25,11 +24,10 @@ import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkl
 })
 export class BookingDetailsComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[BookingDetails] -';
-    hearing: BookingsDetailsModel;
-    booking: HearingModel;
-    participants: Array<ParticipantDetailsModel> = [];
-    judges: Array<ParticipantDetailsModel> = [];
-    judicialMembers: Array<JudiciaryParticipantDetailsModel> = [];
+    hearing: VHBooking;
+    booking: VHBooking;
+    participants: Array<VHParticipant> = [];
+    judicialMembers: Array<JudicialMemberDto> = [];
     isVhOfficerAdmin = false;
     showCancelBooking: boolean;
     showConfirming: boolean;
@@ -51,7 +49,6 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     constructor(
         private readonly videoHearingService: VideoHearingsService,
-        private readonly bookingDetailsService: BookingDetailsService,
         private readonly userIdentityService: UserIdentityService,
         private readonly router: Router,
         private readonly bookingService: BookingService,
@@ -110,9 +107,9 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     setTimeObserver() {
         if (this.booking) {
-            const endofday = new Date(this.booking.scheduled_date_time);
+            const endofday = new Date(this.booking.scheduledDateTime);
             endofday.setHours(23, 59);
-            this.isConfirmationTimeValid = this.booking.scheduled_date_time.valueOf() <= endofday.valueOf();
+            this.isConfirmationTimeValid = this.booking.scheduledDateTime.valueOf() <= endofday.valueOf();
             if (!this.isConfirmationTimeValid && this.timeSubscription) {
                 this.timeSubscription.unsubscribe();
             }
@@ -135,20 +132,17 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         if (!this.booking || this.booking.status !== BookingStatus.Failed) {
             return false;
         }
-        const scheduledTime = moment(this.booking.scheduled_date_time);
+        const scheduledTime = moment(this.booking.scheduledDateTime);
         return scheduledTime.isAfter(moment(new Date()));
     }
 
     mapHearing(hearingResponse: HearingDetailsResponse) {
-        this.hearing = this.bookingDetailsService.mapBooking(hearingResponse);
-        const participants_and_judges = this.bookingDetailsService.mapBookingParticipants(hearingResponse);
-        this.participants = participants_and_judges.participants;
-        this.judges = participants_and_judges.judges;
-        this.judicialMembers = participants_and_judges.judicialMembers;
-        this.hearing.Endpoints = this.bookingDetailsService.mapBookingEndpoints(hearingResponse);
+        this.hearing = mapHearingToVHBooking(hearingResponse);
+        this.participants = this.hearing.participants;
+        this.judicialMembers = this.hearing.judiciaryParticipants;
     }
 
-    mapResponseToModel(hearingResponse: HearingDetailsResponse): HearingModel {
+    mapResponseToModel(hearingResponse: HearingDetailsResponse): VHBooking {
         return this.videoHearingService.mapHearingDetailsResponseToHearingModel(hearingResponse);
     }
 
@@ -165,7 +159,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     setBookingInStorage() {
         this.bookingService.resetEditMode();
-        this.bookingService.setExistingCaseType(this.booking.case_type);
+        this.bookingService.setExistingCaseType(this.booking.caseType);
         this.videoHearingService.updateHearingRequest(this.booking);
     }
 
@@ -266,7 +260,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         }
         this.persistStatus(status);
         if (status === BookingStatus.Failed) {
-            this.hearing.Status = status;
+            this.hearing.status = status;
             return;
         }
         this.$subscriptions.push(
@@ -323,7 +317,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     }
 
     async getConferencePhoneDetails() {
-        if (this.hearing.Status === BookingStatus.Created) {
+        if (this.hearing.status === BookingStatus.Created) {
             try {
                 await lastValueFrom(this.videoHearingService.getTelephoneConferenceId(this.hearingId)).then(phoneResponse => {
                     this.telephoneConferenceId = phoneResponse.telephone_conference_id;
@@ -348,15 +342,15 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     updateWithConferencePhoneDetails() {
         if (this.telephoneConferenceId && this.conferencePhoneNumber) {
-            this.booking.telephone_conference_id = this.telephoneConferenceId;
-            this.hearing.TelephoneConferenceId = this.telephoneConferenceId;
+            this.booking.telephoneConferenceId = this.telephoneConferenceId;
+            this.hearing.telephoneConferenceId = this.telephoneConferenceId;
             this.phoneDetails = `ENG: ${this.conferencePhoneNumber} (ID: ${this.telephoneConferenceId})
 CY: ${this.conferencePhoneNumberWelsh} (ID: ${this.telephoneConferenceId})`;
         }
     }
 
     get judgeExists(): boolean {
-        return this.judges.length > 0 || this.judicialMembers.some(j => j.isJudge);
+        return this.judicialMembers.some(j => j.isJudge);
     }
 
     isMultiDayUpdateAvailable(): boolean {

@@ -5,34 +5,34 @@ import { Router } from '@angular/router';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
-import { HearingModel } from 'src/app/common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MockComponent } from 'ng-mocks';
 import { ScreeningFormComponent } from './screening-form.component';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { ScreeningListComponent } from './screening-list.component';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
-function initHearingRequest(): HearingModel {
-    const hearing = new HearingModel();
-    hearing.hearing_id = '';
+function initHearingRequest(): VHBooking {
+    const hearing = new VHBooking();
+    hearing.hearingId = '';
     hearing.participants = [
-        {
-            display_name: 'Jane',
+        new VHParticipant({
+            displayName: 'Jane',
             email: 'jane@doe.com',
             externalReferenceId: '1Jane'
-        } as ParticipantModel,
-        {
-            display_name: 'Johnny',
+        }),
+        new VHParticipant({
+            displayName: 'Johnny',
             email: 'john@doe.com',
             externalReferenceId: '2John'
-        } as ParticipantModel,
-        {
-            display_name: 'Greeno',
+        }),
+        new VHParticipant({
+            displayName: 'Greeno',
             email: 'james@green.com',
             externalReferenceId: '3Green'
-        } as ParticipantModel
+        })
     ];
     hearing.judiciaryParticipants = [];
     hearing.endpoints = [
@@ -95,7 +95,7 @@ describe('ScreeningComponent', () => {
 
             // Act
             component.onScreeningSaved({
-                participantDisplayName: participant.display_name,
+                participantDisplayName: participant.displayName,
                 measureType: 'All',
                 protectFrom: []
             });
@@ -116,7 +116,7 @@ describe('ScreeningComponent', () => {
 
             // Act
             component.onScreeningSaved({
-                participantDisplayName: participant.display_name,
+                participantDisplayName: participant.displayName,
                 measureType: 'Specific',
                 protectFrom: [{ externalReferenceId: '4Silver' }, { externalReferenceId: '2John' }]
             });

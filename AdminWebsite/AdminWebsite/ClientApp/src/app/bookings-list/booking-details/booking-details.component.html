@@ -8,13 +8,13 @@
       <div>
         <div class="vh-title">
           <h1 class="govuk-heading-l">
-            <app-truncatable-text [id]="'hearingNumber'" [text]="hearing?.HearingCaseNumber" [maxLimit]="50"></app-truncatable-text>
+            <app-truncatable-text [id]="'hearingNumber'" [text]="hearing?.case.number" [maxLimit]="50"></app-truncatable-text>
           </h1>
         </div>
         <div class="vh-booking-detail-status">
           <app-booking-status [bookingDetails]="hearing"></app-booking-status>
         </div>
-        <div *ngIf="hearing.isCancelled" id="lblCancelledDetails" class="vh-cancelled-reason">{{ hearing.CancelReason }}</div>
+        <div *ngIf="hearing.isCancelled" id="lblCancelledDetails" class="vh-cancelled-reason">{{ hearing.cancelReason }}</div>
       </div>
     </div>
   </div>
@@ -28,7 +28,6 @@
         [hearing]="hearing"
         [participants]="participants"
         [judiciaryParticipants]="judicialMembers"
-        [judges]="judges"
         [vh_officer_admin]="isVhOfficerAdmin"
       >
       </app-booking-participant-list>
@@ -74,7 +73,7 @@
         </span>
 
         <button
-          *ngIf="hearing.hasBookingConfirmationFailed && canRetryConfirmation && judgeExists"
+          *ngIf="hasBookingConfirmationFailed && canRetryConfirmation && judgeExists"
           data-module="govuk-button"
           class="govuk-button govuk-button--warning"
           id="retry-confirm-button"

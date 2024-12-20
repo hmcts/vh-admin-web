@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IDropDownModel } from '../common/model/drop-down.model';
-import { ParticipantModel } from '../common/model/participant.model';
 import { BHClient, JudgeResponse, PersonResponseV2 } from './clients/api-client';
 import { Constants } from '../common/constants';
+import { VHParticipant } from '../common/model/vh-participant';
+import { mapJudgeResponseToVHParticipant, mapPersonResponseToVHParticipant } from '../common/model/api-contract-to-client-model-mappers';
 
 @Injectable({
     providedIn: 'root'
@@ -62,14 +63,14 @@ export class SearchService {
 
     constructor(private readonly bhClient: BHClient) {}
 
-    participantSearch(term: string, hearingRole: string): Observable<Array<ParticipantModel>> {
-        const allResults: ParticipantModel[] = [];
+    participantSearch(term: string, hearingRole: string): Observable<Array<VHParticipant>> {
+        const allResults: VHParticipant[] = [];
         if (term.length >= this.minimumSearchLength) {
             if (hearingRole === Constants.HearingRoles.Judge) {
-                return this.searchJudgeAccounts(term).pipe(map(judges => judges.map(judge => ParticipantModel.fromJudgeResponse(judge))));
+                return this.searchJudgeAccounts(term).pipe(map(judges => judges.map(judge => mapJudgeResponseToVHParticipant(judge))));
             } else {
                 const persons$ = this.searchEntries(term);
-                return persons$.pipe(map(persons => persons.map(person => ParticipantModel.fromPersonResponse(person))));
+                return persons$.pipe(map(persons => persons.map(person => mapPersonResponseToVHParticipant(person))));
             }
         } else {
             return of(allResults);

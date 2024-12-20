@@ -10,29 +10,29 @@ import { CancelPopupStubComponent } from '../../testing/stubs/cancel-popup-stub'
 import { ConfirmationPopupStubComponent } from '../../testing/stubs/confirmation-popup-stub';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { OtherInformationComponent } from './other-information.component';
-import { ParticipantModel } from '../../common/model/participant.model';
 import { CaseModel } from 'src/app/common/model/case.model';
-import { HearingModel } from 'src/app/common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
-function initHearingRequest(): HearingModel {
-    const participants: ParticipantModel[] = [];
+function initHearingRequest(): VHBooking {
+    const participants: VHParticipant[] = [];
 
     const cases: CaseModel[] = [];
 
-    const newHearing = new HearingModel();
-    newHearing.cases = cases;
+    const newHearing = new VHBooking();
+    newHearing.case = cases[0];
     newHearing.participants = participants;
 
     const today = new Date();
     today.setHours(14, 30);
 
-    newHearing.hearing_venue_id = -1;
-    newHearing.scheduled_date_time = today;
-    newHearing.scheduled_duration = 0;
+    newHearing.hearingVenueId = -1;
+    newHearing.scheduledDateTime = today;
+    newHearing.scheduledDuration = 0;
 
-    newHearing.other_information = 'some text';
+    newHearing.otherInformation = 'some text';
 
     return newHearing;
 }
@@ -43,18 +43,16 @@ let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
-const interpreter: ParticipantModel = {
-    hearing_role_name: 'Interpreter ',
-    is_judge: false,
-    is_exist_person: false,
+const interpreter = new VHParticipant({
+    hearingRoleName: 'Interpreter ',
+    isExistPerson: false,
     interpretation_language: undefined
-};
-const notInterpreter: ParticipantModel = {
-    hearing_role_name: 'Not Interpreter ',
-    is_judge: false,
-    is_exist_person: false,
+});
+const notInterpreter = new VHParticipant({
+    hearingRoleName: 'Not Interpreter ',
+    isExistPerson: false,
     interpretation_language: undefined
-};
+});
 
 describe('OtherInformationComponent', () => {
     let component: OtherInformationComponent;
@@ -102,7 +100,7 @@ describe('OtherInformationComponent', () => {
     });
     it('should set initial values for field', () => {
         component.ngOnInit();
-        expect(component.hearing.other_information).toBe('some text');
+        expect(component.hearing.otherInformation).toBe('some text');
     });
     it('if press next button should save other information in storage and navigate to summary page.', () => {
         component.ngOnInit();
@@ -179,28 +177,28 @@ describe('OtherInformationComponent', () => {
         component.audioChoice.setValue(false);
         fixture.detectChanges();
         component.next();
-        expect(component.hearing.audio_recording_required).toBe(false);
+        expect(component.hearing.audioRecordingRequired).toBe(false);
     });
     it('should not be allowed to set audio recording options for Service CACD to recording', () => {
-        component.hearing.case_type = 'Court of Appeal Criminal Division';
+        component.hearing.caseType = 'Court of Appeal Criminal Division';
         component.ngOnInit();
         fixture.autoDetectChanges();
         expect(component.switchOffRecording).toBe(true);
-        expect(component.hearing.audio_recording_required).toBe(false);
+        expect(component.hearing.audioRecordingRequired).toBe(false);
     });
     it('should be allowed to set audio recording options for Service', () => {
-        component.hearing.case_type = 'Rents';
+        component.hearing.caseType = 'Rents';
         component.ngOnInit();
         fixture.autoDetectChanges();
         expect(component.switchOffRecording).toBe(false);
     });
     it('should not be allowed to set audio recording options when hearing has an interpreter', () => {
-        component.hearing.case_type = 'Rents';
+        component.hearing.caseType = 'Rents';
         component.hearing.participants.push(interpreter);
         component.ngOnInit();
         fixture.autoDetectChanges();
         expect(component.interpreterPresent).toBe(true);
-        expect(component.hearing.audio_recording_required).toBe(true);
+        expect(component.hearing.audioRecordingRequired).toBe(true);
         expect(component.form.controls['audioChoice'].value).toBe(true);
     });
     it('should be allowed to set audio recording options when hearing does not have an interpreter', () => {

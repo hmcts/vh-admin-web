@@ -3,8 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Constants } from 'src/app/common/constants';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
-import { HearingModel } from 'src/app/common/model/hearing.model';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
@@ -12,13 +11,14 @@ import { BookingBaseComponentDirective as BookingBaseComponent } from '../bookin
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { HearingRoleModel } from 'src/app/common/model/hearing-role.model';
 import { InterpreterFormComponent } from '../interpreter-form/interpreter-form.component';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Directive()
 export abstract class AddParticipantBaseDirective extends BookingBaseComponent implements OnInit {
     isShowErrorSummary = false;
     hearingRoles: HearingRoleModel[] = [];
 
-    participantDetails: ParticipantModel;
+    participantDetails: VHParticipant;
     existingParticipant: boolean;
     existingPersonEmails: string[] = [];
     interpreterSelected = false;
@@ -31,7 +31,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     representeeLabelText: string;
     representeeErrorMessage: string;
 
-    hearing: HearingModel;
+    hearing: VHBooking;
 
     displayNextButton = true;
     displayAddButton = false;
@@ -181,13 +181,13 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     }
     validateJudgeAndJohMembers(): boolean {
         if (this.hearing?.participants.length) {
-            const judge = this.hearing.participants.find(x => x.is_judge);
+            const judge = this.hearing.participants.find(x => x.isJudge);
             return this.searchEmail?.email !== judge?.username;
         }
         return true;
     }
 
-    public getParticipant(participantDetails: ParticipantModel) {
+    public getParticipant(participantDetails: VHParticipant) {
         if (!this.validateJudgeAndJohMembers()) {
             this.searchEmail.isErrorEmailAssignedToJudge = true;
             this.errorAlternativeEmail = true;
@@ -198,9 +198,9 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         this.displayErrorNoParticipants = false;
         this.displayAdd();
         this.enableFields();
-        this.participantDetails = { ...participantDetails };
+        this.participantDetails = participantDetails.clone();
 
-        if (participantDetails.is_exist_person) {
+        if (participantDetails.isExistPerson) {
             this.disableLastFirstNames();
             this.emailDisabled = true;
             this.existingPersonEmails.push(participantDetails.email);
@@ -212,21 +212,21 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         }
         // if it's added in the existing hearing participant, then allowed all fields to edit.
         this.resetPartyAndRole();
-        this.isRepresentative = this.isRoleRepresentative(this.participantDetails.hearing_role_name);
+        this.isRepresentative = this.isRoleRepresentative(this.participantDetails.hearingRoleName);
         const formControlsObj = {
-            role: this.participantDetails.hearing_role_name,
+            role: this.participantDetails.hearingRoleName,
             title: this.participantDetails.title ?? this.constants.PleaseSelect,
-            firstName: this.participantDetails.first_name?.trim(),
-            lastName: this.participantDetails.last_name?.trim(),
+            firstName: this.participantDetails.firstName?.trim(),
+            lastName: this.participantDetails.lastName?.trim(),
             email: this.participantDetails.email?.trim() || '',
             phone: this.participantDetails.phone?.trim() || '',
-            displayName: this.participantDetails.display_name?.trim() || '',
+            displayName: this.participantDetails.displayName?.trim() || '',
             companyName: this.participantDetails.company?.trim() || '',
             companyNameIndividual: this.participantDetails.company?.trim() || '',
             representing: this.participantDetails.representee?.trim() || '',
             interpreterFor: this.setInterpretee(this.participantDetails)?.trim() || this.constants.PleaseSelect
         };
-        if (this.participantDetails.hearing_role_name === Constants.HearingRoles.StaffMember) {
+        if (this.participantDetails.hearingRoleName === Constants.HearingRoles.StaffMember) {
             delete formControlsObj['interpreterFor'];
         }
         this.form.setValue(formControlsObj);
@@ -236,7 +236,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         });
 
         setTimeout(() => {
-            this.form.get('role').setValue(this.participantDetails.hearing_role_name);
+            this.form.get('role').setValue(this.participantDetails.hearingRoleName);
             this.roleSelected();
 
             if (this.participantDetails?.interpretation_language) {
@@ -279,9 +279,9 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         if (
             this.isRoleSelected &&
             !this.existingParticipant &&
-            (!this.participantDetails.hearing_role_name || this.participantDetails.hearing_role_name.length === 0)
+            (!this.participantDetails.hearingRoleName || this.participantDetails.hearingRoleName.length === 0)
         ) {
-            this.participantDetails.hearing_role_name = this.role.value;
+            this.participantDetails.hearingRoleName = this.role.value;
         }
     }
 
@@ -293,12 +293,12 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         }
     }
 
-    private setInterpretee(participant: ParticipantModel): string {
+    private setInterpretee(participant: VHParticipant): string {
         let interpreteeEmail = '';
         if (participant.interpreterFor) {
             interpreteeEmail = participant.interpreterFor;
-        } else if (participant.linked_participants && participant.linked_participants.length > 0) {
-            const interpretee = this.hearing.participants.find(p => p.id === participant.linked_participants[0].linkedParticipantId);
+        } else if (participant.linkedParticipants && participant.linkedParticipants.length > 0) {
+            const interpretee = this.hearing.participants.find(p => p.id === participant.linkedParticipants[0].linkedParticipantId);
             interpreteeEmail = interpretee ? interpretee.email : '';
         }
         return interpreteeEmail;
@@ -319,13 +319,13 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
 
     private hearingHasInterpretees(): boolean {
         return this.hearing.participants.some(
-            p => p.user_role_name === 'Individual' && p.hearing_role_name !== Constants.HearingRoles.Interpreter && !this.isAnObserver(p)
+            p => p.userRoleName === 'Individual' && p.hearingRoleName !== Constants.HearingRoles.Interpreter && !this.isAnObserver(p)
         );
     }
 
     private hearingHasAnInterpreter(): boolean {
         const hearingHasInterpreter = this.hearing.participants.some(
-            p => p.hearing_role_name?.toLowerCase() === HearingRoles.INTERPRETER.toLowerCase()
+            p => p.hearingRoleName?.toLowerCase() === HearingRoles.INTERPRETER.toLowerCase()
         );
         return hearingHasInterpreter;
     }
@@ -398,8 +398,8 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         this.interpreterForm?.forceValidation();
     }
 
-    protected isAnObserver(participant: ParticipantModel): boolean {
-        return participant.hearing_role_name === Constants.HearingRoles.Observer;
+    protected isAnObserver(participant: VHParticipant): boolean {
+        return participant.hearingRoleName === Constants.HearingRoles.Observer;
     }
 
     private setRepresenteeLabel() {

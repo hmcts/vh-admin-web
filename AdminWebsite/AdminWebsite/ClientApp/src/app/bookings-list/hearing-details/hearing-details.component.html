@@ -7,52 +7,52 @@
     <div class="govuk-grid-column-three-quarters vh-xsml">
       <div class="govuk-grid-row vh_panel-r">
         <div class="vh-xsml" id="created-by">
-          <strong>{{ hearing?.CreatedBy }}</strong>
+          <strong>{{ hearing?.createdBy }}</strong>
         </div>
       </div>
       <div class="govuk-grid-row vh-b">
-        <div class="vh-xsml" id="created-date">{{ hearing?.CreatedDate | appLongDatetime }}</div>
+        <div class="vh-xsml" id="created-date">{{ hearing?.createdDate | appLongDatetime }}</div>
       </div>
     </div>
   </div>
-  <div class="govuk-grid-row" *ngIf="hearing?.LastEditBy && hearing?.LastEditBy.length > 0">
+  <div class="govuk-grid-row" *ngIf="hearing?.updatedBy && hearing?.updatedBy.length > 0">
     <div class="govuk-grid-column-one-quarter">
       <span class="vh-xsml">Last edited by:</span>
     </div>
     <div class="govuk-grid-column-three-quarters vh-xsml">
       <div class="govuk-grid-row vh_panel-r">
         <div class="vh-xsml" id="last-edit-by">
-          <strong>{{ hearing?.LastEditBy }}</strong>
+          <strong>{{ hearing?.updatedBy }}</strong>
         </div>
       </div>
-      <div class="govuk-grid-row" [ngClass]="{ 'vh-b': hearing?.ConfirmedBy && hearing?.ConfirmedBy.length > 0 }">
-        <div class="vh-xsml" id="last-edit-date">{{ hearing?.LastEditDate | appLongDatetime }}</div>
+      <div class="govuk-grid-row" [ngClass]="{ 'vh-b': hearing?.confirmedBy && hearing?.confirmedBy.length > 0 }">
+        <div class="vh-xsml" id="last-edit-date">{{ hearing?.updatedDate | appLongDatetime }}</div>
       </div>
     </div>
   </div>
-  <div class="govuk-grid-row" *ngIf="hearing?.ConfirmedBy && hearing?.ConfirmedBy.length > 0">
+  <div class="govuk-grid-row" *ngIf="hearing?.confirmedBy && hearing?.confirmedBy.length > 0">
     <div class="govuk-grid-column-one-quarter">
       <span class="vh-xsml">Confirmed by:</span>
     </div>
     <div class="govuk-grid-column-three-quarters vh-xsml">
       <div class="govuk-grid-row vh_panel-r">
         <div class="vh-xsml" id="confirmed-by">
-          <strong>{{ hearing?.ConfirmedBy }}</strong>
+          <strong>{{ hearing?.confirmedBy }}</strong>
         </div>
       </div>
-      <div class="govuk-grid-row" [ngClass]="{ 'vh-b': hearing?.ConfirmedDate }">
-        <div class="vh-xsml" id="confirmed-date">{{ hearing?.ConfirmedDate | appLongDatetime }}</div>
+      <div class="govuk-grid-row" [ngClass]="{ 'vh-b': hearing?.confirmedDate }">
+        <div class="vh-xsml" id="confirmed-date">{{ hearing?.confirmedDate | appLongDatetime }}</div>
       </div>
     </div>
   </div>
-  <div id="hearing-allocated-to" class="govuk-grid-row" *ngIf="hearing?.AllocatedTo && hearing?.AllocatedTo.length">
+  <div id="hearing-allocated-to" class="govuk-grid-row" *ngIf="hearing?.allocatedTo && hearing?.allocatedTo.length">
     <div class="govuk-grid-column-one-quarter">
       <span class="vh-xsml">Allocated to:</span>
     </div>
     <div class="govuk-grid-column-three-quarters vh-xsml">
       <div class="govuk-grid-row vh_panel-r">
         <div class="vh-xsml" id="allocated-to">
-          <strong>{{ hearing?.AllocatedTo }}</strong>
+          <strong>{{ hearing?.allocatedTo }}</strong>
         </div>
       </div>
     </div>
@@ -63,16 +63,16 @@
 <div class="vh-section">
   <div class="govuk-grid-row vh-wrap">
     <div class="govuk-body vh-sml">
-      <app-truncatable-text [id]="'hearing-number'" [text]="hearing?.HearingCaseNumber" [maxLimit]="50"></app-truncatable-text>
+      <app-truncatable-text [id]="'hearing-number'" [text]="hearing?.case.number" [maxLimit]="50"></app-truncatable-text>
     </div>
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-body vh-sml">
-      <app-truncatable-text [id]="'hearing-name'" [text]="hearing?.HearingCaseName" [maxLimit]="50"></app-truncatable-text>
+      <app-truncatable-text [id]="'hearing-name'" [text]="hearing?.case.name" [maxLimit]="50"></app-truncatable-text>
     </div>
   </div>
   <div class="govuk-grid-row">
-    <div class="govuk-body vh-sml" id="case-type">{{ hearing?.CaseType }}</div>
+    <div class="govuk-body vh-sml" id="case-type">{{ hearing?.caseType }}</div>
   </div>
 </div>
 
@@ -96,28 +96,28 @@
 <div class="vh-section">
   <div class="govuk-grid-row vh-wrap">
     <div class="govuk-body vh-sml" id="hearing-start">
-      {{ hearing?.StartTime | appLongDatetime }}
+      {{ hearing?.scheduledDateTime | appLongDatetime }}
     </div>
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-body vh-sml" id="court-room-address">
-      {{ hearing?.CourtAddress }}{{ hearing?.CourtRoom ? ', ' + hearing?.CourtRoom : '' }}
+      {{ hearing?.courtName }}{{ hearing?.courtRoom ? ', ' + hearing?.courtRoom : '' }}
     </div>
   </div>
   <div class="govuk-grid-row">
-    <div class="govuk-body vh-sml" id="duration">listed for {{ hearing?.DurationInHoursAndMinutes }}</div>
+    <div class="govuk-body vh-sml" id="duration">listed for {{ hearing.durationInHoursAndMinutes }}</div>
   </div>
 </div>
 
 <h2 class="govuk-heading-s remove-header-padding">Audio to be recorded</h2>
 <div class="govuk-form-group vhtable">
-  <div class="govuk-body vh-text-break" id="audioRecorded">{{ hearing?.AudioRecordingRequired ? 'Yes' : 'No' }}</div>
+  <div class="govuk-body vh-text-break" id="audioRecorded">{{ hearing?.audioRecordingRequired ? 'Yes' : 'No' }}</div>
 </div>
 
-<div *ngIf="hearing?.Endpoints && hearing?.Endpoints.length > 0">
+<div *ngIf="hearing?.endpoints && hearing?.endpoints.length > 0">
   <h2 class="govuk-heading-s remove-header-padding">Video access points</h2>
   <div class="govuk-form-group vhtable">
-    <div *ngFor="let endpoint of hearing?.Endpoints; let i = index" id="displayNameRow{{ +i }}" class="govuk-body vh-text-break">
+    <div *ngFor="let endpoint of hearing?.endpoints; let i = index" id="displayNameRow{{ +i }}" class="govuk-body vh-text-break">
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-full" id="displayName{{ +i }}">
           {{ endpoint.displayName }}

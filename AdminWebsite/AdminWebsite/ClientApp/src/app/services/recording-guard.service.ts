@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ParticipantModel } from '../common/model/participant.model';
+import { VHParticipant } from '../common/model/vh-participant';
 
 @Injectable({
     providedIn: 'root'
@@ -13,10 +13,10 @@ export class RecordingGuardService {
         return this.excludedCaseTypes.indexOf(caseType) > -1;
     }
 
-    mandatoryRecordingForHearingRole(participants: ParticipantModel[]) {
+    mandatoryRecordingForHearingRole(participants: VHParticipant[]) {
         return (
-            participants.some(pat => this.mandatoryRecordingRoles.includes(pat.hearing_role_name?.trim())) ||
-            participants.some(pat => this.mandatoryRecordingRoleCodes.includes(pat.hearing_role_code?.trim()))
+            participants.some(pat => this.mandatoryRecordingRoles.includes(pat.hearingRoleName?.trim())) ||
+            participants.some(pat => this.mandatoryRecordingRoleCodes.includes(pat.hearingRoleCode?.trim()))
         );
     }
 }

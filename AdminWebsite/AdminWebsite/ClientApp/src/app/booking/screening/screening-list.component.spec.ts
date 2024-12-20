@@ -1,25 +1,25 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ScreeningListComponent } from './screening-list.component';
-import { HearingModel } from 'src/app/common/model/hearing.model';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { SimpleChange, SimpleChanges } from '@angular/core';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 describe('ScreeningListComponent', () => {
     let component: ScreeningListComponent;
     let fixture: ComponentFixture<ScreeningListComponent>;
-    let hearing: HearingModel;
+    let hearing: VHBooking;
 
     beforeEach(async () => {
-        hearing = new HearingModel();
-        const participantWithoutScreening = new ParticipantModel();
+        hearing = new VHBooking();
+        const participantWithoutScreening = new VHParticipant();
         participantWithoutScreening.id = '1';
-        participantWithoutScreening.display_name = 'Participant No Screening';
+        participantWithoutScreening.displayName = 'Participant No Screening';
 
-        const participantWithScreening = new ParticipantModel();
+        const participantWithScreening = new VHParticipant();
         participantWithScreening.id = '2';
-        participantWithScreening.display_name = 'Participant With Screening';
+        participantWithScreening.displayName = 'Participant With Screening';
         participantWithScreening.screening = {
             measureType: 'All',
             protectFrom: []
@@ -81,7 +81,7 @@ describe('ScreeningListComponent', () => {
     describe('onParticipantScreeningDeleted', () => {
         it('should emit deleteParticipantScreening event', () => {
             // Arrange
-            const participant = new ParticipantModel();
+            const participant = new VHParticipant();
             spyOn(component.deleteParticipantScreening, 'emit');
 
             // Act

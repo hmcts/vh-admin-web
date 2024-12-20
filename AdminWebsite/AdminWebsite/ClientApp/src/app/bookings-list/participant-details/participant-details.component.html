@@ -1,5 +1,5 @@
 <div class="govuk-grid-row container">
-  <div class="judge-row" *ngIf="participant?.HearingRoleName === 'Judge'">
+  <div class="judge-row" *ngIf="participant?.hearingRoleName === 'Judge'">
     <div>
       <img
         src="/assets/images/govuk-crest.png"
@@ -10,58 +10,58 @@
       />
     </div>
     <div id="judge-name">
-      {{ participant?.DisplayName }}
+      {{ participant?.displayName }}
       <div id="judge-hearing-role-name">
-        {{ participant?.HearingRoleName }}
+        {{ participant?.hearingRoleName }}
       </div>
     </div>
   </div>
 
   <div>
-    <div id="participant-{{ participant?.ParticipantId }}-name" *ngIf="participant?.HearingRoleName !== 'Judge'" class="participant-row">
+    <div id="participant-{{ participant?.id }}-name" *ngIf="participant?.hearingRoleName !== 'Judge'" class="participant-row">
       <div class="participant-row__detail">
         <div>
           <div>
             <strong>
               {{ participant?.fullName }}
             </strong>
-            <div>{{ participant?.DisplayName }}</div>
+            <div>{{ participant?.displayName }}</div>
           </div>
 
           <ng-container *ngIf="!participant.isInterpreter; else interpreter">
             <div *ngIf="participant.isRepresenting; else individual">
-              {{ participant?.HearingRoleName }} for
-              <div id="participant-{{ participant?.ParticipantId }}-representee" class="vh-text-color-black">
-                <strong>{{ participant.Representee }}</strong>
+              {{ participant?.hearingRoleName }} for
+              <div id="participant-{{ participant?.id }}-representee" class="vh-text-color-black">
+                <strong>{{ participant.representee }}</strong>
               </div>
             </div>
             <ng-template #individual>
-              <div id="participant-{{ participant?.ParticipantId }}-hearing-role-name">
-                {{ participant?.HearingRoleName }}
+              <div id="participant-{{ participant?.id }}-hearing-role-name">
+                {{ participant?.hearingRoleName }}
               </div>
             </ng-template>
           </ng-container>
 
-          <ng-container *ngIf="participant?.Interpretee">
+          <ng-container *ngIf="participant?.interpreteeName">
             <span>Interpreting for</span>
-            <div id="participant-{{ participant?.ParticipantId }}-representee">
+            <div id="participant-{{ participant?.id }}-representee">
               <strong>
-                {{ participant?.Interpretee }}
+                {{ participant?.interpreteeName }}
               </strong>
             </div>
           </ng-container>
 
-          <ng-container *ngIf="participant?.InterpretationLanguage?.interpreterRequired">
+          <ng-container *ngIf="participant?.interpretation_language?.interpreterRequired">
             <div class="participant-row__lang">
               {{
-                participant.InterpretationLanguage.spokenLanguageCodeDescription ??
-                  participant.InterpretationLanguage.signLanguageDescription
+                participant.interpretation_language.spokenLanguageCodeDescription ??
+                  participant.interpretation_language.signLanguageDescription
               }}
             </div>
           </ng-container>
 
-          <ng-container *ngIf="participant.Screening">
-            <app-screening-enabled-badge [screening]="participant.Screening"></app-screening-enabled-badge>
+          <ng-container *ngIf="participant.screening">
+            <app-screening-enabled-badge [screening]="participant.screening"></app-screening-enabled-badge>
           </ng-container>
         </div>
         <div class="participant-row__icon" *ngIf="participant.isInterpreter || participant.isInterpretee">
@@ -79,7 +79,7 @@
     <div *ngIf="vh_officer_admin" class="contact">
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-quarter contact-label">Email</div>
-        <div id="participant-{{ participant?.ParticipantId }}-email" class="govuk-grid-column-three-quarters wrap">
+        <div id="participant-{{ participant?.id }}-email" class="govuk-grid-column-three-quarters wrap">
           <div *ngIf="participant.isJudge; else participantEmail">
             <div *ngIf="judgeEmail; else judgeNoEmail">
               {{ judgeEmail }}
@@ -91,7 +91,7 @@
 
           <ng-template #participantEmail>
             <div>
-              {{ participant.Email }}
+              {{ participant.email }}
             </div>
           </ng-template>
         </div>
@@ -100,15 +100,15 @@
         <div class="govuk-grid-column-one-quarter contact-label">Username</div>
 
         <div
-          *ngIf="participant.Email !== participant.UserName; else usernamePending"
-          id="participant-{{ participant?.ParticipantId }}-username"
+          *ngIf="participant.email !== participant.username; else usernamePending"
+          id="participant-{{ participant?.id }}-username"
           class="govuk-grid-column-three-quarters wrap"
         >
-          {{ participant?.UserName }}
+          {{ participant?.username }}
         </div>
         <ng-template #usernamePending>
           <div
-            id="participant-{{ participant?.ParticipantId }}-username"
+            id="participant-{{ participant?.id }}-username"
             class="govuk-grid-column-three-quarters wrap"
             appTooltip
             [text]="'The account is being created. This may take a few moments. Please refresh shortly.'"
@@ -119,7 +119,7 @@
       </div>
       <div class="govuk-grid-row vh-mtop">
         <div class="govuk-grid-column-one-quarter contact-label">Telephone</div>
-        <div id="participant-{{ participant?.ParticipantId }}-phone" class="govuk-grid-column-three-quarters wrap">
+        <div id="participant-{{ participant?.id }}-phone" class="govuk-grid-column-three-quarters wrap">
           <div *ngIf="participant.isJudge; else participantPhone">
             <div *ngIf="judgePhone; else judgeNoPhone">
               {{ judgePhone }}
@@ -131,7 +131,7 @@
 
           <ng-template #participantPhone>
             <div>
-              {{ participant.Phone }}
+              {{ participant.phone }}
             </div>
           </ng-template>
         </div>

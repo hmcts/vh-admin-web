@@ -1,21 +1,21 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-import { HearingModel } from 'src/app/common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { SelectedScreeningDto } from './screening.model';
 import { EndpointModel } from '../../common/model/endpoint.model';
-import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Router } from '@angular/router';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-screening',
     templateUrl: './screening.component.html'
 })
 export class ScreeningComponent implements OnInit, OnDestroy {
-    hearing: HearingModel;
+    hearing: VHBooking;
 
     destroyed$ = new Subject<void>();
 
@@ -40,7 +40,7 @@ export class ScreeningComponent implements OnInit, OnDestroy {
     onScreeningSaved(seletecdMeasuresDto: SelectedScreeningDto) {
         this.logger.debug(`${this.loggerPrefix} screening saved`, seletecdMeasuresDto);
 
-        const participant = this.hearing.participants.find(p => p.display_name === seletecdMeasuresDto.participantDisplayName);
+        const participant = this.hearing.participants.find(p => p.displayName === seletecdMeasuresDto.participantDisplayName);
         const endpoint = this.hearing.endpoints.find(e => e.displayName === seletecdMeasuresDto.participantDisplayName);
         if (participant) {
             participant.screening = {
@@ -55,7 +55,7 @@ export class ScreeningComponent implements OnInit, OnDestroy {
             };
         }
         this.hearingService.updateHearingRequest(this.hearing);
-        this.hearing = { ...this.hearing };
+        this.hearing = this.hearing.clone();
     }
 
     onDeleteEndpointScreening(endpoint: EndpointModel) {
@@ -64,16 +64,16 @@ export class ScreeningComponent implements OnInit, OnDestroy {
                 e.screening = null;
             }
         });
-        this.hearing = { ...this.hearing };
+        this.hearing = this.hearing.clone();
     }
 
-    onDeleteParticipantScreening(participant: ParticipantModel) {
+    onDeleteParticipantScreening(participant: VHParticipant) {
         this.hearing.participants.forEach(p => {
             if (p.email === participant.email) {
                 p.screening = null;
             }
         });
-        this.hearing = { ...this.hearing };
+        this.hearing = this.hearing.clone();
     }
 
     onContinue() {

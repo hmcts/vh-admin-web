@@ -140,7 +140,7 @@
             <label class="govuk-label" for="interpreterFor"> Interpreting for </label>
             <select id="interpreterFor" formControlName="interpreterFor" class="govuk-select vh-input-w390">
               <option *ngFor="let interpreterFor of interpreteeList" [ngValue]="interpreterFor.email">
-                {{ interpreterFor.first_name }} {{ interpreterFor.last_name }}
+                {{ interpreterFor.firstName }} {{ interpreterFor.lastName }}
               </option>
             </select>
           </div>

@@ -29,7 +29,7 @@
     <select class="govuk-select" id="representative" name="representative" formControlName="linkedRepresentative">
       <option [value]="null">None</option>
       <option *ngFor="let representative of availableRepresentatives" [value]="representative.email">
-        {{ representative.display_name }}
+        {{ representative.displayName }}
       </option>
     </select>
   </div>

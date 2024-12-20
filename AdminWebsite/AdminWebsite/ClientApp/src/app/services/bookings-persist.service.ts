@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BookingsListModel, BookingsDetailsModel } from '../common/model/bookings-list.model';
-import { HearingModel } from '../common/model/hearing.model';
+import { BookingsListModel } from '../common/model/bookings-list.model';
+import { VHBooking } from '../common/model/vh-booking';
+import { BookingsListItemModel } from '../common/model/booking-list-item.model';
 
 @Injectable({ providedIn: 'root' })
 export class BookingPersistService {
@@ -28,16 +29,16 @@ export class BookingPersistService {
         sessionStorage.removeItem(this.SelectedHearingIdKey);
     }
 
-    updateBooking(hearing: HearingModel): BookingsDetailsModel {
+    updateBooking(hearing: VHBooking): BookingsListItemModel {
         if (
             this._bookingList.length > this._selectedGroupIndex &&
             this._bookingList[this._selectedGroupIndex].BookingsDetails.length > this._selectedItemIndex
         ) {
             const hearingUpdate = this._bookingList[this._selectedGroupIndex].BookingsDetails[this.selectedItemIndex];
-            if (hearingUpdate.HearingId === hearing.hearing_id) {
+            if (hearingUpdate.Booking.hearingId === hearing.hearingId) {
                 this.updateBookingRecord(hearingUpdate, hearing);
 
-                if (hearingUpdate.GroupId) {
+                if (hearingUpdate.Booking.isMultiDay) {
                     this.updateHearingsInGroup(hearingUpdate, hearing);
                 }
                 return hearingUpdate;
@@ -45,50 +46,32 @@ export class BookingPersistService {
         }
     }
 
-    private updateBookingRecord(hearingUpdate: BookingsDetailsModel, hearing: HearingModel) {
-        const newStartDate = new Date(hearing.scheduled_date_time);
+    private updateBookingRecord(hearingUpdate: BookingsListItemModel, hearing: VHBooking) {
+        const newStartDate = new Date(hearing.scheduledDateTime);
 
-        hearingUpdate.IsStartTimeChanged = hearingUpdate.StartTime.toString() !== newStartDate.toString();
+        hearingUpdate.IsStartTimeChanged = hearingUpdate.Booking.scheduledDateTime.toString() !== newStartDate.toString();
         hearingUpdate.Selected = true;
-
-        hearingUpdate.HearingCaseName = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].name : '';
-        hearingUpdate.HearingCaseNumber = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].number : '';
-        hearingUpdate.StartTime = newStartDate;
-        hearingUpdate.Duration = hearing.scheduled_duration;
-        hearingUpdate.CourtRoomAccount = hearing.participants.find(x => x.is_judge)?.username;
-        hearingUpdate.CourtAddress = hearing.court_name;
-        hearingUpdate.CourtRoom = hearing.court_room;
-        hearingUpdate.CreatedBy = hearing.created_by;
-        hearingUpdate.Status = hearing.status;
-        hearingUpdate.TelephoneConferenceId = hearing.telephone_conference_id;
-        if (this.isValidDate(hearing.created_date)) {
-            hearingUpdate.CreatedDate = new Date(hearing.created_date);
-        }
-        hearingUpdate.LastEditBy = hearing.updated_by;
-
-        if (this.isValidDate(hearing.updated_date)) {
-            hearingUpdate.LastEditDate = new Date(hearing.updated_date);
-        }
-        hearingUpdate.JudgeName = this.getJudgeName(hearing);
+        hearingUpdate.Booking = hearing;
 
         return hearingUpdate;
     }
 
-    private updateHearingsInGroup(hearingUpdate: BookingsDetailsModel, hearing: HearingModel) {
-        const hearingsInGroupUpdate: BookingsDetailsModel[] = this._bookingList.flatMap(booking =>
+    private updateHearingsInGroup(hearingUpdate: BookingsListItemModel, hearing: VHBooking) {
+        const hearingsInGroupUpdate: BookingsListItemModel[] = this._bookingList.flatMap(booking =>
             booking.BookingsDetails.filter(
-                bookingDetail => bookingDetail.GroupId === hearingUpdate.GroupId && bookingDetail.HearingId !== hearing.hearing_id
+                bookingDetail =>
+                    bookingDetail.Booking.groupId === hearingUpdate.Booking.groupId && bookingDetail.Booking.hearingId !== hearing.hearingId
             )
         );
 
         if (hearingsInGroupUpdate) {
             hearingsInGroupUpdate.forEach(hearingInGroupToUpdate => {
-                const hearingInGroup = hearing.hearingsInGroup.find(x => x.hearing_id === hearingInGroupToUpdate.HearingId);
+                const hearingInGroup = hearing.hearingsInGroup.find(x => x.hearingId === hearingInGroupToUpdate.Booking.hearingId);
                 this.updateBookingRecord(hearingInGroupToUpdate, hearingInGroup);
             });
         }
 
-        hearingUpdate.HearingsInGroup = hearingsInGroupUpdate;
+        hearingUpdate.Booking.hearingsInGroup = hearingsInGroupUpdate.flatMap(x => x.Booking);
     }
 
     isValidDate(value: any): boolean {
@@ -99,14 +82,14 @@ export class BookingPersistService {
         return false;
     }
 
-    getJudgeName(hearing: HearingModel) {
+    getJudgeName(hearing: VHBooking) {
         if (hearing.judiciaryParticipants && hearing.judiciaryParticipants.length > 0) {
             const judiciaryJudge = hearing.judiciaryParticipants.find(x => x.roleCode === 'Judge');
             return judiciaryJudge ? judiciaryJudge.displayName : '';
         }
 
-        const judge = hearing.participants.find(x => x.is_judge);
-        return judge ? judge.display_name : '';
+        const judge = hearing.participants.find(x => x.isJudge);
+        return judge ? judge.displayName : '';
     }
 
     set bookingList(value: Array<BookingsListModel>) {
