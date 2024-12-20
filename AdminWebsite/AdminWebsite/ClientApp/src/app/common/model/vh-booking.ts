@@ -6,6 +6,7 @@ import { LinkedParticipantModel } from './linked-participant.model';
 import { FormatShortDuration } from '../formatters/format-short-duration';
 import { VHParticipant } from './vh-participant';
 import { cloneWithGetters } from '../helpers/clone-with-getters';
+import { Constants } from '../constants';
 
 export class VHBooking {
     hearingId?: string;
@@ -40,7 +41,6 @@ export class VHBooking {
     hearingsInGroup?: VHBooking[];
     originalScheduledDateTime?: Date;
     supplier: VideoSupplier;
-    judge?: JudicialMemberDto;
     isLastDayOfMultiDayHearing?: boolean;
     groupId?: string;
     confirmedBy?: string;
@@ -109,7 +109,7 @@ export class VHBooking {
             scheduledDateTime: startTime,
             scheduledDuration: duration,
             case: new CaseModel(hearingCaseName, hearingCaseNumber),
-            judge: new JudicialMemberDto(null, null, null, null, null, null, false, judgeName),
+            judiciaryParticipants: [new JudicialMemberDto(null, null, null, null, null, null, false, judgeName)],
             courtRoom: courtRoom,
             courtName: courtAddress,
             createdBy: createdBy,
@@ -128,5 +128,26 @@ export class VHBooking {
 
     clone(): this {
         return cloneWithGetters(this);
+    }
+
+    get hearingDuration(): string {
+        return `listed for ${FormatShortDuration(this.scheduledDuration)}`;
+    }
+
+    get courtRoomAddress(): string {
+        const courtRoomText = this.courtRoom ? ', ' + this.courtRoom : '';
+        return `${this.courtName}${courtRoomText}`;
+    }
+
+    get audioChoice(): string {
+        return this.audioRecordingRequired ? 'Yes' : 'No';
+    }
+
+    get judge(): JudicialMemberDto {
+        const judge = this.judiciaryParticipants?.find(x => x.roleCode === Constants.Judge);
+        if (judge) {
+            return judge;
+        }
+        return null;
     }
 }

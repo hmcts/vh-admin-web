@@ -19,6 +19,7 @@ import {
     BookHearingException,
     BookingStatus,
     HearingDetailsResponse,
+    JudiciaryParticipantResponse,
     MultiHearingRequest,
     UpdateBookingStatusResponse,
     ValidationProblemDetails
@@ -39,7 +40,7 @@ import { TruncatableTextComponent } from 'src/app/shared/truncatable-text/trunca
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
-import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
+import { JudicialMemberDto } from '../judicial-office-holders/models/add-judicial-member.model';
 
 function initExistingHearingRequest(): VHBooking {
     const pat1 = new VHParticipant();
@@ -272,9 +273,9 @@ describe('SummaryComponent with valid request', () => {
         expect(component.otherInformation.OtherInformation).toEqual(
             stringifier.decode<OtherInformationModel>(existingRequest.otherInformation).OtherInformation
         );
-        expect(component.hearingDate).toEqual(existingRequest.scheduledDateTime);
+        expect(component.hearing.scheduledDateTime).toEqual(existingRequest.scheduledDateTime);
         const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearingVenueId);
-        expect(component.courtRoomAddress).toEqual(`${courtString.name}, 123W`);
+        expect(component.hearing.courtRoomAddress).toEqual(`${courtString.name}, 123W`);
     });
     it('should remove participant', () => {
         component.ngOnInit();
@@ -325,14 +326,14 @@ describe('SummaryComponent with valid request', () => {
         expect(component.hearing.audioRecordingRequired).toBe(false);
     });
     it('should set audio recording to true if an interpreter is present', () => {
-        component.interpreterPresent = true;
+        component.hasParticipantsRequiringAudioRecording = true;
         component.isAudioRecordingRequired();
         fixture.detectChanges();
         expect(component.hearing.audioRecordingRequired).toBe(true);
     });
     it('should set audio recording to false if Service is CACD and an interpreter is present', () => {
         component.hearing.caseType = component.constants.CaseTypes.CourtOfAppealCriminalDivision;
-        component.interpreterPresent = true;
+        component.hasParticipantsRequiringAudioRecording = true;
         component.isAudioRecordingRequired();
         component.ngOnInit();
         expect(component.hearing.audioRecordingRequired).toBe(false);
@@ -344,7 +345,7 @@ describe('SummaryComponent with valid request', () => {
     });
     it('should set audio recording to false if Service is Crime Crown Court and an interpreter is present', () => {
         component.hearing.caseType = component.constants.CaseTypes.CrimeCrownCourt;
-        component.interpreterPresent = true;
+        component.hasParticipantsRequiringAudioRecording = true;
         component.isAudioRecordingRequired();
         component.ngOnInit();
         expect(component.hearing.audioRecordingRequired).toBe(false);
@@ -354,13 +355,13 @@ describe('SummaryComponent with valid request', () => {
         component.ngOnInit();
         fixture.detectChanges();
         const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearingVenueId);
-        expect(component.courtRoomAddress).toEqual(`${courtString.name}`);
+        expect(component.hearing.courtRoomAddress).toEqual(`${courtString.name}`);
     });
     it('should display valid audio recording selected option', () => {
         component.hearing.audioRecordingRequired = false;
         component.ngOnInit();
         fixture.detectChanges();
-        expect(component.audioChoice).toBe('No');
+        expect(component.hearing.audioChoice).toBe('No');
     });
     it('should remove interpretee and interpreter and clear the linked participant list on remove interpretee', () => {
         component.ngOnInit();
@@ -524,20 +525,23 @@ describe('SummaryComponent with valid request', () => {
 
     it('When booking status false will re-poll', fakeAsync(async () => {
         videoHearingsServiceSpy.getStatus.calls.reset();
-        const participants: VHParticipant[] = [];
-        const participant = new VHParticipant();
-        participant.firstName = 'firstname';
-        participant.lastName = 'lastname';
-        participant.email = 'firstname.lastname@email.com';
-        participant.hearingRoleName = HearingRoles.JUDGE;
-        participant.id = '100';
-        participants.push(participant);
-        component.hearing.participants = participants;
+        const judiciaryParticipants: JudiciaryParticipantResponse[] = [];
+        const judge = new JudiciaryParticipantResponse({
+            first_name: 'firstname',
+            last_name: 'lastname',
+            full_name: 'fullname',
+            email: 'firstname.lastname@email.com',
+            personal_code: 'personalCode',
+            role_code: 'Judge'
+        });
+        judiciaryParticipants.push(judge);
+        const mappedJudiciaryParticipants = judiciaryParticipants.map(j => JudicialMemberDto.fromJudiciaryParticipantResponse(j));
+        component.hearing.judiciaryParticipants = mappedJudiciaryParticipants;
         const response = {
             id: 'hearing_id',
             status: BookingStatus.Failed,
             created_by: 'test@hmcts.net',
-            participants: participants
+            judiciary_participants: judiciaryParticipants
         } as unknown as HearingDetailsResponse;
 
         videoHearingsServiceSpy.saveHearing.and.returnValue(Promise.resolve(response));
@@ -745,8 +749,8 @@ describe('SummaryComponent  with existing request', () => {
         fixture.detectChanges();
         expect(component.caseNumber).toBe('TX/12345/2018');
         expect(component.caseName).toBe('Mr. Test User vs HMRC');
-        expect(component.courtRoomAddress).toBeTruthy();
-        expect(component.hearingDuration).toBe('listed for 1 hour 20 minutes');
+        expect(component.hearing.courtRoomAddress).toBeTruthy();
+        expect(component.hearing.hearingDuration).toBe('listed for 1 hour 20 minutes');
     });
     it('should hide pop up if continue booking pressed', () => {
         component.continueBooking();
@@ -947,13 +951,15 @@ describe('SummaryComponent  with multi days request', () => {
         component.hearing.endHearingDateTime.setDate(component.hearing.endHearingDateTime.getDate() + 7);
         component.ngOnInit();
 
-        expect(new Date(component.hearingDate).getDate()).toEqual(new Date(existingRequest.scheduledDateTime).getDate());
+        expect(new Date(component.hearing.scheduledDateTime).getDate()).toEqual(new Date(existingRequest.scheduledDateTime).getDate());
         expect(new Date(component.endHearingDate).getDate()).toEqual(new Date(existingRequest.endHearingDateTime).getDate());
 
-        expect(new Date(component.hearingDate).getMonth()).toEqual(new Date(existingRequest.scheduledDateTime).getMonth());
+        expect(new Date(component.hearing.scheduledDateTime).getMonth()).toEqual(new Date(existingRequest.scheduledDateTime).getMonth());
         expect(new Date(component.endHearingDate).getMonth()).toEqual(new Date(existingRequest.endHearingDateTime).getMonth());
 
-        expect(new Date(component.hearingDate).getFullYear()).toEqual(new Date(existingRequest.scheduledDateTime).getFullYear());
+        expect(new Date(component.hearing.scheduledDateTime).getFullYear()).toEqual(
+            new Date(existingRequest.scheduledDateTime).getFullYear()
+        );
         expect(new Date(component.endHearingDate).getFullYear()).toEqual(new Date(existingRequest.endHearingDateTime).getFullYear());
     });
 

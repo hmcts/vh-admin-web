@@ -91,9 +91,10 @@ describe('mapHearingToVHBooking', () => {
 });
 
 describe('mapBookingsHearingResponseToVHBooking', () => {
-    it('should map BookingsHearingResponse to VHBooking', () => {
-        // Arrange
-        const response = new BookingsHearingResponse();
+    let response: BookingsHearingResponse;
+
+    beforeEach(() => {
+        response = new BookingsHearingResponse();
         response.hearing_id = 'hearing-id';
         response.scheduled_date_time = new Date();
         response.scheduled_duration = 90;
@@ -111,8 +112,10 @@ describe('mapBookingsHearingResponseToVHBooking', () => {
         response.conference_supplier = VideoSupplier.Vodafone;
         response.judge_name = 'judge-name';
         response.group_id = 'group-id';
+    });
 
-        // Act
+    it('should map BookingsHearingResponse to VHBooking', () => {
+        // Arrange & Act
         const result = mapBookingsHearingResponseToVHBooking(response);
 
         // Assert
@@ -130,8 +133,22 @@ describe('mapBookingsHearingResponseToVHBooking', () => {
         expect(result.status).toBe(response.status.toString());
         expect(result.audioRecordingRequired).toBe(response.audio_recording_required);
         expect(result.supplier).toBe(response.conference_supplier);
+        expect(result.judiciaryParticipants.length).toBe(1);
+        expect(result.judiciaryParticipants[0].displayName).toBe(response.judge_name);
         expect(result.judge.displayName).toBe(response.judge_name);
         expect(result.groupId).toBe(response.group_id);
+    });
+
+    it('should map BookingsHearingResponse to VHBooking without judge', () => {
+        // Arrange
+        response.judge_name = null;
+
+        // Act
+        const result = mapBookingsHearingResponseToVHBooking(response);
+
+        // Assert
+        expect(result.judiciaryParticipants.length).toBe(0);
+        expect(result.judge).toBe(null);
     });
 });
 

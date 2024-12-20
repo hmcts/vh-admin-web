@@ -1,11 +1,9 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, Subscription, combineLatest } from 'rxjs';
-import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { RemoveInterpreterPopupComponent } from 'src/app/popups/remove-interpreter-popup/remove-interpreter-popup.component';
 import { Constants } from '../../common/constants';
-import { FormatShortDuration } from '../../common/formatters/format-short-duration';
 import { VHBooking } from 'src/app/common/model/vh-booking';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { BookingService } from '../../services/booking.service';
@@ -41,13 +39,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     canNavigate = true;
     failedSubmission: boolean;
     bookingsSaving = false;
-    caseNumber: string;
-    caseName: string;
-    hearingDate: Date;
-    courtRoomAddress: string;
-    hearingDuration: string;
     otherInformation: OtherInformationModel;
-    audioChoice: string;
     showConfirmationRemoveParticipant = false;
     selectedParticipantEmail: string;
     removerFullName: string;
@@ -56,13 +48,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
     private readonly newHearingSessionKey = 'newHearingId';
     isExistingBooking = false;
     $subscriptions: Subscription[] = [];
-    caseType: string;
     bookinConfirmed = false;
-    endpoints: EndpointModel[] = [];
     switchOffRecording = false;
-    multiDays: boolean;
     endHearingDate: Date;
-    interpreterPresent: boolean;
+    hasParticipantsRequiringAudioRecording: boolean;
 
     @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;
@@ -70,7 +59,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     @ViewChild(RemovePopupComponent) removePopupComponent: RemovePopupComponent;
     @ViewChild(RemoveInterpreterPopupComponent) removeInterpreterPopupComponent: RemoveInterpreterPopupComponent;
-    judgeAssigned: boolean;
     saveFailedMessages: string[];
     multiDayBookingEnhancementsEnabled: boolean;
 
@@ -97,7 +85,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.otherInformation = OtherInformationModel.init(this.hearing.otherInformation);
         this.retrieveHearingSummary();
         this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.caseType);
-        this.interpreterPresent = this.recordingGuardService.mandatoryRecordingForHearingRole(this.hearing.participants);
+        this.hasParticipantsRequiringAudioRecording = this.recordingGuardService.mandatoryRecordingForHearingRole(
+            this.hearing.participants
+        );
         this.hearing.audioRecordingRequired = this.isAudioRecordingRequired();
         this.retrieveHearingSummary();
         if (this.participantsListComponent) {
@@ -109,9 +99,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 })
             );
         }
-        this.judgeAssigned =
-            this.hearing.participants.filter(e => e.isJudge).length > 0 ||
-            this.hearing.judiciaryParticipants?.some(e => e.roleCode === 'Judge');
 
         const multiDayBookingEnhancementsFlag$ = this.featureService
             .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)
@@ -141,13 +128,13 @@ export class SummaryComponent implements OnInit, OnDestroy {
     isAudioRecordingRequired(): boolean {
         // CACD hearings should always have recordings set to off
         if (
-            this.caseType === this.constants.CaseTypes.CourtOfAppealCriminalDivision ||
-            this.caseType === this.constants.CaseTypes.CrimeCrownCourt
+            this.hearing.caseType === this.constants.CaseTypes.CourtOfAppealCriminalDivision ||
+            this.hearing.caseType === this.constants.CaseTypes.CrimeCrownCourt
         ) {
             return false;
         }
-        // Hearings with an interpreter should always have recording set to on
-        if (this.interpreterPresent) {
+
+        if (this.hasParticipantsRequiringAudioRecording) {
             return true;
         }
         return this.hearing.audioRecordingRequired;
@@ -219,15 +206,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     private retrieveHearingSummary() {
-        this.caseNumber = this.hearing.case ? this.hearing.case.number : '';
-        this.caseName = this.hearing.case ? this.hearing.case.name : '';
-        this.hearingDate = this.hearing.scheduledDateTime;
-        this.hearingDuration = `listed for ${FormatShortDuration(this.hearing.scheduledDuration)}`;
-        this.courtRoomAddress = this.formatCourtRoom(this.hearing.courtName, this.hearing.courtRoom);
-        this.audioChoice = this.hearing.audioRecordingRequired ? 'Yes' : 'No';
-        this.caseType = this.hearing.caseType;
-        this.endpoints = this.hearing.endpoints;
-        this.multiDays = this.hearing.isMultiDayEdit;
         this.endHearingDate = this.hearing.endHearingDateTime;
 
         if (
@@ -240,7 +218,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     get hasEndpoints(): boolean {
-        return this.endpoints.length > 0;
+        return this.hearing.endpoints.length > 0;
     }
 
     removeEndpoint(rowIndex: number): void {
@@ -301,7 +279,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
 
-                if (this.judgeAssigned) {
+                if (this.hearing.judge) {
                     this.bookingStatusService.pollForStatus(hearingDetailsResponse.id).subscribe(async response => {
                         await this.processBooking(hearingDetailsResponse, response);
                     });
@@ -433,7 +411,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
             return;
         }
         sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
-        if (this.judgeAssigned && noJudgePrior) {
+        if (this.hearing.judge && noJudgePrior) {
             this.showWaitSaving = true;
             this.bookingStatusService
                 .pollForStatus(hearingDetailsResponse.id)
@@ -547,5 +525,13 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     navToAddJudge() {
         this.router.navigate([PageUrls.AddJudicialOfficeHolders]);
+    }
+
+    get caseNumber(): string {
+        return this.hearing.case.number;
+    }
+
+    get caseName(): string {
+        return this.hearing.case.name;
     }
 }

@@ -9,7 +9,6 @@ import {
     JudgeAccountType,
     JudgeResponse
 } from 'src/app/services/clients/api-client';
-import { Constants } from 'src/app/common/constants';
 import { VHBooking } from './vh-booking';
 import { CaseModel } from './case.model';
 import { InterpreterSelectedDto } from 'src/app/booking/interpreter-form/interpreter-selected.model';
@@ -47,7 +46,6 @@ export function mapHearingToVHBooking(hearing: HearingDetailsResponse): VHBookin
         hearingsInGroup: hearing.hearings_in_group?.map(hearingInGroup => mapHearingToVHBooking(hearingInGroup)),
         originalScheduledDateTime: hearing.scheduled_date_time,
         supplier: hearing.conference_supplier,
-        judge: getJudge(hearing),
         isLastDayOfMultiDayHearing:
             hearing.scheduled_date_time.getTime() === hearing.multi_day_hearing_last_day_scheduled_date_time?.getTime(),
         groupId: hearing.group_id,
@@ -58,11 +56,19 @@ export function mapHearingToVHBooking(hearing: HearingDetailsResponse): VHBookin
 }
 
 export function mapBookingsHearingResponseToVHBooking(response: BookingsHearingResponse): VHBooking {
+    const judiciaryParticipants: JudicialMemberDto[] = [];
+    if (response.judge_name) {
+        const judge = new JudicialMemberDto(null, null, null, null, null, null, null, response.judge_name);
+        judge.roleCode = 'Judge';
+        judiciaryParticipants.push(judge);
+    }
+
     return new VHBooking({
         hearingId: response.hearing_id,
         scheduledDateTime: response.scheduled_date_time,
         scheduledDuration: response.scheduled_duration,
         case: new CaseModel(response.hearing_name, response.hearing_number),
+        judiciaryParticipants: judiciaryParticipants,
         createdBy: response.created_by,
         caseType: response.case_type_name,
         courtRoom: response.court_room,
@@ -73,7 +79,6 @@ export function mapBookingsHearingResponseToVHBooking(response: BookingsHearingR
         status: response.status,
         audioRecordingRequired: response.audio_recording_required,
         supplier: response.conference_supplier,
-        judge: new JudicialMemberDto(null, null, null, null, null, null, false, response.judge_name),
         groupId: response.group_id,
         courtRoomAccount: response.court_room_account,
         allocatedTo: response.allocated_to,
@@ -153,14 +158,6 @@ export function mapEndpointResponseToEndpointModel(response: EndpointResponse[],
         });
     }
     return endpoints;
-}
-
-function getJudge(hearing: HearingDetailsResponse): JudicialMemberDto {
-    const judge = hearing.judiciary_participants?.find(x => x.role_code === Constants.Judge);
-    if (judge) {
-        return JudicialMemberDto.fromJudiciaryParticipantResponse(judge);
-    }
-    return null;
 }
 
 export function mapPersonResponseToVHParticipant(person: PersonResponseV2): VHParticipant {

@@ -9,7 +9,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
     <section
-      *ngIf="!judgeAssigned"
+      *ngIf="!hearing.judge"
       class="govuk-notification-banner red-theme"
       aria-labelledby="govuk-notification-banner-title"
       data-module="govuk-notification-banner"
@@ -31,15 +31,15 @@
     <div class="govuk-form-group vhtable">
       <div class="vh-text-break"><app-truncatable-text [id]="'caseNumber'" [text]="caseNumber" [maxLimit]="50"></app-truncatable-text></div>
       <div class="vh-text-break"><app-truncatable-text [id]="'caseName'" [text]="caseName" [maxLimit]="50"></app-truncatable-text></div>
-      <div id="caseType">{{ caseType }}</div>
+      <div id="caseType">{{ hearing.caseType }}</div>
     </div>
 
     <app-booking-edit [title]="'Hearing schedule'" [editLink]="'hearing-schedule'" [elementId]="'hearing-schedule-id'"> </app-booking-edit>
     <div class="govuk-form-group vhtable">
-      <div id="courtAddress" class="vh-text-break">{{ courtRoomAddress }}</div>
+      <div id="courtAddress" class="vh-text-break">{{ hearing.courtRoomAddress }}</div>
 
-      <div id="hearingDate" *ngIf="!multiDays; else multiDaysHearing">
-        {{ hearingDate | appLongDatetime }}
+      <div id="hearingDate" *ngIf="!hearing.isMultiDayEdit; else multiDaysHearing">
+        {{ hearing.scheduledDateTime | appLongDatetime }}
       </div>
       <ng-template #multiDaysHearing>
         <ng-container *ngIf="hearing.hearingDates.length; else dateRange">
@@ -54,7 +54,7 @@
         </ng-template>
       </ng-template>
 
-      <div *ngIf="!multiDays" id="hearingDuration">{{ hearingDuration }}</div>
+      <div *ngIf="!hearing.isMultiDayEdit" id="hearingDuration">{{ hearing.hearingDuration }}</div>
     </div>
 
     <div *ngIf="switchOffRecording; else switchOnRecording">
@@ -68,7 +68,7 @@
       ></app-booking-edit>
     </ng-template>
     <div class="govuk-form-group vhtable">
-      <div class="vh-text-break" id="audioRecording">{{ audioChoice }}</div>
+      <div class="vh-text-break" id="audioRecording">{{ hearing.audioChoice }}</div>
     </div>
 
     <div *ngIf="hasEndpoints">
@@ -79,7 +79,7 @@
       ></app-booking-edit>
 
       <div class="govuk-form-group vhtable">
-        <div *ngFor="let endpoint of endpoints; let i = index" id="endpointtext{{ +i }}" class="vh-text-break">
+        <div *ngFor="let endpoint of hearing.endpoints; let i = index" id="endpointtext{{ +i }}" class="vh-text-break">
           <div class="govuk-grid-row govuk-!-padding-bottom-1">
             <div class="govuk-grid-column-one-half" id="displayName{{ +i }}">
               {{ endpoint.displayName }}
