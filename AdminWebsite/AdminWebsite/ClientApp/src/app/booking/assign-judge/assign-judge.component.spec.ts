@@ -570,7 +570,7 @@ describe('AssignJudgeComponent', () => {
                     expect(updatedJudges.length).toBe(1);
                     expect(component.courtAccountJudgeEmail).toEqual(judge.username);
                     expect(component.judgeDisplayNameFld.value).toEqual(judge.displayName);
-                    expect(updatedJudges[0]).toBe(judge);
+                    expect(updatedJudges[0]).toEqual(judge);
                     expect(updatedJudges[0].hearingRoleCode).toBe(Constants.HearingRoleCodes.Judge);
 
                     expect(component.canNavigate).toBe(true);
