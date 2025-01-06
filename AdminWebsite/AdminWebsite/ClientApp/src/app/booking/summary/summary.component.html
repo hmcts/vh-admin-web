@@ -47,9 +47,9 @@
           <app-multi-day-hearing-schedule [hearingDates]="hearing.hearingDates"></app-multi-day-hearing-schedule>
         </ng-container>
         <ng-template #dateRange>
-          <div id="hearingStartDate">{{ hearingDate | date : 'EEEE dd MMMM yyyy' }} -</div>
+          <div id="hearingStartDate">{{ hearing.scheduledDateTime | date : 'EEEE dd MMMM yyyy' }} -</div>
           <div id="hearingEndDateTime">
-            {{ endHearingDate | date : 'EEEE dd MMMM yyyy' }}, {{ hearingDate | date : 'h:mma' | lowercase }}
+            {{ endHearingDate | date : 'EEEE dd MMMM yyyy' }}, {{ hearing.scheduledDateTime | date : 'h:mma' | lowercase }}
           </div>
         </ng-template>
       </ng-template>
