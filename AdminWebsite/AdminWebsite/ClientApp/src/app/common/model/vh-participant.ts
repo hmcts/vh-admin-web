@@ -40,6 +40,9 @@ export class VHParticipant {
         }
     }
 
+    /**
+     * Combines title with first name and last name
+     */
     get fullName(): string {
         return `${this.title} ${this.firstName} ${this.lastName}`;
     }
