@@ -345,6 +345,12 @@ describe('SearchForJudicialMemberComponent', () => {
             launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(true));
             fixture = TestBed.createComponent(SearchForJudicialMemberComponent);
             component = fixture.componentInstance;
+
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
+            judicialMember.displayName = 'Test User display name';
+            judicialMember.roleCode = 'Judge';
+            component.judicialMember = judicialMember;
+
             fixture.detectChanges();
         });
 

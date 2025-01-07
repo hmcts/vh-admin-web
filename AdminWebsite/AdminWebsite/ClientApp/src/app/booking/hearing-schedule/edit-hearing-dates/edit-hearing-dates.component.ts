@@ -1,14 +1,14 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormArray } from '@angular/forms';
-import { HearingModel } from 'src/app/common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 @Component({
     selector: 'app-edit-hearing-dates',
     templateUrl: './edit-hearing-dates.component.html'
 })
 export class EditHearingDatesComponent {
-    @Input() hearingsInGroupToEdit: HearingModel[];
+    @Input() hearingsInGroupToEdit: VHBooking[];
     @Input() newDatesFormArray: FormArray;
 
     today = new Date();

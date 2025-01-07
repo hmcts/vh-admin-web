@@ -3,8 +3,7 @@ import { Router } from '@angular/router';
 import { first } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { HearingModel } from 'src/app/common/model/hearing.model';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
@@ -13,6 +12,7 @@ import { BookingBaseComponentDirective as BookingBaseComponent } from '../bookin
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { VideoAccessPointDto } from './models/video-access-point.model';
 import { FormGroup } from '@angular/forms';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-endpoints',
@@ -21,12 +21,12 @@ import { FormGroup } from '@angular/forms';
 export class EndpointsComponent extends BookingBaseComponent implements OnInit, OnDestroy {
     canNavigate = true;
     constants = Constants;
-    hearing: HearingModel;
+    hearing: VHBooking;
 
     attemptingCancellation = false;
     attemptingDiscardChanges = false;
 
-    participants: ParticipantModel[] = [];
+    participants: VHParticipant[] = [];
 
     multiDayBookingEnhancementsEnabled: boolean;
     specialMeasureEnabled = false;
@@ -104,7 +104,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
         this.hearing.endpoints = newEndpointsArray;
         this.videoHearingService.updateHearingRequest(this.hearing);
-        this.logger.debug(`${this.loggerPrefix} Updated hearing request`, { hearing: this.hearing?.hearing_id, payload: this.hearing });
+        this.logger.debug(`${this.loggerPrefix} Updated hearing request`, { hearing: this.hearing?.hearingId, payload: this.hearing });
     }
 
     cancelBooking(): void {
@@ -181,7 +181,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
     private checkForExistingRequest(): void {
         this.hearing = this.videoHearingService.getCurrentRequest();
-        this.participants = this.hearing.participants.filter(p => p.user_role_name === this.constants.Representative);
+        this.participants = this.hearing.participants.filter(p => p.userRoleName === this.constants.Representative);
         this.videoEndpoints = this.hearing.endpoints.map(e => {
             const defenceAdvocate = this.participants.find(p => p.email === e.defenceAdvocate);
             return {
@@ -190,7 +190,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
                 displayName: e.displayName,
                 defenceAdvocate: defenceAdvocate
                     ? {
-                          displayName: defenceAdvocate?.display_name,
+                          displayName: defenceAdvocate?.displayName,
                           email: defenceAdvocate?.email
                       }
                     : null,

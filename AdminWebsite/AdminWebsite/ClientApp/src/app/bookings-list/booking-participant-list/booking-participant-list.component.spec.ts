@@ -2,12 +2,12 @@ import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingParticipantListComponent } from './booking-participant-list.component';
-import { HearingRoleCodes, HearingRoles } from '../../common/model/hearing-roles.model';
-import { LinkedParticipant } from '../../services/clients/api-client';
+import { HearingRoleCodes } from '../../common/model/hearing-roles.model';
 import { ParticipantDetailsComponent } from '../participant-details/participant-details.component';
-import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { LinkedParticipantModel } from 'src/app/common/model/linked-participant.model';
+import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 
 describe('BookingParticipantListComponent', () => {
     let component: BookingParticipantListComponent;
@@ -33,7 +33,7 @@ describe('BookingParticipantListComponent', () => {
     });
 
     it('should display participants list', done => {
-        const pr1 = new ParticipantDetailsModel(
+        const pr1 = VHParticipant.createForDetails(
             '1',
             'externalRefId',
             'Mrs',
@@ -53,7 +53,7 @@ describe('BookingParticipantListComponent', () => {
             false,
             null
         );
-        const participantsList: Array<ParticipantDetailsModel> = [];
+        const participantsList: Array<VHParticipant> = [];
         participantsList.push(pr1);
         participantsList.push(pr1);
         participantsList.push(pr1);
@@ -70,37 +70,24 @@ describe('BookingParticipantListComponent', () => {
     });
 
     it('should display judges list', done => {
-        const pr1 = new ParticipantDetailsModel(
-            '1',
-            'externalRefId',
-            'Mrs',
+        const judge = new JudicialMemberDto(
             'Alan',
             'Brake',
-            'Judge',
-            'email.p1@hmcts.net',
-            'email1@hmcts.net',
-            'Judge',
-            null,
             'Alan Brake',
-            '',
-            'ABC Solicitors',
-            'Respondent',
+            'email1@hmcts.net',
             '12345678',
-            'interpretee',
+            'Alan.Brake',
             false,
-            null
+            'Alan Brake'
         );
-        const participantsList: Array<ParticipantDetailsModel> = [];
-        participantsList.push(pr1);
-        participantsList.push(pr1);
-
-        component.judges = participantsList;
+        judge.roleCode = 'Judge';
+        component.judiciaryParticipants = [judge];
 
         fixture.whenStable().then(() => {
             fixture.detectChanges();
             const divElementRole = debugElement.queryAll(By.css('.judge-detail'));
             expect(divElementRole.length).toBeGreaterThan(0);
-            expect(divElementRole.length).toBe(2);
+            expect(divElementRole.length).toBe(1);
             done();
         });
     });
@@ -108,60 +95,44 @@ describe('BookingParticipantListComponent', () => {
     it('should produce a sorted list with specific hierarchy and grouping', done => {
         // setup
         function parseTestInput(inputParticipants) {
-            const participantsArray: ParticipantDetailsModel[] = [];
+            const participantsArray: VHParticipant[] = [];
             inputParticipants.forEach((p, i) => {
-                participantsArray.push({
-                    FirstName: p.FirstName,
-                    ExternalReferenceId: p.ExternalReferenceId ?? undefined,
-                    isJudge: p.isJudge ?? false,
-                    HearingRoleCode: p.HearingRoleCode,
-                    HearingRoleName: p.HearingRoleName,
-                    LinkedParticipants: p.LinkedParticipants ?? null,
-                    ParticipantId: `${i + 1}`,
-                    Company: '',
-                    DisplayName: '',
-                    Email: '',
-                    Flag: false,
-                    IndexInList: 0,
-                    IsInterpretee: false,
-                    Interpretee: p.Interpretee,
-                    LastName: '',
-                    MiddleNames: '',
-                    Phone: '',
-                    Representee: '',
-                    Title: '',
-                    UserName: '',
-                    UserRoleName: '',
-                    get fullName(): string {
-                        return '';
-                    },
-                    get isInterpretee(): boolean {
-                        return false;
-                    },
-                    get isInterpreter(): boolean {
-                        return this.HearingRoleName && this.HearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER;
-                    },
-                    get isRepOrInterpreter(): boolean {
-                        return false;
-                    },
-                    get isRepresenting(): boolean {
-                        return undefined;
-                    },
-                    InterpretationLanguage: null,
-                    Screening: null
-                });
+                participantsArray.push(
+                    new VHParticipant({
+                        firstName: p.FirstName,
+                        externalReferenceId: p.ExternalReferenceId ?? undefined,
+                        hearingRoleCode: p.HearingRoleCode,
+                        hearingRoleName: p.HearingRoleName,
+                        linkedParticipants: p.LinkedParticipants ?? null,
+                        id: `${i + 1}`,
+                        company: '',
+                        displayName: '',
+                        email: '',
+                        interpreteeName: p.Interpretee,
+                        lastName: '',
+                        middleNames: '',
+                        phone: '',
+                        representee: '',
+                        title: '',
+                        username: '',
+                        userRoleName: '',
+                        isInterpretee: false,
+                        interpretation_language: null,
+                        screening: null
+                    })
+                );
             });
             return participantsArray;
         }
         // input
-        const linked_participantList1: LinkedParticipant[] = [];
-        const linked_interpretee = new LinkedParticipant();
-        linked_interpretee.linked_id = '2';
+        const linked_participantList1: LinkedParticipantModel[] = [];
+        const linked_interpretee = new LinkedParticipantModel();
+        linked_interpretee.linkedParticipantId = '2';
         linked_participantList1.push(linked_interpretee);
 
-        const linked_participantList2: LinkedParticipant[] = [];
-        const linked_interpreter = new LinkedParticipant();
-        linked_interpreter.linked_id = '1';
+        const linked_participantList2: LinkedParticipantModel[] = [];
+        const linked_interpreter = new LinkedParticipantModel();
+        linked_interpreter.linkedParticipantId = '1';
         linked_participantList2.push(linked_interpreter);
 
         const participantsInputArray = [
@@ -172,7 +143,6 @@ describe('BookingParticipantListComponent', () => {
                 Interpretee: 'interpretee'
             },
             { HearingRoleName: 'Interpreter', FirstName: 'A', LinkedParticipants: linked_participantList2 },
-            { isJudge: true, HearingRoleName: 'Judge', FirstName: 'L' },
             { HearingRoleName: 'Winger', FirstName: 'J' },
             { HearingRoleName: 'Staff Member', FirstName: 'I' },
             { HearingRoleName: 'Panel Member', FirstName: 'H' },
@@ -187,7 +157,6 @@ describe('BookingParticipantListComponent', () => {
         component.participants = parseTestInput(participantsInputArray);
         // expected output
         const expectedOutput = [
-            { HearingRoleName: 'Judge', FirstName: 'L' },
             { HearingRoleName: 'Panel Member', FirstName: 'H' },
             { HearingRoleName: 'Winger', FirstName: 'J' },
             { HearingRoleName: 'Staff Member', FirstName: 'I' },
@@ -203,46 +172,21 @@ describe('BookingParticipantListComponent', () => {
         ];
 
         for (let i = 0; i < expectedOutput.length; i++) {
-            expect(component.sortedParticipants[i].FirstName).toEqual(expectedOutput[i].FirstName);
-            expect(component.sortedParticipants[i].HearingRoleName).toEqual(expectedOutput[i].HearingRoleName);
+            expect(component.sortedParticipants[i].firstName).toEqual(expectedOutput[i].FirstName);
+            expect(component.sortedParticipants[i].hearingRoleName).toEqual(expectedOutput[i].HearingRoleName);
         }
         done();
     });
 
     it('should sort judiciary participants and members', () => {
-        const jp1 = new JudiciaryParticipantDetailsModel(
-            'Mrs',
-            'Alan',
-            'Brake',
-            'Judge',
-            'email.p1@hmcts.net',
-            'email1@hmcts.net',
-            'Judge',
-            'Judge',
-            'Alan Brake'
-        );
-        const jp2 = new JudiciaryParticipantDetailsModel(
-            'Mr',
-            'John',
-            'Doe',
-            'Winger',
-            'email.p2@hmcts.net',
-            'email2@hmcts.net',
-            'Winger',
-            'PanelMember',
-            'John Doe'
-        );
-        const jp3 = new JudiciaryParticipantDetailsModel(
-            'Ms',
-            'Jane',
-            'Doe',
-            'Panel Member',
-            'email.p3@hmcts.net',
-            'email3@hmcts.net',
-            'Panel Member',
-            'PanelMember',
-            'Jane Doe'
-        );
+        const jp1 = new JudicialMemberDto('Alan', 'Brake', 'Alan Brake', 'email.p1@hmcts.net', '123', 'Alan.Brake', false, 'Alan Brake');
+        jp1.roleCode = 'Judge';
+
+        const jp2 = new JudicialMemberDto('John', 'Doe', 'John Doe', 'email.p2@hmcts.net', '123', 'John.Doe', false, 'John Doe');
+        jp2.roleCode = 'PanelMember';
+
+        const jp3 = new JudicialMemberDto('Jane', 'Doe', 'Jane Doe', 'email.p3@hmcts.net', '123', 'Jane.Doe', false, 'Jane Doe');
+        jp3.roleCode = 'PanelMember';
 
         component.judiciaryParticipants = [jp1, jp2, jp3];
 

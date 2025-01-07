@@ -4,26 +4,26 @@ import { ScreeningFormComponent as ScreeningFormComponent } from './screening-fo
 import { Logger } from 'src/app/services/logger';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { HearingModel } from 'src/app/common/model/hearing.model';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 describe('ScreeningFormComponent', () => {
     let component: ScreeningFormComponent;
     let fixture: ComponentFixture<ScreeningFormComponent>;
     let loggerSpy: jasmine.SpyObj<Logger>;
-    let hearing: HearingModel;
+    let hearing: VHBooking;
 
     beforeEach(async () => {
-        hearing = new HearingModel();
-        const participant1 = new ParticipantModel();
+        hearing = new VHBooking();
+        const participant1 = new VHParticipant();
         participant1.id = '1';
         participant1.email = 'email1';
-        participant1.display_name = 'Participant1';
+        participant1.displayName = 'Participant1';
 
-        const participant2 = new ParticipantModel();
+        const participant2 = new VHParticipant();
         participant2.id = '2';
         participant2.email = 'email2';
-        participant2.display_name = 'Participant2';
+        participant2.displayName = 'Participant2';
 
         const endpoint1 = new EndpointModel(null);
         endpoint1.id = '3';
@@ -37,7 +37,7 @@ describe('ScreeningFormComponent', () => {
 
         hearing.participants = [participant1, participant2];
         hearing.endpoints = [endpoint1, endpoint2];
-        hearing.hearing_id = null; //new hearing
+        hearing.hearingId = null; //new hearing
 
         loggerSpy = jasmine.createSpyObj('Logger', ['debug']);
         await TestBed.configureTestingModule({
@@ -122,7 +122,7 @@ describe('ScreeningFormComponent', () => {
     describe('filtering selectable participants for screening', () => {
         it('should exclude newly added participants from screening options', () => {
             // Arrange
-            hearing.hearing_id = '1'; // isEditMode = true
+            hearing.hearingId = '1'; // isEditMode = true
             const newlyAddedParticipant = hearing.participants[0];
             const newlyAddedEndpoint = hearing.endpoints[0];
             newlyAddedParticipant.id = undefined;
@@ -133,7 +133,7 @@ describe('ScreeningFormComponent', () => {
 
             // Assert
             expect(component.isEditMode).toBeTrue();
-            expect(component.allParticipants.filter(p => p.displayName === newlyAddedParticipant.display_name)).toEqual([]);
+            expect(component.allParticipants.filter(p => p.displayName === newlyAddedParticipant.displayName)).toEqual([]);
             expect(component.allParticipants.filter(p => p.displayName === newlyAddedEndpoint.displayName)).toEqual([]);
             expect(component.allParticipants.length).toBe(2);
             expect(component.newParticipantRemovedFromOptions).toBeTrue();
@@ -141,7 +141,7 @@ describe('ScreeningFormComponent', () => {
 
         it('should include existing participant in screening options', () => {
             // Arrange
-            hearing.hearing_id = '1'; // isEditMode = true
+            hearing.hearingId = '1'; // isEditMode = true
             // Act
             component.hearing = hearing;
             // Assert

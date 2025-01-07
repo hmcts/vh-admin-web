@@ -7,45 +7,46 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Logger } from 'src/app/services/logger';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { HearingModel } from '../../common/model/hearing.model';
 import { VideoEndpointFormComponent } from './video-endpoint-form/video-endpoint-form.component';
 import { VideoEndpointListComponent } from './video-endpoint-list/video-endpoint-list.component';
 import { VideoEndpointItemComponent } from './video-endpoint-item/video-endpoint-item.component';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
+import { VHBooking } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
-function initHearingRequest(): HearingModel {
-    const newHearing = new HearingModel();
-    newHearing.hearing_venue_id = -1;
-    newHearing.scheduled_duration = 0;
+function initHearingRequest(): VHBooking {
+    const newHearing = new VHBooking();
+    newHearing.hearingVenueId = -1;
+    newHearing.scheduledDuration = 0;
     newHearing.participants = [
-        {
+        new VHParticipant({
             id: '1',
-            first_name: 'John',
-            last_name: 'Doe',
+            firstName: 'John',
+            lastName: 'Doe',
             email: 'john@doe.com',
-            display_name: 'John Doe',
-            user_role_name: 'Representative',
+            displayName: 'John Doe',
+            userRoleName: 'Representative',
             interpretation_language: undefined
-        },
-        {
+        }),
+        new VHParticipant({
             id: '2',
-            first_name: 'Chris',
-            last_name: 'Green',
+            firstName: 'Chris',
+            lastName: 'Green',
             email: 'chris@green,com',
-            display_name: 'Chris Green',
-            user_role_name: 'Representative',
+            displayName: 'Chris Green',
+            userRoleName: 'Representative',
             interpretation_language: undefined
-        },
-        {
+        }),
+        new VHParticipant({
             id: '3',
-            first_name: 'Jane',
-            last_name: 'Smith',
+            firstName: 'Jane',
+            lastName: 'Smith',
             email: 'jane@smith.com',
-            display_name: 'Jane Smith',
-            user_role_name: 'Individual',
+            displayName: 'Jane Smith',
+            userRoleName: 'Individual',
             interpretation_language: undefined
-        }
+        })
     ];
     newHearing.endpoints = [
         {
@@ -185,7 +186,7 @@ describe('EndpointsComponent', () => {
 
     describe('when booking is multi day', () => {
         beforeEach(() => {
-            const booking = new HearingModel();
+            const booking = new VHBooking();
             booking.isMultiDay = true;
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(booking);
         });
@@ -204,7 +205,7 @@ describe('EndpointsComponent', () => {
     });
     describe('when booking is not multi day', () => {
         beforeEach(() => {
-            const booking = new HearingModel();
+            const booking = new VHBooking();
             booking.isMultiDay = false;
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(booking);
         });

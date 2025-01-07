@@ -2,16 +2,16 @@ import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { ParticipantDetailsComponent } from './participant-details.component';
-import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { HearingRoleCodes, HearingRoles } from '../../common/model/hearing-roles.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 describe('ParticipantDetailsComponent', () => {
     let component: ParticipantDetailsComponent;
     let fixture: ComponentFixture<ParticipantDetailsComponent>;
     let debugElement: DebugElement;
-    let hearing = null;
+    let hearing: VHBooking = null;
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [ParticipantDetailsComponent],
@@ -21,7 +21,7 @@ describe('ParticipantDetailsComponent', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ParticipantDetailsComponent);
-        hearing = new BookingsDetailsModel(
+        hearing = VHBooking.createForDetails(
             '1',
             new Date('2019-10-22 13:58:40.3730067'),
             120,
@@ -38,18 +38,17 @@ describe('ParticipantDetailsComponent', () => {
             null,
             'Booked',
             true,
-            'reason1',
             'Financial Remedy',
             'judge.green@hmcts.net',
             '1234567'
         );
-        hearing.OtherInformation = '|JudgeEmail|judge@hmcts.net|JudgePhone|123456789|OtherInformation|info';
+        hearing.otherInformation = '|JudgeEmail|judge@hmcts.net|JudgePhone|123456789|OtherInformation|info';
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
     });
 
     it('should display participant details', () => {
-        const pr = new ParticipantDetailsModel(
+        const pr = VHParticipant.createForDetails(
             '1',
             'externalRefId',
             'Mrs',
@@ -69,11 +68,10 @@ describe('ParticipantDetailsComponent', () => {
             false,
             null
         );
-        pr.IndexInList = 0;
         component.participant = pr;
 
         fixture.detectChanges();
-        const divElementRole = debugElement.queryAll(By.css(`#participant-${pr.ParticipantId}-hearing-role-name`));
+        const divElementRole = debugElement.queryAll(By.css(`#participant-${pr.id}-hearing-role-name`));
         expect(divElementRole.length).toBeGreaterThan(0);
         expect(divElementRole.length).toBe(1);
         const el = divElementRole[0].nativeElement as HTMLElement;
@@ -95,7 +93,7 @@ describe('ParticipantDetailsComponent', () => {
     });
 
     it('should be able to know whether participant is judge', () => {
-        const pr = new ParticipantDetailsModel(
+        const pr = VHParticipant.createForDetails(
             '1',
             'externalRefId',
             'Mr',
@@ -115,7 +113,7 @@ describe('ParticipantDetailsComponent', () => {
             false,
             null
         );
-        pr.HearingRoleName = HearingRoles.JUDGE;
+        pr.hearingRoleName = HearingRoles.JUDGE;
 
         component.participant = pr;
         component.hearing = hearing;

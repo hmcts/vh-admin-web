@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HearingTypeResponse, VideoSupplier } from '../../services/clients/api-client';
-import { HearingModel } from '../../common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { CaseModel } from '../../common/model/case.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
@@ -27,7 +27,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     attemptingCancellation: boolean;
     attemptingDiscardChanges = false;
     failedSubmission: boolean;
-    hearing: HearingModel;
+    hearing: VHBooking;
     availableHearingTypes: HearingTypeResponse[];
     availableCaseTypes: string[];
     selectedCaseType: string;
@@ -95,27 +95,27 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     }
 
     isExistingHearingOrParticipantsAdded(): boolean {
-        return !!this.hearing && (!!this.isExistingHearing || this.hearing.participants.some(p => !p.is_judge));
+        return !!this.hearing && (!!this.isExistingHearing || this.hearing.participants.some(p => !p.isJudge));
     }
 
     private checkForExistingRequestOrCreateNew() {
         this.hearing = this.hearingService.getCurrentRequest();
-        this.isExistingHearing = this.hearing?.hearing_id && this.hearing?.hearing_id?.length > 0;
+        this.isExistingHearing = this.hearing?.hearingId && this.hearing?.hearingId?.length > 0;
         this.logger.debug(`${this.loggerPrefix} Checking for existing hearing.`);
 
-        this.selectedCaseType = this.hearing.case_type;
-        this.selectedCaseTypeServiceId = this.hearing.case_type_service_id;
-        if (this.hearing.case_type) {
-            this.selectedCaseType = this.hearing.case_type;
+        this.selectedCaseType = this.hearing.caseType;
+        this.selectedCaseTypeServiceId = this.hearing.caseTypeServiceId;
+        if (this.hearing.caseType) {
+            this.selectedCaseType = this.hearing.caseType;
             return;
         } else {
             this.selectedCaseType = Constants.PleaseSelect;
         }
 
-        if (this.hearing.case_type) {
-            this.selectedCaseType = this.hearing.case_type;
+        if (this.hearing.caseType) {
+            this.selectedCaseType = this.hearing.caseType;
             this.logger.debug(`${this.loggerPrefix} Updating selected Service to current hearing Service.`, {
-                hearing: this.hearing.hearing_id
+                hearing: this.hearing.hearingId
             });
             this.hasSaved = true;
         } else {
@@ -124,7 +124,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     }
 
     private initForm() {
-        let firstCase = this.hearing.cases[0];
+        let firstCase = this.hearing.case;
         if (!firstCase) {
             firstCase = new CaseModel();
         }
@@ -192,7 +192,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     isFirstDayOfMultiDay(): boolean {
         const firstDay = this.hearing.hearingsInGroup[0];
-        const isFirstDay = this.hearing.hearing_id === firstDay.hearing_id;
+        const isFirstDay = this.hearing.hearingId === firstDay.hearingId;
         return isFirstDay;
     }
 
@@ -247,13 +247,13 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     }
 
     private updateHearingRequest() {
-        this.hearing.case_type = this.selectedCaseType;
+        this.hearing.caseType = this.selectedCaseType;
         const hearingCase = new CaseModel();
         hearingCase.name = this.form.value.caseName;
         hearingCase.number = this.form.value.caseNumber;
-        this.hearing.cases[0] = hearingCase;
-        this.hearing.case_type_id = this.isExistingHearing ? this.hearing.case_type_id : this.form.getRawValue().caseType;
-        this.hearing.case_type_service_id = this.selectedCaseTypeServiceId;
+        this.hearing.case = hearingCase;
+        this.hearing.caseTypeId = this.isExistingHearing ? this.hearing.caseTypeId : this.form.getRawValue().caseType;
+        this.hearing.caseTypeServiceId = this.selectedCaseTypeServiceId;
         this.hearing.supplier = this.form.getRawValue().supplier ?? this.retrieveDefaultSupplier();
         this.hearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Updated hearing request details`, { hearing: this.hearing });

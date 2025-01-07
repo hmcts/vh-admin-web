@@ -2,25 +2,25 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ScreeningListItemComponent } from './screening-list-item.component';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { HearingModel } from 'src/app/common/model/hearing.model';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { SimpleChange, SimpleChanges } from '@angular/core';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 describe('ScreeningListItemComponent', () => {
     let component: ScreeningListItemComponent;
     let fixture: ComponentFixture<ScreeningListItemComponent>;
-    let hearing: HearingModel;
+    let hearing: VHBooking;
 
     beforeEach(async () => {
-        hearing = new HearingModel();
-        const participantWithoutScreening = new ParticipantModel();
+        hearing = new VHBooking();
+        const participantWithoutScreening = new VHParticipant();
         participantWithoutScreening.id = '1';
-        participantWithoutScreening.display_name = 'Participant No Screening';
+        participantWithoutScreening.displayName = 'Participant No Screening';
         participantWithoutScreening.email = 'email1@partipant.com';
 
-        const participantWithScreening = new ParticipantModel();
+        const participantWithScreening = new VHParticipant();
         participantWithScreening.id = '2';
-        participantWithScreening.display_name = 'Participant With Screening';
+        participantWithScreening.displayName = 'Participant With Screening';
         participantWithScreening.email = 'email2@partipant.com';
         participantWithScreening.screening = {
             measureType: 'All',

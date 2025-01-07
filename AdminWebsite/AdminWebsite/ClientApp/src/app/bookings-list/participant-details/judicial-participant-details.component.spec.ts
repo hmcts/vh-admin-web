@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { JudicialParticipantDetailsComponent } from './judicial-participant-details.component';
-import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
 import { BookingDetailsTestData } from '../booking-details/booking-details.component.spec';
 import { By } from '@angular/platform-browser';
+import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 
 describe('JudicialParticipantDetailsComponent', () => {
     let component: JudicialParticipantDetailsComponent;
@@ -19,17 +19,17 @@ describe('JudicialParticipantDetailsComponent', () => {
 
     describe('Participant is a Judge', () => {
         it('should display a judge without contact details', () => {
-            const participant = new JudiciaryParticipantDetailsModel(
-                'Mr',
+            const participant = new JudicialMemberDto(
                 'John',
                 'Doe',
                 'John Doe',
                 'john@doe.com',
                 '1234567890',
                 'A1234',
-                'Judge',
+                false,
                 'Judge John'
             );
+            participant.roleCode = 'Judge';
             const hearing = new BookingDetailsTestData().getBookingsDetailsModel();
 
             component.participant = participant;
@@ -51,17 +51,17 @@ describe('JudicialParticipantDetailsComponent', () => {
         });
 
         it('should display a judge with contact details', () => {
-            const participant = new JudiciaryParticipantDetailsModel(
-                'Mr',
+            const participant = new JudicialMemberDto(
                 'John',
                 'Doe',
                 'John Doe',
                 'john@doe.com',
                 '1234567890',
                 'A1234',
-                'Judge',
+                false,
                 'Judge John'
             );
+            participant.roleCode = 'Judge';
             const hearing = new BookingDetailsTestData().getBookingsDetailsModel();
 
             component.participant = participant;
@@ -86,17 +86,8 @@ describe('JudicialParticipantDetailsComponent', () => {
         });
 
         it('should display TBC when no phone number is provided', () => {
-            const participant = new JudiciaryParticipantDetailsModel(
-                'Mr',
-                'John',
-                'Doe',
-                'John Doe',
-                'john@doe.com',
-                null,
-                'A1234',
-                'Judge',
-                'Judge John'
-            );
+            const participant = new JudicialMemberDto('John', 'Doe', 'John Doe', 'john@doe.com', null, 'A1234', false, 'Judge John');
+            participant.roleCode = 'Judge';
             const hearing = new BookingDetailsTestData().getBookingsDetailsModel();
 
             component.participant = participant;
@@ -123,17 +114,8 @@ describe('JudicialParticipantDetailsComponent', () => {
 
     describe('Participant is a Panel Member', () => {
         it('should display a panel member without contact details', () => {
-            const participant = new JudiciaryParticipantDetailsModel(
-                'Mr',
-                'John',
-                'Doe',
-                'John Doe',
-                'john@doe.com',
-                '1234567890',
-                'A1234',
-                'PanelMember',
-                'PM John'
-            );
+            const participant = new JudicialMemberDto('John', 'Doe', 'John Doe', 'john@doe.com', '1234567890', 'A1234', false, 'PM John');
+            participant.roleCode = 'PanelMember';
             const hearing = new BookingDetailsTestData().getBookingsDetailsModel();
 
             component.participant = participant;
@@ -155,17 +137,8 @@ describe('JudicialParticipantDetailsComponent', () => {
         });
 
         it('should display a panel member with contact details', () => {
-            const participant = new JudiciaryParticipantDetailsModel(
-                'Mr',
-                'John',
-                'Doe',
-                'John Doe',
-                'john@doe.com',
-                '1234567890',
-                'A1234',
-                'PanelMember',
-                'PM John'
-            );
+            const participant = new JudicialMemberDto('John', 'Doe', 'John Doe', 'john@doe.com', '1234567890', 'A1234', false, 'PM John');
+            participant.roleCode = 'PanelMember';
             const hearing = new BookingDetailsTestData().getBookingsDetailsModel();
 
             component.participant = participant;

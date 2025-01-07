@@ -1,30 +1,30 @@
-import { HearingModel } from 'src/app/common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 // Creates a multi day hearing from an existing hearing model
-export function createMultiDayHearing(currentHearing: HearingModel) {
-    const multiDayHearing: HearingModel = Object.assign({}, currentHearing);
+export function createMultiDayHearing(currentHearing: VHBooking) {
+    const multiDayHearing: VHBooking = Object.assign({}, currentHearing);
     multiDayHearing.isMultiDay = true;
     const scheduledDateTime = new Date();
     scheduledDateTime.setSeconds(0);
-    multiDayHearing.scheduled_date_time = scheduledDateTime;
-    multiDayHearing.hearing_id = '1';
+    multiDayHearing.scheduledDateTime = scheduledDateTime;
+    multiDayHearing.hearingId = '1';
     multiDayHearing.hearingsInGroup = [];
     const daysInHearing = 4;
     for (let i = 1; i <= daysInHearing; i++) {
-        const hearing: HearingModel = Object.assign({}, multiDayHearing);
+        const hearing: VHBooking = Object.assign({}, multiDayHearing);
         if (i > 1) {
-            const datetime = new Date(multiDayHearing.scheduled_date_time);
-            datetime.setDate(multiDayHearing.scheduled_date_time.getDate() + i - 1);
-            hearing.scheduled_date_time = datetime;
-            hearing.hearing_id = i.toString();
-            hearing.originalScheduledDateTime = hearing.scheduled_date_time;
+            const datetime = new Date(multiDayHearing.scheduledDateTime);
+            datetime.setDate(multiDayHearing.scheduledDateTime.getDate() + i - 1);
+            hearing.scheduledDateTime = datetime;
+            hearing.hearingId = i.toString();
+            hearing.originalScheduledDateTime = hearing.scheduledDateTime;
         }
         multiDayHearing.hearingsInGroup.push(hearing);
     }
     const lastHearing = multiDayHearing.hearingsInGroup[multiDayHearing.hearingsInGroup.length - 1];
-    multiDayHearing.multiDayHearingLastDayScheduledDateTime = lastHearing.scheduled_date_time;
+    multiDayHearing.multiDayHearingLastDayScheduledDateTime = lastHearing.scheduledDateTime;
     multiDayHearing.hearingsInGroup.forEach(h => {
-        h.multiDayHearingLastDayScheduledDateTime = lastHearing.scheduled_date_time;
+        h.multiDayHearingLastDayScheduledDateTime = lastHearing.scheduledDateTime;
     });
 
     return multiDayHearing;

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { HearingModel } from 'src/app/common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { ProtectFrom, ScreeningType, SelectedScreeningDto } from './screening.model';
 
 @Component({
@@ -25,13 +25,13 @@ export class ScreeningFormComponent {
     destroyed$ = new Subject<void>();
     form: FormGroup<ScreeningSelectParticipantForm>;
 
-    @Input() set hearing(hearing: HearingModel) {
+    @Input() set hearing(hearing: VHBooking) {
         const mappedParticipants = hearing.participants
             .filter(x => x.email)
             .map(
                 participant =>
                     ({
-                        displayName: participant.display_name,
+                        displayName: participant.displayName,
                         externalReferenceId: participant.externalReferenceId,
                         isNewlyAdded: participant.id === null || participant.id === undefined
                     } as GenericParticipantsModel)
@@ -45,7 +45,7 @@ export class ScreeningFormComponent {
                     isNewlyAdded: endpoint.id === null || endpoint.id === undefined
                 } as GenericParticipantsModel)
         );
-        this.isEditMode = !!hearing.hearing_id;
+        this.isEditMode = !!hearing.hearingId;
         this.allParticipants = [...mappedParticipants, ...mappedEndpoints].filter(participant =>
             this.includeParticipantInScreeningOptions(participant)
         );

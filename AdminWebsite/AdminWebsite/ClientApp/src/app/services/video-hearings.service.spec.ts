@@ -4,21 +4,14 @@ import {
     BHClient,
     BookingStatus,
     CancelMultiDayHearingRequest,
-    CaseResponse,
     ClientSettingsResponse,
     EditMultiDayHearingRequest,
-    EndpointResponse,
     HearingDetailsResponse,
-    JudiciaryParticipantResponse,
-    LinkedParticipantResponse,
     MultiHearingRequest,
-    ParticipantResponse,
     UpdateHearingInGroupRequest,
     VideoSupplier
 } from './clients/api-client';
-import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
-import { ParticipantModel } from '../common/model/participant.model';
 import { of } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
@@ -27,6 +20,8 @@ import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-
 import { ScreeningDto } from '../booking/screening/screening.model';
 import { ReferenceDataService } from './reference-data.service';
 import { MockValues } from '../testing/data/test-objects';
+import { VHBooking } from '../common/model/vh-booking';
+import { VHParticipant } from '../common/model/vh-participant';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
@@ -86,7 +81,7 @@ describe('Video hearing service', () => {
     });
 
     it('should have changes when updating hearing request', () => {
-        const model = new HearingModel();
+        const model = new VHBooking();
         service.updateHearingRequest(model);
 
         expect(service.hasUnsavedChanges()).toBe(true);
@@ -105,18 +100,18 @@ describe('Video hearing service', () => {
     });
 
     it('should cache current hearing request', () => {
-        const model = new HearingModel();
-        model.hearing_id = 'hearingId';
+        const model = new VHBooking();
+        model.hearingId = 'hearingId';
         service.updateHearingRequest(model);
-        expect(service.getCurrentRequest().hearing_id).toBe('hearingId');
+        expect(service.getCurrentRequest().hearingId).toBe('hearingId');
     });
 
     it('should remove currently cached hearing when cancelling', () => {
-        const model = new HearingModel();
-        model.hearing_id = 'hearingId';
+        const model = new VHBooking();
+        model.hearingId = 'hearingId';
         service.updateHearingRequest(model);
         service.cancelRequest();
-        expect(service.getCurrentRequest().hearing_id).not.toBe('hearingId');
+        expect(service.getCurrentRequest().hearingId).not.toBe('hearingId');
     });
 
     it('should save hearing request in database', async () => {
@@ -124,16 +119,16 @@ describe('Video hearing service', () => {
         const caseModel = new CaseModel();
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
-        const model = new HearingModel();
-        model.case_type = 'Tax';
-        model.scheduled_date_time = new Date(date);
-        model.scheduled_duration = 30;
-        model.court_name = 'court address';
-        model.court_room = 'room 09';
-        model.other_information = 'note';
-        model.cases = [caseModel];
+        const model = new VHBooking();
+        model.caseType = 'Tax';
+        model.scheduledDateTime = new Date(date);
+        model.scheduledDuration = 30;
+        model.courtName = 'court address';
+        model.courtRoom = 'room 09';
+        model.otherInformation = 'note';
+        model.case = caseModel;
         model.participants = [];
-        model.audio_recording_required = true;
+        model.audioRecordingRequired = true;
         const response = new HearingDetailsResponse({ id: '1234566' });
         clientApiSpy.bookNewHearing.and.returnValue(of(response));
 
@@ -146,16 +141,16 @@ describe('Video hearing service', () => {
         const caseModel = new CaseModel();
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
-        const model = new HearingModel();
-        model.case_type = 'Tax';
-        model.scheduled_date_time = new Date(date);
-        model.scheduled_duration = 30;
-        model.court_name = 'court address';
-        model.court_room = 'room 09';
-        model.other_information = 'note';
-        model.cases = [caseModel];
+        const model = new VHBooking();
+        model.caseType = 'Tax';
+        model.scheduledDateTime = new Date(date);
+        model.scheduledDuration = 30;
+        model.courtName = 'court address';
+        model.courtRoom = 'room 09';
+        model.otherInformation = 'note';
+        model.case = caseModel;
         model.participants = [];
-        model.audio_recording_required = true;
+        model.audioRecordingRequired = true;
         model.supplier = VideoSupplier.Vodafone;
         const request = service.mapHearing(model);
 
@@ -170,176 +165,44 @@ describe('Video hearing service', () => {
         expect(request.conference_supplier).toBe(VideoSupplier.Vodafone);
     });
 
-    describe('mapHearingDetailsResponseToHearingModel', () => {
-        it('should map HearingDetailsResponse to HearingModel', () => {
-            const model = createHearingDetailsResponse();
-
-            const request = service.mapHearingDetailsResponseToHearingModel(model);
-            expect(request.hearing_id).toEqual(model.id);
-            expect(request.court_room).toBe('room 09');
-            expect(request.other_information).toBe('note');
-            expect(request.cases).toBeTruthy();
-            expect(request.cases[0].name).toBe('case1');
-            expect(request.cases[0].number).toBe('Number 1');
-            expect(request.scheduled_date_time).toEqual(model.scheduled_date_time);
-            expect(request.scheduled_duration).toBe(30);
-            expect(request.audio_recording_required).toBeTruthy();
-            expect(request.judiciaryParticipants[0]).toBeTruthy();
-            expect(request.judiciaryParticipants[0].displayName).toBe('Judge Dan Smith');
-            expect(request.isMultiDay).toBeFalsy();
-            expect(request.multiDayHearingLastDayScheduledDateTime).toBeTruthy();
-        });
-
-        it('should map HearingDetailsResponse to HearingModel with non-null group id', () => {
-            const model = createHearingDetailsResponse();
-            model.group_id = '1234';
-
-            const request = service.mapHearingDetailsResponseToHearingModel(model);
-            expect(request.isMultiDay).toBeTruthy();
-        });
-
-        it('should map HearingDetailsResponse to HearingModel with non-null hearings in group', () => {
-            const hearingInGroup = createHearingDetailsResponse();
-            hearingInGroup.group_id = '1234';
-            hearingInGroup.created_date = new Date();
-            hearingInGroup.updated_date = new Date();
-            const model = createHearingDetailsResponse();
-            model.group_id = '1234';
-            model.hearings_in_group = [hearingInGroup];
-            const expectedMappedHearingInGroup = service.mapHearingDetailsResponseToHearingModel(hearingInGroup);
-
-            const request = service.mapHearingDetailsResponseToHearingModel(model);
-            expect(request.hearingsInGroup).toEqual([expectedMappedHearingInGroup]);
-        });
-
-        function createHearingDetailsResponse() {
-            const date = Date.now();
-            const caseModel = new CaseResponse();
-            caseModel.name = 'case1';
-            caseModel.number = 'Number 1';
-            const model = new HearingDetailsResponse();
-            model.id = '232423423jsn';
-            model.scheduled_date_time = new Date(date);
-            model.scheduled_duration = 30;
-            model.hearing_room_name = 'room 09';
-            model.other_information = 'note';
-            model.cases = [caseModel];
-            model.participants = [];
-            model.judiciary_participants = [
-                new JudiciaryParticipantResponse({
-                    title: 'Mr',
-                    first_name: 'Dan',
-                    last_name: 'Smith',
-                    display_name: 'Judge Dan Smith',
-                    email: 'joh@judge.com',
-                    full_name: 'Dan Smith',
-                    personal_code: '1234',
-                    work_phone: '123123123',
-                    role_code: 'Judge'
-                })
-            ];
-            model.audio_recording_required = true;
-            model.group_id = null;
-            model.multi_day_hearing_last_day_scheduled_date_time = new Date(date);
-            return model;
-        }
-    });
-
-    it('should map ParticipantResponse to ParticipantModel', () => {
-        const participants: ParticipantResponse[] = [];
-        const participant = new ParticipantResponse();
-        participant.title = 'Mr';
-        participant.first_name = 'Dan';
-        participant.middle_names = 'Ivan';
-        participant.last_name = 'Smith';
-        participant.username = 'dan@hmcts.net';
-        participant.display_name = 'Dan Smith';
-        participant.contact_email = 'dan@hmcts.net';
-        participant.telephone_number = '123123123';
-        participant.hearing_role_name = 'Litigant in person';
-        participant.user_role_name = 'Individual';
-        participant.interpreter_language = null;
-        participants.push(participant);
-
-        const judgeParticipant = new ParticipantResponse();
-        judgeParticipant.title = 'Mr';
-        judgeParticipant.first_name = 'Judge';
-        judgeParticipant.middle_names = 'MiddleNames';
-        judgeParticipant.last_name = 'Test';
-        judgeParticipant.username = 'judge@hmcts.net';
-        judgeParticipant.display_name = 'Judge Test';
-        judgeParticipant.contact_email = 'judge@hmcts.net';
-        judgeParticipant.telephone_number = '123123123';
-        judgeParticipant.hearing_role_name = null;
-        judgeParticipant.user_role_name = 'Judge';
-        judgeParticipant.interpreter_language = null;
-        participants.push(judgeParticipant);
-
-        const model = service.mapParticipantResponseToParticipantModel(participants);
-
-        expect(model[0].title).toEqual(participant.title);
-        expect(model[0].first_name).toEqual(participant.first_name);
-        expect(model[0].middle_names).toEqual(participant.middle_names);
-        expect(model[0].last_name).toEqual(participant.last_name);
-        expect(model[0].username).toEqual(participant.username);
-        expect(model[0].display_name).toEqual(participant.display_name);
-        expect(model[0].email).toEqual(participant.contact_email);
-        expect(model[0].phone).toEqual(participant.telephone_number);
-        expect(model[0].hearing_role_name).toEqual(participant.hearing_role_name);
-        expect(model[0].is_judge).toBeFalse();
-        expect(model[0].interpretation_language).toBeNull();
-
-        expect(model[1].title).toEqual(judgeParticipant.title);
-        expect(model[1].first_name).toEqual(judgeParticipant.first_name);
-        expect(model[1].middle_names).toEqual(judgeParticipant.middle_names);
-        expect(model[1].last_name).toEqual(judgeParticipant.last_name);
-        expect(model[1].username).toEqual(judgeParticipant.username);
-        expect(model[1].display_name).toEqual(judgeParticipant.display_name);
-        expect(model[1].email).toEqual(judgeParticipant.contact_email);
-        expect(model[1].phone).toEqual(judgeParticipant.telephone_number);
-        expect(model[1].hearing_role_name).toEqual(judgeParticipant.hearing_role_name);
-        expect(model[1].is_judge).toBeTrue();
-        expect(model[1].interpretation_language).toBeNull();
-    });
-
     it('should map ParticipantModel toParticipantResponse', () => {
-        const participants: ParticipantModel[] = [];
-        const participant = new ParticipantModel();
+        const participants: VHParticipant[] = [];
+        const participant = new VHParticipant();
         participant.title = 'Mr';
-        participant.first_name = 'Dan';
-        participant.middle_names = 'Ivan';
-        participant.last_name = 'Smith';
+        participant.firstName = 'Dan';
+        participant.middleNames = 'Ivan';
+        participant.lastName = 'Smith';
         participant.username = 'dan@hmcts.net';
-        participant.display_name = 'Dan Smith';
+        participant.displayName = 'Dan Smith';
         participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
-        participant.hearing_role_name = 'Litigant in person';
+        participant.hearingRoleName = 'Litigant in person';
         participants.push(participant);
 
         const model = service.mapParticipants(participants);
 
         expect(model[0].title).toEqual(participant.title);
-        expect(model[0].first_name).toEqual(participant.first_name);
-        expect(model[0].middle_names).toEqual(participant.middle_names);
-        expect(model[0].last_name).toEqual(participant.last_name);
+        expect(model[0].first_name).toEqual(participant.firstName);
+        expect(model[0].middle_names).toEqual(participant.middleNames);
+        expect(model[0].last_name).toEqual(participant.lastName);
         expect(model[0].username).toEqual(participant.username);
-        expect(model[0].display_name).toEqual(participant.display_name);
+        expect(model[0].display_name).toEqual(participant.displayName);
         expect(model[0].contact_email).toEqual(participant.email);
         expect(model[0].telephone_number).toEqual(participant.phone);
     });
 
     it('should map Existing hearing', () => {
-        const participants: ParticipantModel[] = [];
-        const participant = new ParticipantModel();
+        const participants: VHParticipant[] = [];
+        const participant = new VHParticipant();
         participant.title = 'Mr';
-        participant.first_name = 'Dan';
-        participant.middle_names = 'Ivan';
-        participant.last_name = 'Smith';
+        participant.firstName = 'Dan';
+        participant.middleNames = 'Ivan';
+        participant.lastName = 'Smith';
         participant.username = 'dan@hmcts.net';
-        participant.display_name = 'Dan Smith';
+        participant.displayName = 'Dan Smith';
         participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
-        participant.hearing_role_name = 'Litigant in person';
+        participant.hearingRoleName = 'Litigant in person';
         const interpretationLanguage: InterpreterSelectedDto = {
             signLanguageCode: null,
             spokenLanguageCode: 'fr',
@@ -352,20 +215,20 @@ describe('Video hearing service', () => {
         linkedParticipantModel.linkedParticipantId = '200';
         linkedParticipantModel.participantId = '100';
         linkedParticipants.push(linkedParticipantModel);
-        participant.linked_participants = linkedParticipants;
+        participant.linkedParticipants = linkedParticipants;
         participants.push(participant);
         const caseModel = new CaseModel();
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
-        const hearingModel = new HearingModel();
-        hearingModel.court_room = 'Court Room1';
-        hearingModel.court_name = 'Test Court';
-        hearingModel.other_information = 'Other Information';
-        hearingModel.scheduled_date_time = new Date();
-        hearingModel.scheduled_duration = 45;
+        const hearingModel = new VHBooking();
+        hearingModel.courtRoom = 'Court Room1';
+        hearingModel.courtName = 'Test Court';
+        hearingModel.otherInformation = 'Other Information';
+        hearingModel.scheduledDateTime = new Date();
+        hearingModel.scheduledDuration = 45;
         hearingModel.participants = participants;
-        hearingModel.cases = [caseModel];
-        hearingModel.audio_recording_required = true;
+        hearingModel.case = caseModel;
+        hearingModel.audioRecordingRequired = true;
         const endpoints: EndpointModel[] = [];
         const endpoint = new EndpointModel(null);
         endpoint.displayName = 'endpoint 001';
@@ -375,25 +238,25 @@ describe('Video hearing service', () => {
         const editHearingRequest = service.mapExistingHearing(hearingModel);
         const actualParticipant = editHearingRequest.participants[0];
         const expectedParticipant = hearingModel.participants[0];
-        const expectedCase = hearingModel.cases[0];
+        const expectedCase = hearingModel.case;
         const actualCase = editHearingRequest.case;
         const actualEndpoint = editHearingRequest.endpoints[0].display_name;
         const expectedEndpoint = hearingModel.endpoints[0].displayName;
         const actualLinkedParticipants = editHearingRequest.participants[0].linked_participants[0];
-        const expectedLinkedParticipants = hearingModel.participants[0].linked_participants[0];
-        expect(editHearingRequest.hearing_room_name).toEqual(hearingModel.court_room);
-        expect(editHearingRequest.hearing_venue_name).toEqual(hearingModel.court_name);
-        expect(editHearingRequest.other_information).toEqual(hearingModel.other_information);
-        expect(editHearingRequest.scheduled_date_time).toEqual(hearingModel.scheduled_date_time);
-        expect(editHearingRequest.scheduled_duration).toEqual(hearingModel.scheduled_duration);
+        const expectedLinkedParticipants = hearingModel.participants[0].linkedParticipants[0];
+        expect(editHearingRequest.hearing_room_name).toEqual(hearingModel.courtRoom);
+        expect(editHearingRequest.hearing_venue_name).toEqual(hearingModel.courtName);
+        expect(editHearingRequest.other_information).toEqual(hearingModel.otherInformation);
+        expect(editHearingRequest.scheduled_date_time).toEqual(hearingModel.scheduledDateTime);
+        expect(editHearingRequest.scheduled_duration).toEqual(hearingModel.scheduledDuration);
         expect(editHearingRequest.participants.length).toBeGreaterThan(0);
 
         expect(editHearingRequest.audio_recording_required).toBeTruthy();
         expect(actualParticipant.title).toEqual(expectedParticipant.title);
-        expect(actualParticipant.first_name).toEqual(expectedParticipant.first_name);
-        expect(actualParticipant.last_name).toEqual(expectedParticipant.last_name);
-        expect(actualParticipant.middle_names).toEqual(expectedParticipant.middle_names);
-        expect(actualParticipant.hearing_role_name).toEqual(expectedParticipant.hearing_role_name);
+        expect(actualParticipant.first_name).toEqual(expectedParticipant.firstName);
+        expect(actualParticipant.last_name).toEqual(expectedParticipant.lastName);
+        expect(actualParticipant.middle_names).toEqual(expectedParticipant.middleNames);
+        expect(actualParticipant.hearing_role_name).toEqual(expectedParticipant.hearingRoleName);
         expect(actualCase.name).toEqual(expectedCase.name);
         expect(actualCase.number).toEqual(expectedCase.number);
         expect(actualEndpoint).toEqual(expectedEndpoint);
@@ -403,37 +266,37 @@ describe('Video hearing service', () => {
     });
 
     it('should map Existing hearing', () => {
-        const participants: ParticipantModel[] = [];
-        const participant = new ParticipantModel();
+        const participants: VHParticipant[] = [];
+        const participant = new VHParticipant();
         participant.title = 'Mr';
-        participant.first_name = 'Dan';
-        participant.middle_names = 'Ivan';
-        participant.last_name = 'Smith';
+        participant.firstName = 'Dan';
+        participant.middleNames = 'Ivan';
+        participant.lastName = 'Smith';
         participant.username = 'dan@hmcts.net';
-        participant.display_name = 'Dan Smith';
+        participant.displayName = 'Dan Smith';
         participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
-        participant.hearing_role_name = 'Litigant in person';
+        participant.hearingRoleName = 'Litigant in person';
         const linkedParticipants: LinkedParticipantModel[] = [];
         const linkedParticipantModel = new LinkedParticipantModel();
         linkedParticipantModel.linkType = LinkedParticipantType.Interpreter;
         linkedParticipantModel.linkedParticipantId = '200';
         linkedParticipantModel.participantId = '100';
         linkedParticipants.push(linkedParticipantModel);
-        participant.linked_participants = linkedParticipants;
+        participant.linkedParticipants = linkedParticipants;
         participants.push(participant);
         const caseModel = new CaseModel();
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
-        const hearingModel = new HearingModel();
-        hearingModel.court_room = 'Court Room1';
-        hearingModel.court_name = 'Test Court';
-        hearingModel.other_information = 'Other Information';
-        hearingModel.scheduled_date_time = new Date();
-        hearingModel.scheduled_duration = 45;
+        const hearingModel = new VHBooking();
+        hearingModel.courtRoom = 'Court Room1';
+        hearingModel.courtName = 'Test Court';
+        hearingModel.otherInformation = 'Other Information';
+        hearingModel.scheduledDateTime = new Date();
+        hearingModel.scheduledDuration = 45;
         hearingModel.participants = participants;
-        hearingModel.cases = [caseModel];
-        hearingModel.audio_recording_required = true;
+        hearingModel.case = caseModel;
+        hearingModel.audioRecordingRequired = true;
         const endpoints: EndpointModel[] = [];
         const endpoint = new EndpointModel(null);
         endpoint.displayName = 'court room1';
@@ -442,39 +305,27 @@ describe('Video hearing service', () => {
 
         const editHearingRequest = service.mapExistingHearing(hearingModel);
 
-        expect(editHearingRequest.hearing_room_name).toEqual(hearingModel.court_room);
-        expect(editHearingRequest.hearing_venue_name).toEqual(hearingModel.court_name);
-        expect(editHearingRequest.other_information).toEqual(hearingModel.other_information);
-        expect(editHearingRequest.scheduled_date_time).toEqual(hearingModel.scheduled_date_time);
-        expect(editHearingRequest.scheduled_duration).toEqual(hearingModel.scheduled_duration);
+        expect(editHearingRequest.hearing_room_name).toEqual(hearingModel.courtRoom);
+        expect(editHearingRequest.hearing_venue_name).toEqual(hearingModel.courtName);
+        expect(editHearingRequest.other_information).toEqual(hearingModel.otherInformation);
+        expect(editHearingRequest.scheduled_date_time).toEqual(hearingModel.scheduledDateTime);
+        expect(editHearingRequest.scheduled_duration).toEqual(hearingModel.scheduledDuration);
         expect(editHearingRequest.participants.length).toBeGreaterThan(0);
         expect(editHearingRequest.participants[0].title).toEqual(hearingModel.participants[0].title);
-        expect(editHearingRequest.participants[0].first_name).toEqual(hearingModel.participants[0].first_name);
-        expect(editHearingRequest.participants[0].last_name).toEqual(hearingModel.participants[0].last_name);
-        expect(editHearingRequest.participants[0].middle_names).toEqual(hearingModel.participants[0].middle_names);
-        expect(editHearingRequest.participants[0].hearing_role_name).toEqual(hearingModel.participants[0].hearing_role_name);
-        expect(editHearingRequest.case.name).toEqual(hearingModel.cases[0].name);
-        expect(editHearingRequest.case.number).toEqual(hearingModel.cases[0].number);
-        expect(editHearingRequest.audio_recording_required).toEqual(hearingModel.audio_recording_required);
+        expect(editHearingRequest.participants[0].first_name).toEqual(hearingModel.participants[0].firstName);
+        expect(editHearingRequest.participants[0].last_name).toEqual(hearingModel.participants[0].lastName);
+        expect(editHearingRequest.participants[0].middle_names).toEqual(hearingModel.participants[0].middleNames);
+        expect(editHearingRequest.participants[0].hearing_role_name).toEqual(hearingModel.participants[0].hearingRoleName);
+        expect(editHearingRequest.case.name).toEqual(hearingModel.case.name);
+        expect(editHearingRequest.case.number).toEqual(hearingModel.case.number);
+        expect(editHearingRequest.audio_recording_required).toEqual(hearingModel.audioRecordingRequired);
         expect(editHearingRequest.endpoints[0].display_name).toEqual(hearingModel.endpoints[0].displayName);
         expect(editHearingRequest.participants[0].linked_participants[0].linked_id).toEqual(
-            hearingModel.participants[0].linked_participants[0].linkedParticipantId
+            hearingModel.participants[0].linkedParticipants[0].linkedParticipantId
         );
         expect(editHearingRequest.participants[0].linked_participants[0].type).toEqual(
-            hearingModel.participants[0].linked_participants[0].linkType
+            hearingModel.participants[0].linkedParticipants[0].linkType
         );
-    });
-
-    it('should map EndpointResponse to EndpointModel', () => {
-        const endpoints: EndpointResponse[] = [];
-        const endpoint = new EndpointResponse();
-        endpoint.display_name = 'endpoint 001';
-        endpoint.interpreter_language = null;
-        endpoints.push(endpoint);
-
-        const model = service.mapEndpointResponseToEndpointModel(endpoints, []);
-        expect(model[0].displayName).toEqual(endpoint.display_name);
-        expect(model[0].interpretationLanguage).toBeNull();
     });
 
     it('should map EndpointModel toEndpointResponse', () => {
@@ -558,17 +409,6 @@ describe('Video hearing service', () => {
         expect(model[1].participant_contact_email).toEqual(linkedParticipantModelList[1].participantEmail);
         expect(model[1].linked_participant_contact_email).toEqual(linkedParticipantModelList[1].linkedParticipantEmail);
     });
-    it('should map LinkedParticipantResponse to LinkedParticipantModel', () => {
-        const linkedParticipants: LinkedParticipantResponse[] = [];
-        const linkedParticipant = new LinkedParticipantResponse();
-        linkedParticipant.type = LinkedParticipantType.Interpreter;
-        linkedParticipant.linked_id = '100';
-        linkedParticipants.push(linkedParticipant);
-
-        const model = service.mapLinkedParticipantResponseToLinkedParticipantModel(linkedParticipants);
-        expect(model[0].linkType).toEqual(linkedParticipant.type);
-        expect(model[0].linkedParticipantId).toEqual(linkedParticipant.linked_id);
-    });
 
     it('should rebook hearing', async () => {
         clientApiSpy.rebookHearing.and.returnValue(of(null));
@@ -579,30 +419,30 @@ describe('Video hearing service', () => {
 
     describe('isConferenceClosed', () => {
         it('should return false if booking status booked and telephone conference Id is empty', () => {
-            const model = new HearingModel();
+            const model = new VHBooking();
             model.status = BookingStatus.Booked;
-            model.telephone_conference_id = '';
+            model.telephoneConferenceId = '';
             service.updateHearingRequest(model);
             expect(service.isConferenceClosed()).toBe(false);
         });
         it('should return false if booking status created and telephone conference Id is not empty', () => {
-            const model = new HearingModel();
+            const model = new VHBooking();
             model.status = BookingStatus.Created;
-            model.telephone_conference_id = '1111';
+            model.telephoneConferenceId = '1111';
             service.updateHearingRequest(model);
             expect(service.isConferenceClosed()).toBe(false);
         });
         it('should return false if booking status booked and telephone conference Id is not empty', () => {
-            const model = new HearingModel();
+            const model = new VHBooking();
             model.status = BookingStatus.Booked;
-            model.telephone_conference_id = '1111';
+            model.telephoneConferenceId = '1111';
             service.updateHearingRequest(model);
             expect(service.isConferenceClosed()).toBe(false);
         });
         it('should return true if booking status created and telephone conference Id is empty', () => {
-            const model = new HearingModel();
+            const model = new VHBooking();
             model.status = BookingStatus.Created;
-            model.telephone_conference_id = '';
+            model.telephoneConferenceId = '';
             service.updateHearingRequest(model);
             expect(service.isConferenceClosed()).toBe(true);
         });
@@ -610,35 +450,35 @@ describe('Video hearing service', () => {
 
     describe('isHearingAboutToStart', () => {
         const aboutToStartMinutesThreshold = 30;
-        let model: HearingModel;
+        let model: VHBooking;
         beforeEach(() => {
-            model = new HearingModel();
-            model.scheduled_date_time = new Date();
+            model = new VHBooking();
+            model.scheduledDateTime = new Date();
             model.status = BookingStatus.Created;
         });
 
         it('should return false if hearing is not about to start', () => {
-            model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold + 5);
+            model.scheduledDateTime.setMinutes(model.scheduledDateTime.getMinutes() + aboutToStartMinutesThreshold + 5);
             service.updateHearingRequest(model);
             expect(service.isHearingAboutToStart()).toBe(false);
         });
 
         it('should return false if hearing is not about to start & is not confirmed', () => {
             model.isConfirmed = false;
-            model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold - 5);
+            model.scheduledDateTime.setMinutes(model.scheduledDateTime.getMinutes() + aboutToStartMinutesThreshold - 5);
             service.updateHearingRequest(model);
             expect(service.isHearingAboutToStart()).toBe(false);
         });
 
         it('should return true if hearing is not about to start & is confirmed', () => {
             model.isConfirmed = true;
-            model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold - 5);
+            model.scheduledDateTime.setMinutes(model.scheduledDateTime.getMinutes() + aboutToStartMinutesThreshold - 5);
             service.updateHearingRequest(model);
             expect(service.isHearingAboutToStart()).toBe(true);
         });
 
         it('should return false if there is no scheduled_date_time', () => {
-            model.scheduled_date_time = null;
+            model.scheduledDateTime = null;
             service.updateHearingRequest(model);
             expect(service.isHearingAboutToStart()).toBe(false);
         });
@@ -696,7 +536,7 @@ describe('Video hearing service', () => {
         it('should replace an existing judge, from participant list', () => {
             // Arrange
             const newJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
-            const existingJudge = new ParticipantModel();
+            const existingJudge = new VHParticipant();
             existingJudge.username = 'judge';
             service['modelHearing'].participants.push(existingJudge);
             spyOn(service['modelHearing'].participants, 'findIndex').and.returnValue(0);
@@ -810,21 +650,21 @@ describe('Video hearing service', () => {
     });
 
     describe('updateMultiDayHearing', () => {
-        const hearing = new HearingModel();
+        const hearing = new VHBooking();
         const date = Date.now();
         const caseModel = new CaseModel();
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
-        hearing.hearing_id = 'a8c6a042-bc0d-4846-a186-720cd1ddce58';
-        hearing.case_type = 'Tax';
-        hearing.scheduled_date_time = new Date(date);
-        hearing.scheduled_duration = 30;
-        hearing.cases = [caseModel];
-        hearing.audio_recording_required = true;
-        hearing.court_code = '701411';
-        hearing.court_name = 'Manchester Civil and Family Justice Centre';
-        hearing.court_room = 'Court Room1';
-        hearing.other_information = 'Other information';
+        hearing.hearingId = 'a8c6a042-bc0d-4846-a186-720cd1ddce58';
+        hearing.caseType = 'Tax';
+        hearing.scheduledDateTime = new Date(date);
+        hearing.scheduledDuration = 30;
+        hearing.case = caseModel;
+        hearing.audioRecordingRequired = true;
+        hearing.courtCode = '701411';
+        hearing.courtName = 'Manchester Civil and Family Justice Centre';
+        hearing.courtRoom = 'Court Room1';
+        hearing.otherInformation = 'Other information';
         const judiciaryParticipants: JudicialMemberDto[] = [];
         judiciaryParticipants.push(
             new JudicialMemberDto(
@@ -838,13 +678,13 @@ describe('Video hearing service', () => {
             )
         );
         hearing.judiciaryParticipants = judiciaryParticipants;
-        const participants: ParticipantModel[] = [];
+        const participants: VHParticipant[] = [];
         participants.push(
-            new ParticipantModel({
+            new VHParticipant({
                 id: 'e09882e8-345c-4bbb-b412-af6f4f622a24',
                 email: 'app.litigant@email.com',
-                display_name: 'Litigant',
-                hearing_role_code: 'APPL'
+                displayName: 'Litigant',
+                hearingRoleCode: 'APPL'
             })
         );
         hearing.participants = participants;
@@ -869,7 +709,7 @@ describe('Video hearing service', () => {
 
             // Assert
             const expectedRequest = mapExpectedRequest();
-            expect(clientApiSpy.editMultiDayHearing).toHaveBeenCalledWith(hearing.hearing_id, expectedRequest);
+            expect(clientApiSpy.editMultiDayHearing).toHaveBeenCalledWith(hearing.hearingId, expectedRequest);
         });
 
         it('should call api to update hearing and future hearings', () => {
@@ -881,7 +721,7 @@ describe('Video hearing service', () => {
 
             // Assert
             const expectedRequest = mapExpectedRequest();
-            expect(clientApiSpy.editMultiDayHearing).toHaveBeenCalledWith(hearing.hearing_id, expectedRequest);
+            expect(clientApiSpy.editMultiDayHearing).toHaveBeenCalledWith(hearing.hearingId, expectedRequest);
         });
 
         function mapExpectedRequest() {
@@ -901,8 +741,8 @@ describe('Video hearing service', () => {
             expectedRequest.hearings_in_group = hearing.hearingsInGroup.map(
                 h =>
                     new UpdateHearingInGroupRequest({
-                        hearing_id: h.hearing_id,
-                        scheduled_date_time: h.scheduled_date_time
+                        hearing_id: h.hearingId,
+                        scheduled_date_time: h.scheduledDateTime
                     })
             );
 
@@ -931,14 +771,14 @@ describe('Video hearing service', () => {
 
     describe('isTotalHearingMoreThanThreshold', () => {
         it('should return false if booking is multiday and the total days are less than 40', () => {
-            const hearing = new HearingModel();
-            hearing.hearing_id = 'SomeGuid';
+            const hearing = new VHBooking();
+            hearing.hearingId = 'SomeGuid';
             hearing.hearingsInGroup = [];
 
             for (let i = 0; i < 39; i++) {
-                const model = new HearingModel();
+                const model = new VHBooking();
                 model.status = BookingStatus.Booked;
-                model.hearing_id = 'guid' + i;
+                model.hearingId = 'guid' + i;
                 hearing.hearingsInGroup.push(model);
             }
             sessionStorage.setItem(newRequestKey, JSON.stringify(hearing));
@@ -948,14 +788,14 @@ describe('Video hearing service', () => {
             expect(service.isTotalHearingMoreThanThreshold()).toBe(false);
         });
         it('should return true if booking is multiday and the total days are more than 40', () => {
-            const hearing = new HearingModel();
-            hearing.hearing_id = 'SomeGuid';
+            const hearing = new VHBooking();
+            hearing.hearingId = 'SomeGuid';
             hearing.hearingsInGroup = [];
 
             for (let i = 0; i < 50; i++) {
-                const model = new HearingModel();
+                const model = new VHBooking();
                 model.status = BookingStatus.Booked;
-                model.hearing_id = 'guid' + i;
+                model.hearingId = 'guid' + i;
                 hearing.hearingsInGroup.push(model);
             }
             sessionStorage.setItem(newRequestKey, JSON.stringify(hearing));
@@ -996,13 +836,13 @@ describe('Video hearing service', () => {
     describe('mapParticipants', () => {
         it('should map participants', () => {
             // Arrange
-            const participants: ParticipantModel[] = [];
+            const participants: VHParticipant[] = [];
             const language: InterpreterSelectedDto = {
                 signLanguageCode: null,
                 spokenLanguageCode: 'fr',
                 interpreterRequired: true
             };
-            const participant = new ParticipantModel({
+            const participant = new VHParticipant({
                 interpretation_language: language
             });
             participants.push(participant);

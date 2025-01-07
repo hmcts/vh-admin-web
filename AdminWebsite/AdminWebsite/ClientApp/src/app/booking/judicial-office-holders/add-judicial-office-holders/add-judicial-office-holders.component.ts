@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { JudicialMemberDto } from '../models/add-judicial-member.model';
-import { HearingModel } from 'src/app/common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { ParticipantListComponent } from '../../participant';
 import { Subject, takeUntil } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
@@ -19,7 +19,7 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
 
     judgeAssigned = false;
     displayPanelMember = false;
-    hearing: HearingModel;
+    hearing: VHBooking;
     showAddPanelMember = false;
     addPanelMemberText = this.noPanelMemberText;
 

@@ -1,14 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { OtherInformationModel } from '../../../common/model/other-information.model';
-import { HearingModel } from '../../../common/model/hearing.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Constants } from 'src/app/common/constants';
 import { HearingRoleCodes } from '../../../common/model/hearing-roles.model';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-participant-item',
@@ -18,14 +18,14 @@ import { HearingRoleCodes } from '../../../common/model/hearing-roles.model';
 export class ParticipantItemComponent implements OnInit {
     private readonly loggerPrefix = '[ParticipantList - Item] -';
 
-    @Input() participant: ParticipantModel;
-    @Input() hearing: HearingModel;
+    @Input() participant: VHParticipant;
+    @Input() hearing: VHBooking;
     @Input() canEdit = false;
     @Input() isSummaryPage = false;
     @Input() interpreterEnhancementsEnabled = false;
 
-    @Output() edit = new EventEmitter<ParticipantModel>();
-    @Output() remove = new EventEmitter<ParticipantModel>();
+    @Output() edit = new EventEmitter<VHParticipant>();
+    @Output() remove = new EventEmitter<VHParticipant>();
 
     staffMemberRole = Constants.HearingRoles.StaffMember;
     showParticipantActions: boolean;
@@ -44,7 +44,7 @@ export class ParticipantItemComponent implements OnInit {
             this.router.url.includes(PageUrls.AddJudicialOfficeHolders) || this.router.url.includes(PageUrls.Summary);
     }
 
-    getJudgeUser(participant: ParticipantModel): string {
+    getJudgeUser(participant: VHParticipant): string {
         return participant.username;
     }
 
@@ -52,15 +52,15 @@ export class ParticipantItemComponent implements OnInit {
         if (this.participant.isJudiciaryMember) {
             return null; // username and email are the same, no need to show it twice
         }
-        const otherInformation = OtherInformationModel.init(this.hearing.other_information);
+        const otherInformation = OtherInformationModel.init(this.hearing.otherInformation);
         return otherInformation.JudgeEmail;
     }
 
-    getJudgePhone(participant: ParticipantModel): string {
+    getJudgePhone(participant: VHParticipant): string {
         if (this.participant.isJudiciaryMember) {
             return this.participant.phone; // ejud data does not have phone number
         }
-        const otherInformation = OtherInformationModel.init(this.hearing.other_information);
+        const otherInformation = OtherInformationModel.init(this.hearing.otherInformation);
         return otherInformation.JudgePhone ?? participant.phone;
     }
 
@@ -68,7 +68,7 @@ export class ParticipantItemComponent implements OnInit {
         this.bookingService.setEditMode();
     }
 
-    editParticipant(participant: ParticipantModel) {
+    editParticipant(participant: VHParticipant) {
         this.editJudge();
 
         if (this.isSummaryPage && !this.participant.isJudiciaryMember) {
@@ -86,7 +86,7 @@ export class ParticipantItemComponent implements OnInit {
         }
     }
 
-    removeParticipant(participant: ParticipantModel) {
+    removeParticipant(participant: VHParticipant) {
         this.logger.debug(`${this.loggerPrefix} Removing participant`, { participant: participant.email });
         this.remove.emit(participant);
     }
@@ -96,26 +96,26 @@ export class ParticipantItemComponent implements OnInit {
     }
 
     get isJudge() {
-        return this.participant?.is_judge;
+        return this.participant?.isJudge;
     }
 
     get isStaffMember() {
-        return this.participant?.hearing_role_name === Constants.HearingRoles.StaffMember;
+        return this.participant?.hearingRoleName === Constants.HearingRoles.StaffMember;
     }
 
     get isObserverOrPanelMember() {
         return (
-            ['Observer', 'Panel Member'].includes(this.participant?.hearing_role_name) ||
-            [HearingRoleCodes.Observer, 'PanelMember'].includes(this.participant?.hearing_role_code)
+            ['Observer', 'Panel Member'].includes(this.participant?.hearingRoleName) ||
+            [HearingRoleCodes.Observer, 'PanelMember'].includes(this.participant?.hearingRoleCode)
         );
     }
 
     get isInterpreter() {
-        return this.participant.hearing_role_name === 'Interpreter' || this.participant.hearing_role_code === HearingRoleCodes.Interpreter;
+        return this.participant.hearingRoleName === 'Interpreter' || this.participant.hearingRoleCode === HearingRoleCodes.Interpreter;
     }
 
     get isInterpretee() {
-        return this.participant.is_interpretee;
+        return this.participant.isInterpretee;
     }
 
     canEditJudge(): boolean {
