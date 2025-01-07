@@ -5,9 +5,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { BookingParticipantListComponent } from './booking-participant-list.component';
 import { HearingRoleCodes } from '../../common/model/hearing-roles.model';
 import { ParticipantDetailsComponent } from '../participant-details/participant-details.component';
-import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 import { LinkedParticipantModel } from 'src/app/common/model/linked-participant.model';
+import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 
 describe('BookingParticipantListComponent', () => {
     let component: BookingParticipantListComponent;
@@ -70,17 +70,17 @@ describe('BookingParticipantListComponent', () => {
     });
 
     it('should display judges list', done => {
-        const judge = new JudiciaryParticipantDetailsModel(
-            'Mrs',
+        const judge = new JudicialMemberDto(
             'Alan',
             'Brake',
             'Alan Brake',
             'email1@hmcts.net',
             '12345678',
             'Alan.Brake',
-            'Judge',
+            false,
             'Alan Brake'
         );
+        judge.roleCode = 'Judge';
         component.judiciaryParticipants = [judge];
 
         fixture.whenStable().then(() => {
@@ -179,39 +179,14 @@ describe('BookingParticipantListComponent', () => {
     });
 
     it('should sort judiciary participants and members', () => {
-        const jp1 = new JudiciaryParticipantDetailsModel(
-            'Mrs',
-            'Alan',
-            'Brake',
-            'Judge',
-            'email.p1@hmcts.net',
-            'email1@hmcts.net',
-            'Judge',
-            'Judge',
-            'Alan Brake'
-        );
-        const jp2 = new JudiciaryParticipantDetailsModel(
-            'Mr',
-            'John',
-            'Doe',
-            'Winger',
-            'email.p2@hmcts.net',
-            'email2@hmcts.net',
-            'Winger',
-            'PanelMember',
-            'John Doe'
-        );
-        const jp3 = new JudiciaryParticipantDetailsModel(
-            'Ms',
-            'Jane',
-            'Doe',
-            'Panel Member',
-            'email.p3@hmcts.net',
-            'email3@hmcts.net',
-            'Panel Member',
-            'PanelMember',
-            'Jane Doe'
-        );
+        const jp1 = new JudicialMemberDto('Alan', 'Brake', 'Alan Brake', 'email.p1@hmcts.net', '123', 'Alan.Brake', false, 'Alan Brake');
+        jp1.roleCode = 'Judge';
+
+        const jp2 = new JudicialMemberDto('John', 'Doe', 'John Doe', 'email.p2@hmcts.net', '123', 'John.Doe', false, 'John Doe');
+        jp2.roleCode = 'PanelMember';
+
+        const jp3 = new JudicialMemberDto('Jane', 'Doe', 'Jane Doe', 'email.p3@hmcts.net', '123', 'Jane.Doe', false, 'Jane Doe');
+        jp3.roleCode = 'PanelMember';
 
         component.judiciaryParticipants = [jp1, jp2, jp3];
 

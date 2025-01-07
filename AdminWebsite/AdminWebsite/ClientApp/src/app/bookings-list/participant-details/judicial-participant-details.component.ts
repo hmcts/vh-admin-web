@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
+import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 import { VHBooking } from 'src/app/common/model/vh-booking';
 
 @Component({
@@ -9,7 +9,7 @@ import { VHBooking } from 'src/app/common/model/vh-booking';
 })
 export class JudicialParticipantDetailsComponent {
     @Input()
-    participant: JudiciaryParticipantDetailsModel;
+    participant: JudicialMemberDto;
     @Input()
     hearing: VHBooking;
     @Input()

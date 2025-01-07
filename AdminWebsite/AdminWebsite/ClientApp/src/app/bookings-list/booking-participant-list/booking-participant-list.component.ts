@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
 import { Constants } from '../../common/constants';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 import { VHBooking } from 'src/app/common/model/vh-booking';
+import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 
 @Component({
     selector: 'app-booking-participant-list',
@@ -11,9 +11,9 @@ import { VHBooking } from 'src/app/common/model/vh-booking';
 })
 export class BookingParticipantListComponent {
     private _participants: Array<VHParticipant> = [];
-    private _judiciaryParticipants: Array<JudiciaryParticipantDetailsModel> = [];
+    private _judiciaryParticipants: Array<JudicialMemberDto> = [];
     sortedParticipants: VHParticipant[] = [];
-    sortedJudiciaryMembers: JudiciaryParticipantDetailsModel[] = [];
+    sortedJudiciaryMembers: JudicialMemberDto[] = [];
 
     @Input()
     set participants(participants: Array<VHParticipant>) {
@@ -22,7 +22,7 @@ export class BookingParticipantListComponent {
         this.sortJudiciaryMembers();
     }
     @Input()
-    set judiciaryParticipants(judiciaryParticipants: Array<JudiciaryParticipantDetailsModel>) {
+    set judiciaryParticipants(judiciaryParticipants: Array<JudicialMemberDto>) {
         this._judiciaryParticipants = judiciaryParticipants;
         this.sortParticipants();
         this.sortJudiciaryMembers();
