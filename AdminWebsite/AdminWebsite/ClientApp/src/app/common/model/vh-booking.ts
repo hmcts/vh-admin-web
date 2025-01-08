@@ -13,8 +13,8 @@ export class VHBooking {
     scheduledDateTime?: Date;
     scheduledDuration?: number;
     case?: CaseModel;
-    participants?: VHParticipant[] = [];
-    judiciaryParticipants?: JudicialMemberDto[] = [];
+    participants?: VHParticipant[];
+    judiciaryParticipants?: JudicialMemberDto[];
     createdBy?: string;
     caseType?: string;
     caseTypeServiceId?: string;
@@ -29,16 +29,16 @@ export class VHBooking {
     updatedDate: Date;
     status?: string;
     audioRecordingRequired?: boolean;
-    endpoints?: EndpointModel[] = [];
+    endpoints?: EndpointModel[];
     isMultiDayEdit?: boolean;
     endHearingDateTime?: Date;
     telephoneConferenceId?: string;
-    linkedParticipants?: LinkedParticipantModel[] = [];
+    linkedParticipants?: LinkedParticipantModel[];
     hearingDates?: Date[];
     isConfirmed?: boolean;
     isMultiDay?: boolean;
     multiDayHearingLastDayScheduledDateTime?: Date;
-    hearingsInGroup?: VHBooking[] = [];
+    hearingsInGroup?: VHBooking[];
     originalScheduledDateTime?: Date;
     supplier: VideoSupplier;
     isLastDayOfMultiDayHearing?: boolean;
@@ -53,24 +53,8 @@ export class VHBooking {
 
         this.hearingId = init?.hearingId ?? '';
         this.scheduledDuration = init?.scheduledDuration ?? 0;
-        if (init?.participants) {
-            this.participants = init.participants.map(p => new VHParticipant(p));
-        }
-        if (init?.judiciaryParticipants) {
-            this.judiciaryParticipants = init.judiciaryParticipants.map(
-                j =>
-                    new JudicialMemberDto(
-                        j.firstName,
-                        j.lastName,
-                        j.fullName,
-                        j.email,
-                        j.telephone,
-                        j.personalCode,
-                        j.isGeneric,
-                        j.displayName
-                    )
-            );
-        }
+        this.participants = init?.participants ?? [];
+        this.judiciaryParticipants = init?.judiciaryParticipants ?? [];
         this.endpoints = init?.endpoints ?? [];
         this.linkedParticipants = init?.linkedParticipants ?? [];
         this.hearingDates = init?.hearingDates ?? [];
