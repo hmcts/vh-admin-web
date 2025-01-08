@@ -19,7 +19,10 @@ export class ConnectionService implements OnDestroy {
 
     hasConnection$ = new ReplaySubject<boolean>();
 
-    constructor(private readonly http: HttpClient, @Inject(ConnectionServiceConfigToken) @Optional() config: ConnectionServiceConfig) {
+    constructor(
+        private readonly http: HttpClient,
+        @Inject(ConnectionServiceConfigToken) @Optional() config: ConnectionServiceConfig
+    ) {
         this.config = { ...this.defaults, ...config };
         this.startTimer();
     }

@@ -9,7 +9,10 @@ export class AppInsightsLogger implements LogAdapter {
     errorInfo: any;
     appInsights: ApplicationInsights;
 
-    constructor(private readonly configService: ConfigService, private readonly oidcService: OidcSecurityService) {
+    constructor(
+        private readonly configService: ConfigService,
+        private readonly oidcService: OidcSecurityService
+    ) {
         this.configService.getClientSettings().subscribe(settings => {
             this.appInsights = new ApplicationInsights({
                 config: {

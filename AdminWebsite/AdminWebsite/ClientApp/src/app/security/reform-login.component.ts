@@ -7,7 +7,10 @@ import { PageUrls } from '../shared/page-url.constants';
     templateUrl: './login.component.html'
 })
 export class ReformLoginComponent implements OnInit {
-    constructor(private readonly router: Router, private readonly securityService: SecurityService) {
+    constructor(
+        private readonly router: Router,
+        private readonly securityService: SecurityService
+    ) {
         this.securityService.currentIdpConfigId = IdpProviders.reform;
     }
 

@@ -57,7 +57,10 @@ export class VideoHearingsService {
     private modelHearing: VHBooking;
     private readonly judiciaryRoles = Constants.JudiciaryRoles;
 
-    constructor(private readonly bhClient: BHClient, private readonly referenceDataService: ReferenceDataService) {
+    constructor(
+        private readonly bhClient: BHClient,
+        private readonly referenceDataService: ReferenceDataService
+    ) {
         this.newRequestKey = 'bh-newRequest';
         this.bookingHasChangesKey = 'bookingHasChangesKey';
         this.conferencePhoneNumberKey = 'conferencePhoneNumberKey';

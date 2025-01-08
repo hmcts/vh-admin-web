@@ -18,7 +18,10 @@ export class WorkAllocationComponent implements OnInit, OnDestroy {
 
     destroyed$ = new Subject<void>();
 
-    constructor(private readonly userIdentityService: UserIdentityService, private readonly launchDarklyService: LaunchDarklyService) {}
+    constructor(
+        private readonly userIdentityService: UserIdentityService,
+        private readonly launchDarklyService: LaunchDarklyService
+    ) {}
 
     ngOnInit() {
         this.userIdentityService.getUserInformation().subscribe((userProfileResponse: UserProfileResponse) => {

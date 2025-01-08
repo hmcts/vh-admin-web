@@ -35,7 +35,10 @@ export class CancelBookingPopupComponent implements OnInit, OnDestroy {
         'Other (please provide details)'
     ];
 
-    constructor(private readonly fb: FormBuilder, private readonly logger: Logger) {}
+    constructor(
+        private readonly fb: FormBuilder,
+        private readonly logger: Logger
+    ) {}
 
     ngOnInit() {
         this.failedSubmission = false;

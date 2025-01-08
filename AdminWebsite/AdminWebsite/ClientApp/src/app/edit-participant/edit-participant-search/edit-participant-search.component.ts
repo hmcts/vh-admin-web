@@ -15,7 +15,11 @@ export class EditParticipantSearchComponent implements OnInit {
     unauthorisedParticipant: boolean;
     loadingData: boolean;
     result: ParticipantEditResultModel;
-    constructor(private readonly fb: FormBuilder, private readonly service: ParticipantEditService, private readonly logger: Logger) {}
+    constructor(
+        private readonly fb: FormBuilder,
+        private readonly service: ParticipantEditService,
+        private readonly logger: Logger
+    ) {}
 
     ngOnInit(): void {
         this.form = this.fb.group({

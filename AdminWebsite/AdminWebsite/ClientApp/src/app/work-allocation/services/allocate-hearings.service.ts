@@ -8,7 +8,10 @@ import { cleanQuery } from '../../common/helpers/api-helper';
     providedIn: 'root'
 })
 export class AllocateHearingsService {
-    constructor(private readonly bhClient: BHClient, private readonly logger: Logger) {}
+    constructor(
+        private readonly bhClient: BHClient,
+        private readonly logger: Logger
+    ) {}
 
     getAllocationHearings(fromDate, toDate, csoUserName, caseType, caseNumber, isAllocated): Observable<AllocationHearingsResponse[]> {
         try {

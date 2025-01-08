@@ -7,7 +7,10 @@ import { DOCUMENT } from '@angular/common';
 export class DynatraceService {
     private readonly renderer: Renderer2;
 
-    constructor(rendererFactory: RendererFactory2, @Inject(DOCUMENT) private readonly document) {
+    constructor(
+        rendererFactory: RendererFactory2,
+        @Inject(DOCUMENT) private readonly document
+    ) {
         this.renderer = rendererFactory.createRenderer(null, null);
     }
 

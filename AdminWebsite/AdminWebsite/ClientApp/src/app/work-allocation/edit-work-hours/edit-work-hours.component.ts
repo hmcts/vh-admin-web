@@ -44,7 +44,10 @@ export class EditWorkHoursComponent implements OnInit {
 
     @ViewChild(VhoWorkHoursTableComponent) vhoWorkHoursTableComponent!: VhoWorkHoursTableComponent;
 
-    constructor(private readonly bhClient: BHClient, private readonly logger: Logger) {}
+    constructor(
+        private readonly bhClient: BHClient,
+        private readonly logger: Logger
+    ) {}
 
     ngOnInit(): void {
         this.dataChangedBroadcast.subscribe(x => {
