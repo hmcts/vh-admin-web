@@ -39,10 +39,13 @@ export class HeaderComponent implements OnInit {
 
     ngOnInit() {
         this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
-            const currentUrl = this.router.url;
-            this.topMenuItems.forEach(item => {
-                item.active = item.url === currentUrl;
-            });
+            this.updateActiveMenuItem(this.router.url);
+        });
+    }
+
+    updateActiveMenuItem(currentUrl: string) {
+        this.topMenuItems.forEach(item => {
+            item.active = item.url === currentUrl;
         });
     }
 
