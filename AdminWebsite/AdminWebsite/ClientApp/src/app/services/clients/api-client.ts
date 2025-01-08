@@ -85,8 +85,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -188,8 +188,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -300,8 +300,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -412,8 +412,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -526,8 +526,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -633,8 +633,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -721,8 +721,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -809,8 +809,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -908,8 +908,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -1007,8 +1007,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -1118,8 +1118,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -1221,8 +1221,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -1337,8 +1337,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -1452,8 +1452,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -1565,8 +1565,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -1681,8 +1681,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -1787,8 +1787,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -1900,8 +1900,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -2010,8 +2010,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -2120,8 +2120,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -2227,8 +2227,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -2330,8 +2330,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -2433,8 +2433,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -2532,8 +2532,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -2640,8 +2640,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -2748,8 +2748,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -2860,8 +2860,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -2971,8 +2971,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -3084,8 +3084,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -3197,8 +3197,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -3303,8 +3303,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -3404,8 +3404,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -3508,8 +3508,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -3610,8 +3610,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -3717,8 +3717,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -3821,8 +3821,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -3918,8 +3918,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -4020,8 +4020,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -4113,8 +4113,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -4234,8 +4234,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -4333,8 +4333,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -4441,8 +4441,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -4534,8 +4534,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -4625,8 +4625,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -4733,8 +4733,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -4845,8 +4845,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {
@@ -4933,8 +4933,8 @@ export class BHClient extends ApiClientBase {
             response instanceof HttpResponse
                 ? response.body
                 : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
+                  ? (response as any).error
+                  : undefined;
 
         let _headers: any = {};
         if (response.headers) {

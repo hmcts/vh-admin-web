@@ -28,7 +28,10 @@
     <meta name="msapplication-TileImage" content="assets/images/favicons/ms-icon-144x144.png" />
     <meta name="theme-color" content="#ffffff" />
   </head>
-  <body class="govuk-template__body js-enabled">
+  <body class="govuk-template__body">
+    <script type="module">
+      document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
+    </script>
     <app-root></app-root>
   </body>
 </html>

@@ -29,7 +29,7 @@
         formControlName="hearingDate"
         required
         placeholder="e.g. 30/02/2018"
-        min="{{ today | date : 'yyyy-MM-dd' }}"
+        min="{{ today | date: 'yyyy-MM-dd' }}"
         (blur)="resetPastTimeOnBlur()"
       />
       <div *ngIf="hearingDateInvalid">
@@ -58,7 +58,7 @@
             formControlName="hearingDate"
             required
             placeholder="e.g. 30/02/2018"
-            min="{{ today | date : 'yyyy-MM-dd' }}"
+            min="{{ today | date: 'yyyy-MM-dd' }}"
             (blur)="resetPastTimeOnBlur()"
           />
           <div *ngIf="hearingDateInvalid">
@@ -78,7 +78,7 @@
             formControlName="endHearingDate"
             required
             placeholder="e.g. 30/02/2018"
-            min="{{ today | date : 'yyyy-MM-dd' }}"
+            min="{{ today | date: 'yyyy-MM-dd' }}"
           />
           <div *ngIf="endHearingDateInvalid">
             <app-date-error-messages
@@ -103,7 +103,7 @@
         <div *ngIf="hearingDates.length > 0" class="multi-date-selection__list govuk-!-width-one-half">
           <div class="multi-date-selection__list-item" *ngFor="let date of hearingDates; index as i">
             <div class="multi-date-selection__date">
-              {{ date | date : 'EEEE dd MMMM yyyy' }}
+              {{ date | date: 'EEEE dd MMMM yyyy' }}
             </div>
             <a class="vhlink" href="javascript:void(0)" (click)="removeHearingDate(i)">Remove</a>
           </div>
@@ -120,7 +120,7 @@
             type="date"
             [formControl]="addHearingDateControl"
             placeholder="e.g. 30/02/2018"
-            min="{{ today | date : 'yyyy-MM-dd' }}"
+            min="{{ today | date: 'yyyy-MM-dd' }}"
             (blur)="resetPastTimeOnBlur()"
             (change)="hearingDateChanged($event)"
           />
@@ -305,7 +305,7 @@
     </button>
     <button
       id="cancelButton"
-      class="govuk-button hmcts-button--secondary"
+      class="govuk-button govuk-button--secondary"
       data-module="govuk-button"
       (click)="confirmCancelBooking()"
       type="button"

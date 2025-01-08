@@ -30,7 +30,7 @@
               }
             ],
             "styles": ["src/styles.scss"],
-            "scripts": ["node_modules/govuk-frontend/govuk/all.js", "src/scripts/init-script.js"],
+            "scripts": [],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
