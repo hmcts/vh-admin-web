@@ -4,8 +4,7 @@ import { filter } from 'rxjs/operators';
 
 @Component({
     selector: 'app-footer',
-    templateUrl: './footer.component.html',
-    styleUrls: ['./footer.component.css']
+    templateUrl: './footer.component.html'
 })
 export class FooterComponent implements OnInit {
     hideContactUsLink = false;

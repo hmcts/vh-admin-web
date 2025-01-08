@@ -8,6 +8,7 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Router } from '@angular/router';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { BookingService } from 'src/app/services/booking.service';
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-add-judicial-office-holders',
@@ -27,6 +28,8 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
     editingPanelMember = false;
 
     destroyed$ = new Subject<void>();
+
+    addIcon = faPlusCircle;
 
     @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;

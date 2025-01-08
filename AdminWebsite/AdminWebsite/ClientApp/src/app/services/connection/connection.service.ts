@@ -9,7 +9,7 @@ import { ConnectionServiceConfigToken, ConnectionServiceConfig } from './connect
 })
 export class ConnectionService implements OnDestroy {
     private readonly defaults: ConnectionServiceConfig = {
-        url: '/assets/images/favicons/favicon.ico?_:' + new Date().getTime(),
+        url: '/assets/images/favicon.ico?_:' + new Date().getTime(),
         interval: 10000,
         retryInterval: 1000,
         maxRetryAttempts: 3

@@ -25,7 +25,7 @@ export class AppInsightsLogger implements LogAdapter {
                     const remoteDepedencyType = 'RemoteDependencyData';
                     if (envelope.baseType === remoteDepedencyType && (envelope.baseData.name as string)) {
                         const name = envelope.baseData.name as string;
-                        if (name.startsWith('HEAD /assets/images/favicons/favicon.ico?')) {
+                        if (name.startsWith('HEAD /assets/favicons/favicon.ico?')) {
                             // ignore favicon requests used to poll for availability
                             return false;
                         }

@@ -25,8 +25,13 @@
               "src/assets",
               {
                 "glob": "*",
-                "input": "node_modules/govuk-frontend/govuk/assets/fonts",
+                "input": "node_modules/govuk-frontend/dist/govuk/assets/fonts",
                 "output": "assets/fonts/"
+              },
+              {
+                "glob": "*",
+                "input": "node_modules/govuk-frontend/dist/govuk/assets/images",
+                "output": "assets/images/"
               }
             ],
             "styles": ["src/styles.scss"],

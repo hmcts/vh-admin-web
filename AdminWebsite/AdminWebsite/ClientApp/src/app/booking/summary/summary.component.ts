@@ -25,6 +25,7 @@ import { finalize, takeUntil } from 'rxjs/operators';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { faLink } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-summary',
@@ -52,6 +53,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     switchOffRecording = false;
     endHearingDate: Date;
     hasParticipantsRequiringAudioRecording: boolean;
+    linkIcon = faLink;
 
     @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;

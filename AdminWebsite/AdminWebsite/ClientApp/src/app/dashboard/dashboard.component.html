@@ -5,28 +5,20 @@
       <div class="vhpanel vhpanel-green" id="bookHearingBtn">
         <h1 class="vhpanel-title">Book a video hearing</h1>
         <div>
-          <img alt="Begin booking a new hearing" src="assets/images/bookicon.png" style="width: 64px" />
+          <fa-icon [icon]="bookHearingIcon" size="4x"></fa-icon>
         </div>
       </div>
     </a>
   </div>
-  <div class="govuk-grid-column-one-third" *ngIf="false">
-    <a class="vhpanel-link" [routerLink]="['/questionnaire']">
-      <div class="vhpanel vhpanel-blue" id="questionnaireResultsBtn">
-        <h1 class="vhpanel-title">Questionnaire results</h1>
-        <div>
-          <img alt="Begin booking a new hearing" src="assets/images/VHO_questionnaire_icon.png" style="width: 64px" />
-        </div>
-      </div>
-    </a>
-  </div>
+
   <div class="govuk-grid-column-one-third" *ngIf="showAudioFileLink">
     <a class="vhpanel-link" [routerLink]="['/get-audio-file']">
-      <div class="vhpanel vhpanel-lightblue" id="getAudioLinkBtn">
+      <div class="vhpanel vhpanel-brightpurple" id="getAudioLinkBtn">
         <h1 class="vhpanel-title">Get audio file link</h1>
-        <div>
-          <img alt="Get the audio file link" src="assets/images/audio_file.png" style="width: 64px" />
-        </div>
+        <fa-stack size="2x">
+          <fa-icon [icon]="getAudioIconBack" stackItemSize="2x"></fa-icon>
+          <fa-icon [icon]="getAudioIconFront" aria-hidden="true" class="govuk-bright-purple" stackItemSize="1x"></fa-icon>
+        </fa-stack>
       </div>
     </a>
   </div>
@@ -34,8 +26,12 @@
     <a class="vhpanel-link" [routerLink]="['/change-password']">
       <div class="vhpanel vhpanel-darkgrey" id="changePasswordBtn">
         <h1 class="vhpanel-title">Change user password</h1>
+
         <div>
-          <img alt="Change the user password" src="assets/images/change-password.png" width="64" />
+          <fa-stack size="2x">
+            <fa-icon [icon]="changePasswordBackIcon" stackItemSize="2x"></fa-icon>
+            <fa-icon [icon]="changePasswordFrontIcon" aria-hidden="true" stackItemSize="1x"></fa-icon>
+          </fa-stack>
         </div>
       </div>
     </a>
@@ -45,7 +41,7 @@
       <div class="vhpanel vhpanel-pink" id="deleteUserBtn">
         <h1 class="vhpanel-title">Delete user account</h1>
         <div>
-          <img alt="Delete participant" src="assets/images/delete-participant.png" width="64" />
+          <fa-icon [icon]="deleteUserIcon" size="4x"></fa-icon>
         </div>
       </div>
     </a>
@@ -56,7 +52,7 @@
       <div class="vhpanel vhpanel-blue" id="editUserBtn">
         <h1 class="vhpanel-title">Edit participant name</h1>
         <div>
-          <img alt="Edit a participant name" src="assets/images/edit.png" width="64" />
+          <fa-icon [icon]="editParticipantNameIcon" size="4x"></fa-icon>
         </div>
       </div>
     </a>
@@ -67,7 +63,9 @@
       <div class="vhpanel vhpanel-red" id="manageWorkAllocationBtn">
         <h1 class="vhpanel-title">Manage work allocation</h1>
         <div>
-          <img alt="Manage work allocation" src="assets/images/shuffle-solid.svg" width="64" />
+          <div>
+            <fa-icon [icon]="manageWorkAllocationIcon" size="4x"></fa-icon>
+          </div>
         </div>
       </div>
     </a>
@@ -78,7 +76,7 @@
       <div class="vhpanel vhpanel-manage-team" id="manageTeamBtn">
         <h1 class="vhpanel-title">Manage Team</h1>
         <div>
-          <fa-icon [icon]="faUsers" size="4x"></fa-icon>
+          <fa-icon [icon]="manageTeamIcon" size="4x"></fa-icon>
         </div>
       </div>
     </a>

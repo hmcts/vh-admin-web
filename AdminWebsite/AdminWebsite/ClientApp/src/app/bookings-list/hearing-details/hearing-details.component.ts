@@ -6,6 +6,7 @@ import { ConfigService } from 'src/app/services/config.service';
 import { Subject } from 'rxjs';
 import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { faLink } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-hearing-details',
@@ -21,6 +22,7 @@ export class HearingDetailsComponent implements OnDestroy {
     }
 
     phoneConferenceDetails = '';
+    linkIcon = faLink;
 
     destroyed$ = new Subject<void>();
 

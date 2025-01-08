@@ -425,3 +425,11 @@ p {
 .remove-float {
   float: none !important;
 }
+
+.govuk-green {
+  color: govuk-colour('green');
+}
+
+.govuk-bright-purple {
+  color: govuk-colour('bright-purple');
+}

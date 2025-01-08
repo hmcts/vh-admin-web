@@ -77,7 +77,7 @@ export class VideoHearingsService {
         if (localRequest === null) {
             this.modelHearing = new VHBooking();
         } else {
-            this.modelHearing = JSON.parse(localRequest);
+            this.modelHearing = new VHBooking(JSON.parse(localRequest));
         }
     }
 
