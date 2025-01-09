@@ -2,8 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
-import { HearingModel } from '../../common/model/hearing.model';
-import { ParticipantModel } from '../../common/model/participant.model';
 import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from '../../services/booking.service';
@@ -24,42 +22,42 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { MockComponent } from 'ng-mocks';
 import { Constants } from 'src/app/common/constants';
+import { VHBooking } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 
-function initHearingRequest(): HearingModel {
-    const participants: ParticipantModel[] = [];
-    const p1 = new ParticipantModel();
-    p1.display_name = 'display name1';
+function initHearingRequest(): VHBooking {
+    const participants: VHParticipant[] = [];
+    const p1 = new VHParticipant();
+    p1.displayName = 'display name1';
     p1.email = 'test1@hmcts.net';
-    p1.contact_email = 'test1@hmcts.net';
-    p1.first_name = 'first';
-    p1.last_name = 'last';
-    p1.is_judge = true;
+    p1.contactEmail = 'test1@hmcts.net';
+    p1.firstName = 'first';
+    p1.lastName = 'last';
     p1.title = 'Mr.';
     p1.username = 'test1@hmcts.net';
-    p1.hearing_role_name = 'Judge';
+    p1.hearingRoleName = 'Judge';
 
-    const p2 = new ParticipantModel();
-    p2.display_name = 'display name2';
+    const p2 = new VHParticipant();
+    p2.displayName = 'display name2';
     p2.email = 'test2@hmcts.net';
-    p2.contact_email = 'test2@hmcts.net';
-    p2.first_name = 'first2';
-    p2.last_name = 'last2';
-    p2.is_judge = false;
+    p2.contactEmail = 'test2@hmcts.net';
+    p2.firstName = 'first2';
+    p2.lastName = 'last2';
     p2.title = 'Mr.';
     p2.username = 'test2@hmcts.net';
-    p2.hearing_role_name = 'Applicant';
+    p2.hearingRoleName = 'Applicant';
 
     participants.push(p1);
     participants.push(p2);
 
-    const newHearing = new HearingModel();
-    newHearing.cases = [];
+    const newHearing = new VHBooking();
     newHearing.participants = participants;
 
-    newHearing.hearing_venue_id = -1;
-    newHearing.scheduled_date_time = null;
-    newHearing.scheduled_duration = 0;
-    newHearing.audio_recording_required = true;
+    newHearing.hearingVenueId = -1;
+    newHearing.scheduledDateTime = null;
+    newHearing.scheduledDuration = 0;
+    newHearing.audioRecordingRequired = true;
 
     return newHearing;
 }
@@ -188,8 +186,8 @@ describe('AssignJudgeComponent', () => {
         });
 
         it('should initialize form and create judgeDisplayName control', () => {
-            const existingStaffMember = new ParticipantModel({
-                hearing_role_name: staffMemberRole
+            const existingStaffMember = new VHParticipant({
+                hearingRoleName: staffMemberRole
             });
 
             const savedHearing = initHearingRequest();
@@ -299,8 +297,8 @@ describe('AssignJudgeComponent', () => {
             component.judgeDisplayNameFld.setValue('<script>' + displayNameSanitized + '</script>');
             component.changeDisplayName();
             expect(component.judgeDisplayNameFld.value).toBe(displayNameSanitized);
-            expect(component.judge.display_name).toBe(displayNameSanitized);
-            expect(component.hearing.participants.find(x => x.is_judge).display_name).toBe(displayNameSanitized);
+            expect(component.judge.displayName).toBe(displayNameSanitized);
+            expect(component.hearing.participants.find(x => x.isJudge).displayName).toBe(displayNameSanitized);
         });
 
         it('should unsubscribe all subcriptions on destroy component', () => {
@@ -339,7 +337,7 @@ describe('AssignJudgeComponent', () => {
             const judgePhone = '01234567890';
             component.judgePhoneFld.setValue(judgePhone);
             component.changeTelephone();
-            const otherInformationDetails = OtherInformationModel.init(component.hearing.other_information);
+            const otherInformationDetails = OtherInformationModel.init(component.hearing.otherInformation);
             expect(otherInformationDetails.JudgePhone).toBe(judgePhone);
         });
         it('should display error when telephone address is not valid', () => {
@@ -350,19 +348,19 @@ describe('AssignJudgeComponent', () => {
         });
     });
 
-    const judge = new ParticipantModel();
+    const judge = new VHParticipant();
     judge.username = 'JudgeUserName';
     judge.email = 'JudgeEmail';
-    judge.display_name = 'JudgeDisplayName';
+    judge.displayName = 'JudgeDisplayName';
     judge.phone = 'JudgePhone';
-    judge.is_courtroom_account = true;
+    judge.isCourtroomAccount = true;
 
-    const alternateJudge = new ParticipantModel();
+    const alternateJudge = new VHParticipant();
     alternateJudge.username = 'AlternateJudgeUserName';
     alternateJudge.email = 'AlternateJudgeEmail';
-    alternateJudge.display_name = 'AlternateJudgeDisplayName';
+    alternateJudge.displayName = 'AlternateJudgeDisplayName';
     alternateJudge.phone = 'AlternateJudgePhone';
-    alternateJudge.is_judge = true;
+    alternateJudge.hearingRoleName = Constants.HearingRoles.Judge;
 
     const initialJudgeDisplayNameFld = 'InitialJudgeDisplayNameFld';
     const initialJudgeEmailFld = 'InitialJudgeEmailFld';
@@ -372,7 +370,7 @@ describe('AssignJudgeComponent', () => {
     const otherInformationDetailsJudgePhone = 'OtherInformationDetailsJudgePhone';
 
     describe('saveJudgeAndStaffMember', () => {
-        let testJudge: ParticipantModel;
+        let testJudge: VHParticipant;
         beforeEach(() => {
             // setup judge so that isJudgeSelected returns true
             testJudge = Object.assign({}, judge);
@@ -403,7 +401,7 @@ describe('AssignJudgeComponent', () => {
         });
 
         it('should set correct validation errors if display name is null', () => {
-            component.judge.display_name = null;
+            component.judge.displayName = null;
 
             component.saveJudge();
             expect(component.isJudgeParticipantError).toBe(false);
@@ -412,7 +410,7 @@ describe('AssignJudgeComponent', () => {
         });
 
         it('should set correct validation errors if display name is null', () => {
-            component.judge.display_name = null;
+            component.judge.displayName = null;
 
             component.saveJudge();
             expect(component.isJudgeParticipantError).toBe(false);
@@ -512,7 +510,7 @@ describe('AssignJudgeComponent', () => {
 
     describe('updateJudge', () => {
         beforeEach(() => {
-            component.hearing = new HearingModel();
+            component.hearing = new VHBooking();
             component.canNavigate = null;
 
             component.judgeDisplayNameFld.setValue(initialJudgeDisplayNameFld);
@@ -532,7 +530,7 @@ describe('AssignJudgeComponent', () => {
             });
 
             it('should not attempt to add if is existing judge', () => {
-                judge.is_judge = true;
+                judge.hearingRoleName = HearingRoles.JUDGE;
                 component.hearing.participants.unshift(judge);
                 component.updateJudge(judge);
                 expect(videoHearingsServiceSpy.canAddJudge).toHaveBeenCalledTimes(canAddJudgeCalledCountBefore);
@@ -553,7 +551,7 @@ describe('AssignJudgeComponent', () => {
                 beforeEach(() => {
                     const updatedJudgeDisplayName = 'UpdatedJudgeDisplayName';
                     videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
-                    component.judge.display_name = updatedJudgeDisplayName;
+                    component.judge.displayName = updatedJudgeDisplayName;
                 });
 
                 it('should add judge account when none present', () => {
@@ -567,20 +565,20 @@ describe('AssignJudgeComponent', () => {
                 afterEach(() => {
                     component.updateJudge(judge);
                     expect(videoHearingsServiceSpy.canAddJudge).toHaveBeenCalledWith(judge.username);
-                    const updatedJudges = component.hearing.participants.filter(participant => participant.is_judge);
+                    const updatedJudges = component.hearing.participants.filter(participant => participant.isJudge);
 
                     expect(updatedJudges.length).toBe(1);
                     expect(component.courtAccountJudgeEmail).toEqual(judge.username);
-                    expect(component.judgeDisplayNameFld.value).toEqual(judge.display_name);
-                    expect(updatedJudges[0]).toBe(judge);
-                    expect(updatedJudges[0].hearing_role_code).toBe(Constants.HearingRoleCodes.Judge);
+                    expect(component.judgeDisplayNameFld.value).toEqual(judge.displayName);
+                    expect(updatedJudges[0]).toEqual(judge);
+                    expect(updatedJudges[0].hearingRoleCode).toBe(Constants.HearingRoleCodes.Judge);
 
                     expect(component.canNavigate).toBe(true);
                     expect(component.isJudgeParticipantError).toBe(false);
                 });
             });
             afterEach(() => {
-                expect(component.judgeDisplayNameFld.value).toEqual(judge.display_name);
+                expect(component.judgeDisplayNameFld.value).toEqual(judge.displayName);
                 expect(component.judgeEmailFld.value).toEqual(otherInformationDetailsJudgeEmail);
                 expect(component.judgePhoneFld.value).toEqual(otherInformationDetailsJudgePhone);
             });
@@ -590,7 +588,7 @@ describe('AssignJudgeComponent', () => {
             component.hearing.participants.unshift(alternateJudge);
             component.updateJudge(null);
 
-            const updatedJudges = component.hearing.participants.filter(participant => participant.is_judge);
+            const updatedJudges = component.hearing.participants.filter(participant => participant.isJudge);
             expect(updatedJudges.length).toBe(0);
 
             expect(component.isJudgeParticipantError).toBe(false);

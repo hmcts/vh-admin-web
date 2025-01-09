@@ -12,10 +12,10 @@
     <div id="judge-name">
       {{ participant.displayName }}
       <div id="judge-hearing-role-name">Judge</div>
-      <ng-container *ngIf="participant?.InterpretationLanguage?.interpreterRequired">
+      <ng-container *ngIf="participant?.interpretationLanguage?.interpreterRequired">
         <div class="participant-row__lang">
           {{
-            participant.InterpretationLanguage.spokenLanguageCodeDescription ?? participant.InterpretationLanguage.signLanguageDescription
+            participant.interpretationLanguage.spokenLanguageCodeDescription ?? participant.interpretationLanguage.signLanguageDescription
           }}
         </div>
       </ng-container>
@@ -33,11 +33,11 @@
           </div>
           <div>{{ participant.displayName }}</div>
           <div id="participant-{{ participant.personalCode }}-hearing-role-name">Panel Member</div>
-          <ng-container *ngIf="participant?.InterpretationLanguage?.interpreterRequired">
+          <ng-container *ngIf="participant?.interpretationLanguage?.interpreterRequired">
             <div class="participant-row__lang">
               {{
-                participant.InterpretationLanguage.spokenLanguageCodeDescription ??
-                  participant.InterpretationLanguage.signLanguageDescription
+                participant.interpretationLanguage.spokenLanguageCodeDescription ??
+                  participant.interpretationLanguage.signLanguageDescription
               }}
             </div>
           </ng-container>

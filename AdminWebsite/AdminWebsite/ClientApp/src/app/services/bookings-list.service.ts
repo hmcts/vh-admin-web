@@ -8,9 +8,11 @@ import {
     IBookingSearchRequest
 } from './clients/api-client';
 import { Observable } from 'rxjs';
-import { BookingsListModel, BookingsDetailsModel } from '../common/model/bookings-list.model';
+import { BookingsListModel } from '../common/model/bookings-list.model';
 import { BookingsModel } from '../common/model/bookings.model';
 import moment from 'moment';
+import { BookingsListItemModel } from '../common/model/booking-list-item.model';
+import { mapBookingsHearingResponseToVHBooking } from '../common/model/api-contract-to-client-model-mappers';
 
 @Injectable({
     providedIn: 'root'
@@ -62,8 +64,8 @@ export class BookingsListService {
         return model;
     }
 
-    replaceBookingRecord(booking: BookingsDetailsModel, bookings: Array<BookingsListModel>) {
-        const dateOnly = new Date(booking.StartTime.valueOf());
+    replaceBookingRecord(booking: BookingsListItemModel, bookings: Array<BookingsListModel>) {
+        const dateOnly = new Date(booking.Booking.scheduledDateTime.valueOf());
         const dateNoTime = new Date(dateOnly.setHours(0, 0, 0, 0));
         const bookingModel = new BookingsListModel(dateNoTime);
         bookingModel.BookingsDetails = [booking];
@@ -86,7 +88,7 @@ export class BookingsListService {
         const subSet = bookings.findIndex(s => s.BookingsDate.toString() === element.BookingsDate.toString());
         if (subSet > -1) {
             element.BookingsDetails.forEach(item => {
-                const record = bookings[subSet].BookingsDetails.find(x => x.HearingId === item.HearingId);
+                const record = bookings[subSet].BookingsDetails.find(x => x.Booking.hearingId === item.Booking.hearingId);
                 if (!record) {
                     this.insertBookingIntoGroup(item, bookings[subSet]);
                 }
@@ -105,7 +107,7 @@ export class BookingsListService {
         hearings.forEach(hearing => {
             for (let j = 0; j < bookings.length; j++) {
                 for (let i = 0; i < bookings[j].BookingsDetails.length; i++) {
-                    if (bookings[j].BookingsDetails[i].HearingId === hearing.HearingId) {
+                    if (bookings[j].BookingsDetails[i].Booking.hearingId === hearing.Booking.hearingId) {
                         bookings[j].BookingsDetails.splice(i, 1);
                     }
                     if (!bookings[j].BookingsDetails || bookings[j].BookingsDetails.length === 0) {
@@ -120,11 +122,11 @@ export class BookingsListService {
         });
     }
 
-    private insertBookingIntoGroup(element: BookingsDetailsModel, groupBookings: BookingsListModel) {
+    private insertBookingIntoGroup(element: BookingsListItemModel, groupBookings: BookingsListModel) {
         groupBookings.BookingsDetails.push(element);
         groupBookings.BookingsDetails.sort((a, b) => {
-            const dateA = moment(a.StartTime);
-            const dateB = moment(b.StartTime);
+            const dateA = moment(a.Booking.scheduledDateTime);
+            const dateB = moment(b.Booking.scheduledDateTime);
             if (dateA.isBefore(dateB)) {
                 return -1;
             }
@@ -162,31 +164,8 @@ export class BookingsListService {
         return model;
     }
 
-    private mapBookingsDetails(hearing: BookingsHearingResponse) {
-        const details = new BookingsDetailsModel(
-            hearing.hearing_id.toString(),
-            hearing.scheduled_date_time,
-            hearing.scheduled_duration,
-            hearing.hearing_number,
-            hearing.hearing_name,
-            hearing.judge_name,
-            hearing.court_room,
-            hearing.court_address,
-            hearing.created_by,
-            hearing.created_date,
-            hearing.last_edit_by,
-            hearing.last_edit_date,
-            hearing.confirmed_by,
-            hearing.confirmed_date,
-            hearing.status,
-            hearing.audio_recording_required,
-            hearing.cancel_reason,
-            hearing.case_type_name,
-            hearing.court_room_account,
-            '',
-            hearing.allocated_to
-        );
-        details.GroupId = hearing.group_id;
+    private mapBookingsDetails(hearing: BookingsHearingResponse): BookingsListItemModel {
+        const details = new BookingsListItemModel(mapBookingsHearingResponseToVHBooking(hearing));
         return details;
     }
 }

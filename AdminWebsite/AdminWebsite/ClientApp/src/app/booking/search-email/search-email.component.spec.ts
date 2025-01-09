@@ -2,7 +2,6 @@ import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testin
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { ParticipantModel } from '../../common/model/participant.model';
 import { ClientSettingsResponse } from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
@@ -10,6 +9,7 @@ import { SearchService } from '../../services/search.service';
 import { SearchEmailComponent } from './search-email.component';
 import { DebugElement, ElementRef } from '@angular/core';
 import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 describe('SearchEmailComponent', () => {
     let component: SearchEmailComponent;
@@ -17,32 +17,32 @@ describe('SearchEmailComponent', () => {
     let fixture: ComponentFixture<SearchEmailComponent>;
     let searchField: ElementRef;
 
-    const participant1 = new ParticipantModel();
-    participant1.first_name = 'FirstName1';
-    participant1.last_name = 'LastName1';
-    participant1.display_name = 'DisplayName1';
+    const participant1 = new VHParticipant();
+    participant1.firstName = 'FirstName1';
+    participant1.lastName = 'LastName1';
+    participant1.displayName = 'DisplayName1';
     participant1.email = 'Email1';
     participant1.username = 'Username1';
     participant1.title = 'Title1';
 
-    const participant2 = new ParticipantModel();
-    participant2.first_name = 'FirstName2';
-    participant2.last_name = 'LastName2';
-    participant2.display_name = 'DisplayName2';
+    const participant2 = new VHParticipant();
+    participant2.firstName = 'FirstName2';
+    participant2.lastName = 'LastName2';
+    participant2.displayName = 'DisplayName2';
     participant2.email = 'Email2';
     participant2.username = 'Username2';
     participant2.title = 'Title2';
 
-    const participantList: ParticipantModel[] = [participant1, participant2];
+    const participantList: VHParticipant[] = [participant1, participant2];
 
-    const participantModel = new ParticipantModel();
+    const participantModel = new VHParticipant();
     participantModel.email = 'aa@hmcts.net';
-    participantModel.first_name = 'Ann';
-    participantModel.last_name = 'Smith';
+    participantModel.firstName = 'Ann';
+    participantModel.lastName = 'Smith';
     participantModel.title = 'Mrs';
-    participantModel.hearing_role_name = 'Litigant in person';
+    participantModel.hearingRoleName = 'Litigant in person';
     participantModel.phone = '12345678';
-    participantModel.display_name = 'Ann';
+    participantModel.displayName = 'Ann';
 
     const configSettings = new ClientSettingsResponse();
     configSettings.test_username_stem = '@hmcts.net';
@@ -178,15 +178,15 @@ describe('SearchEmailComponent', () => {
     });
     it('select item should emit event participant found on navigating away from email field', () => {
         spyOn(component.findParticipant, 'emit');
-        const participantsList: ParticipantModel[] = [];
-        const participant = new ParticipantModel();
+        const participantsList: VHParticipant[] = [];
+        const participant = new VHParticipant();
         participant.email = 'citizen.one@hmcts.net';
-        participant.first_name = 'citizen';
-        participant.last_name = 'one';
+        participant.firstName = 'citizen';
+        participant.lastName = 'one';
         participantModel.title = 'Mr.';
-        participantModel.hearing_role_name = 'Litigant in person';
+        participantModel.hearingRoleName = 'Litigant in person';
         participantModel.phone = '12345678';
-        participantModel.display_name = 'Citizen One';
+        participantModel.displayName = 'Citizen One';
         participantsList.push(participant);
         component.results = participantsList;
 
@@ -197,7 +197,7 @@ describe('SearchEmailComponent', () => {
     });
     it('select item should not emit event participant found on navigating away from email field', () => {
         spyOn(component.findParticipant, 'emit');
-        const participantsList: ParticipantModel[] = [];
+        const participantsList: VHParticipant[] = [];
         component.results = participantsList;
 
         component.populateParticipantInfo('citizen.one@hmcts.net');
@@ -207,7 +207,7 @@ describe('SearchEmailComponent', () => {
     });
     it('select item should emit null on navigating away from email field when hearing role is judge', () => {
         spyOn(component.findParticipant, 'emit');
-        const participantsList: ParticipantModel[] = [];
+        const participantsList: VHParticipant[] = [];
         component.results = participantsList;
         component.hearingRoleParticipant = 'Judge';
 
@@ -219,7 +219,7 @@ describe('SearchEmailComponent', () => {
     });
     it('select item should not emit on navigating away from email field when hearing role is judge but email is unchanged', () => {
         spyOn(component.findParticipant, 'emit');
-        const participantsList: ParticipantModel[] = [];
+        const participantsList: VHParticipant[] = [];
         component.results = participantsList;
         component.hearingRoleParticipant = 'Judge';
         const email = 'citizen.one@hmcts.net';
@@ -232,7 +232,7 @@ describe('SearchEmailComponent', () => {
     });
     it('select item should not emit on navigating away from email field when email is changed but role is not judge', () => {
         spyOn(component.findParticipant, 'emit');
-        const participantsList: ParticipantModel[] = [];
+        const participantsList: VHParticipant[] = [];
         component.results = participantsList;
         component.hearingRoleParticipant = 'NotJudge';
         const email = 'citizen.one@hmcts.net';
@@ -246,7 +246,7 @@ describe('SearchEmailComponent', () => {
     });
     it('select item should not emit on navigating away from email field when email is unchanged and role is not judge', () => {
         spyOn(component.findParticipant, 'emit');
-        const participantsList: ParticipantModel[] = [];
+        const participantsList: VHParticipant[] = [];
         component.results = participantsList;
         component.hearingRoleParticipant = 'NotJudge';
         const email = 'citizen.one@hmcts.net';
@@ -297,13 +297,13 @@ describe('SearchEmailComponent', () => {
         expect(component.emailChanged.emit).toHaveBeenCalled();
     });
     it('should emit event email is changed if searched email does not exist in non-empty results', () => {
-        const existingParticipant = new ParticipantModel({
+        const existingParticipant = new VHParticipant({
             email: 'YOSXJDKSD@hmcts.net',
-            first_name: 'YOSXJDKSD',
-            last_name: 'YOSXJDKSD'
+            firstName: 'YOSXJDKSD',
+            lastName: 'YOSXJDKSD'
         });
 
-        const existingParticipants: ParticipantModel[] = [];
+        const existingParticipants: VHParticipant[] = [];
         existingParticipants.push(existingParticipant);
 
         component.results = existingParticipants;
@@ -316,13 +316,13 @@ describe('SearchEmailComponent', () => {
         expect(component.emailChanged.emit).toHaveBeenCalled();
     });
     it('should not emit event email is changed if searched email is invalid and does not exist in non-empty results', () => {
-        const existingParticipant = new ParticipantModel({
+        const existingParticipant = new VHParticipant({
             email: 'YOSXJDKSD@hmcts.net',
-            first_name: 'YOSXJDKSD',
-            last_name: 'YOSXJDKSD'
+            firstName: 'YOSXJDKSD',
+            lastName: 'YOSXJDKSD'
         });
 
-        const existingParticipants: ParticipantModel[] = [];
+        const existingParticipants: VHParticipant[] = [];
         existingParticipants.push(existingParticipant);
 
         component.results = existingParticipants;

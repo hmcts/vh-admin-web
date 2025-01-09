@@ -2,43 +2,43 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { VideoEndpointFormComponent } from './video-endpoint-form.component';
 import { VideoAccessPointDto } from '../models/video-access-point.model';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { InterpreterFormComponent } from '../../interpreter-form/interpreter-form.component';
 import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { of } from 'rxjs';
 import { InterpreterSelectedDto } from '../../interpreter-form/interpreter-selected.model';
 import { MockComponent } from 'ng-mocks';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 describe('VideoEndpointFormComponent', () => {
-    const participants: ParticipantModel[] = [
-        {
+    const participants: VHParticipant[] = [
+        new VHParticipant({
             id: '1',
-            first_name: 'John',
-            last_name: 'Doe',
+            firstName: 'John',
+            lastName: 'Doe',
             email: 'john@doe.com',
-            display_name: 'John Doe',
-            user_role_name: 'Representative',
+            displayName: 'John Doe',
+            userRoleName: 'Representative',
             interpretation_language: undefined
-        },
-        {
+        }),
+        new VHParticipant({
             id: '2',
-            first_name: 'Chris',
-            last_name: 'Green',
+            firstName: 'Chris',
+            lastName: 'Green',
             email: 'chris@green,com',
-            display_name: 'Chris Green',
-            user_role_name: 'Representative',
+            displayName: 'Chris Green',
+            userRoleName: 'Representative',
             interpretation_language: undefined
-        },
-        {
+        }),
+        new VHParticipant({
             id: '3',
-            first_name: 'Jane',
-            last_name: 'Smith',
+            firstName: 'Jane',
+            lastName: 'Smith',
             email: 'jane@smith.com',
-            display_name: 'Jane Smith',
-            user_role_name: 'Individual',
+            displayName: 'Jane Smith',
+            userRoleName: 'Individual',
             interpretation_language: undefined
-        }
+        })
     ];
 
     let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
@@ -150,7 +150,7 @@ describe('VideoEndpointFormComponent', () => {
                 displayName: 'Test Endpoint',
                 defenceAdvocate: {
                     email: rep.email,
-                    displayName: rep.display_name
+                    displayName: rep.displayName
                 },
                 interpretationLanguage: undefined,
                 screening: undefined,

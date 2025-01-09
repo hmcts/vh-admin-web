@@ -6,7 +6,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 import { CaseModel } from '../../common/model/case.model';
-import { HearingModel } from '../../common/model/hearing.model';
 import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from '../../services/booking.service';
@@ -23,18 +22,21 @@ import { createMultiDayHearing } from 'src/app/testing/helpers/hearing.helpers';
 import { VideoSupplier } from 'src/app/services/clients/api-client';
 import { ServiceIds } from '../models/supplier-override';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
+import { VHBooking } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 
-function initHearingRequest(): HearingModel {
-    const newHearing = new HearingModel();
-    newHearing.hearing_venue_id = -1;
-    newHearing.scheduled_duration = 0;
+function initHearingRequest(): VHBooking {
+    const newHearing = new VHBooking();
+    newHearing.hearingVenueId = -1;
+    newHearing.scheduledDuration = 0;
     return newHearing;
 }
 
-function initExistingHearingRequest(): HearingModel {
-    const existingRequest = new HearingModel();
-    existingRequest.hearing_venue_id = 1;
-    existingRequest.case_type = 'Generic';
+function initExistingHearingRequest(): VHBooking {
+    const existingRequest = new VHBooking();
+    existingRequest.hearingVenueId = 1;
+    existingRequest.caseType = 'Generic';
 
     return existingRequest;
 }
@@ -312,7 +314,7 @@ describe('CreateHearingComponent with existing request in session', () => {
         const existingCase = new CaseModel();
         existingCase.name = 'Captain America Vs. The World';
         existingCase.number = '1234';
-        existingRequest.cases.push(existingCase);
+        existingRequest.case = existingCase;
 
         const newRequestKey = 'bh-newRequest';
         const jsonRequest = JSON.stringify(existingRequest);
@@ -332,8 +334,8 @@ describe('CreateHearingComponent with existing request in session', () => {
     });
 
     it('should repopulate form with existing request', fakeAsync(() => {
-        expect(component.caseNumber.value).toBe(existingRequest.cases[0].number);
-        expect(component.caseName.value).toBe(existingRequest.cases[0].name);
+        expect(component.caseNumber.value).toBe(existingRequest.case.number);
+        expect(component.caseName.value).toBe(existingRequest.case.name);
     }));
 
     it('should hide cancel and discard pop up confirmation', () => {
@@ -391,15 +393,17 @@ describe('CreateHearingComponent with existing request in session', () => {
     });
     it('should return true if participants have been added', () => {
         component.hearing.participants = [
-            { is_judge: false, is_exist_person: true, interpretation_language: undefined },
-            { is_judge: true, is_exist_person: true, interpretation_language: undefined }
+            new VHParticipant({ isExistPerson: true, interpretation_language: undefined }),
+            new VHParticipant({ hearingRoleName: HearingRoles.JUDGE, isExistPerson: true, interpretation_language: undefined })
         ];
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(true);
     });
     it('should return false if participants have not been added', () => {
         component.hearing.participants = [];
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(false);
-        component.hearing.participants = [{ is_judge: true, is_exist_person: true, interpretation_language: undefined }];
+        component.hearing.participants = [
+            new VHParticipant({ hearingRoleName: HearingRoles.JUDGE, isExistPerson: true, interpretation_language: undefined })
+        ];
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(false);
     });
     it('should return false if hearing is undefined', () => {

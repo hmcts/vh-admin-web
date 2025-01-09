@@ -139,43 +139,43 @@
       >
         <div class="govuk-grid-row vh-row vh-a" onKeyPress="" (click)="rowSelected(b, i)" [attr.id]="b + '_' + i">
           <div class="govuk-grid-column-one-quarter">
-            <app-booking-status [bookingDetails]="detail" [showTime]="true"></app-booking-status>
+            <app-booking-status [bookingDetails]="detail.Booking" [showTime]="true"></app-booking-status>
           </div>
           <div class="govuk-grid-column-one-quarter">
-            <div class="vh-sml">{{ detail.HearingCaseNumber }}</div>
-            <div class="vh-sml">{{ detail.HearingCaseName }}</div>
-            <div class="vh-sml">{{ detail.CaseType }}</div>
+            <div class="vh-sml">{{ detail.Booking.case.number }}</div>
+            <div class="vh-sml">{{ detail.Booking.case.name }}</div>
+            <div class="vh-sml">{{ detail.Booking.caseType }}</div>
             <div class="vh-sml">{{ detail.HearingType }}</div>
           </div>
           <div class="govuk-grid-column-one-quarter">
-            <div class="vh-sml">{{ detail.JudgeName }}</div>
-            <div class="govuk-hint vh-sml vh-font-black">{{ detail.CourtRoomAccount }}</div>
-            <div class="govuk-hint vh-sml vh-font-black">{{ detail.CourtAddress }}</div>
+            <div class="vh-sml">{{ detail.Booking.judge?.displayName }}</div>
+            <div class="govuk-hint vh-sml vh-font-black">{{ detail.Booking.courtRoomAccount }}</div>
+            <div class="govuk-hint vh-sml vh-font-black">{{ detail.Booking.courtName }}</div>
           </div>
           <div class="govuk-grid-column-one-quarter">
             <div class="govuk-grid-row">
               <div class="govuk-grid-column-full">
                 <div class="govuk-hint vh-xsml vh-font-black">Created by:</div>
 
-                <span class="govuk-hint vh-xsml vh-font-black">{{ detail.CreatedBy }}</span>
+                <span class="govuk-hint vh-xsml vh-font-black">{{ detail.Booking.createdBy }}</span>
                 <span class="govuk-hint vh-xsml vh-font-black">
-                  {{ detail.CreatedDate | appLongDatetime }}
+                  {{ detail.Booking.createdDate | appLongDatetime }}
                 </span>
               </div>
             </div>
-            <div class="govuk-grid-row" *ngIf="detail.LastEditBy">
+            <div class="govuk-grid-row" *ngIf="detail.Booking.updatedBy">
               <div class="govuk-grid-column-full vh-l">
                 <div class="govuk-hint vh-xsml vh-font-black">Last edited by:</div>
 
-                <span class="govuk-hint vh-xsml vh-font-black">{{ detail.LastEditBy }}</span>
+                <span class="govuk-hint vh-xsml vh-font-black">{{ detail.Booking.updatedBy }}</span>
                 <span class="govuk-hint vh-xsml vh-font-black">
-                  {{ detail.LastEditDate | appLongDatetime }}
+                  {{ detail.Booking.updatedDate | appLongDatetime }}
                 </span>
               </div>
             </div>
-            <div id="allocated-to-{{ detail.HearingId }}" class="govuk-grid-row">
+            <div id="allocated-to-{{ detail.Booking.hearingId }}" class="govuk-grid-row">
               <div class="govuk-grid-column-full vh-l">
-                <div class="govuk-hint vh-xsml vh-font-black">Allocated to: {{ detail.AllocatedTo }}</div>
+                <div class="govuk-hint vh-xsml vh-font-black">Allocated to: {{ detail.Booking.allocatedTo }}</div>
               </div>
             </div>
           </div>

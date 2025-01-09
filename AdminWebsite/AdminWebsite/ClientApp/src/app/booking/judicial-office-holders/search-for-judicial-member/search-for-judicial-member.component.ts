@@ -173,9 +173,11 @@ export class SearchForJudicialMemberComponent implements AfterContentChecked {
         this.interpreterSelection = $event;
         if (!$event.interpreterRequired) {
             this.interpreterSelection = null;
-            this.judicialMember = { ...this.judicialMember, interpretationLanguage: null };
+            this.judicialMember = this.judicialMember.clone();
+            this.judicialMember.interpretationLanguage = null;
         } else {
-            this.judicialMember = { ...this.judicialMember, interpretationLanguage: $event };
+            this.judicialMember = this.judicialMember.clone();
+            this.judicialMember.interpretationLanguage = $event;
         }
     }
 }

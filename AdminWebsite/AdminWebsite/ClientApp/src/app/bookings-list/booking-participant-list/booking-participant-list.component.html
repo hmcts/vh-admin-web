@@ -1,13 +1,5 @@
 <h3 class="govuk-heading-m">Participants</h3>
 <div class="participant-details">
-  <app-booking-participant-details
-    [hearing]="hearing"
-    *ngFor="let judge of judges"
-    [participant]="judge"
-    [vh_officer_admin]="vh_officer_admin"
-    class="participant-detail judge-detail"
-  >
-  </app-booking-participant-details>
   <app-judicial-participant-details
     [hearing]="hearing"
     *ngFor="let joh of sortedJudiciaryMembers"

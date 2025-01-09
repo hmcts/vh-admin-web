@@ -3,9 +3,10 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 import { BHClient, JudgeAccountType, JudgeResponse, PersonResponseV2 } from './clients/api-client';
-import { ParticipantModel } from '../common/model/participant.model';
 import { Constants } from '../common/constants';
 import { LaunchDarklyService } from './launch-darkly.service';
+import { VHParticipant } from '../common/model/vh-participant';
+import { mapJudgeResponseToVHParticipant, mapPersonResponseToVHParticipant } from '../common/model/api-contract-to-client-model-mappers';
 
 let service: SearchService;
 
@@ -70,38 +71,38 @@ ejudJudge.account_type = JudgeAccountType.Judiciary;
 
 const judgeList: JudgeResponse[] = [judge1, judge2, ejudJudge];
 
-const judgeParticipant1 = new ParticipantModel();
-judgeParticipant1.first_name = 'judgeParticipant1FirstName';
-judgeParticipant1.last_name = 'judgeParticipant1LastName';
-judgeParticipant1.display_name = 'judgeParticipant1DisplayName';
+const judgeParticipant1 = new VHParticipant();
+judgeParticipant1.firstName = 'judgeParticipant1FirstName';
+judgeParticipant1.lastName = 'judgeParticipant1LastName';
+judgeParticipant1.displayName = 'judgeParticipant1DisplayName';
 judgeParticipant1.email = 'judgeParticipant1Email';
 
-const judgeParticipant2 = new ParticipantModel();
-judgeParticipant2.first_name = 'judgeParticipant2FirstName';
-judgeParticipant2.last_name = 'judgeParticipant2LastName';
-judgeParticipant2.display_name = 'judgeParticipant2DisplayName';
+const judgeParticipant2 = new VHParticipant();
+judgeParticipant2.firstName = 'judgeParticipant2FirstName';
+judgeParticipant2.lastName = 'judgeParticipant2LastName';
+judgeParticipant2.displayName = 'judgeParticipant2DisplayName';
 judgeParticipant2.email = 'judgeParticipant2Email';
 
-const judgeParticipant3 = new ParticipantModel();
-judgeParticipant2.first_name = 'judgeParticipant2FirstName';
-judgeParticipant2.last_name = 'judgeParticipant2LastName';
-judgeParticipant2.display_name = null;
+const judgeParticipant3 = new VHParticipant();
+judgeParticipant2.firstName = 'judgeParticipant2FirstName';
+judgeParticipant2.lastName = 'judgeParticipant2LastName';
+judgeParticipant2.displayName = null;
 judgeParticipant2.email = 'judgeEjud';
 
-const judgeParticipantList: ParticipantModel[] = [judgeParticipant1, judgeParticipant2, judgeParticipant3];
+const judgeParticipantList: VHParticipant[] = [judgeParticipant1, judgeParticipant2, judgeParticipant3];
 
-const participant1 = new ParticipantModel();
-participant1.first_name = 'participant1FirstName';
-participant1.last_name = 'participant1LastName';
-participant1.display_name = 'participant1DisplayName';
+const participant1 = new VHParticipant();
+participant1.firstName = 'participant1FirstName';
+participant1.lastName = 'participant1LastName';
+participant1.displayName = 'participant1DisplayName';
 participant1.email = 'participant1Email';
 
-const participant2 = new ParticipantModel();
-participant2.first_name = 'participant2FirstName';
-participant2.last_name = 'participant2LastName';
-participant2.display_name = 'participant2DisplayName';
+const participant2 = new VHParticipant();
+participant2.firstName = 'participant2FirstName';
+participant2.lastName = 'participant2LastName';
+participant2.displayName = 'participant2DisplayName';
 participant2.email = 'participant2Email';
-const participantList: ParticipantModel[] = [participant1, participant2];
+const participantList: VHParticipant[] = [participant1, participant2];
 let clientApiSpy: jasmine.SpyObj<BHClient>;
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 
@@ -111,9 +112,6 @@ describe('SearchService', () => {
 
         clientApiSpy.postPersonBySearchTerm.and.returnValue(of(personList));
         clientApiSpy.postJudgesBySearchTerm.and.returnValue(of(judgeList));
-
-        spyOn(ParticipantModel, 'fromPersonResponse').and.returnValue(participant1);
-        spyOn(ParticipantModel, 'fromJudgeResponse').and.returnValue(judgeParticipant1);
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
@@ -136,33 +134,42 @@ describe('SearchService', () => {
 
         it('should call searchEntries and map response when role is not judge or judiciary ', () => {
             const terms = validSearchTerms;
+            const mappedParticipants: VHParticipant[] = [];
+
             service.participantSearch(terms, roleRegular).subscribe(participants => {
                 expect(participants.length).toEqual(participantList.length);
+                mappedParticipants.push(...participants);
             });
             expect(service.searchEntries).toHaveBeenCalledWith(terms);
             expect(service.searchEntries).toHaveBeenCalledTimes(1);
             expect(service.searchJudgeAccounts).toHaveBeenCalledTimes(0);
 
-            expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledTimes(personList.length);
+            expect(mappedParticipants.length).toBe(personList.length);
             personList.forEach(person => {
-                expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledWith(person);
+                const expectedMappedParticipant = mapPersonResponseToVHParticipant(person);
+                const matchingParticipant = mappedParticipants.find(p => compareWithoutExternalReferenceId(p, expectedMappedParticipant));
+                expect(matchingParticipant).toBeTruthy();
             });
         });
 
         it('should call searchJudgeAccounts and map response when role is judge ', () => {
             const terms = validSearchTerms;
+            const mappedParticipants: VHParticipant[] = [];
 
             service.participantSearch(terms, roleJudge).subscribe(participants => {
                 expect(participants.length).toEqual(judgeParticipantList.length);
+                mappedParticipants.push(...participants);
             });
             expect(service.searchJudgeAccounts).toHaveBeenCalledWith(terms);
             expect(service.searchJudgeAccounts).toHaveBeenCalledTimes(1);
 
             expect(service.searchEntries).toHaveBeenCalledTimes(0);
 
-            expect(ParticipantModel.fromJudgeResponse).toHaveBeenCalledTimes(judgeList.length);
+            expect(mappedParticipants.length).toBe(judgeList.length);
             judgeList.forEach(judge => {
-                expect(ParticipantModel.fromJudgeResponse).toHaveBeenCalledWith(judge);
+                const expectedMappedParticipant = mapJudgeResponseToVHParticipant(judge);
+                const matchingParticipant = mappedParticipants.find(p => compareWithoutExternalReferenceId(p, expectedMappedParticipant));
+                expect(matchingParticipant).toBeTruthy();
             });
         });
     });
@@ -200,3 +207,10 @@ describe('SearchService', () => {
         expect(list.length).toBeGreaterThan(0);
     });
 });
+
+// The participant's external reference id is auto-generated so will not match in the assertion
+function compareWithoutExternalReferenceId(obj1: any, obj2: any): boolean {
+    const { externalReferenceId: _, ...rest1 } = obj1;
+    const { externalReferenceId: __, ...rest2 } = obj2;
+    return JSON.stringify(rest1) === JSON.stringify(rest2);
+}

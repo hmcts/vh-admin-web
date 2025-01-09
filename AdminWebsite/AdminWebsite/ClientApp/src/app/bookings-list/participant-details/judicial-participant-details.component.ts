@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
-import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
+import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 @Component({
     selector: 'app-judicial-participant-details',
@@ -9,9 +9,9 @@ import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 })
 export class JudicialParticipantDetailsComponent {
     @Input()
-    participant: JudiciaryParticipantDetailsModel;
+    participant: JudicialMemberDto;
     @Input()
-    hearing: BookingsDetailsModel;
+    hearing: VHBooking;
     @Input()
     vh_officer_admin: boolean;
 }
