@@ -43,6 +43,25 @@ export class JudicialMemberDto {
         return dto;
     }
 
+    static fromPartial(partial: Partial<JudicialMemberDto>): JudicialMemberDto {
+        const dto = new JudicialMemberDto(
+            partial.firstName,
+            partial.lastName,
+            partial.fullName,
+            partial.email,
+            partial.telephone,
+            partial.personalCode,
+            partial.isGeneric,
+            partial.displayName
+        );
+        dto.roleCode = partial.roleCode;
+        dto.optionalContactNumber = partial.optionalContactNumber;
+        dto.optionalContactEmail = partial.optionalContactEmail;
+        dto.interpretationLanguage = partial.interpretationLanguage;
+
+        return dto;
+    }
+
     clone(): this {
         return cloneWithGetters(this);
     }
