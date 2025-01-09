@@ -5015,7 +5015,6 @@ export enum ScreeningType {
 }
 
 export enum VideoSupplier {
-    Kinly = 'Kinly',
     Vodafone = 'Vodafone'
 }
 
