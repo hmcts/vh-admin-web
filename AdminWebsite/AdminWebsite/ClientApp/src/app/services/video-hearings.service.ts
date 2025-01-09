@@ -74,7 +74,7 @@ export class VideoHearingsService {
         if (localRequest === null) {
             this.modelHearing = new VHBooking();
         } else {
-            this.modelHearing = JSON.parse(localRequest);
+            this.modelHearing = new VHBooking(JSON.parse(localRequest));
         }
     }
 
@@ -83,7 +83,7 @@ export class VideoHearingsService {
         let existingHearing = false;
 
         if (request) {
-            const model: VHBooking = JSON.parse(request);
+            const model: VHBooking = new VHBooking(JSON.parse(request));
             existingHearing = model.hearingId && model.hearingId.length > 0;
         }
 
