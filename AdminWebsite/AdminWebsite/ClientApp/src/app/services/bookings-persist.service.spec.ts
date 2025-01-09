@@ -86,7 +86,7 @@ describe('BookingsPersistService', () => {
             const model = new VHBooking({
                 updatedDate: new Date(),
                 audioRecordingRequired: true,
-                supplier: VideoSupplier.Kinly
+                supplier: VideoSupplier.Vodafone
             });
             service.updateBooking(model);
             expect(service.bookingList.length).toBe(0);

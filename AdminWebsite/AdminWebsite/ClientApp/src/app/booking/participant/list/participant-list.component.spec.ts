@@ -65,7 +65,7 @@ describe('ParticipantListComponent', () => {
         fixture = TestBed.createComponent(ParticipantListComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-        component.hearing = new VHBooking({ updatedDate: new Date(), supplier: VideoSupplier.Kinly });
+        component.hearing = new VHBooking({ updatedDate: new Date(), supplier: VideoSupplier.Vodafone });
         fixture.detectChanges();
     });
 
@@ -338,7 +338,7 @@ describe('ParticipantListComponent-SortParticipants', () => {
         fixture = TestBed.createComponent(ParticipantListComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-        component.hearing = new VHBooking({ updatedDate: new Date(), supplier: VideoSupplier.Kinly });
+        component.hearing = new VHBooking({ updatedDate: new Date(), supplier: VideoSupplier.Vodafone });
         fixture.detectChanges();
     });
     it('should produce a sorted list with no duplicates', () => {
