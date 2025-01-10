@@ -19,6 +19,7 @@ import { takeUntil } from 'rxjs/operators';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { InterpreterSelectedDto } from '../interpreter-form/interpreter-selected.model';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { faPlusCircle, faEraser, faCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-add-participant',
@@ -48,6 +49,10 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     showConfirmRemoveInterpretee = false;
     forceInterpretationLanguageSelection = false;
     interpreterSelection: InterpreterSelectedDto;
+
+    addIcon = faPlusCircle;
+    clearIcon = faEraser;
+    clearCircle = faCircle;
 
     @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;
@@ -294,7 +299,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
     saveParticipant() {
         this.actionsBeforeSave();
-
         if (
             this.form.valid &&
             this.isInterpreterFormValid &&

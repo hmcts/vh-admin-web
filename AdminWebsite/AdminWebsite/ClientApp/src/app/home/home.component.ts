@@ -8,7 +8,10 @@ import { SecurityService } from '../security/services/security.service';
     templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
-    constructor(private readonly securityService: SecurityService, private readonly router: Router) {}
+    constructor(
+        private readonly securityService: SecurityService,
+        private readonly router: Router
+    ) {}
 
     ngOnInit(): void {
         this.securityService

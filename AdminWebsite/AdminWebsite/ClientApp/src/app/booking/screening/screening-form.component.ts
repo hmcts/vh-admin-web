@@ -12,7 +12,10 @@ export class ScreeningFormComponent {
     isEditMode = false;
     newParticipantRemovedFromOptions = false;
 
-    constructor(private readonly formBuilder: FormBuilder, private readonly cdRef: ChangeDetectorRef) {}
+    constructor(
+        private readonly formBuilder: FormBuilder,
+        private readonly cdRef: ChangeDetectorRef
+    ) {}
 
     @Output() screeningSaved = new EventEmitter<SelectedScreeningDto>();
 
@@ -34,7 +37,7 @@ export class ScreeningFormComponent {
                         displayName: participant.displayName,
                         externalReferenceId: participant.externalReferenceId,
                         isNewlyAdded: participant.id === null || participant.id === undefined
-                    } as GenericParticipantsModel)
+                    }) as GenericParticipantsModel
             );
 
         const mappedEndpoints = hearing.endpoints.map(
@@ -43,7 +46,7 @@ export class ScreeningFormComponent {
                     displayName: endpoint.displayName,
                     externalReferenceId: endpoint.externalReferenceId,
                     isNewlyAdded: endpoint.id === null || endpoint.id === undefined
-                } as GenericParticipantsModel)
+                }) as GenericParticipantsModel
         );
         this.isEditMode = !!hearing.hearingId;
         this.allParticipants = [...mappedParticipants, ...mappedEndpoints].filter(participant =>

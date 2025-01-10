@@ -1,13 +1,13 @@
-import { Component, EventEmitter, ViewChild, Input, ElementRef } from '@angular/core';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Component, EventEmitter, ViewChild, Input, ElementRef, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, Observable } from 'rxjs';
 
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
-    styleUrls: ['./header.component.css']
+    styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
     @Input() loggedIn: boolean;
     @Input() username: string;
 
@@ -35,6 +35,18 @@ export class HeaderComponent {
     constructor(private readonly router: Router) {
         this.$confirmLogout = new EventEmitter();
         this.$confirmSaveBooking = new EventEmitter();
+    }
+
+    ngOnInit() {
+        this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+            this.updateActiveMenuItem(this.router.url);
+        });
+    }
+
+    updateActiveMenuItem(currentUrl: string) {
+        this.topMenuItems.forEach(item => {
+            item.active = item.url === currentUrl;
+        });
     }
 
     selectMenuItem(indexOfItem: number) {

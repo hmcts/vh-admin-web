@@ -10,8 +10,8 @@
         name="interpreter-required"
         type="checkbox"
         [(ngModel)]="displayForm"
-        (keydown.enter)="displayForm = !displayForm; $event.stopPropagation()"
-        (click)="displayForm = !displayForm; $event.stopPropagation()"
+        (keydown.enter)="toggleDisplayForm(); $event.stopPropagation()"
+        (click)="toggleDisplayForm(); $event.stopPropagation()"
       />
       <label class="govuk-label govuk-checkboxes__label" [htmlFor]="checkboxId"> Interpreter required </label>
     </div>

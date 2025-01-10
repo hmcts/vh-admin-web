@@ -15,7 +15,11 @@ export class GetAudioFileVhComponent implements OnInit {
     results: HearingAudioSearchModel[];
     today = new Date();
 
-    constructor(private readonly fb: FormBuilder, private readonly audioLinkService: AudioLinkService, private readonly logger: Logger) {}
+    constructor(
+        private readonly fb: FormBuilder,
+        private readonly audioLinkService: AudioLinkService,
+        private readonly logger: Logger
+    ) {}
 
     get caseNumber() {
         return this.vhAudioFileForm.get('caseNumber');

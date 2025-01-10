@@ -76,6 +76,11 @@ export class InterpreterFormComponent implements OnInit, OnDestroy {
         });
     }
 
+    toggleDisplayForm() {
+        this.displayForm = !this.displayForm;
+        this.cdRef.detectChanges();
+    }
+
     prepopulateForm(interpreterSelected: InterpreterSelectedDto) {
         if (!interpreterSelected) {
             return;

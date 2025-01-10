@@ -38,7 +38,7 @@
               class="govuk-input"
               type="date"
               formControlName="startDate"
-              min="{{ today | date : 'yyyy-MM-dd' }}"
+              min="{{ today | date: 'yyyy-MM-dd' }}"
               max="{{ searchForm.value.endDate }}"
               (blur)="onStartDateBlur()"
             />
@@ -50,7 +50,7 @@
               class="govuk-input"
               type="date"
               formControlName="endDate"
-              min="{{ searchForm.value.startDate || today | date : 'yyyy-MM-dd' }}"
+              min="{{ searchForm.value.startDate || today | date: 'yyyy-MM-dd' }}"
               (blur)="onEndDateBlur()"
             />
           </div>
@@ -100,7 +100,7 @@
               type="button"
               (click)="onClear()"
               alt="clear and reload existing booking list"
-              class="govuk-button hmcts-button--secondary"
+              class="govuk-button govuk-button--secondary"
             >
               Clear
             </button>
@@ -127,7 +127,7 @@
     <div *ngFor="let booking of bookings; index as b">
       <div class="govuk-grid-row vh-row">
         <div class="govuk-grid-column-full govuk-hint">
-          {{ booking.BookingsDate | amLocal | amDateFormat : 'dddd DD MMMM YYYY' }}
+          {{ booking.BookingsDate | amLocal | amDateFormat: 'dddd DD MMMM YYYY' }}
         </div>
       </div>
       <div class="govuk-grid-row vh-row">

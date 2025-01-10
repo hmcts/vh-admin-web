@@ -1,4 +1,4 @@
-@import 'govuk-frontend/govuk/base';
+@import 'govuk-frontend/dist/govuk/base';
 // global styles for <a> and <p> tags
 $govuk-global-styles: true;
 
@@ -12,7 +12,6 @@ $govuk-global-styles: true;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   height: 190px;
-  width: 300px;
   margin-bottom: 15px;
   padding: 25px 10px;
   border: 5px solid transparent;
@@ -62,7 +61,7 @@ $govuk-global-styles: true;
   background-color: govuk-colour('orange');
 }
 
-.vhpanel-lightblue {
+.vhpanel-brightpurple {
   background-color: govuk-colour('bright-purple');
 }
 

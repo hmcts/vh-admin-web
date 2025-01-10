@@ -26,7 +26,11 @@ export class TooltipDirective implements OnDestroy {
 
     tooltip: HTMLElement;
 
-    constructor(private readonly el: ElementRef, private readonly renderer: Renderer2, private readonly deviceTypeService: DeviceType) {}
+    constructor(
+        private readonly el: ElementRef,
+        private readonly renderer: Renderer2,
+        private readonly deviceTypeService: DeviceType
+    ) {}
     ngOnDestroy(): void {
         this.hide();
     }
