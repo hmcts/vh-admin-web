@@ -29,7 +29,10 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
 
     isEditMode = false;
 
-    constructor(private readonly videoHearingsService: VideoHearingsService, private readonly ldService: LaunchDarklyService) {}
+    constructor(
+        private readonly videoHearingsService: VideoHearingsService,
+        private readonly ldService: LaunchDarklyService
+    ) {}
 
     ngOnDestroy(): void {
         this.destroyed$.unsubscribe();

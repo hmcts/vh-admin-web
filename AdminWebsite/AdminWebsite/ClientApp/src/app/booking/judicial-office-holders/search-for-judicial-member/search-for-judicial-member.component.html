@@ -3,7 +3,7 @@
     <label class="govuk-label" for="judiciaryEmailInput">Email</label>
     <input id="judiciaryEmailInput" class="govuk-input" type="email" autocomplete="off" formControlName="judiciaryEmail" />
     <ul id="search-results-list" *ngIf="showResult && searchResult?.length > 0" class="vh-li-email govuk-body">
-      <li *ngFor="let result of searchResult | slice : 0 : 9" class="vk-showlist-m30">
+      <li *ngFor="let result of searchResult | slice: 0 : 9" class="vk-showlist-m30">
         <span class="vh-a-email" (keypress)="selectJudicialMember(result)" (click)="selectJudicialMember(result)">{{ result.email }}</span>
       </li>
     </ul>

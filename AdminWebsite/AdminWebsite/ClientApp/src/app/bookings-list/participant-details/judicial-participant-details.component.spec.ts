@@ -40,7 +40,7 @@ describe('JudicialParticipantDetailsComponent', () => {
 
             expect(component).toBeTruthy();
 
-            const imgElement = fixture.debugElement.nativeElement.querySelector('img[src="/assets/images/govuk-crest.png"]');
+            const imgElement = fixture.debugElement.nativeElement.querySelector('img[src="/assets/images/govuk-crest.svg"]');
             expect(imgElement).toBeTruthy();
 
             const nameElement = fixture.debugElement.query(By.css('#judge-name'));
@@ -72,7 +72,7 @@ describe('JudicialParticipantDetailsComponent', () => {
 
             expect(component).toBeTruthy();
 
-            const imgElement = fixture.debugElement.nativeElement.querySelector('img[src="/assets/images/govuk-crest.png"]');
+            const imgElement = fixture.debugElement.nativeElement.querySelector('img[src="/assets/images/govuk-crest.svg"]');
             expect(imgElement).toBeTruthy();
 
             const nameElement = fixture.debugElement.query(By.css('#judge-name'));
@@ -98,7 +98,7 @@ describe('JudicialParticipantDetailsComponent', () => {
 
             expect(component).toBeTruthy();
 
-            const imgElement = fixture.debugElement.nativeElement.querySelector('img[src="/assets/images/govuk-crest.png"]');
+            const imgElement = fixture.debugElement.nativeElement.querySelector('img[src="/assets/images/govuk-crest.svg"]');
             expect(imgElement).toBeTruthy();
 
             const nameElement = fixture.debugElement.query(By.css('#judge-name'));
@@ -126,7 +126,7 @@ describe('JudicialParticipantDetailsComponent', () => {
 
             expect(component).toBeTruthy();
 
-            const imgElement = fixture.debugElement.nativeElement.querySelector('img[src="/assets/images/govuk-crest.png"]');
+            const imgElement = fixture.debugElement.nativeElement.querySelector('img[src="/assets/images/govuk-crest.svg"]');
             expect(imgElement).toBeNull();
 
             const nameElement = fixture.debugElement.query(By.css('#judge-name'));
@@ -149,7 +149,7 @@ describe('JudicialParticipantDetailsComponent', () => {
 
             expect(component).toBeTruthy();
 
-            const imgElement = fixture.debugElement.nativeElement.querySelector('img[src="/assets/images/govuk-crest.png"]');
+            const imgElement = fixture.debugElement.nativeElement.querySelector('img[src="/assets/images/govuk-crest.svg"]');
             expect(imgElement).toBeNull();
 
             const nameElement = fixture.debugElement.query(By.css('#judge-name'));

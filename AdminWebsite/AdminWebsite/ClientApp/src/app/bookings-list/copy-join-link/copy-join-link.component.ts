@@ -16,7 +16,10 @@ export class CopyJoinLinkComponent extends CopyDetailsBase implements OnInit {
 
     private readonly vh_video_uri: string;
 
-    constructor(protected clipboardService: ClipboardService, private readonly configService: ConfigService) {
+    constructor(
+        protected clipboardService: ClipboardService,
+        private readonly configService: ConfigService
+    ) {
         super(clipboardService);
         this.vh_video_uri = this.configService.getConfig().video_web_url;
     }

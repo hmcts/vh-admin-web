@@ -7,7 +7,10 @@ import { SecurityService } from './services/security.service';
 })
 @Injectable()
 export class LogoutComponent implements OnInit {
-    constructor(private readonly securityService: SecurityService, private readonly userIdentityService: UserIdentityService) {}
+    constructor(
+        private readonly securityService: SecurityService,
+        private readonly userIdentityService: UserIdentityService
+    ) {}
 
     ngOnInit() {
         this.securityService.isAuthenticated().subscribe(auth => {

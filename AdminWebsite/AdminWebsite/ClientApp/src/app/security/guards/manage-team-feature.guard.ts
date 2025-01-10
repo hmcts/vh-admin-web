@@ -6,7 +6,10 @@ import { map, take } from 'rxjs/operators';
 
 @Injectable()
 export class ManageTeamFeatureGuard {
-    constructor(private readonly launchDarklyService: LaunchDarklyService, private readonly router: Router) {}
+    constructor(
+        private readonly launchDarklyService: LaunchDarklyService,
+        private readonly router: Router
+    ) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         return this.launchDarklyService.getFlag<boolean>(FeatureFlags.dom1Integration).pipe(

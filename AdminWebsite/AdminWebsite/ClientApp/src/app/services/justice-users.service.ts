@@ -34,7 +34,10 @@ export class JusticeUsersService {
         )
     );
 
-    constructor(private readonly apiClient: BHClient, private readonly logger: Logger) {}
+    constructor(
+        private readonly apiClient: BHClient,
+        private readonly logger: Logger
+    ) {}
 
     refresh() {
         this.refresh$.next();

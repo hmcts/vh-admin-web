@@ -13,7 +13,10 @@ export class CvpAudioFileSearchResultComponent {
 
     @Input() results: CvpAudioSearchModel[];
 
-    constructor(private readonly clipboardService: ClipboardService, private readonly logger: Logger) {}
+    constructor(
+        private readonly clipboardService: ClipboardService,
+        private readonly logger: Logger
+    ) {}
 
     get hasResults() {
         return this.results && this.results.length > 0;

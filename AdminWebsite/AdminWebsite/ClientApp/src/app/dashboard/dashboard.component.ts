@@ -3,7 +3,8 @@ import { Subject, combineLatest, lastValueFrom, takeUntil } from 'rxjs';
 import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.service';
 import { Logger } from '../services/logger';
 import { UserIdentityService } from '../services/user-identity.service';
-import { faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faShuffle, faPenToSquare, faLock, faRotateRight, faVolumeOff, faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarCheck, faCircleUser } from '@fortawesome/free-regular-svg-icons';
 
 @Component({
     selector: 'app-dashboard',
@@ -19,7 +20,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
         private readonly logger: Logger
     ) {}
 
-    faUsers = faUsers;
+    manageTeamIcon = faUsers;
+    bookHearingIcon = faCalendarCheck;
+    manageWorkAllocationIcon = faShuffle;
+    editParticipantNameIcon = faPenToSquare;
+
+    changePasswordBackIcon = faRotateRight;
+    changePasswordFrontIcon = faLock;
+
+    getAudioIconBack = faCircle;
+    getAudioIconFront = faVolumeOff;
+
+    deleteUserIcon = faCircleUser;
 
     showCheckList = false;
     showBooking = false;

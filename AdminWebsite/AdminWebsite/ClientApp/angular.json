@@ -22,15 +22,19 @@
               "src/favicon.ico",
               "src/assets",
               "src/web.config",
-              "src/assets",
               {
                 "glob": "*",
-                "input": "node_modules/govuk-frontend/govuk/assets/fonts",
+                "input": "node_modules/govuk-frontend/dist/govuk/assets/fonts",
                 "output": "assets/fonts/"
+              },
+              {
+                "glob": "*",
+                "input": "node_modules/govuk-frontend/dist/govuk/assets/images",
+                "output": "assets/images/"
               }
             ],
             "styles": ["src/styles.scss"],
-            "scripts": ["node_modules/govuk-frontend/govuk/all.js", "src/scripts/init-script.js"],
+            "scripts": [],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
@@ -93,11 +97,15 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/assets",
               {
                 "glob": "*",
-                "input": "node_modules/govuk-frontend/govuk/assets/fonts",
+                "input": "node_modules/govuk-frontend/dist/govuk/assets/fonts",
                 "output": "assets/fonts/"
+              },
+              {
+                "glob": "*",
+                "input": "node_modules/govuk-frontend/dist/govuk/assets/images",
+                "output": "assets/images/"
               }
             ]
           }

@@ -200,7 +200,7 @@
 
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half" *ngIf="displayAddButton">
-          <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
+          <fa-icon [icon]="addIcon" size="2x" class="govuk-green" aria-hidden="true"></fa-icon>
           <span class="vh-vert-top-m15">
             <a href="javascript:void(0)" (click)="saveParticipant()" type="submit" id="addParticipantBtn" class="govuk-link govuk-body">
               Add participant
@@ -209,7 +209,7 @@
         </div>
 
         <div class="govuk-grid-column-one-half" *ngIf="displayUpdateButton">
-          <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
+          <fa-icon [icon]="addIcon" size="2x" class="govuk-green" aria-hidden="true"></fa-icon>
           <span class="vh-vert-top-m15">
             <a
               href="javascript:void(0)"
@@ -224,7 +224,10 @@
         </div>
 
         <div class="govuk-grid-column-one-half" *ngIf="displayClearButton">
-          <img src="assets/images/ClearIcon.png" alt="Clear fields icon" />
+          <fa-stack [style]="{ verticalAlign: 'bottom' }">
+            <fa-icon [icon]="clearCircle" class="govuk-green" stackItemSize="2x"></fa-icon>
+            <fa-icon [icon]="clearIcon" class="govuk-green" [inverse]="true" aria-hidden="true" stackItemSize="1x"></fa-icon>
+          </fa-stack>
           <span class="vh-vert-top-m15">
             <a href="javascript:void(0)" id="clearFormBtn" class="govuk-link govuk-body" (click)="clearForm()"> Clear details </a>
           </span>
@@ -235,7 +238,7 @@
       <button *ngIf="displayNextButton" id="nextButton" class="govuk-button vh-mr25" data-module="govuk-button" value="" (click)="next()">
         {{ buttonAction }}
       </button>
-      <button id="cancelBtn" class="govuk-button hmcts-button--secondary" data-module="govuk-button" (click)="addParticipantCancel()">
+      <button id="cancelBtn" class="govuk-button govuk-button--secondary" data-module="govuk-button" (click)="addParticipantCancel()">
         Cancel
       </button>
     </div>

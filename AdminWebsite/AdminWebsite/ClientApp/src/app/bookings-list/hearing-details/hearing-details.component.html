@@ -138,7 +138,7 @@
       </div>
       <div *ngIf="getDefenceAdvocateByContactEmail(endpoint.defenceAdvocate)" class="govuk-grid-row">
         <div class="govuk-grid-column-full" id="defenceAdvocateRep{{ +i }}">
-          <img src="/assets/images/link.png" class="icon" alt="link to endpoint" />
+          <fa-icon [icon]="linkIcon" size="xs"></fa-icon>
           {{ getDefenceAdvocateByContactEmail(endpoint.defenceAdvocate) }}
         </div>
       </div>
