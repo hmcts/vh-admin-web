@@ -36,7 +36,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     isExistingHearing: boolean;
     destroyed$ = new Subject<void>();
 
-    vodafoneToggle = false;
     supportedSupplierOverrides: ServiceIds = { serviceIds: [] };
     displayOverrideSupplier = false;
     supplierOptions = VideoSupplier;
@@ -66,11 +65,9 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
                 this.multiDayEnhancementsEnabled = flag;
             });
 
-        const vodafoneToggle$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.vodafone);
         const supplierOverridesToggle$ = this.launchDarklyService.getFlag<ServiceIds>(FeatureFlags.supplierOverrides, { serviceIds: [] });
 
-        combineLatest([vodafoneToggle$, supplierOverridesToggle$]).subscribe(([vodafoneToggle, supplierOverrides]) => {
-            this.vodafoneToggle = vodafoneToggle;
+        combineLatest([supplierOverridesToggle$]).subscribe(([supplierOverrides]) => {
             this.supportedSupplierOverrides = supplierOverrides;
             if (this.form && !this.form.contains('supplier')) {
                 this.form.addControl('supplier', this.fb.control(this.hearing?.supplier ?? this.retrieveDefaultSupplier()));
@@ -145,7 +142,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     }
 
     retrieveDefaultSupplier(): VideoSupplier {
-        return this.vodafoneToggle ? VideoSupplier.Vodafone : VideoSupplier.Kinly;
+        return VideoSupplier.Vodafone;
     }
 
     get caseName() {

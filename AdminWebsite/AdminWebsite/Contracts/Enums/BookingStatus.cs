@@ -11,6 +11,6 @@ public enum BookingStatus
 
 public enum VideoSupplier
 {
-    Kinly = 1,
+    // Kinly = 1,
     Vodafone = 2
 }

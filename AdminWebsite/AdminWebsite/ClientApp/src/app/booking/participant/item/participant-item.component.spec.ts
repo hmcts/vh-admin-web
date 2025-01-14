@@ -55,7 +55,7 @@ describe('ParticipantItemComponent', () => {
         component.hearing = new VHBooking({
             updatedDate: new Date(),
             otherInformation: '|JudgeEmail|James.Doe@hmcts.net|JudgePhone|123456789',
-            supplier: VideoSupplier.Kinly
+            supplier: VideoSupplier.Vodafone
         });
 
         fixture.detectChanges();

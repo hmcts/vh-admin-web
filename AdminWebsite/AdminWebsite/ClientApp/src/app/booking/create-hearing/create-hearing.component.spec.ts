@@ -63,7 +63,6 @@ describe('CreateHearingComponent with multiple Services', () => {
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vodafone).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.specialMeasures).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag
             .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
@@ -157,7 +156,6 @@ describe('CreateHearingComponent with multiple Services', () => {
 
     describe('supplier overrides', () => {
         beforeEach(() => {
-            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vodafone).and.returnValue(of(true));
             launchDarklyServiceSpy.getFlag
                 .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
                 .and.returnValue(of({ serviceIds: ['ZZY1'] }));
@@ -168,7 +166,6 @@ describe('CreateHearingComponent with multiple Services', () => {
 
         it('should map supplier override', () => {
             expect(component.supportedSupplierOverrides).toEqual({ serviceIds: ['ZZY1'] });
-            expect(component.vodafoneToggle).toBeTrue();
         });
 
         it('should display supplier override when selected Service is in the override list', () => {
@@ -186,14 +183,7 @@ describe('CreateHearingComponent with multiple Services', () => {
         });
 
         describe('retrieveDefaultSupplier', () => {
-            it('should return Kinly if feature toggle is off', () => {
-                component.vodafoneToggle = false;
-                const defaultSupplier = component.retrieveDefaultSupplier();
-                expect(defaultSupplier).toBe(VideoSupplier.Kinly);
-            });
-
-            it('should return Vodafone if feature toggle is on', () => {
-                component.vodafoneToggle = true;
+            it('should return Vodafone', () => {
                 const defaultSupplier = component.retrieveDefaultSupplier();
                 expect(defaultSupplier).toBe(VideoSupplier.Vodafone);
             });
@@ -209,7 +199,6 @@ describe('CreateHearingComponent with single Service', () => {
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vodafone).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.specialMeasures).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag
             .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
@@ -277,7 +266,6 @@ describe('CreateHearingComponent with existing request in session', () => {
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vodafone).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.specialMeasures).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag
             .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)

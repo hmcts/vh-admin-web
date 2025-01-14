@@ -109,18 +109,18 @@
       },
       "BookingsApi.Client": {
         "type": "Transitive",
-        "resolved": "3.1.9",
-        "contentHash": "szk1pTukvzHsprWASvwtdTvoHCbm5RC5Lnj1wYmSC+/I/s1uyoL7uLbauV2s84znk2xssLpol4N7Fyxl5wJGAw==",
+        "resolved": "3.1.14",
+        "contentHash": "j+zkb9f2uRlGWS3Jte2ES43XfBO/r434V8WmcDYm5wBoy5acl26f1bPLbd0mXH/bjd78BDhAu6Oo7LXl5cN2JQ==",
         "dependencies": {
-          "BookingsApi.Common.DotNet6": "3.1.9",
+          "BookingsApi.Common.DotNet6": "3.1.14",
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "System.Text.Json": "8.0.5"
         }
       },
       "BookingsApi.Common.DotNet6": {
         "type": "Transitive",
-        "resolved": "3.1.9",
-        "contentHash": "3rSoSlmcZw4+uxPIj+KpBAI6WjIk2ntsEGc75oGDD7fQM+qpEDCuIn4xSid1fcO6sdQ2Dkd/8/3c0k2dyL+yeg==",
+        "resolved": "3.1.14",
+        "contentHash": "/N0w8827EwMPO9Suz1R9evG8G8DFPPYOhcUixyqxZDvPkgr4uqjgK7uX41OP2TtADgPBrDVPs66G1DmbKGfWXg==",
         "dependencies": {
           "System.Text.Json": "8.0.5"
         }
@@ -2220,18 +2220,18 @@
       },
       "VideoApi.Client": {
         "type": "Transitive",
-        "resolved": "3.1.7",
-        "contentHash": "l7/NvSybO0/k+rAg1jY78hjZrQ1v2P/qdmh75gJeK+tax3Ukwc0G6+QvKbvlbetzU1TjKf2GFrublKZ5h1OdMg==",
+        "resolved": "3.1.15",
+        "contentHash": "cPbRgMHHM9tj7mdEZMh1wejWMjexzQ/ajG3jED3TxIu/nA1vrwIoxp/BumerHZdFzgCYnTByBckJGOmg4njwDw==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
-          "System.Text.Json": "8.0.4"
+          "System.Text.Json": "8.0.5"
         }
       },
       "adminwebsite": {
         "type": "Project",
         "dependencies": {
           "AspNetCore.HealthChecks.Uris": "[8.0.1, )",
-          "BookingsApi.Client": "[3.1.9, )",
+          "BookingsApi.Client": "[3.1.14, )",
           "FluentValidation.AspNetCore": "[11.3.0, )",
           "LaunchDarkly.ServerSdk": "[8.5.0, )",
           "MicroElements.Swashbuckle.FluentValidation": "[6.0.0, )",
@@ -2254,7 +2254,7 @@
           "Swashbuckle.AspNetCore.Swagger": "[6.6.1, )",
           "TimeZoneConverter": "[6.1.0, )",
           "UserApi.Client": "[2.1.1, )",
-          "VideoApi.Client": "[3.1.7, )"
+          "VideoApi.Client": "[3.1.15, )"
         }
       },
       "adminwebsite.testing.common": {
