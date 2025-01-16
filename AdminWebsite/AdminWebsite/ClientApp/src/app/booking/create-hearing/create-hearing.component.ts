@@ -109,16 +109,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         } else {
             this.selectedCaseType = Constants.PleaseSelect;
         }
-
-        if (this.hearing.caseType) {
-            this.selectedCaseType = this.hearing.caseType.name;
-            this.logger.debug(`${this.loggerPrefix} Updating selected Service to current hearing Service.`, {
-                hearing: this.hearing.hearingId
-            });
-            this.hasSaved = true;
-        } else {
-            this.selectedCaseType = Constants.PleaseSelect;
-        }
     }
 
     private initForm() {

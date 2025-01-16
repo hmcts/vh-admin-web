@@ -12,7 +12,7 @@ import {
     VideoSupplier
 } from './clients/api-client';
 import { CaseModel } from '../common/model/case.model';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
@@ -46,7 +46,8 @@ describe('Video hearing service', () => {
             'getHearingRoles',
             'editMultiDayHearing',
             'cancelMultiDayHearing',
-            'getBookingQueueState'
+            'getBookingQueueState',
+            'getHearingById'
         ]);
         service = new VideoHearingsService(clientApiSpy, referenceDataServiceSpy);
     });
@@ -974,6 +975,38 @@ describe('Video hearing service', () => {
             service.isBookingServiceDegraded().subscribe(result => {
                 expect(result).toBeFalse();
             });
+        });
+    });
+
+    describe('getHearingById', () => {
+        const venue = MockValues.Courts[0];
+        let hearingResponse: HearingDetailsResponse;
+
+        beforeEach(() => {
+            hearingResponse = ResponseTestData.getHearingResponseTestData();
+            clientApiSpy.getHearingById.and.returnValue(of(hearingResponse));
+        });
+
+        it('should return hearing details', async () => {
+            // Arrange
+            hearingResponse.hearing_venue_code = venue.code;
+
+            // Act
+            const result = await firstValueFrom(service.getHearingById(hearingResponse.id));
+
+            // Assert
+            expect(result).toEqual(hearingResponse);
+        });
+
+        it('should return hearing details without venue name if venue not found', async () => {
+            // Arrange
+            hearingResponse.hearing_venue_code = undefined;
+
+            // Act
+            const result = await firstValueFrom(service.getHearingById(hearingResponse.id));
+
+            // Assert
+            expect(result).toEqual(hearingResponse);
         });
     });
 });
