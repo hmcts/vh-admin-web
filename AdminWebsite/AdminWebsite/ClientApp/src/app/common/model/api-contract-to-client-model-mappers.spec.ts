@@ -415,6 +415,25 @@ describe('mapJudicialMemberDtoToVHParticipant', () => {
     }
 });
 
+describe('mapCaseTypeResponseToCaseTypeModel', () => {
+    it('should map CaseTypeResponse to CaseTypeModel', () => {
+        // Arrange
+        const caseTypeResponse = new CaseTypeResponse({
+            name: 'name',
+            service_id: 'service-id',
+            is_audio_recording_allowed: true
+        });
+
+        // Act
+        const result = mapCaseTypeResponseToCaseTypeModel(caseTypeResponse);
+
+        // Assert
+        expect(result.name).toBe(caseTypeResponse.name);
+        expect(result.serviceId).toBe(caseTypeResponse.service_id);
+        expect(result.isAudioRecordingAllowed).toBe(caseTypeResponse.is_audio_recording_allowed);
+    });
+});
+
 function createSingleDayHearing(): HearingDetailsResponse {
     const hearing = new HearingDetailsResponse();
     hearing.id = '123';

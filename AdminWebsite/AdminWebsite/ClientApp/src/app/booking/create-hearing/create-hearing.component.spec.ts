@@ -163,12 +163,6 @@ describe('CreateHearingComponent with multiple Services', () => {
             caseTypeControl.setValue('Tax');
         });
 
-        afterAll(() => {
-            caseNumberControl.reset();
-            caseNameControl.reset();
-            caseTypeControl.reset();
-        });
-
         it('should navigate to summary when in edit mode', () => {
             component.editMode = true;
             component.saveHearingDetails();
