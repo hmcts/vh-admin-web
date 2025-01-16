@@ -13,6 +13,7 @@ namespace AdminWebsite.UnitTests.Helper
                 .With(x => x.Participants = new List<ParticipantResponseV2>())
                 .With(x => x.JudicialOfficeHolders = new List<JudiciaryParticipantResponse>())
                 .With(x => x.Cases = new List<CaseResponseV2> { Builder<CaseResponseV2>.CreateNew().Build() })
+                .With(x => x.ServiceIsAudioRecordingAllowed = true)
                 .Build(); 
         }
 
