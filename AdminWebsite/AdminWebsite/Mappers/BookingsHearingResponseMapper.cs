@@ -17,7 +17,7 @@ public static class BookingsHearingResponseMapper
             CaseType = new CaseTypeResponse
             {
                 Name = hearingResponse.CaseTypeName,
-                IsAudioRecordingAllowed = hearingResponse.CaseTypeName != "Court of Appeal Criminal Division" && hearingResponse.CaseTypeName != "Crime Crown Court" // TODO replace with value from bookings api
+                IsAudioRecordingAllowed = hearingResponse.CaseTypeIsAudioRecordingAllowed
             },
             CourtRoom = hearingResponse.CourtRoom,
             CourtAddress = hearingResponse.CourtAddress,

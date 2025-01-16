@@ -44,7 +44,7 @@ public static class HearingDetailsResponseMapper
             {
                 Name = hearingDetails.ServiceName,
                 ServiceId = hearingDetails.ServiceId,
-                IsAudioRecordingAllowed = hearingDetails.ServiceId != "VIHTMP1" && hearingDetails.ServiceId != "VIHTMP8" // TODO replace with value from bookings api
+                IsAudioRecordingAllowed = hearingDetails.ServiceIsAudioRecordingAllowed
             }
         };
     }
