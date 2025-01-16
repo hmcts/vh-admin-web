@@ -69,11 +69,7 @@ function initExistingHearingRequest(): VHBooking {
     existingRequest.courtName = courtString;
     existingRequest.isMultiDayEdit = false;
     existingRequest.endHearingDateTime = new Date(addDays(Date.now(), 7));
-    existingRequest.caseType = new CaseTypeModel({
-        name: 'Tribunal',
-        serviceId: '123',
-        isAudioRecordingAllowed: true
-    });
+    existingRequest.caseType = ResponseTestData.getCaseTypeModelTestData();
 
     existingRequest.participants = [];
     existingRequest.participants.push(pat1);
@@ -99,11 +95,7 @@ function initBadHearingRequest(): VHBooking {
     existingRequest.hearingVenueId = 2;
     existingRequest.scheduledDateTime = today;
     existingRequest.scheduledDuration = 80;
-    existingRequest.caseType = new CaseTypeModel({
-        name: 'Tribunal',
-        serviceId: '123',
-        isAudioRecordingAllowed: true
-    });
+    existingRequest.caseType = ResponseTestData.getCaseTypeModelTestData();
     return existingRequest;
 }
 

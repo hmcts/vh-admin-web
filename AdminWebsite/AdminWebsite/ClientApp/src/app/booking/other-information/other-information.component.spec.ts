@@ -16,6 +16,7 @@ import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 import { CaseTypeModel } from 'src/app/common/model/case-type.model';
+import { ResponseTestData } from 'src/app/testing/data/response-test-data';
 
 function initHearingRequest(): VHBooking {
     const participants: VHParticipant[] = [];
@@ -34,11 +35,7 @@ function initHearingRequest(): VHBooking {
     newHearing.scheduledDuration = 0;
 
     newHearing.otherInformation = 'some text';
-    newHearing.caseType = new CaseTypeModel({
-        name: 'Tribunal',
-        serviceId: '123',
-        isAudioRecordingAllowed: true
-    });
+    newHearing.caseType = ResponseTestData.getCaseTypeModelTestData();
 
     return newHearing;
 }

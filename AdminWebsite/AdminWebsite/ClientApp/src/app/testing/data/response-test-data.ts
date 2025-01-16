@@ -7,11 +7,13 @@ import {
     BookingsByDateResponse,
     BookingsHearingResponse,
     BookingsResponse,
-    JusticeUserResponse
+    JusticeUserResponse,
+    CaseTypeResponse
 } from '../../services/clients/api-client';
 import { v4 as uuid } from 'uuid';
 import { BookingsListItemModel } from 'src/app/common/model/booking-list-item.model';
 import { VHBooking } from 'src/app/common/model/vh-booking';
+import { CaseTypeModel } from 'src/app/common/model/case-type.model';
 
 export class ResponseTestData {
     static getHearingResponseTestData(): HearingDetailsResponse {
@@ -408,5 +410,21 @@ export class ResponseTestData {
         byDate.hearings.push(bhr1);
 
         return byDate;
+    }
+
+    static getCaseTypeModelTestData(): CaseTypeModel {
+        return new CaseTypeModel({
+            name: 'Tribunal',
+            serviceId: '123',
+            isAudioRecordingAllowed: true
+        });
+    }
+
+    static getCaseTypeResponseTestData(): CaseTypeResponse {
+        return new CaseTypeResponse({
+            name: 'Tribunal',
+            service_id: '123',
+            is_audio_recording_allowed: true
+        });
     }
 }
