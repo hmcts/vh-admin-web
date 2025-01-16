@@ -37,8 +37,15 @@ public class HearingTypesController : ReferenceDataControllerBase
             {
                 Group = caseType.Name,
                 Id = caseType.Id,
-                ServiceId = caseType.ServiceId
+                ServiceId = caseType.ServiceId,
+                IsAudioRecordingAllowed = true // TODO get from bookings api
             }).ToList();
+
+        // TODO get from bookings api
+        foreach (var type in result.Where(type => type.ServiceId is "VIHTMP1" or "VIHTMP8"))
+        {
+            type.IsAudioRecordingAllowed = false;
+        }
 
         return Ok(result);
     }

@@ -49,7 +49,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
 
     ngOnInit() {
         this.checkForExistingRequest();
-        this.switchOffRecording = this.recordingGuard.switchOffRecording(this.hearing.caseType);
+        this.switchOffRecording = !this.hearing.caseType.isAudioRecordingAllowed;
         this.interpreterPresent = this.recordingGuard.mandatoryRecordingForHearingRole(this.hearing.participants);
         this.initForm();
         super.ngOnInit();

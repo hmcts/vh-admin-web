@@ -41,6 +41,7 @@ import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 import { JudicialMemberDto } from '../judicial-office-holders/models/add-judicial-member.model';
+import { CaseTypeModel } from 'src/app/common/model/case-type.model';
 
 function initExistingHearingRequest(): VHBooking {
     const pat1 = new VHParticipant();
@@ -68,6 +69,11 @@ function initExistingHearingRequest(): VHBooking {
     existingRequest.courtName = courtString;
     existingRequest.isMultiDayEdit = false;
     existingRequest.endHearingDateTime = new Date(addDays(Date.now(), 7));
+    existingRequest.caseType = new CaseTypeModel({
+        name: 'Tribunal',
+        serviceId: '123',
+        isAudioRecordingAllowed: true
+    });
 
     existingRequest.participants = [];
     existingRequest.participants.push(pat1);
@@ -93,6 +99,11 @@ function initBadHearingRequest(): VHBooking {
     existingRequest.hearingVenueId = 2;
     existingRequest.scheduledDateTime = today;
     existingRequest.scheduledDuration = 80;
+    existingRequest.caseType = new CaseTypeModel({
+        name: 'Tribunal',
+        serviceId: '123',
+        isAudioRecordingAllowed: true
+    });
     return existingRequest;
 }
 
@@ -101,10 +112,7 @@ const stringifier = new PipeStringifierService();
 
 const routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info', 'warn', 'debug']);
-recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
-    'switchOffRecording',
-    'mandatoryRecordingForHearingRole'
-]);
+recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', ['mandatoryRecordingForHearingRole']);
 
 const refDataServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getHearingTypes']);
 const videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService> = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
@@ -320,8 +328,11 @@ describe('SummaryComponent with valid request', () => {
             expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
         });
     }));
-    it('should set audio recording to false if Service is CACD', () => {
-        component.hearing.caseType = component.constants.CaseTypes.CourtOfAppealCriminalDivision;
+    it('should set audio recording to false if recording is not allowed for case type', () => {
+        component.hearing.caseType = new CaseTypeModel({
+            name: 'Court of Appeal Criminal Division',
+            isAudioRecordingAllowed: false
+        });
         component.ngOnInit();
         expect(component.hearing.audioRecordingRequired).toBe(false);
     });
@@ -331,20 +342,11 @@ describe('SummaryComponent with valid request', () => {
         fixture.detectChanges();
         expect(component.hearing.audioRecordingRequired).toBe(true);
     });
-    it('should set audio recording to false if Service is CACD and an interpreter is present', () => {
-        component.hearing.caseType = component.constants.CaseTypes.CourtOfAppealCriminalDivision;
-        component.hasParticipantsRequiringAudioRecording = true;
-        component.isAudioRecordingRequired();
-        component.ngOnInit();
-        expect(component.hearing.audioRecordingRequired).toBe(false);
-    });
-    it('should set audio recording to false if Service is Crime Crown Court', () => {
-        component.hearing.caseType = component.constants.CaseTypes.CrimeCrownCourt;
-        component.ngOnInit();
-        expect(component.hearing.audioRecordingRequired).toBe(false);
-    });
-    it('should set audio recording to false if Service is Crime Crown Court and an interpreter is present', () => {
-        component.hearing.caseType = component.constants.CaseTypes.CrimeCrownCourt;
+    it('should set audio recording to false if recording is not allowed for case type and an interpreter is present', () => {
+        component.hearing.caseType = new CaseTypeModel({
+            name: 'Court of Appeal Criminal Division',
+            isAudioRecordingAllowed: false
+        });
         component.hasParticipantsRequiringAudioRecording = true;
         component.isAudioRecordingRequired();
         component.ngOnInit();
@@ -919,10 +921,7 @@ describe('SummaryComponent  with multi days request', () => {
     const ldServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
     ldServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
     ldServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
-    recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
-        'switchOffRecording',
-        'mandatoryRecordingForHearingRole'
-    ]);
+    recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', ['mandatoryRecordingForHearingRole']);
     const existingRequest = initExistingHearingRequest();
     existingRequest.isMultiDayEdit = true;
     existingRequest.hearingId = '12345ty';

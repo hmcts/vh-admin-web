@@ -19,5 +19,10 @@ namespace AdminWebsite.Contracts.Responses
         /// The service id for the type
         /// </summary>
         public string ServiceId { get; set; }
+        
+        /// <summary>
+        /// Whether audio is allowed to be recorded for the type
+        /// </summary>
+        public bool IsAudioRecordingAllowed { get; set; }
     }
 }

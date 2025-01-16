@@ -320,7 +320,7 @@ export class VideoHearingsService {
     mapHearing(newRequest: VHBooking): BookingDetailsRequest {
         const newHearingRequest = new BookingDetailsRequest();
         newHearingRequest.cases = this.mapCases(newRequest);
-        newHearingRequest.case_type_service_id = newRequest.caseTypeServiceId;
+        newHearingRequest.case_type_service_id = newRequest.caseType.serviceId;
         newHearingRequest.scheduled_date_time = new Date(newRequest.scheduledDateTime);
         newHearingRequest.scheduled_duration = newRequest.scheduledDuration;
         newHearingRequest.hearing_venue_code = newRequest.courtCode;
@@ -448,9 +448,9 @@ export class VideoHearingsService {
                 if (venue) {
                     hearing.hearing_venue_name = venue.name;
                 }
-                const hearingType = hearingTypes.find(ht => ht.service_id === hearing.service_id);
+                const hearingType = hearingTypes.find(ht => ht.service_id === hearing.case_type.service_id);
                 if (hearingType) {
-                    hearing.case_type_name = hearingType.group;
+                    hearing.case_type.name = hearingType.group;
                 }
                 return hearing;
             })

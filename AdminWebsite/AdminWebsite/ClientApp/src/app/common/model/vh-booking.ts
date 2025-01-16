@@ -7,6 +7,7 @@ import { FormatShortDuration } from '../formatters/format-short-duration';
 import { VHParticipant } from './vh-participant';
 import { cloneWithGetters } from '../helpers/clone-with-getters';
 import { Constants } from '../constants';
+import { CaseTypeModel } from './case-type.model';
 
 export class VHBooking {
     hearingId?: string;
@@ -16,12 +17,10 @@ export class VHBooking {
     participants?: VHParticipant[] = [];
     judiciaryParticipants?: JudicialMemberDto[] = [];
     createdBy?: string;
-    caseType?: string;
-    caseTypeServiceId?: string;
+    caseType?: CaseTypeModel;
     otherInformation?: string;
     courtRoom?: string;
     hearingVenueId?: number;
-    caseTypeId?: number;
     courtName?: string;
     courtCode?: string;
     createdDate?: Date;
@@ -124,7 +123,9 @@ export class VHBooking {
             confirmedDate: confirmedDate,
             status: status,
             audioRecordingRequired: audioRecordingRequired,
-            caseType: caseType,
+            caseType: new CaseTypeModel({
+                name: caseType
+            }),
             courtRoomAccount: courtRoomAccount,
             telephoneConferenceId: telephoneConferenceId
         });

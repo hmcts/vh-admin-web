@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { BookingsListService } from './bookings-list.service';
-import { BHClient, BookingsResponse, BookingsByDateResponse, BookingsHearingResponse } from './clients/api-client';
+import { BHClient, BookingsResponse, BookingsByDateResponse, BookingsHearingResponse, CaseTypeResponse } from './clients/api-client';
 import { Observable, of } from 'rxjs';
 import { BookingsListModel } from '../common/model/bookings-list.model';
 import { BookingsModel } from '../common/model/bookings.model';
@@ -288,6 +288,11 @@ export class ResponseTestData {
         bhr.last_edit_by = 'Sam';
         bhr.audio_recording_required = true;
         bhr.cancel_reason = 'some more information';
+        bhr.case_type = new CaseTypeResponse({
+            name: 'Tribunal',
+            service_id: '123',
+            is_audio_recording_allowed: true
+        });
 
         const bhr1 = new BookingsHearingResponse({ hearing_date: date });
         bhr1.hearing_id = '2';
@@ -304,6 +309,11 @@ export class ResponseTestData {
         bhr1.last_edit_by = 'Sam';
         bhr1.audio_recording_required = true;
         bhr1.cancel_reason = 'some more information1';
+        bhr1.case_type = new CaseTypeResponse({
+            name: 'Tribunal',
+            service_id: '123',
+            is_audio_recording_allowed: true
+        });
 
         const byDate = new BookingsByDateResponse();
         byDate.scheduled_date = new Date('2019-10-22 00:00:00.0000000');

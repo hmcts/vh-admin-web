@@ -11,8 +11,7 @@ public class HearingDetailsResponse
     public int ScheduledDuration { get; set; }
     public string HearingVenueCode { get; set; }
     public string HearingVenueName { get; set; }
-    public string ServiceId { get; set; }
-    public string CaseTypeName { get; set; }
+    public CaseTypeResponse CaseType { get; set; }
     public List<CaseResponse> Cases { get; set; }
     public List<ParticipantResponse> Participants { get; set; }
     public List<JudiciaryParticipantResponse> JudiciaryParticipants { get; set; }

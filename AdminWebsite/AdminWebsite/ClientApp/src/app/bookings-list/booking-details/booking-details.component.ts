@@ -159,7 +159,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     setBookingInStorage() {
         this.bookingService.resetEditMode();
-        this.bookingService.setExistingCaseType(this.booking.caseType);
+        this.bookingService.setExistingCaseType(this.booking.caseType.name);
         this.videoHearingService.updateHearingRequest(this.booking);
     }
 

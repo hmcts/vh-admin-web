@@ -2,7 +2,14 @@ import { BookingsListModel } from './../common/model/bookings-list.model';
 import { BookingPersistService } from './bookings-persist.service';
 import { v4 as uuid } from 'uuid';
 import { CaseModel } from '../common/model/case.model';
-import { BookingStatus, CaseResponse, HearingDetailsResponse, JudiciaryParticipantResponse, VideoSupplier } from './clients/api-client';
+import {
+    BookingStatus,
+    CaseResponse,
+    CaseTypeResponse,
+    HearingDetailsResponse,
+    JudiciaryParticipantResponse,
+    VideoSupplier
+} from './clients/api-client';
 import { VHBooking } from '../common/model/vh-booking';
 import { BookingsListItemModel } from '../common/model/booking-list-item.model';
 import { mapHearingToVHBooking } from '../common/model/api-contract-to-client-model-mappers';
@@ -52,7 +59,9 @@ function MockHearingDetailsResponse(): HearingDetailsResponse {
     response.created_date = new Date();
     response.status = BookingStatus.Booked;
     response.audio_recording_required = true;
-    response.case_type_name = 'Financial Remedy';
+    response.case_type = new CaseTypeResponse({
+        name: 'Financial Remedy'
+    });
     return response;
 }
 

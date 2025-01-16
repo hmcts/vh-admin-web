@@ -4,6 +4,7 @@ import {
     BookingStatus,
     BookingStatus2,
     CaseResponse,
+    CaseTypeResponse,
     EndpointResponse,
     HearingDetailsResponse,
     InterprepretationType,
@@ -22,6 +23,7 @@ import { VHBooking } from './vh-booking';
 import {
     mapBookingsHearingResponseToVHBooking,
     mapCaseResponseToCaseModel,
+    mapCaseTypeResponseToCaseTypeModel,
     mapEndpointResponseToEndpointModel,
     mapHearingToVHBooking,
     mapJudgeResponseToVHParticipant,
@@ -101,7 +103,11 @@ describe('mapBookingsHearingResponseToVHBooking', () => {
         response.hearing_name = 'hearing-name';
         response.hearing_number = 'hearing-number';
         response.created_by = 'created-by';
-        response.case_type_name = 'case-type-name';
+        response.case_type = new CaseTypeResponse({
+            name: 'case-type-name',
+            service_id: 'service-id',
+            is_audio_recording_allowed: true
+        });
         response.court_room = 'court-room';
         response.court_address = 'court-address';
         response.created_date = new Date();
@@ -124,7 +130,7 @@ describe('mapBookingsHearingResponseToVHBooking', () => {
         expect(result.scheduledDuration).toBe(response.scheduled_duration);
         expect(result.case).toEqual(new CaseModel(response.hearing_name, response.hearing_number));
         expect(result.createdBy).toBe(response.created_by);
-        expect(result.caseType).toBe(response.case_type_name);
+        expect(result.caseType).toEqual(mapCaseTypeResponseToCaseTypeModel(response.case_type));
         expect(result.courtRoom).toBe(response.court_room);
         expect(result.courtName).toBe(response.court_address);
         expect(result.createdDate).toEqual(response.created_date);
@@ -416,8 +422,10 @@ function createSingleDayHearing(): HearingDetailsResponse {
     hearing.scheduled_duration = 90;
     hearing.hearing_venue_code = 'venue-code';
     hearing.hearing_venue_name = 'venue-name';
-    hearing.service_id = 'service-id';
-    hearing.case_type_name = 'case-type-name';
+    hearing.case_type = new CaseTypeResponse({
+        name: 'case-type-name',
+        service_id: 'service-id'
+    });
     hearing.cases = createCases();
     hearing.participants = createParticipants();
     hearing.judiciary_participants = createJudiciaryParticipants();
@@ -638,10 +646,8 @@ function verifyVHBooking(vhBooking: VHBooking, hearing: HearingDetailsResponse) 
     expect(vhBooking.scheduledDuration).toBe(hearing.scheduled_duration);
     expect(vhBooking.courtCode).toBe(hearing.hearing_venue_code);
     expect(vhBooking.courtName).toBe(hearing.hearing_venue_name);
-    expect(vhBooking.caseTypeServiceId).toBe(hearing.service_id);
-    expect(vhBooking.caseType).toBe(hearing.case_type_name);
+    expect(vhBooking.caseType).toEqual(mapCaseTypeResponseToCaseTypeModel(hearing.case_type));
     expect(vhBooking.case).toEqual(mapCaseResponseToCaseModel(hearing.cases)[0]);
-    vhBooking.participants.forEach(participant => {});
     expect(vhBooking.participants).toEqual(hearing.participants.map(participant => mapParticipantResponseToVHParticipant(participant)));
     expect(vhBooking.judiciaryParticipants).toEqual(
         hearing.judiciary_participants.map(judiciaryParticipant => JudicialMemberDto.fromJudiciaryParticipantResponse(judiciaryParticipant))

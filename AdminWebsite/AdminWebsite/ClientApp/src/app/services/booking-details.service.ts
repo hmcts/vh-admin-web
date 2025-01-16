@@ -28,7 +28,7 @@ export class BookingDetailsService {
             hearingResponse.confirmed_date,
             hearingResponse.status,
             hearingResponse.audio_recording_required,
-            hearingResponse.case_type_name,
+            hearingResponse.case_type.name,
             '',
             ''
         );

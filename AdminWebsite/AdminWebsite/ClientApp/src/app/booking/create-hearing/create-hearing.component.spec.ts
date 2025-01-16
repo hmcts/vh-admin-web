@@ -25,6 +25,7 @@ import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
+import { CaseTypeModel } from 'src/app/common/model/case-type.model';
 
 function initHearingRequest(): VHBooking {
     const newHearing = new VHBooking();
@@ -36,7 +37,9 @@ function initHearingRequest(): VHBooking {
 function initExistingHearingRequest(): VHBooking {
     const existingRequest = new VHBooking();
     existingRequest.hearingVenueId = 1;
-    existingRequest.caseType = 'Generic';
+    existingRequest.caseType = new CaseTypeModel({
+        name: 'Generic'
+    });
 
     return existingRequest;
 }
