@@ -22,7 +22,7 @@ import { ReferenceDataService } from './reference-data.service';
 import { MockValues } from '../testing/data/test-objects';
 import { VHBooking } from '../common/model/vh-booking';
 import { VHParticipant } from '../common/model/vh-participant';
-import { CaseTypeModel } from '../common/model/case-type.model';
+import { ResponseTestData } from '../testing/data/response-test-data';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
@@ -121,7 +121,7 @@ describe('Video hearing service', () => {
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
         const model = new VHBooking();
-        model.caseType = new CaseTypeModel({ name: 'Tax' });
+        model.caseType = ResponseTestData.getCaseTypeModelTestData();
         model.scheduledDateTime = new Date(date);
         model.scheduledDuration = 30;
         model.courtName = 'court address';
@@ -143,7 +143,7 @@ describe('Video hearing service', () => {
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
         const model = new VHBooking();
-        model.caseType = new CaseTypeModel({ name: 'Tax' });
+        model.caseType = ResponseTestData.getCaseTypeModelTestData();
         model.scheduledDateTime = new Date(date);
         model.scheduledDuration = 30;
         model.courtName = 'court address';
@@ -657,7 +657,7 @@ describe('Video hearing service', () => {
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
         hearing.hearingId = 'a8c6a042-bc0d-4846-a186-720cd1ddce58';
-        hearing.caseType = new CaseTypeModel({ name: 'Tax' });
+        hearing.caseType = ResponseTestData.getCaseTypeModelTestData();
         hearing.scheduledDateTime = new Date(date);
         hearing.scheduledDuration = 30;
         hearing.case = caseModel;
