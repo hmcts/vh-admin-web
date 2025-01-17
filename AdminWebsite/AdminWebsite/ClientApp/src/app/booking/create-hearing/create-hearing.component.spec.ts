@@ -25,6 +25,8 @@ import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
+import { ResponseTestData } from 'src/app/testing/data/response-test-data';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 
 function initHearingRequest(): VHBooking {
     const newHearing = new VHBooking();
@@ -36,7 +38,7 @@ function initHearingRequest(): VHBooking {
 function initExistingHearingRequest(): VHBooking {
     const existingRequest = new VHBooking();
     existingRequest.hearingVenueId = 1;
-    existingRequest.caseType = 'Generic';
+    existingRequest.caseType = ResponseTestData.getCaseTypeModelTestData();
 
     return existingRequest;
 }
@@ -152,6 +154,26 @@ describe('CreateHearingComponent with multiple Services', () => {
         caseTypeControl.setValue(caseTypeValue);
         expect(component.selectedCaseType).toBe(caseTypeValue);
         expect(caseTypeControl.valid).toBeTruthy();
+    });
+
+    describe('saveHearingDetails when form is valid and fully populated', () => {
+        beforeEach(() => {
+            caseNumberControl.setValue('12345');
+            caseNameControl.setValue('Case Name');
+            caseTypeControl.setValue('Tax');
+        });
+
+        it('should navigate to summary when in edit mode', () => {
+            component.editMode = true;
+            component.saveHearingDetails();
+            expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.Summary]);
+        });
+
+        it('should navigate to hearing schedule when not in edit mode', () => {
+            component.editMode = false;
+            component.saveHearingDetails();
+            expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.HearingSchedule]);
+        });
     });
 
     describe('supplier overrides', () => {

@@ -11,7 +11,7 @@ public class BookingsHearingResponse
     public string HearingName { get; set; }
     public DateTime ScheduledDateTime { get; set; }
     public int ScheduledDuration { get; set; }
-    public string CaseTypeName { get; set; }
+    public CaseTypeResponse CaseType { get; set; }
     public string CourtRoom { get; set; }
     public string CourtAddress { get; set; }
     public string JudgeName { get; set; }

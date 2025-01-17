@@ -29,6 +29,7 @@ public class BookingsHearingResponseMapperTests
                             ScheduledDateTime = DateTime.UtcNow,
                             ScheduledDuration = 1,
                             CaseTypeName = "caseTypeName",
+                            CaseTypeIsAudioRecordingAllowed = true,
                             CourtRoom = "courtRoom",
                             CourtAddress = "courtAddress",
                             JudgeName = "judgeName",

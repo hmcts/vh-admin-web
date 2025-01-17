@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Mappers;
 using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,12 +34,7 @@ public class HearingTypesController : ReferenceDataControllerBase
     public async Task<ActionResult<IList<HearingTypeResponse>>> GetHearingTypes()
     {
         var caseTypes = await _referenceDataService.GetNonDeletedCaseTypesAsync();
-        var result = caseTypes.Select(caseType => new HearingTypeResponse
-            {
-                Group = caseType.Name,
-                Id = caseType.Id,
-                ServiceId = caseType.ServiceId
-            }).ToList();
+        var result = caseTypes.Select(t => t.Map()).ToList();
 
         return Ok(result);
     }

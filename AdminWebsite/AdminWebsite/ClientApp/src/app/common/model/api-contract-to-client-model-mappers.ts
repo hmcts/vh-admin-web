@@ -7,7 +7,8 @@ import {
     BookingsHearingResponse,
     PersonResponseV2,
     JudgeAccountType,
-    JudgeResponse
+    JudgeResponse,
+    CaseTypeResponse
 } from 'src/app/services/clients/api-client';
 import { VHBooking } from './vh-booking';
 import { CaseModel } from './case.model';
@@ -17,6 +18,7 @@ import { LinkedParticipantModel } from './linked-participant.model';
 import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 import { EndpointModel } from './endpoint.model';
 import { VHParticipant } from './vh-participant';
+import { CaseTypeModel } from './case-type.model';
 
 export function mapHearingToVHBooking(hearing: HearingDetailsResponse): VHBooking {
     return new VHBooking({
@@ -29,8 +31,7 @@ export function mapHearingToVHBooking(hearing: HearingDetailsResponse): VHBookin
             JudicialMemberDto.fromJudiciaryParticipantResponse(judiciaryParticipant)
         ),
         createdBy: hearing.created_by,
-        caseType: hearing.case_type_name,
-        caseTypeServiceId: hearing.service_id,
+        caseType: mapCaseTypeResponseToCaseTypeModel(hearing.case_type),
         otherInformation: hearing.other_information,
         courtRoom: hearing.hearing_room_name,
         courtName: hearing.hearing_venue_name,
@@ -70,7 +71,7 @@ export function mapBookingsHearingResponseToVHBooking(response: BookingsHearingR
         case: new CaseModel(response.hearing_name, response.hearing_number),
         judiciaryParticipants: judiciaryParticipants,
         createdBy: response.created_by,
-        caseType: response.case_type_name,
+        caseType: mapCaseTypeResponseToCaseTypeModel(response.case_type),
         courtRoom: response.court_room,
         courtName: response.court_address,
         createdDate: response.created_date,
@@ -100,6 +101,14 @@ export function mapCaseResponseToCaseModel(casesResponse: CaseResponse[]): CaseM
         });
     }
     return cases;
+}
+
+export function mapCaseTypeResponseToCaseTypeModel(response: CaseTypeResponse): CaseTypeModel {
+    return new CaseTypeModel({
+        name: response.name,
+        serviceId: response.service_id,
+        isAudioRecordingAllowed: response.is_audio_recording_allowed
+    });
 }
 
 export function mapParticipantResponseToVHParticipant(response: ParticipantResponse): VHParticipant {

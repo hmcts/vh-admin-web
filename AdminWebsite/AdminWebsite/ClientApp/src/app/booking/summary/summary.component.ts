@@ -86,7 +86,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.checkForExistingRequest();
         this.otherInformation = OtherInformationModel.init(this.hearing.otherInformation);
         this.retrieveHearingSummary();
-        this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.caseType);
+        this.switchOffRecording = !this.hearing.caseType.isAudioRecordingAllowed;
         this.hasParticipantsRequiringAudioRecording = this.recordingGuardService.mandatoryRecordingForHearingRole(
             this.hearing.participants
         );
@@ -129,10 +129,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     isAudioRecordingRequired(): boolean {
         // CACD hearings should always have recordings set to off
-        if (
-            this.hearing.caseType === this.constants.CaseTypes.CourtOfAppealCriminalDivision ||
-            this.hearing.caseType === this.constants.CaseTypes.CrimeCrownCourt
-        ) {
+        if (!this.hearing.caseType.isAudioRecordingAllowed) {
             return false;
         }
 

@@ -9,6 +9,7 @@ import { BookingPersistService } from '../../services/bookings-persist.service';
 import {
     BookingStatus,
     CaseResponse,
+    CaseTypeResponse,
     HearingDetailsResponse,
     JudiciaryParticipantResponse,
     ParticipantResponse,
@@ -27,6 +28,7 @@ import { HearingRoleCodes } from '../../common/model/hearing-roles.model';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 import { VHBooking } from 'src/app/common/model/vh-booking';
+import { ResponseTestData } from 'src/app/testing/data/response-test-data';
 
 let component: BookingDetailsComponent;
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
@@ -159,6 +161,7 @@ now.setMonth(now.getMonth());
 now = new Date(now);
 hearingModel.scheduledDateTime = now;
 hearingModel.audioRecordingRequired = true;
+hearingModel.caseType = ResponseTestData.getCaseTypeModelTestData();
 
 const cancel_reason = 'Online abandonment (incomplete registration)';
 
@@ -636,8 +639,10 @@ function createHearingDetailsResponse(): HearingDetailsResponse {
         scheduled_duration: 120,
         hearing_venue_code: 'venue-code',
         hearing_venue_name: 'venue-name',
-        service_id: 'service-id',
-        case_type_name: 'case-type-name',
+        case_type: new CaseTypeResponse({
+            name: 'case-type-name',
+            service_id: 'service-id'
+        }),
         cases: createCaseResponses(),
         participants: createParticipantResponses(),
         judiciary_participants: createJudiciaryParticipantResponses(),

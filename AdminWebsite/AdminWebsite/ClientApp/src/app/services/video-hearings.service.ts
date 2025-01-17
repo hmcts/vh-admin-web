@@ -15,7 +15,6 @@ import {
     EndpointRequest,
     HearingDetailsResponse,
     HearingRoleResponse,
-    HearingTypeResponse,
     HearingVenueResponse,
     JudiciaryParticipantRequest,
     LinkedParticipant,
@@ -52,7 +51,6 @@ export class VideoHearingsService {
     private readonly totalHearingsCountThreshold: number = 40;
 
     private readonly venues$: Observable<HearingVenueResponse[]>;
-    private readonly hearingTypes$: Observable<HearingTypeResponse[]>;
 
     private modelHearing: VHBooking;
     private readonly judiciaryRoles = Constants.JudiciaryRoles;
@@ -69,7 +67,6 @@ export class VideoHearingsService {
 
         this.checkForExistingHearing();
         this.venues$ = this.referenceDataService.getCourts().pipe(shareReplay(1));
-        this.hearingTypes$ = this.referenceDataService.getHearingTypes();
     }
 
     private checkForExistingHearing() {
@@ -320,7 +317,7 @@ export class VideoHearingsService {
     mapHearing(newRequest: VHBooking): BookingDetailsRequest {
         const newHearingRequest = new BookingDetailsRequest();
         newHearingRequest.cases = this.mapCases(newRequest);
-        newHearingRequest.case_type_service_id = newRequest.caseTypeServiceId;
+        newHearingRequest.case_type_service_id = newRequest.caseType.serviceId;
         newHearingRequest.scheduled_date_time = new Date(newRequest.scheduledDateTime);
         newHearingRequest.scheduled_duration = newRequest.scheduledDuration;
         newHearingRequest.hearing_venue_code = newRequest.courtCode;
@@ -442,15 +439,11 @@ export class VideoHearingsService {
 
     getHearingById(hearingId: string): Observable<HearingDetailsResponse> {
         const hearingById$ = this.bhClient.getHearingById(hearingId);
-        return combineLatest([hearingById$, this.venues$, this.hearingTypes$]).pipe(
-            map(([hearing, venues, hearingTypes]) => {
+        return combineLatest([hearingById$, this.venues$]).pipe(
+            map(([hearing, venues]) => {
                 const venue = venues.find(v => v.code === hearing.hearing_venue_code);
                 if (venue) {
                     hearing.hearing_venue_name = venue.name;
-                }
-                const hearingType = hearingTypes.find(ht => ht.service_id === hearing.service_id);
-                if (hearingType) {
-                    hearing.case_type_name = hearingType.group;
                 }
                 return hearing;
             })
