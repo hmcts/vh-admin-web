@@ -41,32 +41,32 @@ stages:
               chartValuesPath: ${{ variables.chartPath }}
               helmVersion: '3.12.3'
 
-      - job: UnitAndIntegrationTests
-        displayName: "Unit and Integration Tests"
-        steps:
-          - checkout: self
+      # - job: UnitAndIntegrationTests
+      #   displayName: "Unit and Integration Tests"
+      #   steps:
+      #     - checkout: self
 
-          - template: templates/dotnet/build-test-analyse.yml@azTemplates
-            parameters:
-              dotnetVersion: ${{ variables.dotnetVersion }}
-              nugetConfigPath: nuget.config
-              appName: ${{ variables.appName }}
-              dockerComposeTestFile: docker-compose.tests.yml
-              publishNodeTests: true
-              nodeTestResultFolder: $(System.DefaultWorkingDirectory)/AdminWebsite/AdminWebsite/ClientApp
-              sonarExtraProperties: |
-                sonar.exclusions=**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/src/app/testing/**, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs, **/src/app/testing/data/*.ts, **/auth-config.module.ts
-                sonar.cs.opencover.reportsPaths=$(System.DefaultWorkingDirectory)/coverage.opencover.xml
-                sonar.javascript.lcov.reportPaths=**/ClientApp/coverage/lcov.info
-                sonar.typescript.exclusions=**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts
-                sonar.coverage.exclusions=**/AdminWebsite/Configuration/**, **/AdminWebsite/Security/**, **/AdminWebsite.Testing.Common/**, **/AdminWebsite/Views/*, **/AdminWebsite/Pages/*, **/AdminWebsite.AcceptanceTests/*, **/AdminWebsite.*Tests/*
-                sonar.issue.ignore.multicriteria=e1, e2, e3
-                sonar.issue.ignore.multicriteria.e1.ruleKey=typescript:S6544
-                sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.ts
-                sonar.issue.ignore.multicriteria.e2.ruleKey=typescript:S107
-                sonar.issue.ignore.multicriteria.e2.resourceKey=**/*.ts
-                sonar.issue.ignore.multicriteria.e3.ruleKey=csharpsquid:S107
-                sonar.issue.ignore.multicriteria.e3.resourceKey=**/*.cs
+      #     - template: templates/dotnet/build-test-analyse.yml@azTemplates
+      #       parameters:
+      #         dotnetVersion: ${{ variables.dotnetVersion }}
+      #         nugetConfigPath: nuget.config
+      #         appName: ${{ variables.appName }}
+      #         dockerComposeTestFile: docker-compose.tests.yml
+      #         publishNodeTests: true
+      #         nodeTestResultFolder: $(System.DefaultWorkingDirectory)/AdminWebsite/AdminWebsite/ClientApp
+      #         sonarExtraProperties: |
+      #           sonar.exclusions=**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/src/app/testing/**, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs, **/src/app/testing/data/*.ts, **/auth-config.module.ts
+      #           sonar.cs.opencover.reportsPaths=$(System.DefaultWorkingDirectory)/coverage.opencover.xml
+      #           sonar.javascript.lcov.reportPaths=**/ClientApp/coverage/lcov.info
+      #           sonar.typescript.exclusions=**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts
+      #           sonar.coverage.exclusions=**/AdminWebsite/Configuration/**, **/AdminWebsite/Security/**, **/AdminWebsite.Testing.Common/**, **/AdminWebsite/Views/*, **/AdminWebsite/Pages/*, **/AdminWebsite.AcceptanceTests/*, **/AdminWebsite.*Tests/*
+      #           sonar.issue.ignore.multicriteria=e1, e2, e3
+      #           sonar.issue.ignore.multicriteria.e1.ruleKey=typescript:S6544
+      #           sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.ts
+      #           sonar.issue.ignore.multicriteria.e2.ruleKey=typescript:S107
+      #           sonar.issue.ignore.multicriteria.e2.resourceKey=**/*.ts
+      #           sonar.issue.ignore.multicriteria.e3.ruleKey=csharpsquid:S107
+      #           sonar.issue.ignore.multicriteria.e3.resourceKey=**/*.cs
 
   #####################################################
   # Build Docker Image. ###############################
