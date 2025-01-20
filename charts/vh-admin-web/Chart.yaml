@@ -2,12 +2,12 @@
 apiVersion: v2
 name: vh-admin-web
 home: https://github.com/hmcts/vh-admin-web
-version: 0.0.27
+version: 0.0.28
 description: Helm Chart for Admin Web
 maintainers:
   - name: VH Devops
 
 dependencies:
   - name: java
-    version: 5.0.2
+    version: 5.2.1
     repository: https://hmctspublic.azurecr.io/helm/v1/repo/
