@@ -6226,7 +6226,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
     hearing_name?: string | undefined;
     scheduled_date_time?: Date;
     scheduled_duration?: number;
-    case_type_name?: string | undefined;
+    case_type?: CaseTypeResponse;
     court_room?: string | undefined;
     court_address?: string | undefined;
     judge_name?: string | undefined;
@@ -6260,7 +6260,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
             this.hearing_name = _data['hearing_name'];
             this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
             this.scheduled_duration = _data['scheduled_duration'];
-            this.case_type_name = _data['case_type_name'];
+            this.case_type = _data['case_type'] ? CaseTypeResponse.fromJS(_data['case_type']) : <any>undefined;
             this.court_room = _data['court_room'];
             this.court_address = _data['court_address'];
             this.judge_name = _data['judge_name'];
@@ -6295,7 +6295,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
         data['hearing_name'] = this.hearing_name;
         data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
         data['scheduled_duration'] = this.scheduled_duration;
-        data['case_type_name'] = this.case_type_name;
+        data['case_type'] = this.case_type ? this.case_type.toJSON() : <any>undefined;
         data['court_room'] = this.court_room;
         data['court_address'] = this.court_address;
         data['judge_name'] = this.judge_name;
@@ -6323,7 +6323,7 @@ export interface IBookingsHearingResponse {
     hearing_name?: string | undefined;
     scheduled_date_time?: Date;
     scheduled_duration?: number;
-    case_type_name?: string | undefined;
+    case_type?: CaseTypeResponse;
     court_room?: string | undefined;
     court_address?: string | undefined;
     judge_name?: string | undefined;
@@ -6441,6 +6441,49 @@ export interface ICaseResponse {
     number?: string | undefined;
     name?: string | undefined;
     is_lead_case?: boolean;
+}
+
+export class CaseTypeResponse implements ICaseTypeResponse {
+    name?: string | undefined;
+    service_id?: string | undefined;
+    is_audio_recording_allowed?: boolean;
+
+    constructor(data?: ICaseTypeResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data['name'];
+            this.service_id = _data['service_id'];
+            this.is_audio_recording_allowed = _data['is_audio_recording_allowed'];
+        }
+    }
+
+    static fromJS(data: any): CaseTypeResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new CaseTypeResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['name'] = this.name;
+        data['service_id'] = this.service_id;
+        data['is_audio_recording_allowed'] = this.is_audio_recording_allowed;
+        return data;
+    }
+}
+
+export interface ICaseTypeResponse {
+    name?: string | undefined;
+    service_id?: string | undefined;
+    is_audio_recording_allowed?: boolean;
 }
 
 /** Configuration to initialise the UI application */
@@ -6674,8 +6717,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     scheduled_duration?: number;
     hearing_venue_code?: string | undefined;
     hearing_venue_name?: string | undefined;
-    service_id?: string | undefined;
-    case_type_name?: string | undefined;
+    case_type?: CaseTypeResponse;
     cases?: CaseResponse[] | undefined;
     participants?: ParticipantResponse[] | undefined;
     judiciary_participants?: JudiciaryParticipantResponse[] | undefined;
@@ -6714,8 +6756,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             this.scheduled_duration = _data['scheduled_duration'];
             this.hearing_venue_code = _data['hearing_venue_code'];
             this.hearing_venue_name = _data['hearing_venue_name'];
-            this.service_id = _data['service_id'];
-            this.case_type_name = _data['case_type_name'];
+            this.case_type = _data['case_type'] ? CaseTypeResponse.fromJS(_data['case_type']) : <any>undefined;
             if (Array.isArray(_data['cases'])) {
                 this.cases = [] as any;
                 for (let item of _data['cases']) this.cases!.push(CaseResponse.fromJS(item));
@@ -6771,8 +6812,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
         data['scheduled_duration'] = this.scheduled_duration;
         data['hearing_venue_code'] = this.hearing_venue_code;
         data['hearing_venue_name'] = this.hearing_venue_name;
-        data['service_id'] = this.service_id;
-        data['case_type_name'] = this.case_type_name;
+        data['case_type'] = this.case_type ? this.case_type.toJSON() : <any>undefined;
         if (Array.isArray(this.cases)) {
             data['cases'] = [];
             for (let item of this.cases) data['cases'].push(item.toJSON());
@@ -6820,8 +6860,7 @@ export interface IHearingDetailsResponse {
     scheduled_duration?: number;
     hearing_venue_code?: string | undefined;
     hearing_venue_name?: string | undefined;
-    service_id?: string | undefined;
-    case_type_name?: string | undefined;
+    case_type?: CaseTypeResponse;
     cases?: CaseResponse[] | undefined;
     participants?: ParticipantResponse[] | undefined;
     judiciary_participants?: JudiciaryParticipantResponse[] | undefined;
@@ -6897,6 +6936,8 @@ export class HearingTypeResponse implements IHearingTypeResponse {
     id?: number | undefined;
     /** The service id for the type */
     service_id?: string | undefined;
+    /** Whether audio is allowed to be recorded for the type */
+    is_audio_recording_allowed?: boolean;
 
     constructor(data?: IHearingTypeResponse) {
         if (data) {
@@ -6911,6 +6952,7 @@ export class HearingTypeResponse implements IHearingTypeResponse {
             this.group = _data['group'];
             this.id = _data['id'];
             this.service_id = _data['service_id'];
+            this.is_audio_recording_allowed = _data['is_audio_recording_allowed'];
         }
     }
 
@@ -6926,6 +6968,7 @@ export class HearingTypeResponse implements IHearingTypeResponse {
         data['group'] = this.group;
         data['id'] = this.id;
         data['service_id'] = this.service_id;
+        data['is_audio_recording_allowed'] = this.is_audio_recording_allowed;
         return data;
     }
 }
@@ -6938,6 +6981,8 @@ export interface IHearingTypeResponse {
     id?: number | undefined;
     /** The service id for the type */
     service_id?: string | undefined;
+    /** Whether audio is allowed to be recorded for the type */
+    is_audio_recording_allowed?: boolean;
 }
 
 /** A judge existing in the system */

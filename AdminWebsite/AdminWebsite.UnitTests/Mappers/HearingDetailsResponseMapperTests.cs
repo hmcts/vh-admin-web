@@ -28,7 +28,10 @@ public class HearingDetailsResponseMapperTests
         actual.ScheduledDateTime.Should().Be(hearing.ScheduledDateTime);
         actual.ScheduledDuration.Should().Be(hearing.ScheduledDuration);
         actual.HearingVenueCode.Should().Be(hearing.HearingVenueCode);
-        actual.ServiceId.Should().Be(hearing.ServiceId);
+        actual.CaseType.Should().NotBeNull();
+        actual.CaseType.Name.Should().Be(hearing.ServiceName);
+        actual.CaseType.ServiceId.Should().Be(hearing.ServiceId);
+        actual.CaseType.IsAudioRecordingAllowed.Should().Be(hearing.ServiceIsAudioRecordingAllowed);
         actual.ConferenceSupplier.Should().Be(AdminWebsite.Contracts.Enums.VideoSupplier.Vodafone);
         actual.AllocatedToUsername.Should().Be(hearing.AllocatedToUsername);
     }

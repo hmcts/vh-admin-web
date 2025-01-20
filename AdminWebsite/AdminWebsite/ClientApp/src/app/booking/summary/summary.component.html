@@ -31,7 +31,7 @@
     <div class="govuk-form-group vhtable">
       <div class="vh-text-break"><app-truncatable-text [id]="'caseNumber'" [text]="caseNumber" [maxLimit]="50"></app-truncatable-text></div>
       <div class="vh-text-break"><app-truncatable-text [id]="'caseName'" [text]="caseName" [maxLimit]="50"></app-truncatable-text></div>
-      <div id="caseType">{{ hearing.caseType }}</div>
+      <div id="caseType">{{ hearing.caseType.name }}</div>
     </div>
 
     <app-booking-edit [title]="'Hearing schedule'" [editLink]="'hearing-schedule'" [elementId]="'hearing-schedule-id'"> </app-booking-edit>

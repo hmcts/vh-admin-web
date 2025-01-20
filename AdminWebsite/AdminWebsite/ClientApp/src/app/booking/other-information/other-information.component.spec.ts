@@ -15,6 +15,8 @@ import { VHBooking } from 'src/app/common/model/vh-booking';
 import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { CaseTypeModel } from 'src/app/common/model/case-type.model';
+import { ResponseTestData } from 'src/app/testing/data/response-test-data';
 
 function initHearingRequest(): VHBooking {
     const participants: VHParticipant[] = [];
@@ -33,6 +35,7 @@ function initHearingRequest(): VHBooking {
     newHearing.scheduledDuration = 0;
 
     newHearing.otherInformation = 'some text';
+    newHearing.caseType = ResponseTestData.getCaseTypeModelTestData();
 
     return newHearing;
 }
@@ -179,21 +182,30 @@ describe('OtherInformationComponent', () => {
         component.next();
         expect(component.hearing.audioRecordingRequired).toBe(false);
     });
-    it('should not be allowed to set audio recording options for Service CACD to recording', () => {
-        component.hearing.caseType = 'Court of Appeal Criminal Division';
+    it('should not be allowed to set audio recording options when audio recording is not allowed for case type', () => {
+        component.hearing.caseType = new CaseTypeModel({
+            name: 'Court of Appeal Criminal Division',
+            isAudioRecordingAllowed: false
+        });
         component.ngOnInit();
         fixture.autoDetectChanges();
         expect(component.switchOffRecording).toBe(true);
         expect(component.hearing.audioRecordingRequired).toBe(false);
     });
-    it('should be allowed to set audio recording options for Service', () => {
-        component.hearing.caseType = 'Rents';
+    it('should be allowed to set audio recording options when audio recording is not allowed for case type', () => {
+        component.hearing.caseType = new CaseTypeModel({
+            name: 'Rents',
+            isAudioRecordingAllowed: true
+        });
         component.ngOnInit();
         fixture.autoDetectChanges();
         expect(component.switchOffRecording).toBe(false);
     });
     it('should not be allowed to set audio recording options when hearing has an interpreter', () => {
-        component.hearing.caseType = 'Rents';
+        component.hearing.caseType = new CaseTypeModel({
+            name: 'Rents',
+            isAudioRecordingAllowed: true
+        });
         component.hearing.participants.push(interpreter);
         component.ngOnInit();
         fixture.autoDetectChanges();

@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { BookingDetailsService } from './booking-details.service';
 import { HearingDetailsResponse, CaseResponse, ParticipantResponse, EndpointResponse } from './clients/api-client';
+import { ResponseTestData as TestDataResponseTestData } from 'src/app/testing/data/response-test-data';
 
 export class ResponseTestData {
     static getHearingResponseTestData(): HearingDetailsResponse {
@@ -25,6 +26,7 @@ export class ResponseTestData {
         response.group_id = '123';
         response.multi_day_hearing_last_day_scheduled_date_time = new Date('2019-10-23 13:58:40.3730067');
         response.allocated_to_username = 'allocated-to@email.com';
+        response.case_type = TestDataResponseTestData.getCaseTypeResponseTestData();
 
         const par1 = new ParticipantResponse();
         par1.id = '1';

@@ -1,3 +1,4 @@
+using AdminWebsite.Contracts.Responses;
 using BookingsHearingResponse = AdminWebsite.Contracts.Responses.BookingsHearingResponse;
 
 namespace AdminWebsite.Mappers;
@@ -13,7 +14,11 @@ public static class BookingsHearingResponseMapper
             HearingName = hearingResponse.HearingName,
             ScheduledDateTime = hearingResponse.ScheduledDateTime,
             ScheduledDuration = hearingResponse.ScheduledDuration,
-            CaseTypeName = hearingResponse.CaseTypeName,
+            CaseType = new CaseTypeResponse
+            {
+                Name = hearingResponse.CaseTypeName,
+                IsAudioRecordingAllowed = hearingResponse.CaseTypeIsAudioRecordingAllowed
+            },
             CourtRoom = hearingResponse.CourtRoom,
             CourtAddress = hearingResponse.CourtAddress,
             JudgeName = hearingResponse.JudgeName,

@@ -69,15 +69,15 @@
     <label class="govuk-label govuk-!-width-one-half" for="caseType">Service</label>
     <!--suppress XmlDuplicatedId -->
     <select *ngIf="!this.editMode" class="govuk-select govuk-!-width-one-half" id="caseType" formControlName="caseType">
-      <option *ngFor="let availableCaseType of availableCaseTypes" [ngValue]="availableCaseType">
-        {{ availableCaseType }}
+      <option *ngFor="let caseType of selectableCaseTypes" [ngValue]="caseType">
+        {{ caseType }}
       </option>
     </select>
     <!--suppress XmlDuplicatedId -->
     <input
       *ngIf="this.editMode"
       id="caseType"
-      [placeholder]="this.hearing.caseType"
+      [placeholder]="this.hearing.caseType.name"
       class="govuk-input govuk-!-width-one-half"
       type="text"
       formControlName="caseType"

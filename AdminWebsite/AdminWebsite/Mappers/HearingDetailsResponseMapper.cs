@@ -17,7 +17,6 @@ public static class HearingDetailsResponseMapper
             ScheduledDateTime = hearingDetails.ScheduledDateTime,
             ScheduledDuration = hearingDetails.ScheduledDuration,
             HearingVenueCode = hearingDetails.HearingVenueCode,
-            ServiceId = hearingDetails.ServiceId,
             Cases = hearingDetails.Cases?.Select(e => new CaseResponse
             {
                 IsLeadCase = e.IsLeadCase,
@@ -40,7 +39,13 @@ public static class HearingDetailsResponseMapper
             JudiciaryParticipants = hearingDetails.JudicialOfficeHolders?.Select(j => j.Map()).ToList(),
             GroupId = hearingDetails.GroupId,
             ConferenceSupplier = Enum.TryParse<VideoSupplier>(hearingDetails.BookingSupplier.ToString(), out var supplier) ? supplier : VideoSupplier.Vodafone,
-            AllocatedToUsername = hearingDetails.AllocatedToUsername
+            AllocatedToUsername = hearingDetails.AllocatedToUsername,
+            CaseType = new CaseTypeResponse
+            {
+                Name = hearingDetails.ServiceName,
+                ServiceId = hearingDetails.ServiceId,
+                IsAudioRecordingAllowed = hearingDetails.ServiceIsAudioRecordingAllowed
+            }
         };
     }
     

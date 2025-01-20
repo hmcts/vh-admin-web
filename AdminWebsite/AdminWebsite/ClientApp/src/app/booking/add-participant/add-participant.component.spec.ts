@@ -28,6 +28,7 @@ import { InterpreterSelectedDto } from '../interpreter-form/interpreter-selected
 import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
 import { VHBooking } from 'src/app/common/model/vh-booking';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
+import { ResponseTestData } from 'src/app/testing/data/response-test-data';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -178,8 +179,7 @@ function initHearingRequest(): VHBooking {
     newHearing.hearingVenueId = -1;
     newHearing.scheduledDuration = 0;
     newHearing.participants = participants;
-    newHearing.caseType = 'Test Service';
-    newHearing.caseTypeServiceId = 'AA1';
+    newHearing.caseType = ResponseTestData.getCaseTypeModelTestData();
     return newHearing;
 }
 

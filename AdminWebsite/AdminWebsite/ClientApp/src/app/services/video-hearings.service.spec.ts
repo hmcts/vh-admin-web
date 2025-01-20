@@ -12,7 +12,7 @@ import {
     VideoSupplier
 } from './clients/api-client';
 import { CaseModel } from '../common/model/case.model';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
@@ -22,6 +22,7 @@ import { ReferenceDataService } from './reference-data.service';
 import { MockValues } from '../testing/data/test-objects';
 import { VHBooking } from '../common/model/vh-booking';
 import { VHParticipant } from '../common/model/vh-participant';
+import { ResponseTestData } from '../testing/data/response-test-data';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
@@ -45,7 +46,8 @@ describe('Video hearing service', () => {
             'getHearingRoles',
             'editMultiDayHearing',
             'cancelMultiDayHearing',
-            'getBookingQueueState'
+            'getBookingQueueState',
+            'getHearingById'
         ]);
         service = new VideoHearingsService(clientApiSpy, referenceDataServiceSpy);
     });
@@ -120,7 +122,7 @@ describe('Video hearing service', () => {
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
         const model = new VHBooking();
-        model.caseType = 'Tax';
+        model.caseType = ResponseTestData.getCaseTypeModelTestData();
         model.scheduledDateTime = new Date(date);
         model.scheduledDuration = 30;
         model.courtName = 'court address';
@@ -142,7 +144,7 @@ describe('Video hearing service', () => {
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
         const model = new VHBooking();
-        model.caseType = 'Tax';
+        model.caseType = ResponseTestData.getCaseTypeModelTestData();
         model.scheduledDateTime = new Date(date);
         model.scheduledDuration = 30;
         model.courtName = 'court address';
@@ -656,7 +658,7 @@ describe('Video hearing service', () => {
         caseModel.name = 'case1';
         caseModel.number = 'Number 1';
         hearing.hearingId = 'a8c6a042-bc0d-4846-a186-720cd1ddce58';
-        hearing.caseType = 'Tax';
+        hearing.caseType = ResponseTestData.getCaseTypeModelTestData();
         hearing.scheduledDateTime = new Date(date);
         hearing.scheduledDuration = 30;
         hearing.case = caseModel;
@@ -973,6 +975,38 @@ describe('Video hearing service', () => {
             service.isBookingServiceDegraded().subscribe(result => {
                 expect(result).toBeFalse();
             });
+        });
+    });
+
+    describe('getHearingById', () => {
+        const venue = MockValues.Courts[0];
+        let hearingResponse: HearingDetailsResponse;
+
+        beforeEach(() => {
+            hearingResponse = ResponseTestData.getHearingResponseTestData();
+            clientApiSpy.getHearingById.and.returnValue(of(hearingResponse));
+        });
+
+        it('should return hearing details', async () => {
+            // Arrange
+            hearingResponse.hearing_venue_code = venue.code;
+
+            // Act
+            const result = await firstValueFrom(service.getHearingById(hearingResponse.id));
+
+            // Assert
+            expect(result).toEqual(hearingResponse);
+        });
+
+        it('should return hearing details without venue name if venue not found', async () => {
+            // Arrange
+            hearingResponse.hearing_venue_code = undefined;
+
+            // Act
+            const result = await firstValueFrom(service.getHearingById(hearingResponse.id));
+
+            // Assert
+            expect(result).toEqual(hearingResponse);
         });
     });
 });
