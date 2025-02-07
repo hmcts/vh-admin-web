@@ -4,9 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Mappers;
 using AdminWebsite.Security;
-using AdminWebsite.Services.Models;
 using BookingsApi.Client;
 using Microsoft.Extensions.Logging;
 using NotificationApi.Client;
@@ -28,16 +26,6 @@ namespace AdminWebsite.Services
         Task<IEnumerable<JudgeResponse>> SearchJudgesByEmail(string term);
 
         /// <summary>
-        ///     Returns a list of judges filtered by email in the active directory
-        /// </summary>
-        /// <remarks>
-        /// Filters test accounts if configured to run as live environment 
-        /// </remarks>
-        Task<IEnumerable<UserResponse>> SearchEjudiciaryJudgesByEmailUserResponse(string term);
-
-        Task<UserRole> GetUserRoleAsync(string userName);
-
-        /// <summary>
         ///     Updates the users AAD password
         /// </summary>
         /// <param name="userName"></param>
@@ -50,8 +38,6 @@ namespace AdminWebsite.Services
         /// <param name="username"></param>
         /// <returns></returns>
         Task DeleteParticipantAccountAsync(string username);
-
-        Task AssignParticipantToGroup(string username, string userRole);
 
         Task<string> GetAdUserIdForUsername(string username);
 
@@ -67,11 +53,11 @@ namespace AdminWebsite.Services
         public const string VirtualRoomProfessionalUser = "VirtualRoomProfessionalUser";
         public const string JudicialOfficeHolder = "JudicialOfficeHolder";
         public const string StaffMember = "Staff Member";
+        private readonly IBookingsApiClient _bookingsApiClient;
+        private readonly ILogger<UserAccountService> _logger;
+        private readonly INotificationApiClient _notificationApiClient;
 
         private readonly IUserApiClient _userApiClient;
-        private readonly IBookingsApiClient _bookingsApiClient;
-        private readonly INotificationApiClient _notificationApiClient;
-        private readonly ILogger<UserAccountService> _logger;
 
         /// <summary>
         /// User account management service
@@ -90,17 +76,6 @@ namespace AdminWebsite.Services
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
             _notificationApiClient = notificationApiClient;
-        }
-
-        public async Task<UserRole> GetUserRoleAsync(string userName)
-        {
-            var user = await _userApiClient.GetUserByAdUserNameAsync(userName);
-            if (!Enum.TryParse<UserRoleType>(user.UserRole, out var userRoleResult))
-            {
-                throw new InvalidOperationException($"Invalid user role: {user.UserRole}");
-            }
-
-            return new UserRole { UserRoleType = userRoleResult, CaseTypes = user.CaseType };
         }
 
         public async Task<string> GetAdUserIdForUsername(string username)
@@ -138,13 +113,6 @@ namespace AdminWebsite.Services
             return judgesList;
         }
 
-        public async Task<IEnumerable<UserResponse>> SearchEjudiciaryJudgesByEmailUserResponse(string term)
-        {
-            _logger.LogDebug("Attempting to get all judge accounts.");
-            var judgesList = await _userApiClient.GetEjudiciaryJudgesByUsernameAsync(term);
-            return judgesList;
-        }
-
         public async Task ResetParticipantPassword(string userName)
         {
             var userProfile = await _userApiClient.GetUserByAdUserNameAsync(userName);
@@ -170,28 +138,6 @@ namespace AdminWebsite.Services
                 await _bookingsApiClient.AnonymisePersonWithUsernameAsync(username);
         }
 
-        public async Task AssignParticipantToGroup(string username, string userRole)
-        {   
-            switch (userRole)
-            {
-                case RepresentativeRole:
-                    await AddGroup(username, External);
-                    await AddGroup(username, VirtualRoomProfessionalUser);
-                    break;
-                case JohRole:
-                    await AddGroup(username, External);
-                    await AddGroup(username, JudicialOfficeHolder);
-                    break;
-                case StaffMember:
-                    await AddGroup(username, Internal);
-                    await AddGroup(username, StaffMember);
-                    break;
-                default:
-                    await AddGroup(username, External);
-                    break;
-            }
-        }
-
         /// <summary>
         /// Update an existing account
         /// </summary>
@@ -208,16 +154,6 @@ namespace AdminWebsite.Services
                 LastName = lastName
             };
             return _userApiClient.UpdateUserAccountAsync(userId, request);
-        }
-
-        private async Task AddGroup(string username, string groupName)
-        {
-            var addUserToGroupRequest = new AddUserToGroupRequest
-            {
-                UserId = username,
-                GroupName = groupName
-            };
-            await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
         }
 
         private async Task<bool> CheckUsernameExistsInAdAsync(string username)
@@ -248,7 +184,7 @@ namespace AdminWebsite.Services
                 return false;
             }
         }
-        
+
         private async Task<bool> CheckPersonExistsInBookingsAsync(string username)
         {
             try
