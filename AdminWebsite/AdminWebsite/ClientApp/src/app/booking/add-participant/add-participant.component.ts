@@ -19,7 +19,7 @@ import { takeUntil } from 'rxjs/operators';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { InterpreterSelectedDto } from '../interpreter-form/interpreter-selected.model';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
-import { faPlusCircle, faEraser, faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCircle, faEraser, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-add-participant',

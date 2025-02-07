@@ -1,25 +1,18 @@
-﻿using AdminWebsite.Contracts.Responses;
+﻿using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 using UserApi.Client;
 
 namespace AdminWebsite.Controllers
 {
     [Produces("application/json")]
     [Route("api/accounts")]
-    public class UserDataController : ControllerBase
+    public class UserDataController(IUserAccountService userAccountService) : ControllerBase
     {
-        private readonly IUserAccountService _userAccountService;
-
-        public UserDataController(IUserAccountService userAccountService)
-        {
-            _userAccountService = userAccountService;
-        }
-
         /// <summary>
         ///     Search Judges by email
         /// </summary>
@@ -30,7 +23,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<IList<JudgeResponse>>> SearchJudgesByEmail(string term)
         {
-            var response = await _userAccountService.SearchJudgesByEmail(term);
+            var response = await userAccountService.SearchJudgesByEmail(term);
             return Ok(response);
         }
 
@@ -48,7 +41,7 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                await _userAccountService.ResetParticipantPassword(userName);
+                await userAccountService.ResetParticipantPassword(userName);
                 return Ok();
             }
             catch (UserApiException e)

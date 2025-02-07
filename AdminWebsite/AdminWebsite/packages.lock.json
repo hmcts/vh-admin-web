@@ -235,9 +235,9 @@
       },
       "UserApi.Client": {
         "type": "Direct",
-        "requested": "[3.1.8, )",
-        "resolved": "3.1.8",
-        "contentHash": "8w452n+iR4pTsF8krmEXpIF+UKx0gMQThIghlwQZR4OU3MCZyB+EZqQVs+QqKkuoRQnKpCtuHrikRZyKE9gTLA==",
+        "requested": "[3.1.10, )",
+        "resolved": "3.1.10",
+        "contentHash": "wZOra3f8bhqdD9PAXXFN5OkBp+JZbkV+pFTgYS1lypmMtnPcn7WeaNH8K6Zbf75I4CvGOGLHjdExw7nGGoN2IQ==",
         "dependencies": {
           "System.Text.Json": "8.0.5"
         }

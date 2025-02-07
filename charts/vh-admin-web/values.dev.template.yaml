@@ -9,3 +9,4 @@ java:
     AZUREAD__REDIRECTURI: https://${SERVICE_FQDN}/home
     DOM1__POSTLOGOUTREDIRECTURI: https://${SERVICE_FQDN}/logout
     DOM1__REDIRECTURI: https://${SERVICE_FQDN}/home
+    
