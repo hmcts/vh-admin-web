@@ -446,7 +446,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
-        this.removeScreening(this.selectedParticipantEmail);
         this.hearing = this.hearing.clone();
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.videoHearingService.setBookingHasChanged();
@@ -797,19 +796,5 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
     private getInterpretee(email: string): VHParticipant {
         return this.hearing.participants.find(p => p.email === email);
-    }
-
-    private removeScreening(selectedParticipantEmail: string) {
-        // all participants protected from selectedParticipantEmail, should have their screening to them removed
-        const participant = this.hearing.participants.find(p => p.email === selectedParticipantEmail);
-        const endpoint = this.hearing.endpoints.find(e => e.displayName === selectedParticipantEmail);
-        if (participant) {
-            this.hearing.participants.forEach(p => {
-                if (p.screening?.protectFrom && p.screening.protectFrom.includes(participant.email)) {
-                    p.screening = null;
-                }
-            });
-        }
-        this.hearing = this.hearing.clone();
     }
 }
