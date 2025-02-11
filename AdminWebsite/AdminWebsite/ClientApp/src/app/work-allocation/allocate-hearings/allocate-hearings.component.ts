@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AllocateHearingsService } from '../services/allocate-hearings.service';
-import { AllocationHearingsResponse, HearingTypeResponse, JusticeUserResponse } from '../../services/clients/api-client';
+import { AllocationHearingsResponse, CaseTypeResponse, JusticeUserResponse } from '../../services/clients/api-client';
 import { faCircleExclamation, faHourglassStart, faTriangleExclamation, faClock } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingItemModel, AllocateHearingModel } from './models/allocate-hearing.model';
 import { Transform } from '@fortawesome/fontawesome-svg-core';
@@ -100,11 +100,11 @@ export class AllocateHearingsComponent implements OnInit, OnDestroy {
         this.selectedJusticeUserIds = this.bookingPersistService.selectedUsers;
         this.selectedCaseTypeIds = this.bookingPersistService.selectedCaseTypes;
         this.referenceDataService
-            .getHearingTypes()
+            .getCaseTypes()
             .pipe(takeUntil(this.destroy$))
-            .subscribe((data: HearingTypeResponse[]) => {
+            .subscribe((data: CaseTypeResponse[]) => {
                 this.caseTypesSelectOptions = data
-                    .map(item => item.group)
+                    .map(item => item.name)
                     .sort((a, b) => a.localeCompare(b))
                     .map(group => ({ entityId: group, label: group }));
             });

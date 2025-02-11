@@ -32,11 +32,11 @@ describe('Video hearing service', () => {
     const conferencePhoneNumberKey = 'conferencePhoneNumberKey';
     const conferencePhoneNumberWelshKey = 'conferencePhoneNumberWelshKey';
     beforeEach(() => {
-        referenceDataServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts', 'getHearingTypes']);
+        referenceDataServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts', 'getCaseTypes']);
         referenceDataServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
-        referenceDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+        referenceDataServiceSpy.getCaseTypes.and.returnValue(of(MockValues.CaseTypesList));
         clientApiSpy = jasmine.createSpyObj<BHClient>([
-            'getHearingTypes',
+            'getCaseTypes',
             'bookNewHearing',
             'cloneHearing',
             'getTelephoneConferenceIdById',

@@ -6,7 +6,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MockLogger } from '../../testing/mock-logger';
 import { Logger } from '../../../services/logger';
 import { of, throwError } from 'rxjs';
-import { HearingTypeResponse } from '../../../services/clients/api-client';
+import { CaseTypeResponse } from '../../../services/clients/api-client';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
 
@@ -17,8 +17,8 @@ describe('CaseTypesMenuComponent', () => {
     const caseType = 'caseType1';
 
     beforeEach(async () => {
-        refDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getHearingTypes']);
-        refDataServiceSpy.getHearingTypes.and.returnValue(of([new HearingTypeResponse({ group: caseType })]));
+        refDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCaseTypes']);
+        refDataServiceSpy.getCaseTypes.and.returnValue(of([new CaseTypeResponse({ name: caseType })]));
         await TestBed.configureTestingModule({
             imports: [NgSelectModule, ReactiveFormsModule],
             declarations: [CaseTypesMenuComponent],
@@ -62,16 +62,16 @@ describe('CaseTypesMenuComponent', () => {
     describe('loadItems', () => {
         it('should call video hearing service', () => {
             component.loadItems();
-            expect(refDataServiceSpy.getHearingTypes).toHaveBeenCalled();
+            expect(refDataServiceSpy.getCaseTypes).toHaveBeenCalled();
             expect(component.caseTypes).toContain('caseType1');
         });
 
         it('should call video hearing service, and catch thrown exception', () => {
-            refDataServiceSpy.getHearingTypes.and.returnValue(throwError({ status: 404 }));
+            refDataServiceSpy.getCaseTypes.and.returnValue(throwError({ status: 404 }));
 
             const handleListErrorSpy = spyOn(component, 'handleListError');
             component.loadItems();
-            expect(refDataServiceSpy.getHearingTypes).toHaveBeenCalled();
+            expect(refDataServiceSpy.getCaseTypes).toHaveBeenCalled();
             expect(handleListErrorSpy).toHaveBeenCalled();
         });
     });

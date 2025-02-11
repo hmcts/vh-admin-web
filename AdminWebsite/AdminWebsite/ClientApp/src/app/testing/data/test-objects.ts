@@ -1,43 +1,39 @@
-import { HearingTypeResponse, HearingVenueResponse, JudgeResponse } from 'src/app/services/clients/api-client';
+import { CaseTypeResponse, HearingVenueResponse, JudgeResponse } from 'src/app/services/clients/api-client';
 
 export class MockValues {
-    static HearingTypesList: HearingTypeResponse[] = JSON.parse(
+    static CaseTypesList: CaseTypeResponse[] = JSON.parse(
         `
     [
       {
-        "code": null,
         "service_id": "BTA",
-        "group": "Tax",
+        "is_audio_recording_allowed": "true",
         "id": 1,
-        "name": "Basic Tax Appeals"
+        "name": "Tax"
       },
       {
-        "code": null,
         "service_id": "ZZY1",
-        "group": "Generic",
+        "is_audio_recording_allowed": "true",
         "id": 2,
-        "name": "Automated Test"
+        "name": "Generic"
       },
       {
-        "code": null,
         "service_id": "FDAH",
-        "group": "Financial Remedy",
+        "is_audio_recording_allowed": "true",
         "id": 3,
-        "name": "First Directions Appointment Hearing"
+        "name": "Financial Remedy"
       }
     ]
     `
     );
 
-    static HearingTypesSingle: HearingTypeResponse[] = JSON.parse(
+    static CaseTypesSingle: CaseTypeResponse[] = JSON.parse(
         `
     [
       {
-        "code": null,
         "service_id": "BTA",
-        "group": "Tax",
+        "is_audio_recording_allowed": "true",
         "id": 1,
-        "name": "Basic Tax Appeals"
+        "name": "Tax"
       }
     ]
     `

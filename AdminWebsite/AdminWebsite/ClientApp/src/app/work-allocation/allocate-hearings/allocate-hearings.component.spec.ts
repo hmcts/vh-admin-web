@@ -30,7 +30,7 @@ describe('AllocateHearingsComponent', () => {
     let testData: AllocationHearingsResponse[];
 
     const loggerMock = jasmine.createSpyObj('Logger', ['debug']);
-    const referenceDataServiceMock = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getHearingTypes']);
+    const referenceDataServiceMock = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCaseTypes']);
     const allUsers$ = new BehaviorSubject<JusticeUserResponse[]>([]);
     beforeEach(async () => {
         justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', [
@@ -92,7 +92,7 @@ describe('AllocateHearingsComponent', () => {
     describe('ngOnInit', () => {
         let searchForHearingsSpy;
 
-        referenceDataServiceMock.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+        referenceDataServiceMock.getCaseTypes.and.returnValue(of(MockValues.CaseTypesList));
 
         beforeEach(() => {
             searchForHearingsSpy = spyOn(component, 'searchForHearings');
