@@ -215,7 +215,7 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_return_ok_for_booking_list_and_exclude_repeated_types()
         {
-            var hearingTypesIds = new List<string> { "1", "2" };
+            var caseTypeIds = new List<string> { "1", "2" };
 
             _userIdentity.Setup(x => x.IsATeamLead()).Returns(true);
 
@@ -231,7 +231,7 @@ namespace AdminWebsite.UnitTests.Controllers
             {
                 Cursor = "cursor",
                 Limit = 100,
-                CaseTypes = hearingTypesIds
+                CaseTypes = caseTypeIds
             };
 
             var okResult = await _controller.GetBookingsList(request) as OkObjectResult;

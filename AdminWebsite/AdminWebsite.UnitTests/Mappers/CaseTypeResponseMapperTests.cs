@@ -3,7 +3,7 @@ using BookingsApi.Contract.V2.Responses;
 
 namespace AdminWebsite.UnitTests.Mappers;
 
-public class HearingTypeResponseMapperTests
+public class CaseTypeResponseMapperTests
 {
     [Test]
     public void Should_map_v2()
@@ -22,7 +22,7 @@ public class HearingTypeResponseMapperTests
 
         // Assert
         result.Id.Should().Be(type.Id);
-        result.Group.Should().Be(type.Name);
+        result.Name.Should().Be(type.Name);
         result.ServiceId.Should().Be(type.ServiceId);
         result.IsAudioRecordingAllowed.Should().Be(type.IsAudioRecordingAllowed);
     }
