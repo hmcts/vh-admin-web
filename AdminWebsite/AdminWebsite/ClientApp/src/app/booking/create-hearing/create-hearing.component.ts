@@ -276,7 +276,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             this.displaySupplierOverrideIfSupported();
         });
 
-        const caseTypeResponses = caseTypes;
+        const caseTypeResponses = [...caseTypes];
         caseTypeResponses.sort(this.dynamicSort('name'));
         this.availableCaseTypes = caseTypeResponses
             .map(
