@@ -25,7 +25,7 @@ import {
     BookingsResponse,
     HearingDetailsResponse,
     HearingVenueResponse,
-    HearingTypeResponse,
+    CaseTypeResponse,
     JusticeUserResponse
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -57,7 +57,7 @@ const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'mapHearingDetailsResponseToHearingModel',
     'getUsers'
 ]);
-const referenceDataServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts', 'getHearingTypes']);
+const referenceDataServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts', 'getCaseTypes']);
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 let returnUrlService: ReturnUrlService;
 const featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
@@ -617,7 +617,7 @@ describe('BookingsListComponent', () => {
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
         videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
-        referenceDataServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
+        referenceDataServiceSpy.getCaseTypes.and.returnValue(of(new Array<CaseTypeResponse>()));
         configServiceSpy.getConfig.and.returnValue({});
 
         referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));

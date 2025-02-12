@@ -588,6 +588,109 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
+     * Gets a list of case types
+     * @return OK
+     */
+    getCaseTypes(): Observable<CaseTypeResponse[]> {
+        let url_ = this.baseUrl + '/api/reference/types';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetCaseTypes(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetCaseTypes(response_ as any);
+                        } catch (e) {
+                            return _observableThrow(e) as any as Observable<CaseTypeResponse[]>;
+                        }
+                    } else return _observableThrow(response_) as any as Observable<CaseTypeResponse[]>;
+                })
+            );
+    }
+
+    protected processGetCaseTypes(response: HttpResponseBase): Observable<CaseTypeResponse[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                  ? (response as any).error
+                  : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    if (Array.isArray(resultData200)) {
+                        result200 = [] as any;
+                        for (let item of resultData200) result200!.push(CaseTypeResponse.fromJS(item));
+                    } else {
+                        result200 = <any>null;
+                    }
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result404: any = null;
+                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result404 = ProblemDetails.fromJS(resultData404);
+                    return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * Get the configuration settings for client
      * @return OK
      */
@@ -2163,109 +2266,6 @@ export class BHClient extends ApiClientBase {
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result400 = ProblemDetails.fromJS(resultData400);
                     return throwException('Bad Request', status, _responseText, _headers, result400);
-                })
-            );
-        } else if (status === 401) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    return throwException('Unauthorized', status, _responseText, _headers);
-                })
-            );
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-                })
-            );
-        }
-        return _observableOf(null as any);
-    }
-
-    /**
-     * Gets a list hearing types
-     * @return OK
-     */
-    getHearingTypes(): Observable<HearingTypeResponse[]> {
-        let url_ = this.baseUrl + '/api/reference/types';
-        url_ = url_.replace(/[?&]$/, '');
-
-        let options_: any = {
-            observe: 'response',
-            responseType: 'blob',
-            headers: new HttpHeaders({
-                Accept: 'application/json'
-            })
-        };
-
-        return _observableFrom(this.transformOptions(options_))
-            .pipe(
-                _observableMergeMap(transformedOptions_ => {
-                    return this.http.request('get', url_, transformedOptions_);
-                })
-            )
-            .pipe(
-                _observableMergeMap((response_: any) => {
-                    return this.processGetHearingTypes(response_);
-                })
-            )
-            .pipe(
-                _observableCatch((response_: any) => {
-                    if (response_ instanceof HttpResponseBase) {
-                        try {
-                            return this.processGetHearingTypes(response_ as any);
-                        } catch (e) {
-                            return _observableThrow(e) as any as Observable<HearingTypeResponse[]>;
-                        }
-                    } else return _observableThrow(response_) as any as Observable<HearingTypeResponse[]>;
-                })
-            );
-    }
-
-    protected processGetHearingTypes(response: HttpResponseBase): Observable<HearingTypeResponse[]> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse
-                ? response.body
-                : (response as any).error instanceof Blob
-                  ? (response as any).error
-                  : undefined;
-
-        let _headers: any = {};
-        if (response.headers) {
-            for (let key of response.headers.keys()) {
-                _headers[key] = response.headers.get(key);
-            }
-        }
-        if (status === 500) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result500: any = null;
-                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
-                })
-            );
-        } else if (status === 200) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result200: any = null;
-                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    if (Array.isArray(resultData200)) {
-                        result200 = [] as any;
-                        for (let item of resultData200) result200!.push(HearingTypeResponse.fromJS(item));
-                    } else {
-                        result200 = <any>null;
-                    }
-                    return _observableOf(result200);
-                })
-            );
-        } else if (status === 404) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result404: any = null;
-                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result404 = ProblemDetails.fromJS(resultData404);
-                    return throwException('Not Found', status, _responseText, _headers, result404);
                 })
             );
         } else if (status === 401) {
@@ -6444,6 +6444,7 @@ export interface ICaseResponse {
 }
 
 export class CaseTypeResponse implements ICaseTypeResponse {
+    id?: number;
     name?: string | undefined;
     service_id?: string | undefined;
     is_audio_recording_allowed?: boolean;
@@ -6458,6 +6459,7 @@ export class CaseTypeResponse implements ICaseTypeResponse {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data['id'];
             this.name = _data['name'];
             this.service_id = _data['service_id'];
             this.is_audio_recording_allowed = _data['is_audio_recording_allowed'];
@@ -6473,6 +6475,7 @@ export class CaseTypeResponse implements ICaseTypeResponse {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
         data['name'] = this.name;
         data['service_id'] = this.service_id;
         data['is_audio_recording_allowed'] = this.is_audio_recording_allowed;
@@ -6481,6 +6484,7 @@ export class CaseTypeResponse implements ICaseTypeResponse {
 }
 
 export interface ICaseTypeResponse {
+    id?: number;
     name?: string | undefined;
     service_id?: string | undefined;
     is_audio_recording_allowed?: boolean;
@@ -6926,63 +6930,6 @@ export interface IHearingRoleResponse {
     name?: string | undefined;
     user_role?: string | undefined;
     code?: string | undefined;
-}
-
-/** Defines a type of hearing based on case */
-export class HearingTypeResponse implements IHearingTypeResponse {
-    /** Which case type it belongs to */
-    group?: string | undefined;
-    /** Unique identifier for this type of hearing */
-    id?: number | undefined;
-    /** The service id for the type */
-    service_id?: string | undefined;
-    /** Whether audio is allowed to be recorded for the type */
-    is_audio_recording_allowed?: boolean;
-
-    constructor(data?: IHearingTypeResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.group = _data['group'];
-            this.id = _data['id'];
-            this.service_id = _data['service_id'];
-            this.is_audio_recording_allowed = _data['is_audio_recording_allowed'];
-        }
-    }
-
-    static fromJS(data: any): HearingTypeResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new HearingTypeResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['group'] = this.group;
-        data['id'] = this.id;
-        data['service_id'] = this.service_id;
-        data['is_audio_recording_allowed'] = this.is_audio_recording_allowed;
-        return data;
-    }
-}
-
-/** Defines a type of hearing based on case */
-export interface IHearingTypeResponse {
-    /** Which case type it belongs to */
-    group?: string | undefined;
-    /** Unique identifier for this type of hearing */
-    id?: number | undefined;
-    /** The service id for the type */
-    service_id?: string | undefined;
-    /** Whether audio is allowed to be recorded for the type */
-    is_audio_recording_allowed?: boolean;
 }
 
 /** A judge existing in the system */

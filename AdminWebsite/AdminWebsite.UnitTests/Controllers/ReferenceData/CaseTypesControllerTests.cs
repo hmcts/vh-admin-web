@@ -9,20 +9,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AdminWebsite.UnitTests.Controllers.ReferenceData;
 
-public class HearingTypesControllerTests
+public class CaseTypesControllerTests
 {
     private Mock<IReferenceDataService> _referenceDataService;
-    private HearingTypesController _controller;
+    private CaseTypesController _controller;
 
     [SetUp]
     public void SetUp()
     {
         _referenceDataService = new Mock<IReferenceDataService>();
-        _controller = new HearingTypesController(_referenceDataService.Object);
+        _controller = new CaseTypesController(_referenceDataService.Object);
     }
     
     [Test]
-    public async Task Should_return_list_of_hearing_types()
+    public async Task Should_return_list_of_case_types()
     {
         // Arrange
         var types = new List<CaseTypeResponseV2>
@@ -47,7 +47,7 @@ public class HearingTypesControllerTests
             .ReturnsAsync(types);
 
         // Act
-        var response = await _controller.GetHearingTypes();
+        var response = await _controller.GetCaseTypes();
 
         // Assert
         var result = (OkObjectResult)response.Result;

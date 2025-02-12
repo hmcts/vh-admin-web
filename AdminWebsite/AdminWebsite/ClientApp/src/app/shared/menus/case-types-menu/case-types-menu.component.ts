@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { BookingPersistService } from '../../../services/bookings-persist.service';
 import { FormBuilder } from '@angular/forms';
-import { HearingTypeResponse } from '../../../services/clients/api-client';
+import { CaseTypeResponse } from '../../../services/clients/api-client';
 import { Logger } from '../../../services/logger';
 import { MenuBase } from '../menu-base';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
@@ -34,12 +34,12 @@ export class CaseTypesMenuComponent extends MenuBase {
 
     loadItems(): void {
         const distinct = (value, index, array) => array.indexOf(value) === index;
-        this.referenceDataService.getHearingTypes().subscribe({
-            next: (data: HearingTypeResponse[]) => {
+        this.referenceDataService.getCaseTypes().subscribe({
+            next: (data: CaseTypeResponse[]) => {
                 this.caseTypes = this.items = [
                     ...Array.from(
                         data
-                            .map(item => item.group)
+                            .map(item => item.name)
                             .filter(distinct)
                             .sort((a, b) => a.localeCompare(b))
                     )

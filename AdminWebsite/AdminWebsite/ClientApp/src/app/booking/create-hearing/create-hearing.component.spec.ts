@@ -58,7 +58,6 @@ describe('CreateHearingComponent with multiple Services', () => {
     let caseNameControl: AbstractControl;
     let caseNumberControl: AbstractControl;
     let caseTypeControl: AbstractControl;
-    let hearingTypeControl: AbstractControl;
 
     const newHearing = initHearingRequest();
 
@@ -70,7 +69,7 @@ describe('CreateHearingComponent with multiple Services', () => {
             .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
             .and.returnValue(of(defaultOverrideValue));
 
-        refDataServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getHearingTypes']);
+        refDataServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCaseTypes']);
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getCurrentRequest',
@@ -82,7 +81,7 @@ describe('CreateHearingComponent with multiple Services', () => {
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
-        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+        refDataServiceSpy.getCaseTypes.and.returnValue(of(MockValues.CaseTypesList));
         bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
 
         TestBed.configureTestingModule({
@@ -108,7 +107,6 @@ describe('CreateHearingComponent with multiple Services', () => {
         caseNameControl = component.form.controls['caseName'];
         caseNumberControl = component.form.controls['caseNumber'];
         caseTypeControl = component.form.controls['caseType'];
-        hearingTypeControl = component.form.controls['hearingType'];
     });
 
     it('should not set Service when multiple items returned', () => {
@@ -226,7 +224,6 @@ describe('CreateHearingComponent with single Service', () => {
             .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
             .and.returnValue(of(defaultOverrideValue));
 
-        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getCurrentRequest',
             'updateHearingRequest',
@@ -237,7 +234,7 @@ describe('CreateHearingComponent with single Service', () => {
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
-        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
+        refDataServiceSpy.getCaseTypes.and.returnValue(of(MockValues.CaseTypesSingle));
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
@@ -261,11 +258,11 @@ describe('CreateHearingComponent with single Service', () => {
     });
 
     it('should set Service when single item returned', fakeAsync(() => {
-        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
+        refDataServiceSpy.getCaseTypes.and.returnValue(of(MockValues.CaseTypesSingle));
         fixture.detectChanges();
         tick();
         fixture.detectChanges();
-        expect(component.availableHearingTypes.length).toBe(1);
+        expect(component.availableCaseTypes.length).toBe(1);
         expect(component.selectedCaseType).toBeDefined();
     }));
 
@@ -304,7 +301,7 @@ describe('CreateHearingComponent with existing request in session', () => {
         bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        refDataServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+        refDataServiceSpy.getCaseTypes.and.returnValue(of(MockValues.CaseTypesList));
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HearingTypeResponse, VideoSupplier } from '../../services/clients/api-client';
+import { CaseTypeResponse, VideoSupplier } from '../../services/clients/api-client';
 import { VHBooking } from 'src/app/common/model/vh-booking';
 import { CaseModel } from '../../common/model/case.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -29,7 +29,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     attemptingDiscardChanges = false;
     failedSubmission: boolean;
     hearing: VHBooking;
-    availableHearingTypes: HearingTypeResponse[];
     availableCaseTypes: CaseTypeModel[];
     selectedCaseType: string;
     selectedCaseTypeServiceId: string;
@@ -84,7 +83,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.failedSubmission = false;
         this.checkForExistingRequestOrCreateNew();
         this.initForm();
-        this.retrieveHearingTypes();
+        this.retrieveCaseTypes();
         super.ngOnInit();
     }
 
@@ -250,19 +249,19 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.logger.debug(`${this.loggerPrefix} Updated hearing request details`, { hearing: this.hearing });
     }
 
-    private retrieveHearingTypes() {
-        this.logger.debug(`${this.loggerPrefix} Retrieving hearing type`);
-        this.referenceDataService.getHearingTypes().subscribe({
-            next: (data: HearingTypeResponse[]) => {
-                this.setupCaseTypeAndHearingTypes(data);
+    private retrieveCaseTypes() {
+        this.logger.debug(`${this.loggerPrefix} Retrieving case type`);
+        this.referenceDataService.getCaseTypes().subscribe({
+            next: (data: CaseTypeResponse[]) => {
+                this.setupCaseTypes(data);
             },
             error: error => this.errorService.handleError(error)
         });
     }
 
-    private setupCaseTypeAndHearingTypes(hearingTypes: HearingTypeResponse[]) {
-        this.logger.debug(`${this.loggerPrefix} Setting up hearing types`, {
-            hearingTypes: hearingTypes.length
+    private setupCaseTypes(caseTypes: CaseTypeResponse[]) {
+        this.logger.debug(`${this.loggerPrefix} Setting up case types`, {
+            caseTypes: caseTypes.length
         });
 
         this.caseType.valueChanges.subscribe(val => {
@@ -270,21 +269,22 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             this.logger.debug(`${this.loggerPrefix} Updating selected Service`, {
                 caseType: this.selectedCaseType
             });
-            this.selectedCaseTypeServiceId = hearingTypes.find(h => h.group === this.selectedCaseType)?.service_id;
+            this.selectedCaseTypeServiceId = caseTypes.find(h => h.name === this.selectedCaseType)?.service_id;
             if (this.supportedSupplierOverrides.serviceIds.includes(this.selectedCaseTypeServiceId)) {
                 this.displayOverrideSupplier = true;
             }
             this.displaySupplierOverrideIfSupported();
         });
 
-        this.availableHearingTypes = hearingTypes;
-        this.availableHearingTypes.sort(this.dynamicSort('name'));
-        this.availableCaseTypes = this.availableHearingTypes
+        const caseTypeResponses = [...caseTypes];
+        caseTypeResponses.sort(this.dynamicSort('name'));
+        this.availableCaseTypes = caseTypeResponses
             .map(
                 h =>
                     new CaseTypeModel({
-                        name: h.group,
-                        isAudioRecordingAllowed: h.is_audio_recording_allowed
+                        name: h.name,
+                        isAudioRecordingAllowed: h.is_audio_recording_allowed,
+                        serviceId: h.service_id
                     })
             )
             .filter((value, index, self) => self.indexOf(value) === index)
@@ -308,7 +308,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         if (!this.selectedCaseType) {
             return;
         }
-        const serviceId = this.availableHearingTypes.find(h => h.group === this.selectedCaseType)?.service_id;
+        const serviceId = this.availableCaseTypes.find(h => h.name === this.selectedCaseType)?.serviceId;
         if (serviceId && this.supportedSupplierOverrides.serviceIds.includes(serviceId)) {
             this.displayOverrideSupplier = true;
         } else {

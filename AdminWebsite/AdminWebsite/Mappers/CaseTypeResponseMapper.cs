@@ -3,13 +3,13 @@ using BookingsApi.Contract.V2.Responses;
 
 namespace AdminWebsite.Mappers;
 
-public static class HearingTypeResponseMapper
+public static class CaseTypeResponseMapper
 {
-    public static HearingTypeResponse Map(this CaseTypeResponseV2 response) =>
+    public static CaseTypeResponse Map(this CaseTypeResponseV2 response) =>
         new()
         {
-            Group = response.Name,
             Id = response.Id,
+            Name = response.Name,
             ServiceId = response.ServiceId,
             IsAudioRecordingAllowed = response.IsAudioRecordingAllowed
         };
