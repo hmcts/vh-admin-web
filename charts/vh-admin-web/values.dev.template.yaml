@@ -9,4 +9,4 @@ java:
     AZUREAD__REDIRECTURI: https://${SERVICE_FQDN}/home
     DOM1__POSTLOGOUTREDIRECTURI: https://${SERVICE_FQDN}/logout
     DOM1__REDIRECTURI: https://${SERVICE_FQDN}/home
-    VHSERVICES__VIDEOWEBURL: https://vh-video-web-pr-949.dev.platform.hmcts.net/
+    VHSERVICES__BOOKINGSAPIURL: https://vh-booking-api-pr-949.dev.platform.hmcts.net/
