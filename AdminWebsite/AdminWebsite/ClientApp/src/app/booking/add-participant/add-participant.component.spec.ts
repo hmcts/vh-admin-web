@@ -352,22 +352,6 @@ describe('AddParticipantComponent', () => {
         component.saveParticipant();
         expect(component.isShowErrorSummary).toBeTruthy();
     });
-    it('should validate first name', () => {
-        expect(firstName.valid).toBeFalsy();
-        firstName.setValue('Sam');
-        expect(firstName.valid).toBeTruthy();
-
-        firstName.setValue('María Jose Carreño Quiñones');
-        expect(firstName.valid).toBeFalsy();
-    });
-    it('should validate last name', () => {
-        expect(lastName.valid).toBeFalsy();
-        lastName.setValue('Sam');
-        expect(lastName.valid).toBeTruthy();
-
-        lastName.setValue('María Jose Carreño Quiñones');
-        expect(lastName.valid).toBeFalsy();
-    });
 
     it('should validate phone', () => {
         phone.setValue('ABC');
@@ -887,7 +871,7 @@ describe('AddParticipantComponent edit mode', () => {
         expect(component.form.controls['email']).toBeTruthy();
         expect(component.form.controls['email'].errors['required']).toBeTruthy();
     });
-    it('should check text input is valid for tranformation to email address in UserApi', () => {
+    it('should check first name and last name are valid', () => {
         // arrange
         const testCases = {
             'wil.li_am.': false,
@@ -899,7 +883,12 @@ describe('AddParticipantComponent edit mode', () => {
             ' qweqwe ': false,
             'w.w': true,
             XY: true,
-            A: true
+            A: true,
+            Sam: true,
+            'María Jose Carreño Quiñones': false,
+            Köln: true,
+            créâtïvéàççénts: true,
+            用户: true
         };
 
         component.form.setValue({
