@@ -11,10 +11,10 @@ export const Constants = {
     PleaseSelectPattern: '^((?!Please select).)*$',
     TextInputPattern: /^[^%{}~|]+$/,
     TextInputPatternDisplayName: /^[\p{L}\p{N}\s',._-]+$/u,
-    TextInputPatternName: /^(?!.*[^ \p{L}\p{M}0-9'._-]{2})(?!.*\s)(?!.*\.\.)(?!.*\.$)(?!^\.)(?!.*^$)[_?\p{L}\p{M}0-9'._-]+$/u,
+    TextInputPatternName: /^(?!.*[^ \p{L}\p{M}0-9'._-]{2})(?!.*\s)(?!.*\.\.)(?!.*\.$)(?!^\.)[\p{L}\p{M}0-9'._-]+$/u,
     PostCodePattern: /^([a-zA-Z]{1,2}(\d{1,2}|\d[a-zA-Z])\s*\d[a-zA-Z]{2})$/,
     EmailPattern:
-        /^(?!.*\.\.)(?!.*\.$)(?!.*@.*\.\.)[\p{L}\p{M}0-9!#$%'*/=?^`{|}~-]+(?:\.[\p{L}\p{M}0-9!#$%'*/=?^`{|}~-]+)*@[\p{L}\p{M}0-9-]+(?:\.[\p{L}\p{M}0-9-]+)*\.[\p{L}]{2,}$/u,
+        /^[\p{L}\p{M}0-9!#$%'*/=?^`{|}~-]+(?:\.[\p{L}\p{M}0-9!#$%'*/=?^`{|}~-]+)*@[\p{L}\p{M}0-9-]+(\.[\p{L}\p{M}0-9-]+)*\.\p{L}{2,}$/u,
     PhonePattern: /^([0-9() +-.])*$/,
     EndpointDisplayNamePattern: /^[\p{L}\p{N}\s',._-]+$/u,
     Judge: 'Judge',

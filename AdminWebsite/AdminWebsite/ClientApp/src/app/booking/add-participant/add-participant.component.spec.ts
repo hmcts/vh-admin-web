@@ -886,9 +886,9 @@ describe('AddParticipantComponent edit mode', () => {
             A: true,
             Sam: true,
             'María Jose Carreño Quiñones': false,
-            Köln: true,
-            créâtïvéàççénts: true,
-            用户: true
+            'Köln': true,
+            'créâtïvéàççénts': true,
+            '用户': true
         };
 
         component.form.setValue({
