@@ -884,7 +884,7 @@ describe('AddParticipantComponent edit mode', () => {
             'w.w': true,
             XY: true,
             A: true,
-            Sam: true,
+            'Sam': true,
             'María Jose Carreño Quiñones': false,
             'Köln': true,
             'créâtïvéàççénts': true,
