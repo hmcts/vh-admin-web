@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { Component, Directive, EventEmitter, Output } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -23,9 +23,9 @@ import {
     BookingsByDateResponse,
     BookingsHearingResponse,
     BookingsResponse,
+    CaseTypeResponse,
     HearingDetailsResponse,
     HearingVenueResponse,
-    CaseTypeResponse,
     JusticeUserResponse
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -634,7 +634,7 @@ describe('BookingsListComponent', () => {
                 VenuesMenuComponent,
                 BookingStatusComponent
             ],
-            imports: [HttpClientModule, MomentModule, ReactiveFormsModule, NgSelectModule],
+            imports: [MomentModule, ReactiveFormsModule, NgSelectModule],
             providers: [
                 FormBuilder,
                 ConfigService,
@@ -647,7 +647,8 @@ describe('BookingsListComponent', () => {
                 { provide: ReferenceDataService, useValue: referenceDataServiceSpy },
                 { provide: JusticeUsersService, useValue: justiceUserServiceSpy },
                 { provide: JusticeUsersMenuComponent, useClass: JusticeUserMenuStubComponent },
-                DatePipe
+                DatePipe,
+                provideHttpClient(withInterceptorsFromDi())
             ]
         }).compileComponents();
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FooterComponent } from './footer/footer.component';
@@ -28,18 +28,6 @@ import { FeatureFlagDirective } from '../src/app/shared/feature-flag.directive';
 import { ScreeningEnabledBageComponent as ScreeningEnabledBadgeComponent } from './screening-enabled-badge/screening-enabled-badge.component';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule.withConfig({
-            callSetDisabledState: 'whenDisabledForLegacyCode'
-        }),
-        HttpClientModule,
-        SharedRoutingModule,
-        ClipboardModule,
-        NgSelectModule,
-        FontAwesomeModule
-    ],
     declarations: [
         HeaderComponent,
         FooterComponent,
@@ -58,7 +46,6 @@ import { ScreeningEnabledBageComponent as ScreeningEnabledBadgeComponent } from 
         TruncatableTextComponent,
         ScreeningEnabledBadgeComponent
     ],
-    providers: [WindowRef, WindowScrolling, { provide: HTTP_INTERCEPTORS, useClass: SpinnerInterceptor, multi: true }],
     exports: [
         HeaderComponent,
         FooterComponent,
@@ -80,6 +67,23 @@ import { ScreeningEnabledBageComponent as ScreeningEnabledBadgeComponent } from 
         RolesToDisplayPipe,
         TruncatableTextComponent,
         ScreeningEnabledBadgeComponent
+    ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule.withConfig({
+            callSetDisabledState: 'whenDisabledForLegacyCode'
+        }),
+        SharedRoutingModule,
+        ClipboardModule,
+        NgSelectModule,
+        FontAwesomeModule
+    ],
+    providers: [
+        WindowRef,
+        WindowScrolling,
+        { provide: HTTP_INTERCEPTORS, useClass: SpinnerInterceptor, multi: true },
+        provideHttpClient(withInterceptorsFromDi())
     ]
 })
 export class SharedModule {

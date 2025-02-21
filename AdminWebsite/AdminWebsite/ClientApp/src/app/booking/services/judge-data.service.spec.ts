@@ -1,6 +1,6 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { inject, TestBed } from '@angular/core/testing';
 import { JudgeDataService } from './judge-data.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BHClient } from 'src/app/services/clients/api-client';
 
 describe('JudgeDataService', () => {
@@ -8,8 +8,8 @@ describe('JudgeDataService', () => {
     beforeEach(() => {
         bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['searchJudgesByEmail']);
         TestBed.configureTestingModule({
-            imports: [HttpClientModule],
-            providers: [JudgeDataService, { provide: BHClient, useValue: bhClientSpy }]
+            imports: [],
+            providers: [JudgeDataService, { provide: BHClient, useValue: bhClientSpy }, provideHttpClient(withInterceptorsFromDi())]
         });
     });
 
