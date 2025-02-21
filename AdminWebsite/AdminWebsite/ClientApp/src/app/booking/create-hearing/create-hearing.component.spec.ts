@@ -1,32 +1,32 @@
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs';
-import { Logger } from 'src/app/services/logger';
-import { CaseModel } from '../../common/model/case.model';
-import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
-import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
-import { BookingService } from '../../services/booking.service';
-import { ErrorService } from '../../services/error.service';
-import { VideoHearingsService } from '../../services/video-hearings.service';
-import { SharedModule } from '../../shared/shared.module';
-import { MockValues } from '../../testing/data/test-objects';
-import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
-import { CreateHearingComponent } from './create-hearing.component';
-import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
-import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
-import { By } from '@angular/platform-browser';
-import { createMultiDayHearing } from 'src/app/testing/helpers/hearing.helpers';
-import { VideoSupplier } from 'src/app/services/clients/api-client';
-import { ServiceIds } from '../models/supplier-override';
-import { ReferenceDataService } from 'src/app/services/reference-data.service';
-import { VHBooking } from 'src/app/common/model/vh-booking';
-import { VHParticipant } from 'src/app/common/model/vh-participant';
-import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
-import { ResponseTestData } from 'src/app/testing/data/response-test-data';
-import { PageUrls } from 'src/app/shared/page-url.constants';
+import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { ComponentFixture, fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { AbstractControl, ReactiveFormsModule } from "@angular/forms";
+import { Router } from "@angular/router";
+import { RouterTestingModule } from "@angular/router/testing";
+import { of } from "rxjs";
+import { Logger } from "src/app/services/logger";
+import { CaseModel } from "../../common/model/case.model";
+import { CancelPopupComponent } from "../../popups/cancel-popup/cancel-popup.component";
+import { DiscardConfirmPopupComponent } from "../../popups/discard-confirm-popup/discard-confirm-popup.component";
+import { BookingService } from "../../services/booking.service";
+import { ErrorService } from "../../services/error.service";
+import { VideoHearingsService } from "../../services/video-hearings.service";
+import { SharedModule } from "../../shared/shared.module";
+import { MockValues } from "../../testing/data/test-objects";
+import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
+import { CreateHearingComponent } from "./create-hearing.component";
+import { FeatureFlags, LaunchDarklyService } from "src/app/services/launch-darkly.service";
+import { BreadcrumbStubComponent } from "src/app/testing/stubs/breadcrumb-stub";
+import { By } from "@angular/platform-browser";
+import { createMultiDayHearing } from "src/app/testing/helpers/hearing.helpers";
+import { VideoSupplier } from "src/app/services/clients/api-client";
+import { ServiceIds } from "../models/supplier-override";
+import { ReferenceDataService } from "src/app/services/reference-data.service";
+import { VHBooking } from "src/app/common/model/vh-booking";
+import { VHParticipant } from "src/app/common/model/vh-participant";
+import { HearingRoles } from "src/app/common/model/hearing-roles.model";
+import { ResponseTestData } from "src/app/testing/data/response-test-data";
+import { PageUrls } from "src/app/shared/page-url.constants";
 
 function initHearingRequest(): VHBooking {
     const newHearing = new VHBooking();
@@ -237,20 +237,20 @@ describe('CreateHearingComponent with single Service', () => {
         refDataServiceSpy.getCaseTypes.and.returnValue(of(MockValues.CaseTypesSingle));
 
         TestBed.configureTestingModule({
-            declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent],
-            imports: [ReactiveFormsModule, RouterTestingModule],
-            providers: [
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: ReferenceDataService, useValue: refDataServiceSpy },
-                { provide: Router, useValue: routerSpy },
-                { provide: ErrorService, useValue: errorService },
-                { provide: BookingService, useValue: bookingServiceSpy },
-                { provide: Logger, useValue: loggerSpy },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
-                { provide: BreadcrumbComponent, useClass: BreadcrumbStubComponent },
-                provideHttpClient(withInterceptorsFromDi())
-            ]
-        }).compileComponents();
+    declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent],
+    imports: [ReactiveFormsModule, RouterTestingModule],
+    providers: [
+        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+        { provide: ReferenceDataService, useValue: refDataServiceSpy },
+        { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
+        { provide: BookingService, useValue: bookingServiceSpy },
+        { provide: Logger, useValue: loggerSpy },
+        { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
+        { provide: BreadcrumbComponent, useClass: BreadcrumbStubComponent },
+        provideHttpClient(withInterceptorsFromDi())
+    ]
+}).compileComponents();
 
         fixture = TestBed.createComponent(CreateHearingComponent);
         component = fixture.componentInstance;
@@ -305,20 +305,20 @@ describe('CreateHearingComponent with existing request in session', () => {
         refDataServiceSpy.getCaseTypes.and.returnValue(of(MockValues.CaseTypesList));
 
         TestBed.configureTestingModule({
-            declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent],
-            imports: [ReactiveFormsModule, RouterTestingModule],
-            providers: [
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: ReferenceDataService, useValue: refDataServiceSpy },
-                { provide: Router, useValue: routerSpy },
-                { provide: ErrorService, useValue: errorService },
-                { provide: BookingService, useValue: bookingServiceSpy },
-                { provide: Logger, useValue: loggerSpy },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
-                { provide: BreadcrumbComponent, useClass: BreadcrumbStubComponent },
-                provideHttpClient(withInterceptorsFromDi())
-            ]
-        }).compileComponents();
+    declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent],
+    imports: [ReactiveFormsModule, RouterTestingModule],
+    providers: [
+        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+        { provide: ReferenceDataService, useValue: refDataServiceSpy },
+        { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
+        { provide: BookingService, useValue: bookingServiceSpy },
+        { provide: Logger, useValue: loggerSpy },
+        { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
+        { provide: BreadcrumbComponent, useClass: BreadcrumbStubComponent },
+        provideHttpClient(withInterceptorsFromDi())
+    ]
+}).compileComponents();
 
         const existingCase = new CaseModel();
         existingCase.name = 'Captain America Vs. The World';

@@ -9,7 +9,8 @@ import { EditWorkHoursService } from '../../services/edit-work-hours.service';
 
 @Component({
     selector: 'app-vho-search',
-    templateUrl: './vho-search.component.html'
+    templateUrl: './vho-search.component.html',
+    standalone: false
 })
 export class VhoSearchComponent implements OnInit {
     form: FormGroup;

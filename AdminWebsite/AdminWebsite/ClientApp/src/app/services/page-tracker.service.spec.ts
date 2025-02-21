@@ -5,7 +5,10 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Component, NgModule } from '@angular/core';
 
-@Component({ selector: 'app-mock-component', template: '' })
+@Component({
+    selector: 'app-mock-component', template: '',
+    standalone: false
+})
 class MockComponent {}
 
 @NgModule({ declarations: [MockComponent] })

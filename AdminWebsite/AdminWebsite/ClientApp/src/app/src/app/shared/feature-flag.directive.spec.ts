@@ -9,7 +9,8 @@ import { of } from 'rxjs';
         <ng-container *appFeatureFlag="'myFlag'">
             <div>Flag is enabled</div>
         </ng-container>
-    `
+    `,
+    standalone: false
 })
 class TestComponent {}
 

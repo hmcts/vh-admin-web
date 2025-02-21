@@ -13,7 +13,8 @@ import { VHParticipant } from 'src/app/common/model/vh-participant';
 @Component({
     selector: 'app-participant-item',
     templateUrl: './participant-item.component.html',
-    styleUrls: ['./participant-item.component.scss']
+    styleUrls: ['./participant-item.component.scss'],
+    standalone: false
 })
 export class ParticipantItemComponent implements OnInit {
     private readonly loggerPrefix = '[ParticipantList - Item] -';

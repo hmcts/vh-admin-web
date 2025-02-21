@@ -6,7 +6,8 @@ import { UserIdentityService } from '../../services/user-identity.service';
 @Component({
     selector: 'app-unallocated-hearings',
     templateUrl: './unallocated-hearings.component.html',
-    styleUrls: ['./unallocated-hearings.component.css']
+    styleUrls: ['./unallocated-hearings.component.css'],
+    standalone: false
 })
 export class UnallocatedHearingsComponent implements OnInit {
     private readonly loggerPrefix = 'UnallocatedHearingsComponent';

@@ -2,7 +2,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
     selector: 'app-justice-users-menu',
-    template: ''
+    template: '',
+    standalone: false
 })
 export class JusticeUserMenuStubComponent {
     selectedLabel: string;

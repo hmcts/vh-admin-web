@@ -7,7 +7,8 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 @Component({
     selector: 'app-edit-participant-search-results',
     templateUrl: './edit-participant-search-results.component.html',
-    styleUrls: ['./edit-participant-search-results.component.scss']
+    styleUrls: ['./edit-participant-search-results.component.scss'],
+    standalone: false
 })
 export class EditParticipantSearchResultsComponent {
     @Input() contactEmail: string;

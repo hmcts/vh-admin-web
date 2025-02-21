@@ -3,7 +3,8 @@ import { Logger } from 'src/app/services/logger';
 
 @Component({
     selector: 'app-update-user-popup',
-    templateUrl: './update-user-popup.component.html'
+    templateUrl: './update-user-popup.component.html',
+    standalone: false
 })
 export class UpdateUserPopupComponent {
     private readonly loggerPrefix = '[UpdateUserPopup] -';

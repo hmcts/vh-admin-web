@@ -9,7 +9,8 @@ import { ReferenceDataService } from '../../../services/reference-data.service';
 @Component({
     selector: 'app-venues-menu',
     templateUrl: './venues-menu.component.html',
-    styleUrls: ['./venues-menu.component.scss']
+    styleUrls: ['./venues-menu.component.scss'],
+    standalone: false
 })
 export class VenuesMenuComponent extends MenuBase {
     loggerPrefix = '[MenuVenues] -';

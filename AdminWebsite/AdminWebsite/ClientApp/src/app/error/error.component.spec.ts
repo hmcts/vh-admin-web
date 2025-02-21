@@ -1,11 +1,11 @@
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { ComponentFixture, inject, TestBed, waitForAsync } from '@angular/core/testing';
-import { Router } from '@angular/router';
-import { of } from 'rxjs';
-import { ConnectionService } from '../services/connection/connection.service';
-import { PageTrackerService } from '../services/page-tracker.service';
-import { ErrorComponent } from './error.component';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
+import { ComponentFixture, inject, TestBed, waitForAsync } from "@angular/core/testing";
+import { Router } from "@angular/router";
+import { of } from "rxjs";
+import { ConnectionService } from "../services/connection/connection.service";
+import { PageTrackerService } from "../services/page-tracker.service";
+import { ErrorComponent } from "./error.component";
 
 describe('ErrorComponent', () => {
     let component: ErrorComponent;
@@ -21,17 +21,17 @@ describe('ErrorComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [ErrorComponent],
-            imports: [],
-            providers: [
-                { provide: Router, useValue: routerMock },
-                HttpClient,
-                ConnectionService,
-                { provide: PageTrackerService, useValue: pageTrackerMock },
-                provideHttpClient(withInterceptorsFromDi()),
-                provideHttpClientTesting()
-            ]
-        }).compileComponents();
+    declarations: [ErrorComponent],
+    imports: [],
+    providers: [
+        { provide: Router, useValue: routerMock },
+        HttpClient,
+        ConnectionService,
+        { provide: PageTrackerService, useValue: pageTrackerMock },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+}).compileComponents();
     }));
 
     beforeEach(() => {

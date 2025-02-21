@@ -2,7 +2,8 @@ import { Component, EventEmitter } from '@angular/core';
 
 @Component({
     selector: 'app-sign-out',
-    template: ''
+    template: '',
+    standalone: false
 })
 export class SignOutStubComponent {
     $confirmLogout: EventEmitter<any>;

@@ -2,7 +2,8 @@ import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
     selector: 'app-sign-out-popup',
-    templateUrl: './sign-out-popup.component.html'
+    templateUrl: './sign-out-popup.component.html',
+    standalone: false
 })
 export class SignOutPopupComponent {
     @Output() continue: EventEmitter<any>;

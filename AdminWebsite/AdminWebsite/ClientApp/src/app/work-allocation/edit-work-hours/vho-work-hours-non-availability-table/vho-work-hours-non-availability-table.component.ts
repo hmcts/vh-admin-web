@@ -23,7 +23,8 @@ type RequiredField = (typeof requiredFieldNames)[number];
 @Component({
     selector: 'app-vho-work-hours-non-availability-table',
     templateUrl: './vho-work-hours-non-availability-table.component.html',
-    styleUrls: ['./vho-work-hours-non-availability-table.component.scss']
+    styleUrls: ['./vho-work-hours-non-availability-table.component.scss'],
+    standalone: false
 })
 export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDeactiveComponent {
     constructor(

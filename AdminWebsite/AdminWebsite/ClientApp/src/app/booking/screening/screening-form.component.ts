@@ -6,7 +6,8 @@ import { ProtectFrom, ScreeningType, SelectedScreeningDto } from './screening.mo
 
 @Component({
     selector: 'app-screening-form',
-    templateUrl: './screening-form.component.html'
+    templateUrl: './screening-form.component.html',
+    standalone: false
 })
 export class ScreeningFormComponent {
     isEditMode = false;

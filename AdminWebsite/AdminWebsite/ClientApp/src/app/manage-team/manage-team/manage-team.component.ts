@@ -13,7 +13,8 @@ import { map, takeUntil, tap } from 'rxjs/operators';
     selector: 'app-manage-team',
     templateUrl: './manage-team.component.html',
     styleUrls: ['./manage-team.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ManageTeamComponent implements OnInit, OnDestroy {
     private readonly filterSize = 20;

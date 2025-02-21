@@ -7,7 +7,8 @@ import { Logger } from '../../services/logger';
 @Component({
     selector: 'app-get-audio-link-button',
     templateUrl: './get-audio-link-button.component.html',
-    styleUrls: ['./get-audio-link-button.component.scss']
+    styleUrls: ['./get-audio-link-button.component.scss'],
+    standalone: false
 })
 export class GetAudioLinkButtonComponent {
     private readonly loggerPrefix = '[GetAudioLinkButton] -';
