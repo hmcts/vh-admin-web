@@ -5,7 +5,8 @@ import { DeviceType } from 'src/app/services/device-type';
 @Component({
     selector: 'app-unsupported-browser',
     templateUrl: './unsupported-browser.component.html',
-    styleUrls: ['./unsupported-browser.component.scss']
+    styleUrls: ['./unsupported-browser.component.scss'],
+    standalone: false
 })
 export class UnsupportedBrowserComponent {
     supportedBrowsers: SupportedBrowserModel[] = [];

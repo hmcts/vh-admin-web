@@ -10,7 +10,8 @@ import { map } from 'rxjs/operators';
 @Component({
     selector: 'app-justice-users-menu',
     templateUrl: './justice-users-menu.component.html',
-    styleUrls: ['./justice-users-menu.component.scss']
+    styleUrls: ['./justice-users-menu.component.scss'],
+    standalone: false
 })
 export class JusticeUsersMenuComponent extends MenuBase implements OnInit {
     loggerPrefix = '[MenuJusticeUser] -';

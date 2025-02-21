@@ -12,7 +12,8 @@ import { FeatureFlags } from 'src/app/services/launch-darkly.service';
 @Component({
     selector: 'app-search-for-judicial-member',
     templateUrl: './search-for-judicial-member.component.html',
-    styleUrls: ['./search-for-judicial-member.component.scss']
+    styleUrls: ['./search-for-judicial-member.component.scss'],
+    standalone: false
 })
 export class SearchForJudicialMemberComponent implements AfterContentChecked {
     readonly NotificationDelayTime = 1200;

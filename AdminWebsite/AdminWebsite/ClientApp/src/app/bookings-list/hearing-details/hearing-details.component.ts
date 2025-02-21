@@ -11,7 +11,8 @@ import { faLink } from '@fortawesome/free-solid-svg-icons';
 @Component({
     selector: 'app-hearing-details',
     templateUrl: 'hearing-details.component.html',
-    styleUrls: ['hearing-details.component.css']
+    styleUrls: ['hearing-details.component.css'],
+    standalone: false
 })
 export class HearingDetailsComponent implements OnDestroy {
     @Input() hearing: VHBooking = null;

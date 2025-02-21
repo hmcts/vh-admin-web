@@ -20,7 +20,8 @@ import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/model
 @Component({
     selector: 'app-booking-details',
     templateUrl: 'booking-details.component.html',
-    styleUrls: ['booking-details.component.css']
+    styleUrls: ['booking-details.component.css'],
+    standalone: false
 })
 export class BookingDetailsComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[BookingDetails] -';

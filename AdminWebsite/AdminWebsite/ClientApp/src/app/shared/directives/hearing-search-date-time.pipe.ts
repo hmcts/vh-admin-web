@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import * as moment from 'moment';
 
 @Pipe({
-    name: 'appHearingSearchDateTime'
+    name: 'appHearingSearchDateTime',
+    standalone: false
 })
 export class HearingSearchDateTimePipe implements PipeTransform {
     transform(value: any, args?: any): any {

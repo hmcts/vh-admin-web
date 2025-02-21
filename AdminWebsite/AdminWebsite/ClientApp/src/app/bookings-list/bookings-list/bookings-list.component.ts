@@ -21,7 +21,8 @@ import { BookingsListItemModel } from 'src/app/common/model/booking-list-item.mo
 @Component({
     selector: 'app-bookings-list',
     templateUrl: './bookings-list.component.html',
-    styleUrls: ['./bookings-list.component.scss']
+    styleUrls: ['./bookings-list.component.scss'],
+    standalone: false
 })
 export class BookingsListComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[BookingsList] -';

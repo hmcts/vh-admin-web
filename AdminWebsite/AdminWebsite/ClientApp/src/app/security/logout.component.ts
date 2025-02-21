@@ -3,7 +3,8 @@ import { UserIdentityService } from '../services/user-identity.service';
 import { SecurityService } from './services/security.service';
 @Component({
     selector: 'app-logout',
-    templateUrl: './logout.component.html'
+    templateUrl: './logout.component.html',
+    standalone: false
 })
 @Injectable()
 export class LogoutComponent implements OnInit {

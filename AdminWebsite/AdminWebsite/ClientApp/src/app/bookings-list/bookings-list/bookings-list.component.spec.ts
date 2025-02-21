@@ -484,14 +484,18 @@ export class ArrayBookingslistModelTestData {
     }
 }
 
-@Directive({ selector: '[appScrollable]' })
+@Directive({
+    selector: '[appScrollable]',
+    standalone: false
+})
 class ScrollableDirective {
     @Output() scrollPosition = new EventEmitter();
 }
 
 @Component({
     selector: 'app-booking-details',
-    template: ''
+    template: '',
+    standalone: false
 })
 class BookingDetailsComponent {}
 

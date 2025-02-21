@@ -10,7 +10,8 @@ import { LaunchDarklyService, FeatureFlags } from 'src/app/services/launch-darkl
 @Component({
     selector: 'app-breadcrumb',
     templateUrl: './breadcrumb.component.html',
-    styleUrls: ['./breadcrumb.component.scss']
+    styleUrls: ['./breadcrumb.component.scss'],
+    standalone: false
 })
 export class BreadcrumbComponent implements OnInit, OnDestroy {
     breadcrumbItems: BreadcrumbItemModel[];

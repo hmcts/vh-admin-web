@@ -10,7 +10,8 @@ import { Logger } from '../../services/logger';
 @Component({
     selector: 'app-booking-confirmation',
     templateUrl: './booking-confirmation.component.html',
-    styleUrls: ['./booking-confirmation.component.css']
+    styleUrls: ['./booking-confirmation.component.css'],
+    standalone: false
 })
 export class BookingConfirmationComponent implements OnInit {
     protected readonly loggerPrefix: string = '[BookingConfirmation] -';

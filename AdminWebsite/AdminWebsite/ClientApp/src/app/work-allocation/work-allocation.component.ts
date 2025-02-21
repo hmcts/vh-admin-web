@@ -7,7 +7,8 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
     selector: 'app-work-allocation',
     templateUrl: './work-allocation.component.html',
-    styleUrls: ['./work-allocation.component.scss']
+    styleUrls: ['./work-allocation.component.scss'],
+    standalone: false
 })
 export class WorkAllocationComponent implements OnInit, OnDestroy {
     public isVhTeamLeader = false;

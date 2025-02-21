@@ -16,7 +16,8 @@ import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-endpoints',
-    templateUrl: './endpoints.component.html'
+    templateUrl: './endpoints.component.html',
+    standalone: false
 })
 export class EndpointsComponent extends BookingBaseComponent implements OnInit, OnDestroy {
     canNavigate = true;

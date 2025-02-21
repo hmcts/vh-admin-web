@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import * as moment from 'moment';
 
 @Pipe({
-    name: 'appLongDatetime'
+    name: 'appLongDatetime',
+    standalone: false
 })
 export class LongDatetimePipe implements PipeTransform {
     transform(value: any, args?: any): any {

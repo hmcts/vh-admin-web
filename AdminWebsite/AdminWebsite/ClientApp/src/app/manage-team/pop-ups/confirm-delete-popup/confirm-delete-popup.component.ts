@@ -5,7 +5,8 @@ import { CombineDateAndTime } from '../../../common/formatters/combine-date-and-
 
 @Component({
     selector: 'app-confirm-delete-hours-popup',
-    templateUrl: './confirm-delete-popup.component.html'
+    templateUrl: './confirm-delete-popup.component.html',
+    standalone: false
 })
 export class ConfirmDeleteHoursPopupComponent implements OnInit {
     private readonly loggerPrefix = '[DeleteNonWorkingHours] -';

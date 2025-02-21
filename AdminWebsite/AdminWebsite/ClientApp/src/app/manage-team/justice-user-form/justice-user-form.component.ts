@@ -13,7 +13,8 @@ export type JusticeUserFormMode = 'add' | 'edit';
 
 @Component({
     selector: 'app-justice-user-form',
-    templateUrl: './justice-user-form.component.html'
+    templateUrl: './justice-user-form.component.html',
+    standalone: false
 })
 export class JusticeUserFormComponent implements OnChanges {
     errorMessages = Constants.Error;

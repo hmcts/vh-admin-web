@@ -5,7 +5,8 @@ import { Constants } from '../common/constants';
 @Component({
     selector: 'app-unauthorised',
     templateUrl: './unauthorised.component.html',
-    styleUrls: ['./unauthorised.component.css']
+    styleUrls: ['./unauthorised.component.css'],
+    standalone: false
 })
 export class UnauthorisedComponent extends BaseAccordionComponent {
     readonly contactUsEmail = Constants.Contact.email;

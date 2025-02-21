@@ -24,7 +24,8 @@ import { faCircle, faEraser, faPlusCircle } from '@fortawesome/free-solid-svg-ic
 @Component({
     selector: 'app-add-participant',
     templateUrl: './add-participant.component.html',
-    styleUrls: ['./add-participant.component.scss']
+    styleUrls: ['./add-participant.component.scss'],
+    standalone: false
 })
 export class AddParticipantComponent extends AddParticipantBaseDirective implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
     constants = Constants;
