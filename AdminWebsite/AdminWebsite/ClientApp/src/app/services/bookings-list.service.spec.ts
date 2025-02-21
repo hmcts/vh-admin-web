@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BookingsListService } from './bookings-list.service';
-import { BHClient, BookingsResponse, BookingsByDateResponse, BookingsHearingResponse } from './clients/api-client';
+import { BHClient, BookingsByDateResponse, BookingsHearingResponse, BookingsResponse } from './clients/api-client';
 import { Observable, of } from 'rxjs';
 import { BookingsListModel } from '../common/model/bookings-list.model';
 import { BookingsModel } from '../common/model/bookings.model';
@@ -325,8 +325,8 @@ describe('bookings list service', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientModule],
-            providers: [BookingsListService, { provide: BHClient, useValue: bhClientSpy }]
+            imports: [],
+            providers: [BookingsListService, { provide: BHClient, useValue: bhClientSpy }, provideHttpClient(withInterceptorsFromDi())]
         });
         bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['bookingsList']);
         bookingsResponse = new ResponseTestData().getTestData();
