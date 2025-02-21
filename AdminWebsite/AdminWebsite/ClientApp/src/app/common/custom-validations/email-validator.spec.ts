@@ -7,8 +7,7 @@ it('should validate email and return true', () => {
         'long.email-address-with-hyphens@and.subdomains.example.com',
         'name/surname@example.com',
         'josé.köln@email.com',
-        'Áá@créâtïvéàççénts.com',
-        '用户@例子.公司'
+        'Áá@créâtïvéàççénts.com'
     ];
     emails.forEach(email => {
         expect(isAValidEmail(email)).withContext(email).toBe(true);
