@@ -11,7 +11,7 @@ import { BookingPersistService } from '../../services/bookings-persist.service';
 import { BookingsResponse } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
-import * as moment from 'moment';
+import moment from 'moment';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';

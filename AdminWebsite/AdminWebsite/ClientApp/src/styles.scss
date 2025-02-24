@@ -1,6 +1,6 @@
-$govuk-global-styles: true;
+$govuk-suppressed-warnings: ('govuk-typography-scale-14');
 
-@import 'govuk-frontend/dist/govuk/all';
+@import 'govuk-frontend/dist/govuk/index';
 @import '@ministryofjustice/frontend/moj/all';
 @import '@ng-select/ng-select/themes/default.theme.css';
 
