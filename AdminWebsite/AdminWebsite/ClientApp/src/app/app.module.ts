@@ -44,6 +44,7 @@ import { ReformLoginComponent } from './security/reform-login.component';
 import { AudioSearchGuard } from './security/audio-search.guard';
 import { ManageTeamFeatureGuard } from './security/guards/manage-team-feature.guard';
 import { DynatraceService } from './services/dynatrace.service';
+import { VersionService } from './services/version.service';
 
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -89,6 +90,7 @@ export function loadConfig(configService: ConfigService) {
         { provide: Logger, useClass: LoggerService },
         ConfigService,
         DynatraceService,
+        VersionService,
         AuthGuard,
         ChangesGuard,
         DatePipe,
