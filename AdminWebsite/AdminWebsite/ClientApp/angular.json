@@ -14,10 +14,11 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "stylePreprocessorOptions": {
-              "includePaths": [
-                  "node_modules", "src/sass"
-              ]},
-
+              "includePaths": ["src/sass"],
+              "sass": {
+                  "futureDeprecations": ["import"]
+              }
+            },
             "outputPath": {
               "base": "dist"
             },
