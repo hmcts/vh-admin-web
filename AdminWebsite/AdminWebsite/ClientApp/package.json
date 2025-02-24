@@ -89,7 +89,7 @@
     "prettier": "^3.4.2",
     "puppeteer": "^23.11.1",
     "run-script-os": "^1.1.6",
-    "sass": "^1.83.1",
+    "sass": "^1.85.0",
     "typescript": "^5.7.3",
     "uuid": "^9.0.0"
   },
