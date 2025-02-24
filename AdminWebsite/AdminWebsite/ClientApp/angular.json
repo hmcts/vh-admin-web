@@ -13,12 +13,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "stylePreprocessorOptions": {
-              "includePaths": ["src/sass"],
-              "sass": {
-                  "futureDeprecations": ["import"]
-              }
-            },
             "outputPath": {
               "base": "dist"
             },
@@ -43,6 +37,12 @@
               }
             ],
             "styles": ["src/styles.scss"],
+            "stylePreprocessorOptions": {
+                "includePaths": ["node_modules"],
+                "sass": {
+                  "futureDeprecations": ["import"]
+               }
+            },
             "scripts": [],
             "extractLicenses": false,
             "sourceMap": true,
