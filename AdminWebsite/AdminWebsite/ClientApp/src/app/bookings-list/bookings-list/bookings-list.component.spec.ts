@@ -5,7 +5,7 @@ import { AbstractControl, FormBuilder, ReactiveFormsModule } from '@angular/form
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
-import * as moment from 'moment';
+import moment from 'moment';
 import { MomentModule } from 'ngx-moment';
 import { of } from 'rxjs';
 import { ConfigService } from 'src/app/services/config.service';

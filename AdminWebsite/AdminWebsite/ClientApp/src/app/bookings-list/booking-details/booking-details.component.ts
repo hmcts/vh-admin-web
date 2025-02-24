@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import * as moment from 'moment';
+import moment from 'moment';
 import { interval, lastValueFrom, Subject, Subscription, takeUntil } from 'rxjs';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingService } from '../../services/booking.service';
