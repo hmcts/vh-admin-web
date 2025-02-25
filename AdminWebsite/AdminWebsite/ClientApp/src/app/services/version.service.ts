@@ -1,6 +1,6 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { BHClient } from './clients/api-client';
-import { shareReplay, tap } from 'rxjs';
+import { shareReplay } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
@@ -9,12 +9,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class VersionService {
     private bhClient = inject(BHClient);
 
-    private readonly version$ = this.bhClient.getAppVersion()
-      .pipe(
-        shareReplay(1)
-      );
+    private readonly version$ = this.bhClient.getAppVersion().pipe(shareReplay(1));
 
     private versionResult = toSignal(this.version$, { initialValue: undefined });
 
-    appVersion = computed(() => (this.versionResult()) ? this.versionResult().app_version : 'Unknown');
+    appVersion = computed(() => (this.versionResult() ? this.versionResult().app_version : 'Unknown'));
 }

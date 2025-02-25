@@ -12,7 +12,7 @@ export class FooterComponent implements OnInit {
     private versionService = inject(VersionService);
 
     appVersion = this.versionService.appVersion;
-    
+
     constructor(private readonly router: Router) {
         this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(x => {
             this.hideContactUs();
