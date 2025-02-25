@@ -3,7 +3,8 @@ import { EventEmitter } from 'events';
 import { PaginationModel } from 'src/app/shared/pagination/pagination-model';
 
 @Component({
-    selector: 'app-pagination', template: '',
+    selector: 'app-pagination',
+    template: '',
     standalone: false
 })
 export class PaginationStubComponent {

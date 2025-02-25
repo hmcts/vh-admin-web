@@ -1,8 +1,8 @@
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
-import { discardPeriodicTasks, fakeAsync, inject, TestBed, tick } from "@angular/core/testing";
-import { firstValueFrom, of } from "rxjs";
-import { ConnectionServiceConfigToken } from "./connection";
-import { ConnectionService } from "./connection.service";
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { discardPeriodicTasks, fakeAsync, inject, TestBed, tick } from '@angular/core/testing';
+import { firstValueFrom, of } from 'rxjs';
+import { ConnectionServiceConfigToken } from './connection';
+import { ConnectionService } from './connection.service';
 
 // two separate describes() here, to allow for different module configurations
 
@@ -11,14 +11,14 @@ describe('Connection service (connected)', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-    imports: [],
-    providers: [
-        HttpClient,
-        // inject a short interval, 1s, just for testing
-        { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } },
-        provideHttpClient(withInterceptorsFromDi())
-    ]
-});
+            imports: [],
+            providers: [
+                HttpClient,
+                // inject a short interval, 1s, just for testing
+                { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } },
+                provideHttpClient(withInterceptorsFromDi())
+            ]
+        });
     });
 
     it('should make requests on the interval', fakeAsync(
@@ -61,9 +61,13 @@ describe('connection service (disconnected)', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-    imports: [],
-    providers: [ConnectionService, { provide: ConnectionServiceConfigToken, useValue: { url, maxRetryAttempts: 2 } }, provideHttpClient(withInterceptorsFromDi())]
-});
+            imports: [],
+            providers: [
+                ConnectionService,
+                { provide: ConnectionServiceConfigToken, useValue: { url, maxRetryAttempts: 2 } },
+                provideHttpClient(withInterceptorsFromDi())
+            ]
+        });
 
         service = TestBed.inject(ConnectionService);
     });

@@ -1,9 +1,10 @@
-import { Component, Input, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input } from '@angular/core';
 import { ParticipantRequest } from 'src/app/services/clients/api-client';
 import { VHBooking } from 'src/app/common/model/vh-booking';
 
 @Component({
-    selector: 'app-participant-list', template: '<div></div>',
+    selector: 'app-participant-list',
+    template: '<div></div>',
     standalone: false
 })
 export class ParticipantsListStubComponent {

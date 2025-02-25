@@ -1,20 +1,20 @@
-import { inject, TestBed } from "@angular/core/testing";
-import { ParticipantService } from "./participant.service";
-import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
-import { HearingRoleResponse } from "../../services/clients/api-client";
-import { Logger } from "../../services/logger";
-import { HearingRoleModel } from "src/app/common/model/hearing-role.model";
-import { VHBooking } from "src/app/common/model/vh-booking";
-import { VHParticipant } from "src/app/common/model/vh-participant";
+import { inject, TestBed } from '@angular/core/testing';
+import { ParticipantService } from './participant.service';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HearingRoleResponse } from '../../services/clients/api-client';
+import { Logger } from '../../services/logger';
+import { HearingRoleModel } from 'src/app/common/model/hearing-role.model';
+import { VHBooking } from 'src/app/common/model/vh-booking';
+import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 describe('ParticipantService', () => {
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info']);
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-    imports: [],
-    providers: [ParticipantService, { provide: Logger, useValue: loggerSpy }, provideHttpClient(withInterceptorsFromDi())]
-});
+            imports: [],
+            providers: [ParticipantService, { provide: Logger, useValue: loggerSpy }, provideHttpClient(withInterceptorsFromDi())]
+        });
     });
 
     it('should be created', inject([ParticipantService], (service: ParticipantService) => {

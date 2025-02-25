@@ -1,17 +1,17 @@
-import { inject, TestBed } from "@angular/core/testing";
-import { UserIdentityService } from "./user-identity.service";
-import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
-import { BHClient, UserProfileResponse } from "./clients/api-client";
-import { of } from "rxjs";
+import { inject, TestBed } from '@angular/core/testing';
+import { UserIdentityService } from './user-identity.service';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { BHClient, UserProfileResponse } from './clients/api-client';
+import { of } from 'rxjs';
 
 describe('UserIdentityService', () => {
     const bhClientSpy = jasmine.createSpyObj('BHClient', ['getUserProfile']);
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-    imports: [],
-    providers: [{ provide: BHClient, useValue: bhClientSpy }, UserIdentityService, provideHttpClient(withInterceptorsFromDi())]
-});
+            imports: [],
+            providers: [{ provide: BHClient, useValue: bhClientSpy }, UserIdentityService, provideHttpClient(withInterceptorsFromDi())]
+        });
     });
 
     it('should retrieve user profile from memory when it exists', inject([UserIdentityService], (service: UserIdentityService) => {

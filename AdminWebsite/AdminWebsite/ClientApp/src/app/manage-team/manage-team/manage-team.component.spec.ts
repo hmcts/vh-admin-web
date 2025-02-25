@@ -16,7 +16,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TooltipDirective } from 'src/app/shared/directives/tooltip.directive';
 
 @Component({
-    selector: 'app-justice-user-form', template: '',
+    selector: 'app-justice-user-form',
+    template: '',
     standalone: false
 })
 export class JusticeUserFormStubComponent {}

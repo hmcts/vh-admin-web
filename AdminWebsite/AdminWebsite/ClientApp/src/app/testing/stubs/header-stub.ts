@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input } from '@angular/core';
 
 @Component({
-    selector: 'app-header', template: '',
+    selector: 'app-header',
+    template: '',
     standalone: false
 })
 export class HeaderStubComponent {

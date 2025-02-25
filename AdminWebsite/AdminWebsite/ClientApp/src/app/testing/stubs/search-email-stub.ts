@@ -1,8 +1,9 @@
-import { Component, Output, ViewChild, ElementRef, EventEmitter } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
-    selector: 'app-search-email', template: '',
+    selector: 'app-search-email',
+    template: '',
     standalone: false
 })
 export class SearchEmailStubComponent {

@@ -1,13 +1,13 @@
-import { TestBed } from "@angular/core/testing";
-import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
-import { BookingsListService } from "./bookings-list.service";
-import { BHClient, BookingsByDateResponse, BookingsHearingResponse, BookingsResponse } from "./clients/api-client";
-import { Observable, of } from "rxjs";
-import { BookingsListModel } from "../common/model/bookings-list.model";
-import { BookingsModel } from "../common/model/bookings.model";
-import { BookingsListItemModel } from "../common/model/booking-list-item.model";
-import { VHBooking } from "../common/model/vh-booking";
-import { ResponseTestData as TestDataResponseData } from "src/app/testing/data/response-test-data";
+import { TestBed } from '@angular/core/testing';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { BookingsListService } from './bookings-list.service';
+import { BHClient, BookingsByDateResponse, BookingsHearingResponse, BookingsResponse } from './clients/api-client';
+import { Observable, of } from 'rxjs';
+import { BookingsListModel } from '../common/model/bookings-list.model';
+import { BookingsModel } from '../common/model/bookings.model';
+import { BookingsListItemModel } from '../common/model/booking-list-item.model';
+import { VHBooking } from '../common/model/vh-booking';
+import { ResponseTestData as TestDataResponseData } from 'src/app/testing/data/response-test-data';
 
 export class ResponseTestData {
     static getEditingBookings(): Array<BookingsListModel> {
@@ -325,9 +325,9 @@ describe('bookings list service', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-    imports: [],
-    providers: [BookingsListService, { provide: BHClient, useValue: bhClientSpy }, provideHttpClient(withInterceptorsFromDi())]
-});
+            imports: [],
+            providers: [BookingsListService, { provide: BHClient, useValue: bhClientSpy }, provideHttpClient(withInterceptorsFromDi())]
+        });
         bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['bookingsList']);
         bookingsResponse = new ResponseTestData().getTestData();
 

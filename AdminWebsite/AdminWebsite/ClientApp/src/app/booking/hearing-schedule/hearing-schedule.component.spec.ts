@@ -1,27 +1,27 @@
-import { DatePipe } from "@angular/common";
-import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
-import { AbstractControl, FormArray, ReactiveFormsModule } from "@angular/forms";
-import { Router } from "@angular/router";
-import { RouterTestingModule } from "@angular/router/testing";
-import { of } from "rxjs";
-import { HearingVenueResponse } from "src/app/services/clients/api-client";
-import { Logger } from "src/app/services/logger";
-import { CancelPopupComponent } from "../../popups/cancel-popup/cancel-popup.component";
-import { DiscardConfirmPopupComponent } from "../../popups/discard-confirm-popup/discard-confirm-popup.component";
-import { ErrorService } from "../../services/error.service";
-import { ReferenceDataService } from "../../services/reference-data.service";
-import { VideoHearingsService } from "../../services/video-hearings.service";
-import { SharedModule } from "../../shared/shared.module";
-import { MockValues } from "../../testing/data/test-objects";
-import { BreadcrumbStubComponent } from "../../testing/stubs/breadcrumb-stub";
-import { HearingScheduleComponent } from "./hearing-schedule.component";
-import { BreadcrumbComponent } from "../breadcrumb/breadcrumb.component";
-import { FeatureFlags, LaunchDarklyService } from "src/app/services/launch-darkly.service";
-import { By } from "@angular/platform-browser";
-import { createMultiDayHearing } from "src/app/testing/helpers/hearing.helpers";
-import { EditHearingDatesComponent } from "./edit-hearing-dates/edit-hearing-dates.component";
-import { VHBooking } from "src/app/common/model/vh-booking";
+import { DatePipe } from '@angular/common';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { AbstractControl, FormArray, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
+import { HearingVenueResponse } from 'src/app/services/clients/api-client';
+import { Logger } from 'src/app/services/logger';
+import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
+import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
+import { ErrorService } from '../../services/error.service';
+import { ReferenceDataService } from '../../services/reference-data.service';
+import { VideoHearingsService } from '../../services/video-hearings.service';
+import { SharedModule } from '../../shared/shared.module';
+import { MockValues } from '../../testing/data/test-objects';
+import { BreadcrumbStubComponent } from '../../testing/stubs/breadcrumb-stub';
+import { HearingScheduleComponent } from './hearing-schedule.component';
+import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { By } from '@angular/platform-browser';
+import { createMultiDayHearing } from 'src/app/testing/helpers/hearing.helpers';
+import { EditHearingDatesComponent } from './edit-hearing-dates/edit-hearing-dates.component';
+import { VHBooking } from 'src/app/common/model/vh-booking';
 
 const newHearing = new VHBooking();
 
@@ -427,20 +427,20 @@ describe('HearingScheduleComponent returning to page', () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
-    declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent],
-    imports: [ReactiveFormsModule, RouterTestingModule],
-    providers: [
-        { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
-        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-        { provide: Router, useValue: routerSpy },
-        { provide: ErrorService, useValue: errorService },
-        { provide: BreadcrumbComponent, useValue: BreadcrumbStubComponent },
-        DatePipe,
-        { provide: Logger, useValue: loggerSpy },
-        { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
-        provideHttpClient(withInterceptorsFromDi())
-    ]
-}).compileComponents();
+            declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent],
+            imports: [ReactiveFormsModule, RouterTestingModule],
+            providers: [
+                { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
+                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: Router, useValue: routerSpy },
+                { provide: ErrorService, useValue: errorService },
+                { provide: BreadcrumbComponent, useValue: BreadcrumbStubComponent },
+                DatePipe,
+                { provide: Logger, useValue: loggerSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
+                provideHttpClient(withInterceptorsFromDi())
+            ]
+        }).compileComponents();
     }));
 
     beforeEach(() => {
@@ -594,26 +594,26 @@ describe('HearingScheduleComponent multi days hearing', () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
-    declarations: [
-        HearingScheduleComponent,
-        BreadcrumbStubComponent,
-        CancelPopupComponent,
-        DiscardConfirmPopupComponent,
-        EditHearingDatesComponent
-    ],
-    imports: [ReactiveFormsModule, RouterTestingModule],
-    providers: [
-        { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
-        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-        { provide: Router, useValue: routerSpy },
-        { provide: ErrorService, useValue: errorService },
-        { provide: BreadcrumbComponent, useValue: BreadcrumbStubComponent },
-        DatePipe,
-        { provide: Logger, useValue: loggerSpy },
-        { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
-        provideHttpClient(withInterceptorsFromDi())
-    ]
-}).compileComponents();
+            declarations: [
+                HearingScheduleComponent,
+                BreadcrumbStubComponent,
+                CancelPopupComponent,
+                DiscardConfirmPopupComponent,
+                EditHearingDatesComponent
+            ],
+            imports: [ReactiveFormsModule, RouterTestingModule],
+            providers: [
+                { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
+                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: Router, useValue: routerSpy },
+                { provide: ErrorService, useValue: errorService },
+                { provide: BreadcrumbComponent, useValue: BreadcrumbStubComponent },
+                DatePipe,
+                { provide: Logger, useValue: loggerSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
+                provideHttpClient(withInterceptorsFromDi())
+            ]
+        }).compileComponents();
     }));
 
     beforeEach(() => {

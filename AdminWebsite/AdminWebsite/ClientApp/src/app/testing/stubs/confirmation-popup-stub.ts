@@ -2,7 +2,8 @@ import { Component, Input, Output } from '@angular/core';
 import { EventEmitter } from 'events';
 
 @Component({
-    selector: 'app-confirmation-popup', template: '',
+    selector: 'app-confirmation-popup',
+    template: '',
     standalone: false
 })
 export class ConfirmationPopupStubComponent {
