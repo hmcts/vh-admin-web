@@ -12,7 +12,7 @@ import { ChangesGuard } from './common/guards/changes.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './security/login.component';
 import { LogoutComponent } from './security/logout.component';
-import { BH_API_BASE_URL } from './services/clients/api-client';
+import { BH_API_BASE_URL, BHClient } from './services/clients/api-client';
 import { ConfigService, ENVIRONMENT_CONFIG } from './services/config.service';
 import { UserIdentityService } from './services/user-identity.service';
 import { UnauthorisedComponent } from './error/unauthorised.component';
@@ -105,7 +105,8 @@ export function loadConfig(configService: ConfigService) {
         AppInsightsLogger,
         WindowRef,
         ManageTeamFeatureGuard,
-        AudioSearchGuard
+        AudioSearchGuard,
+        BHClient
     ],
     exports: [UnallocatedHearingsComponent],
     bootstrap: [AppComponent]

@@ -7,11 +7,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
     providedIn: 'root'
 })
 export class VersionService {
-    private bhClient = inject(BHClient);
+    
+    constructor(private bhClient: BHClient) {
+        this.version$ = this.bhClient.getAppVersion().pipe(shareReplay(1));
+        this.versionResult = toSignal(this.version$, { initialValue: undefined });
+    }
 
-    private readonly version$ = this.bhClient.getAppVersion().pipe(shareReplay(1));
-
-    private versionResult = toSignal(this.version$, { initialValue: undefined });
+    private version$;
+    private versionResult;
 
     appVersion = computed(() => (this.versionResult() ? this.versionResult().app_version : 'Unknown'));
 }
