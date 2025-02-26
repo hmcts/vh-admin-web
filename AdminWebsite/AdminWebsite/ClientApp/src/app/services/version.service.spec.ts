@@ -13,10 +13,7 @@ describe('VersionService', () => {
             const spy = jasmine.createSpyObj('BHClient', ['getAppVersion']);
 
             TestBed.configureTestingModule({
-                providers: [
-                    VersionService,
-                    { provide: BHClient, useValue: spy }
-                ]
+                providers: [VersionService, { provide: BHClient, useValue: spy }]
             });
 
             service = TestBed.inject(VersionService);

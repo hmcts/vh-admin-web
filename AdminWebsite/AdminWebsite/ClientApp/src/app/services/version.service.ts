@@ -7,7 +7,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
     providedIn: 'root'
 })
 export class VersionService {
-
     constructor(private bhClient: BHClient) {
         this.version$ = this.bhClient.getAppVersion().pipe(shareReplay(1));
         this.versionResult = toSignal(this.version$, { initialValue: undefined });
