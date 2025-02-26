@@ -1,4 +1,4 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, Injectable } from '@angular/core';
 import { BHClient } from './clients/api-client';
 import { shareReplay } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -7,7 +7,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
     providedIn: 'root'
 })
 export class VersionService {
-    
+
     constructor(private bhClient: BHClient) {
         this.version$ = this.bhClient.getAppVersion().pipe(shareReplay(1));
         this.versionResult = toSignal(this.version$, { initialValue: undefined });

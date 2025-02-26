@@ -23,7 +23,7 @@ describe('VersionService', () => {
             bhClientSpy = TestBed.inject(BHClient) as jasmine.SpyObj<BHClient>;
         });
 
-        fit('should be created', () => {
+        it('should be created', () => {
             expect(service).toBeTruthy();
         });
 
