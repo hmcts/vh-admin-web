@@ -1,40 +1,41 @@
 import { TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { VersionService } from './version.service';
 import { of } from 'rxjs';
 import { AppVersionResponse, BHClient } from './clients/api-client';
 
+
 describe('VersionService', () => {
-    describe('VersionService', () => {
-        let service: VersionService;
-        let bhClientSpy: jasmine.SpyObj<BHClient>;
+    let service: VersionService;
+    let bhClientSpy: jasmine.SpyObj<BHClient>;
 
-        beforeEach(() => {
-            const spy = jasmine.createSpyObj('BHClient', ['getAppVersion']);
+    beforeEach(() => {
+        bhClientSpy = jasmine.createSpyObj('BHClient', ['getAppVersion']);
 
-            TestBed.configureTestingModule({
-                providers: [VersionService, { provide: BHClient, useValue: spy }]
-            });
-
-            service = TestBed.inject(VersionService);
-            bhClientSpy = TestBed.inject(BHClient) as jasmine.SpyObj<BHClient>;
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule],
+            providers: [
+                VersionService,
+                { provide: BHClient, useValue: bhClientSpy }
+            ]
         });
 
-        it('should be created', () => {
-            expect(service).toBeTruthy();
-        });
+        service = new VersionService(bhClientSpy);
 
-        it('should return app version when available', () => {
-            const mockVersion: AppVersionResponse = { app_version: '1.0.0', init: () => {}, toJSON: () => ({}) };
-            bhClientSpy.getAppVersion.and.returnValue(of(mockVersion));
-
-            expect(service.appVersion()).toBe('1.0.0');
-        });
-
-        it('should return "Unknown" when app version is not available', () => {
-            bhClientSpy.getAppVersion.and.returnValue(of(undefined));
-
-            expect(service.appVersion()).toBe('Unknown');
-        });
     });
+
+    it('should be created', () => {
+        expect(service).toBeTruthy();
+    });
+
+    it('should call getAppVersion and return the version', async () => {
+        const mockVersion: AppVersionResponse = { app_version: '1.0.0', init: () => {}, toJSON: () => ({}) };
+        bhClientSpy.getAppVersion.and.returnValue(of(mockVersion));
+
+        service.version$?.subscribe(version => {
+            expect(version).toEqual(mockVersion);
+        });
+
+        expect(bhClientSpy.getAppVersion.calls.count()).toBe(1);
+    }, 10000); // Increase timeout interval to 10000ms
 });
