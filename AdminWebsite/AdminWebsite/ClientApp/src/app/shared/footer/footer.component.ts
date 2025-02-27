@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -15,7 +15,10 @@ export class FooterComponent implements OnInit, OnDestroy {
 
     appVersion: string;
 
-    constructor(private readonly router: Router, private readonly versionService: VersionService) {
+    constructor(
+        private readonly router: Router,
+        private readonly versionService: VersionService
+    ) {
         this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(x => {
             this.hideContactUs();
         });
@@ -24,7 +27,7 @@ export class FooterComponent implements OnInit, OnDestroy {
         });
     }
     ngOnDestroy(): void {
-       this.sub.unsubscribe();
+        this.sub.unsubscribe();
     }
 
     ngOnInit() {
