@@ -1,6 +1,5 @@
 import { MomentModule } from 'ngx-moment';
 import { DatePipe } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -77,7 +76,6 @@ export function loadConfig(configService: ConfigService) {
         AuthConfigModule
     ],
     providers: [
-        HttpClientModule,
         ReactiveFormsModule,
         AppRoutingModule,
         { provide: APP_INITIALIZER, useFactory: loadConfig, deps: [ConfigService], multi: true },
