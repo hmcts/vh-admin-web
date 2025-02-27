@@ -19,15 +19,16 @@ export class FooterComponent implements OnInit, OnDestroy {
         private readonly versionService: VersionService
     ) {
         this.router.events
-            .pipe(filter(event => event instanceof NavigationEnd), takeUntil(this.destroyed$))
+            .pipe(
+                filter(event => event instanceof NavigationEnd),
+                takeUntil(this.destroyed$)
+            )
             .subscribe(x => {
                 this.hideContactUs();
             });
-        this.versionService.version$
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(version => {
-                this.appVersion = version.app_version;
-            });
+        this.versionService.version$.pipe(takeUntil(this.destroyed$)).subscribe(version => {
+            this.appVersion = version.app_version;
+        });
     }
     ngOnDestroy(): void {
         this.destroyed$.next();
