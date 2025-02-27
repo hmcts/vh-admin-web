@@ -91,7 +91,7 @@
                         "polyfills": "src/polyfills.ts",
                         "tsConfig": "src/tsconfig.spec.json",
                         "karmaConfig": "src/karma.conf.js",
-                        "codeCoverageExclude": ["src/app/security/auth-config.module.ts", "src/app/services/clients/*", "src/app/testing/**"],
+                        "codeCoverageExclude": ["src/app/security/auth-config.module.ts", "src/app/services/clients/*", "src/app/testing/**", "src/app/app.module.ts"],
                         "styles": ["src/styles.scss"],
                         "scripts": [],
                         "assets": [
