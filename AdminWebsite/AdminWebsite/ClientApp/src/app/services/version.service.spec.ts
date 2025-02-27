@@ -4,7 +4,6 @@ import { VersionService } from './version.service';
 import { of } from 'rxjs';
 import { AppVersionResponse, BHClient } from './clients/api-client';
 
-
 describe('VersionService', () => {
     let service: VersionService;
     let bhClientSpy: jasmine.SpyObj<BHClient>;
@@ -14,14 +13,10 @@ describe('VersionService', () => {
 
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
-            providers: [
-                VersionService,
-                { provide: BHClient, useValue: bhClientSpy }
-            ]
+            providers: [VersionService, { provide: BHClient, useValue: bhClientSpy }]
         });
 
         service = new VersionService(bhClientSpy);
-
     });
 
     it('should be created', () => {
