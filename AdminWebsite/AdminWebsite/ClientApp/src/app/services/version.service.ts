@@ -6,7 +6,7 @@ import { shareReplay } from 'rxjs';
     providedIn: 'root'
 })
 export class VersionService {
-    constructor(private bhClient: BHClient) {
+    constructor(private readonly bhClient: BHClient) {
         this.version$ = this.bhClient.getAppVersion()?.pipe(shareReplay(1));
     }
 
