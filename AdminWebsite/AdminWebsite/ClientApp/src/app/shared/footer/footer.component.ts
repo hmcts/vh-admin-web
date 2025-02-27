@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 import { VersionService } from 'src/app/services/version.service';
 
 @Component({
@@ -10,8 +10,7 @@ import { VersionService } from 'src/app/services/version.service';
 })
 export class FooterComponent implements OnInit, OnDestroy {
     hideContactUsLink = false;
-    sub!: Subscription;
-    //private versionService = inject(VersionService);
+    destroyed$ = new Subject<void>();
 
     appVersion: string;
 
@@ -22,12 +21,13 @@ export class FooterComponent implements OnInit, OnDestroy {
         this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(x => {
             this.hideContactUs();
         });
-        this.sub = this.versionService.version$.subscribe(version => {
+        this.versionService.version$.pipe(takeUntil(this.destroyed$)).subscribe(version => {
             this.appVersion = version.app_version;
         });
     }
     ngOnDestroy(): void {
-        this.sub.unsubscribe();
+        this.destroyed$.next();
+        this.destroyed$.complete();
     }
 
     ngOnInit() {
