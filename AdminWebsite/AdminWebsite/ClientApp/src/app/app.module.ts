@@ -1,6 +1,6 @@
 import { MomentModule } from 'ngx-moment';
 import { DatePipe } from '@angular/common';
-import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
+import { ErrorHandler, inject, NgModule, provideAppInitializer } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
@@ -78,7 +78,10 @@ export function loadConfig(configService: ConfigService) {
     providers: [
         ReactiveFormsModule,
         AppRoutingModule,
-        { provide: APP_INITIALIZER, useFactory: loadConfig, deps: [ConfigService], multi: true },
+        provideAppInitializer(() => {
+            const initializerFn = loadConfig(inject(ConfigService));
+            return initializerFn();
+        }),
         { provide: Config, useFactory: () => ENVIRONMENT_CONFIG },
         { provide: BH_API_BASE_URL, useFactory: () => '.' },
         { provide: LOG_ADAPTER, useClass: ConsoleLogger, multi: true },
