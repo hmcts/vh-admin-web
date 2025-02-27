@@ -5,7 +5,9 @@ it('should validate email and return true', () => {
         'correct.email@test.com',
         'w.c@email.co.uk',
         'long.email-address-with-hyphens@and.subdomains.example.com',
-        'name/surname@example.com'
+        'name/surname@example.com',
+        'josé.köln@email.com',
+        'Áá@créâtïvéàççénts.com'
     ];
     emails.forEach(email => {
         expect(isAValidEmail(email)).withContext(email).toBe(true);
