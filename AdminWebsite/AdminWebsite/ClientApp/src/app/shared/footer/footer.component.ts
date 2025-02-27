@@ -18,7 +18,9 @@ export class FooterComponent implements OnInit, OnDestroy {
         private readonly router: Router,
         private readonly versionService: VersionService
     ) {
-        this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(x => {
+        this.router.events
+            .pipe(filter(event => event instanceof NavigationEnd), takeUntil(this.destroyed$))
+            .subscribe(x => {
             this.hideContactUs();
         });
         this.versionService.version$.pipe(takeUntil(this.destroyed$)).subscribe(version => {
