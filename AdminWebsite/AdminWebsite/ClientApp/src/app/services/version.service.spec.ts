@@ -32,5 +32,5 @@ describe('VersionService', () => {
         });
 
         expect(bhClientSpy.getAppVersion.calls.count()).toBe(1);
-    }, 10000); // Increase timeout interval to 10000ms
+    });
 });
