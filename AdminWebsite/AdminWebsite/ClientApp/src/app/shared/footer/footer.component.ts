@@ -6,6 +6,7 @@ import { VersionService } from 'src/app/services/version.service';
 
 @Component({
     selector: 'app-footer',
+    styleUrls: ['./footer.component.scss'],
     templateUrl: './footer.component.html'
 })
 export class FooterComponent implements OnInit, OnDestroy {
