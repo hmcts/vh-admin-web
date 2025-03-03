@@ -139,7 +139,7 @@ describe('AddJudicialOfficeHoldersComponent', () => {
             component.hearing.judiciaryParticipants = [judicialMember];
 
             // Act
-            component.prepoplateFormForEdit(participantEmail);
+            component.prepopulateFormForEdit(participantEmail);
 
             // Assert
             expect(component.participantToEdit).toEqual(judicialMember);
@@ -164,7 +164,7 @@ describe('AddJudicialOfficeHoldersComponent', () => {
             component.hearing.judiciaryParticipants = [panelMemberParticipant];
 
             // Act
-            component.prepoplateFormForEdit(participantEmail);
+            component.prepopulateFormForEdit(participantEmail);
 
             // Assert
             expect(component.participantToEdit).toEqual(panelMemberParticipant);
@@ -179,7 +179,7 @@ describe('AddJudicialOfficeHoldersComponent', () => {
             component.hearing.judiciaryParticipants = [];
 
             // Act
-            component.prepoplateFormForEdit(participantEmail);
+            component.prepopulateFormForEdit(participantEmail);
 
             // Assert
             expect(loggerSpy.warn.calls.mostRecent().args[0].includes('Unable to find participant to edit.')).toBeTrue();
