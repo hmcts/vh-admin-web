@@ -225,6 +225,18 @@ describe('InterpreterFormComponent', () => {
             expect(component.form.controls.spokenLanguageCode.value).toBe('fr');
         });
 
+        it('should ignore when the interpreterRequired is false', () => {
+            const interpreterSelected: InterpreterSelectedDto = {
+                interpreterRequired: false,
+                signLanguageCode: null,
+                spokenLanguageCode: 'fr'
+            };
+            component.prepopulateForm(interpreterSelected);
+            expect(component.displayForm).toBeFalse();
+            expect(component.form.controls.signLanguageCode.value).toBeNull();
+            expect(component.form.controls.spokenLanguageCode.value).toBeNull();
+        });
+
         it('should ignore when paramater is null', () => {
             component.prepopulateForm(null);
             expect(component.displayForm).toBeFalse();

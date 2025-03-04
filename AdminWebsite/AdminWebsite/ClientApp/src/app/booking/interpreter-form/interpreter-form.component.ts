@@ -82,7 +82,7 @@ export class InterpreterFormComponent implements OnInit, OnDestroy {
     }
 
     prepopulateForm(interpreterSelected: InterpreterSelectedDto) {
-        if (!interpreterSelected || !interpreterSelected.interpreterRequired) {
+        if (!interpreterSelected?.interpreterRequired) {
             return;
         }
         this.displayForm = interpreterSelected.interpreterRequired;
