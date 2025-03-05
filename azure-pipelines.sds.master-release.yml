@@ -10,7 +10,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: apply-git-version-before-docker-build
+      ref: master
       endpoint: hmcts
 
 parameters:
