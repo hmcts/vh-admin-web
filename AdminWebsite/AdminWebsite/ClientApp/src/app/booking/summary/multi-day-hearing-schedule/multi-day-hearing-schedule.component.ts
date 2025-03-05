@@ -8,7 +8,8 @@ const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
 @Component({
     selector: 'app-multi-day-hearing-schedule',
     templateUrl: './multi-day-hearing-schedule.component.html',
-    styleUrls: ['./multi-day-hearing-schedule.component.scss']
+    styleUrls: ['./multi-day-hearing-schedule.component.scss'],
+    standalone: false
 })
 export class MultiDayHearingScheduleComponent implements OnInit {
     @Input() hearingDates = [];

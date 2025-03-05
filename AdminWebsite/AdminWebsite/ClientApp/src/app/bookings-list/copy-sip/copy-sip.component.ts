@@ -6,7 +6,8 @@ import { CopyDetailsBase } from '../component/copy-details-base';
 @Component({
     selector: 'app-copy-sip',
     templateUrl: './copy-sip.component.html',
-    styleUrls: ['./copy-sip.component.scss']
+    styleUrls: ['./copy-sip.component.scss'],
+    standalone: false
 })
 export class CopySipComponent extends CopyDetailsBase implements OnInit {
     @Input() set endpoint(value: EndpointModel) {

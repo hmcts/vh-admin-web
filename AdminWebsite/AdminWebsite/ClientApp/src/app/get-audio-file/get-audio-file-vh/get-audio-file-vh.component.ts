@@ -6,7 +6,8 @@ import { Logger } from 'src/app/services/logger';
 
 @Component({
     selector: 'app-get-audio-file-vh',
-    templateUrl: './get-audio-file-vh.component.html'
+    templateUrl: './get-audio-file-vh.component.html',
+    standalone: false
 })
 export class GetAudioFileVhComponent implements OnInit {
     private readonly loggerPrefix = '[GetAudioFileVh] -';

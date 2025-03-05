@@ -16,7 +16,8 @@ import { PipeStringifierService } from 'src/app/services/pipe-stringifier.servic
 @Component({
     selector: 'app-other-information',
     templateUrl: './other-information.component.html',
-    styleUrls: ['./other-information.component.css']
+    styleUrls: ['./other-information.component.css'],
+    standalone: false
 })
 export class OtherInformationComponent extends BookingBaseComponent implements OnInit {
     constants = Constants;

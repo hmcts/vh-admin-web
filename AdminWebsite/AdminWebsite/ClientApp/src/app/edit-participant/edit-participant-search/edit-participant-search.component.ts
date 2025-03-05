@@ -6,7 +6,8 @@ import { ParticipantEditService } from '../../services/participant-edit-service.
 
 @Component({
     selector: 'app-edit-participant-search',
-    templateUrl: './edit-participant-search.component.html'
+    templateUrl: './edit-participant-search.component.html',
+    standalone: false
 })
 export class EditParticipantSearchComponent implements OnInit {
     private readonly loggerPrefix = '[EditParticipant] -';

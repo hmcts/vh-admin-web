@@ -5,7 +5,8 @@ import { LoadingSpinnerService } from 'src/app/services/loading-spinner.service'
 @Component({
     selector: 'app-wait-popup',
     templateUrl: './wait-popup.component.html',
-    styleUrls: ['./wait-popup.component.css']
+    styleUrls: ['./wait-popup.component.css'],
+    standalone: false
 })
 export class WaitPopupComponent {
     @Input()

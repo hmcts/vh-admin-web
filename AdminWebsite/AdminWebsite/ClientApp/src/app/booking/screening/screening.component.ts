@@ -12,7 +12,8 @@ import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-screening',
-    templateUrl: './screening.component.html'
+    templateUrl: './screening.component.html',
+    standalone: false
 })
 export class ScreeningComponent implements OnInit, OnDestroy {
     hearing: VHBooking;

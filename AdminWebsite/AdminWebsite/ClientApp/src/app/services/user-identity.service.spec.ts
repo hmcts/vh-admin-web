@@ -1,6 +1,6 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { inject, TestBed } from '@angular/core/testing';
 import { UserIdentityService } from './user-identity.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BHClient, UserProfileResponse } from './clients/api-client';
 import { of } from 'rxjs';
 
@@ -9,8 +9,8 @@ describe('UserIdentityService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientModule],
-            providers: [{ provide: BHClient, useValue: bhClientSpy }, UserIdentityService]
+            imports: [],
+            providers: [{ provide: BHClient, useValue: bhClientSpy }, UserIdentityService, provideHttpClient(withInterceptorsFromDi())]
         });
     });
 

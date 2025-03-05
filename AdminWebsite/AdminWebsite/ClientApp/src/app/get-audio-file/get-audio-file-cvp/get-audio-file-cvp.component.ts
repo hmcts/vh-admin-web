@@ -6,7 +6,8 @@ import { Logger } from 'src/app/services/logger';
 
 @Component({
     selector: 'app-get-audio-file-cvp',
-    templateUrl: './get-audio-file-cvp.component.html'
+    templateUrl: './get-audio-file-cvp.component.html',
+    standalone: false
 })
 export class GetAudioFileCvpComponent implements OnInit {
     private readonly loggerPrefix = '[GetAudioFileCvp] -';

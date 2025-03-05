@@ -22,7 +22,8 @@ import { EditHearingDatesComponent } from './edit-hearing-dates/edit-hearing-dat
 @Component({
     selector: 'app-hearing-schedule',
     templateUrl: './hearing-schedule.component.html',
-    styleUrls: ['./hearing-schedule.component.scss']
+    styleUrls: ['./hearing-schedule.component.scss'],
+    standalone: false
 })
 export class HearingScheduleComponent extends BookingBaseComponent implements OnInit, OnDestroy {
     hearing: VHBooking;

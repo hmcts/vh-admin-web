@@ -1,6 +1,10 @@
 import { Component, Input } from '@angular/core';
 
-@Component({ selector: 'app-booking-edit', template: '' })
+@Component({
+    selector: 'app-booking-edit',
+    template: '',
+    standalone: false
+})
 export class BookingEditStubComponent {
     private _editLink: string;
     @Input()

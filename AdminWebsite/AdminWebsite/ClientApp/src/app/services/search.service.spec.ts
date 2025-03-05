@@ -1,6 +1,6 @@
 import { SearchService } from './search.service';
 import { TestBed } from '@angular/core/testing';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { of } from 'rxjs';
 import { BHClient, JudgeAccountType, JudgeResponse, PersonResponseV2 } from './clients/api-client';
 import { Constants } from '../common/constants';
@@ -114,10 +114,11 @@ describe('SearchService', () => {
         clientApiSpy.postJudgesBySearchTerm.and.returnValue(of(judgeList));
 
         TestBed.configureTestingModule({
-            imports: [HttpClientModule],
+            imports: [],
             providers: [
                 { provide: BHClient, useValue: clientApiSpy },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
+                provideHttpClient(withInterceptorsFromDi())
             ]
         });
 

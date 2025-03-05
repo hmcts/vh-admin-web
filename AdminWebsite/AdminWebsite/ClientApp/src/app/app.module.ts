@@ -1,7 +1,6 @@
 import { MomentModule } from 'ngx-moment';
 import { DatePipe } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { APP_INITIALIZER, NgModule, ErrorHandler } from '@angular/core';
+import { ErrorHandler, inject, NgModule, provideAppInitializer } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
@@ -20,7 +19,7 @@ import { PopupModule } from './popups/popup.module';
 import { SharedModule } from './shared/shared.module';
 import { ErrorComponent } from './error/error.component';
 import { ErrorService } from './services/error.service';
-import { LoggerService, LOG_ADAPTER } from './services/logger.service';
+import { LOG_ADAPTER, LoggerService } from './services/logger.service';
 import { PageTrackerService } from './services/page-tracker.service';
 import { AppInsightsLogger } from './services/app-insights-logger.service';
 import { Logger } from './services/logger';
@@ -49,7 +48,6 @@ import { VersionService } from './services/version.service';
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
 }
-
 @NgModule({
     declarations: [
         AppComponent,
@@ -79,10 +77,12 @@ export function loadConfig(configService: ConfigService) {
         AuthConfigModule
     ],
     providers: [
-        HttpClientModule,
         ReactiveFormsModule,
         AppRoutingModule,
-        { provide: APP_INITIALIZER, useFactory: loadConfig, deps: [ConfigService], multi: true },
+        provideAppInitializer(() => {
+            const initializerFn = loadConfig(inject(ConfigService));
+            return initializerFn();
+        }),
         { provide: Config, useFactory: () => ENVIRONMENT_CONFIG },
         { provide: BH_API_BASE_URL, useFactory: () => '.' },
         { provide: LOG_ADAPTER, useClass: ConsoleLogger, multi: true },

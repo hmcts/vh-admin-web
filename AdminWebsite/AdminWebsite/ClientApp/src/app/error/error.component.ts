@@ -7,7 +7,8 @@ import { PageTrackerService } from '../services/page-tracker.service';
 
 @Component({
     selector: 'app-error',
-    templateUrl: './error.component.html'
+    templateUrl: './error.component.html',
+    standalone: false
 })
 export class ErrorComponent {
     hasConnection$ = new Observable();

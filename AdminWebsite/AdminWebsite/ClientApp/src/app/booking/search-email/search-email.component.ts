@@ -11,7 +11,8 @@ import { VHParticipant } from 'src/app/common/model/vh-participant';
     selector: 'app-search-email',
     templateUrl: './search-email.component.html',
     styleUrls: ['./search-email.component.css'],
-    providers: [SearchService]
+    providers: [SearchService],
+    standalone: false
 })
 export class SearchEmailComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[SearchEmail] -';

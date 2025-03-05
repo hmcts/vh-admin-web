@@ -7,7 +7,8 @@ import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/model
 @Component({
     selector: 'app-booking-participant-list',
     templateUrl: 'booking-participant-list.component.html',
-    styleUrls: ['booking-participant-list.component.scss']
+    styleUrls: ['booking-participant-list.component.scss'],
+    standalone: false
 })
 export class BookingParticipantListComponent {
     private _participants: Array<VHParticipant> = [];

@@ -18,7 +18,8 @@ import { SearchResults } from './search-results-model';
 
 @Component({
     selector: 'app-edit-work-hours',
-    templateUrl: './edit-work-hours.component.html'
+    templateUrl: './edit-work-hours.component.html',
+    standalone: false
 })
 export class EditWorkHoursComponent implements OnInit {
     loggerPrefix = 'EditWorkHoursComponent';

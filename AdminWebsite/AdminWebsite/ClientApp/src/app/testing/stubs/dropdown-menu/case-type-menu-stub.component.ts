@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 
 @Component({
     selector: 'app-case-types-menu',
-    template: ''
+    template: '',
+    standalone: false
 })
 export class CaseTypeMenuStubComponent {
     loadItems() {

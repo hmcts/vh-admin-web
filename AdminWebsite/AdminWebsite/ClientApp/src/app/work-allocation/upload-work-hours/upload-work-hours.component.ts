@@ -4,7 +4,8 @@ import { WorkHoursFileProcessorService } from '../services/work-hours-file-proce
 
 @Component({
     selector: 'app-upload-work-hours',
-    templateUrl: './upload-work-hours.component.html'
+    templateUrl: './upload-work-hours.component.html',
+    standalone: false
 })
 export class UploadWorkHoursComponent {
     public fileType = FileType;
