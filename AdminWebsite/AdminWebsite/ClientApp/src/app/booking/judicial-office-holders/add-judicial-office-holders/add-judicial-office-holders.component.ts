@@ -55,7 +55,7 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
             this.removeJudiciaryParticipant(participantEmail);
         });
         this.participantsListComponent.$selectedForEdit.pipe(takeUntil(this.destroyed$)).subscribe(participant => {
-            this.prepoplateFormForEdit(participant);
+            this.prepopulateFormForEdit(participant);
         });
     }
 
@@ -64,11 +64,11 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
         if (!emailToEdit) {
             return;
         }
-        this.prepoplateFormForEdit(emailToEdit);
+        this.prepopulateFormForEdit(emailToEdit);
         this.bookingService.removeParticipantEmail();
     }
 
-    prepoplateFormForEdit(participantEmail: string) {
+    prepopulateFormForEdit(participantEmail: string) {
         const participantIndex = this.hearing.judiciaryParticipants.findIndex(x => x.email === participantEmail);
         if (participantIndex < 0) {
             this.logger.warn(`${this.loggerPrefix} Unable to find participant to edit.`, participantEmail);
