@@ -8,6 +8,6 @@
 
 using System.Reflection;
 
-[assembly: AssemblyFileVersion("1.6.1.0")]
-[assembly: AssemblyVersion("1.6.1.0")]
-[assembly: AssemblyInformationalVersion("1.6.1-VIH-5629-Add-version-property-to-healthcheck-endpoint.1+92.Branch.feature-VIH-5629-Add-version-property-to-healthcheck-endpoint.Sha.4f333f891e88913cd828ec926f3e817925db417b")]
+[assembly: AssemblyFileVersion("2.3.1.0")]
+[assembly: AssemblyVersion("2.3.1.0")]
+[assembly: AssemblyInformationalVersion("2.3.1-VIH-11026---Display-app-version.1+701.Branch.VIH-11026---Display-app-version.Sha.f89a9fdce082997c7dc52d4188964a8ad2a25099")]

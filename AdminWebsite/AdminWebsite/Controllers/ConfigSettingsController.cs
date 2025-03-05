@@ -1,4 +1,5 @@
 using System.Net;
+using System.Reflection;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -66,7 +67,7 @@ namespace AdminWebsite.Controllers
             IdpConfiguration idpConfiguration = _featureToggles.Dom1Enabled()
                 ? _dom1AdConfiguration
                 : _azureAdConfiguration;
-            
+
             clientSettings.ClientId = idpConfiguration.ClientId;
             clientSettings.TenantId = idpConfiguration.TenantId;
             clientSettings.ResourceId = idpConfiguration.ResourceId;
@@ -84,6 +85,21 @@ namespace AdminWebsite.Controllers
                 PostLogoutRedirectUri = _azureAdConfiguration.PostLogoutRedirectUri
             };
             return Ok(clientSettings);
+        }
+
+        [HttpGet("version")]
+        [AllowAnonymous]
+        [SwaggerOperation(OperationId = "GetAppVersion")]
+        [ProducesResponseType(typeof(AppVersionResponse), (int)HttpStatusCode.OK)]
+        public ActionResult<AppVersionResponse> GetVersion()
+        {
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            if (version != null)
+            {
+                var versionString = version.Major + "." + version.Minor + "." + version.Build;
+                return Ok(new AppVersionResponse { AppVersion = versionString });
+            }
+            return Ok(new AppVersionResponse { AppVersion = "Unknown" });
         }
     }
 }

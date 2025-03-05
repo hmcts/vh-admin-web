@@ -5,17 +5,23 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DashboardStubComponent } from 'src/app/testing/stubs/dashboard-stub';
 import { FooterComponent } from './footer.component';
+import { BHClient } from 'src/app/services/clients/api-client';
+import { of } from 'rxjs';
 
 describe('FooterComponent', () => {
     let component: FooterComponent;
     let fixture: ComponentFixture<FooterComponent>;
     let location: Location;
     let router: Router;
+    let bhClientSpy: jasmine.SpyObj<BHClient>;
 
     beforeEach(waitForAsync(() => {
+        bhClientSpy = jasmine.createSpyObj('BHClient', ['getAppVersion']);
+        bhClientSpy.getAppVersion.and.returnValue(of({ app_version: '1.0.0', init: () => {}, toJSON: () => ({}) }));
         TestBed.configureTestingModule({
             declarations: [FooterComponent, DashboardStubComponent],
             imports: [RouterTestingModule.withRoutes([{ path: 'dashboard', component: DashboardStubComponent }])],
+            providers: [{ provide: BHClient, useValue: bhClientSpy }],
             schemas: [NO_ERRORS_SCHEMA]
         }).compileComponents();
     }));
