@@ -7,7 +7,8 @@ import { VersionService } from 'src/app/services/version.service';
 @Component({
     selector: 'app-footer',
     styleUrls: ['./footer.component.scss'],
-    templateUrl: './footer.component.html'
+    templateUrl: './footer.component.html',
+    standalone: false
 })
 export class FooterComponent implements OnInit, OnDestroy {
     hideContactUsLink = false;
