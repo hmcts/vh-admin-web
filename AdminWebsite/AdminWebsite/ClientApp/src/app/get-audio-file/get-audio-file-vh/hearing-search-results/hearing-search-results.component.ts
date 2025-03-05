@@ -4,7 +4,8 @@ import { HearingAudioSearchModel } from 'src/app/common/model/hearing-audio-sear
 @Component({
     selector: 'app-hearing-search-results',
     templateUrl: './hearing-search-results.component.html',
-    styleUrls: ['./hearing-search-results.component.scss']
+    styleUrls: ['./hearing-search-results.component.scss'],
+    standalone: false
 })
 export class HearingSearchResultsComponent {
     @Input() results: HearingAudioSearchModel[];

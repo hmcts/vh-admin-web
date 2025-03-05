@@ -3,7 +3,8 @@ import { Component, ElementRef, Input, ViewChild, OnInit } from '@angular/core';
 @Component({
     selector: 'app-truncatable-text',
     templateUrl: './truncatable-text.component.html',
-    styleUrls: ['./truncatable-text.component.scss']
+    styleUrls: ['./truncatable-text.component.scss'],
+    standalone: false
 })
 export class TruncatableTextComponent implements OnInit {
     @ViewChild('textField', { static: false }) textField: ElementRef<HTMLSpanElement>;

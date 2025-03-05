@@ -5,7 +5,8 @@ import { CopyDetailsBase } from '../component/copy-details-base';
 @Component({
     selector: 'app-copy-conference-phone',
     templateUrl: './copy-conference-phone.component.html',
-    styleUrls: ['./copy-conference-phone.component.scss']
+    styleUrls: ['./copy-conference-phone.component.scss'],
+    standalone: false
 })
 export class CopyConferencePhoneComponent extends CopyDetailsBase implements OnInit {
     @Input() set phoneConferenceDetails(value: string) {

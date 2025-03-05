@@ -9,7 +9,8 @@ import { SecurityService } from './services/security.service';
 
 @Component({
     selector: 'app-login',
-    templateUrl: './login.component.html'
+    templateUrl: './login.component.html',
+    standalone: false
 })
 @Injectable()
 export class LoginComponent implements OnInit {

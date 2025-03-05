@@ -18,7 +18,8 @@ import { Subject } from 'rxjs';
 @Component({
     selector: 'app-allocate-hearings',
     templateUrl: './allocate-hearings.component.html',
-    styleUrls: ['./allocate-hearings.component.scss']
+    styleUrls: ['./allocate-hearings.component.scss'],
+    standalone: false
 })
 export class AllocateHearingsComponent implements OnInit, OnDestroy {
     constructor(

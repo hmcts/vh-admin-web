@@ -4,7 +4,8 @@ import { IdpProviders, SecurityService } from './services/security.service';
 import { PageUrls } from '../shared/page-url.constants';
 @Component({
     selector: 'app-reform-login',
-    templateUrl: './login.component.html'
+    templateUrl: './login.component.html',
+    standalone: false
 })
 export class ReformLoginComponent implements OnInit {
     constructor(

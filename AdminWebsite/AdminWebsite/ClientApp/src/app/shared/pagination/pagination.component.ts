@@ -5,7 +5,8 @@ import { PaginationModel } from './pagination-model';
 @Component({
     selector: 'app-pagination',
     templateUrl: './pagination.component.html',
-    styleUrls: ['./pagination.component.css']
+    styleUrls: ['./pagination.component.css'],
+    standalone: false
 })
 export class PaginationComponent {
     @Input() pagination: PaginationModel = new PaginationModel(0, 1, 1, 5);

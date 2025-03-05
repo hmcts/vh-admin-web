@@ -6,7 +6,8 @@ import { LaunchDarklyService, FeatureFlags } from 'src/app/services/launch-darkl
 
 @Component({
     selector: 'app-booking-edit',
-    templateUrl: './booking-edit.component.html'
+    templateUrl: './booking-edit.component.html',
+    standalone: false
 })
 export class BookingEditComponent {
     constructor(

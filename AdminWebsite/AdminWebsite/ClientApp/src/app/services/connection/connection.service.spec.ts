@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { discardPeriodicTasks, fakeAsync, inject, TestBed, tick } from '@angular/core/testing';
 import { firstValueFrom, of } from 'rxjs';
 import { ConnectionServiceConfigToken } from './connection';
@@ -11,11 +11,12 @@ describe('Connection service (connected)', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientModule],
+            imports: [],
             providers: [
                 HttpClient,
                 // inject a short interval, 1s, just for testing
-                { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } }
+                { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } },
+                provideHttpClient(withInterceptorsFromDi())
             ]
         });
     });
@@ -60,8 +61,12 @@ describe('connection service (disconnected)', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [ConnectionService, { provide: ConnectionServiceConfigToken, useValue: { url, maxRetryAttempts: 2 } }],
-            imports: [HttpClientModule]
+            imports: [],
+            providers: [
+                ConnectionService,
+                { provide: ConnectionServiceConfigToken, useValue: { url, maxRetryAttempts: 2 } },
+                provideHttpClient(withInterceptorsFromDi())
+            ]
         });
 
         service = TestBed.inject(ConnectionService);

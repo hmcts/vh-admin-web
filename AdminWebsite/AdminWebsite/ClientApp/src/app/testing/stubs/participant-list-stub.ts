@@ -1,8 +1,12 @@
-import { Component, Input, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input } from '@angular/core';
 import { ParticipantRequest } from 'src/app/services/clients/api-client';
 import { VHBooking } from 'src/app/common/model/vh-booking';
 
-@Component({ selector: 'app-participant-list', template: '<div></div>' })
+@Component({
+    selector: 'app-participant-list',
+    template: '<div></div>',
+    standalone: false
+})
 export class ParticipantsListStubComponent {
     @Input() isSummaryPage = false;
     @Input() canEdit = false;

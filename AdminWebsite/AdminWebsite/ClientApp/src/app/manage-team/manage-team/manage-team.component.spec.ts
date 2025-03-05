@@ -15,7 +15,11 @@ import { RolesToDisplayPipe } from '../../shared/pipes/roles-to-display.pipe';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TooltipDirective } from 'src/app/shared/directives/tooltip.directive';
 
-@Component({ selector: 'app-justice-user-form', template: '' })
+@Component({
+    selector: 'app-justice-user-form',
+    template: '',
+    standalone: false
+})
 export class JusticeUserFormStubComponent {}
 
 describe('ManageTeamComponent', () => {

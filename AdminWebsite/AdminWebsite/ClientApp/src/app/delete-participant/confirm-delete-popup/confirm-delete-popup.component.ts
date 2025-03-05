@@ -3,7 +3,8 @@ import { Logger } from 'src/app/services/logger';
 
 @Component({
     selector: 'app-confirm-delete-popup',
-    templateUrl: './confirm-delete-popup.component.html'
+    templateUrl: './confirm-delete-popup.component.html',
+    standalone: false
 })
 export class ConfirmDeletePopupComponent {
     private readonly loggerPrefix = '[DeleteParticipant] -';

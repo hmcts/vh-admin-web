@@ -9,7 +9,8 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 @Component({
     selector: 'app-edit-participant',
     templateUrl: './edit-participant.component.html',
-    styleUrls: ['./edit-participant.component.scss']
+    styleUrls: ['./edit-participant.component.scss'],
+    standalone: false
 })
 export class EditParticipantComponent implements OnInit {
     private readonly loggerPrefix = '[EditParticipant] -';

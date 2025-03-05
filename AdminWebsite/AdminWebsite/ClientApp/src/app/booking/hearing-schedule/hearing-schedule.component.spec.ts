@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -427,7 +427,8 @@ describe('HearingScheduleComponent returning to page', () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
-            imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
+            declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent],
+            imports: [ReactiveFormsModule, RouterTestingModule],
             providers: [
                 { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
@@ -436,9 +437,9 @@ describe('HearingScheduleComponent returning to page', () => {
                 { provide: BreadcrumbComponent, useValue: BreadcrumbStubComponent },
                 DatePipe,
                 { provide: Logger, useValue: loggerSpy },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
-            ],
-            declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
+                provideHttpClient(withInterceptorsFromDi())
+            ]
         }).compileComponents();
     }));
 
@@ -593,7 +594,14 @@ describe('HearingScheduleComponent multi days hearing', () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
-            imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
+            declarations: [
+                HearingScheduleComponent,
+                BreadcrumbStubComponent,
+                CancelPopupComponent,
+                DiscardConfirmPopupComponent,
+                EditHearingDatesComponent
+            ],
+            imports: [ReactiveFormsModule, RouterTestingModule],
             providers: [
                 { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
@@ -602,14 +610,8 @@ describe('HearingScheduleComponent multi days hearing', () => {
                 { provide: BreadcrumbComponent, useValue: BreadcrumbStubComponent },
                 DatePipe,
                 { provide: Logger, useValue: loggerSpy },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
-            ],
-            declarations: [
-                HearingScheduleComponent,
-                BreadcrumbStubComponent,
-                CancelPopupComponent,
-                DiscardConfirmPopupComponent,
-                EditHearingDatesComponent
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
+                provideHttpClient(withInterceptorsFromDi())
             ]
         }).compileComponents();
     }));
