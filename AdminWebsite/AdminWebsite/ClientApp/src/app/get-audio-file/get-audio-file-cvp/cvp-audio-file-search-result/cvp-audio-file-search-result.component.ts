@@ -6,7 +6,8 @@ import { Logger } from 'src/app/services/logger';
 @Component({
     selector: 'app-cvp-audio-file-search-result',
     templateUrl: './cvp-audio-file-search-result.component.html',
-    styleUrls: ['./cvp-audio-file-search-result.component.scss']
+    styleUrls: ['./cvp-audio-file-search-result.component.scss'],
+    standalone: false
 })
 export class CvpAudioFileSearchResultComponent {
     private readonly loggerPrefix = '[CvpAudioFileSearchResult] -';

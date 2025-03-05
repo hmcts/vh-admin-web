@@ -9,7 +9,8 @@ import { VHParticipant } from 'src/app/common/model/vh-participant';
 
 @Component({
     selector: 'app-video-endpoint-form',
-    templateUrl: './video-endpoint-form.component.html'
+    templateUrl: './video-endpoint-form.component.html',
+    standalone: false
 })
 export class VideoEndpointFormComponent {
     errorMessages = Constants.Error;

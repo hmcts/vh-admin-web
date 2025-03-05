@@ -1,6 +1,6 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { inject, TestBed } from '@angular/core/testing';
 import { ParticipantService } from './participant.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HearingRoleResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { HearingRoleModel } from 'src/app/common/model/hearing-role.model';
@@ -12,8 +12,8 @@ describe('ParticipantService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientModule],
-            providers: [ParticipantService, { provide: Logger, useValue: loggerSpy }]
+            imports: [],
+            providers: [ParticipantService, { provide: Logger, useValue: loggerSpy }, provideHttpClient(withInterceptorsFromDi())]
         });
     });
 

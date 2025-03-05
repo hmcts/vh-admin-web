@@ -9,7 +9,8 @@ import { ReferenceDataService } from 'src/app/services/reference-data.service';
 @Component({
     selector: 'app-case-types-menu',
     templateUrl: './case-types-menu.component.html',
-    styleUrls: ['./case-types-menu.component.scss']
+    styleUrls: ['./case-types-menu.component.scss'],
+    standalone: false
 })
 export class CaseTypesMenuComponent extends MenuBase {
     loggerPrefix = '[MenuCaseTypes] -';

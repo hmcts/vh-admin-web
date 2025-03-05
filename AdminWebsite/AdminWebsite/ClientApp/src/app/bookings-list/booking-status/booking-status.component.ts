@@ -3,7 +3,8 @@ import { VHBooking } from 'src/app/common/model/vh-booking';
 @Component({
     selector: 'app-booking-status',
     templateUrl: './booking-status.component.html',
-    styleUrls: ['./booking-status.component.scss']
+    styleUrls: ['./booking-status.component.scss'],
+    standalone: false
 })
 export class BookingStatusComponent {
     @Input() bookingDetails: VHBooking;

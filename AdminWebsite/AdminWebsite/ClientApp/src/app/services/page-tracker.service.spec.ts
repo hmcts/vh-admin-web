@@ -1,11 +1,15 @@
-import { TestBed, tick, fakeAsync } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { PageTrackerService } from './page-tracker.service';
 import { AppInsightsLogger } from './app-insights-logger.service';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Component, NgModule } from '@angular/core';
 
-@Component({ selector: 'app-mock-component', template: '' })
+@Component({
+    selector: 'app-mock-component',
+    template: '',
+    standalone: false
+})
 class MockComponent {}
 
 @NgModule({ declarations: [MockComponent] })

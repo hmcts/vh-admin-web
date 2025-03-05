@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, inject, TestBed, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
@@ -22,12 +22,14 @@ describe('ErrorComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [ErrorComponent],
-            imports: [HttpClientTestingModule],
+            imports: [],
             providers: [
                 { provide: Router, useValue: routerMock },
                 HttpClient,
                 ConnectionService,
-                { provide: PageTrackerService, useValue: pageTrackerMock }
+                { provide: PageTrackerService, useValue: pageTrackerMock },
+                provideHttpClient(withInterceptorsFromDi()),
+                provideHttpClientTesting()
             ]
         }).compileComponents();
     }));

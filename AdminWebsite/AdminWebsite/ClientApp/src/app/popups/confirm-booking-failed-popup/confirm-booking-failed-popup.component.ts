@@ -2,7 +2,8 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 @Component({
     selector: 'app-confirm-booking-failed-popup',
-    templateUrl: './confirm-booking-failed-popup.component.html'
+    templateUrl: './confirm-booking-failed-popup.component.html',
+    standalone: false
 })
 export class ConfirmBookingFailedPopupComponent implements OnInit {
     @Output() close: EventEmitter<any> = new EventEmitter<any>();

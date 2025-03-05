@@ -7,7 +7,8 @@ import { VHBooking } from 'src/app/common/model/vh-booking';
 @Component({
     selector: 'app-booking-participant-details',
     templateUrl: 'participant-details.component.html',
-    styleUrls: ['participant-details.component.scss']
+    styleUrls: ['participant-details.component.scss'],
+    standalone: false
 })
 export class ParticipantDetailsComponent {
     @Input()

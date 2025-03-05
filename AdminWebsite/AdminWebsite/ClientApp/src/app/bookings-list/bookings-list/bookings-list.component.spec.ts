@@ -1,11 +1,11 @@
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { Component, Directive, EventEmitter, Output } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
-import * as moment from 'moment';
+import moment from 'moment';
 import { MomentModule } from 'ngx-moment';
 import { of } from 'rxjs';
 import { ConfigService } from 'src/app/services/config.service';
@@ -23,9 +23,9 @@ import {
     BookingsByDateResponse,
     BookingsHearingResponse,
     BookingsResponse,
+    CaseTypeResponse,
     HearingDetailsResponse,
     HearingVenueResponse,
-    CaseTypeResponse,
     JusticeUserResponse
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -484,14 +484,18 @@ export class ArrayBookingslistModelTestData {
     }
 }
 
-@Directive({ selector: '[appScrollable]' })
+@Directive({
+    selector: '[appScrollable]',
+    standalone: false
+})
 class ScrollableDirective {
     @Output() scrollPosition = new EventEmitter();
 }
 
 @Component({
     selector: 'app-booking-details',
-    template: ''
+    template: '',
+    standalone: false
 })
 class BookingDetailsComponent {}
 
@@ -634,7 +638,7 @@ describe('BookingsListComponent', () => {
                 VenuesMenuComponent,
                 BookingStatusComponent
             ],
-            imports: [HttpClientModule, MomentModule, ReactiveFormsModule, NgSelectModule],
+            imports: [MomentModule, ReactiveFormsModule, NgSelectModule],
             providers: [
                 FormBuilder,
                 ConfigService,
@@ -647,7 +651,8 @@ describe('BookingsListComponent', () => {
                 { provide: ReferenceDataService, useValue: referenceDataServiceSpy },
                 { provide: JusticeUsersService, useValue: justiceUserServiceSpy },
                 { provide: JusticeUsersMenuComponent, useClass: JusticeUserMenuStubComponent },
-                DatePipe
+                DatePipe,
+                provideHttpClient(withInterceptorsFromDi())
             ]
         }).compileComponents();
 

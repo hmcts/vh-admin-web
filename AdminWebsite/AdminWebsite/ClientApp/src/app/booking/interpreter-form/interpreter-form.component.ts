@@ -7,7 +7,8 @@ import { InterpreterSelectedDto } from './interpreter-selected.model';
 
 @Component({
     selector: 'app-interpreter-form',
-    templateUrl: './interpreter-form.component.html'
+    templateUrl: './interpreter-form.component.html',
+    standalone: false
 })
 export class InterpreterFormComponent implements OnInit, OnDestroy {
     forceDisplayForm: boolean;

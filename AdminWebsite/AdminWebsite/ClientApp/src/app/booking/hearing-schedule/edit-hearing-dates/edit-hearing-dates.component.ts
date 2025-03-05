@@ -5,7 +5,8 @@ import { VHBooking } from 'src/app/common/model/vh-booking';
 
 @Component({
     selector: 'app-edit-hearing-dates',
-    templateUrl: './edit-hearing-dates.component.html'
+    templateUrl: './edit-hearing-dates.component.html',
+    standalone: false
 })
 export class EditHearingDatesComponent {
     @Input() hearingsInGroupToEdit: VHBooking[];

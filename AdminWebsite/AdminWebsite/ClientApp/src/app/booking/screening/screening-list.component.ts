@@ -6,7 +6,8 @@ import { VHParticipant } from 'src/app/common/model/vh-participant';
 @Component({
     selector: 'app-screening-list',
     templateUrl: './screening-list.component.html',
-    styleUrls: ['./screening-list.component.scss']
+    styleUrls: ['./screening-list.component.scss'],
+    standalone: false
 })
 export class ScreeningListComponent implements OnChanges {
     participantsWithScreening: VHParticipant[] = [];

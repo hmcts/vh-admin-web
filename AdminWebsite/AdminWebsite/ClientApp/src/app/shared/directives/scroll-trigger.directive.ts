@@ -2,7 +2,8 @@ import { Directive, HostListener, EventEmitter, Output, ElementRef } from '@angu
 import { WindowScrolling } from '../window-scrolling';
 
 @Directive({
-    selector: '[appScrollTrigger]'
+    selector: '[appScrollTrigger]',
+    standalone: false
 })
 export class ScrollTriggerDirective {
     private atBottom = false;

@@ -11,7 +11,8 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 @Component({
     selector: 'app-delete-participant-search-results',
     templateUrl: './delete-participant-search-results.component.html',
-    styleUrls: ['./delete-participant-search-results.component.scss']
+    styleUrls: ['./delete-participant-search-results.component.scss'],
+    standalone: false
 })
 export class DeleteParticipantSearchResultsComponent {
     private readonly loggerPrefix = '[DeleteParticipant] -';

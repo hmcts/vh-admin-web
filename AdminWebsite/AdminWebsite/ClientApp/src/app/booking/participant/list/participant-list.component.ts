@@ -12,7 +12,8 @@ import { mapJudicialMemberDtoToVHParticipant } from 'src/app/common/model/api-co
 @Component({
     selector: 'app-participant-list',
     templateUrl: './participant-list.component.html',
-    styleUrls: ['./participant-list.component.scss']
+    styleUrls: ['./participant-list.component.scss'],
+    standalone: false
 })
 export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnDestroy {
     @Input() hearing: VHBooking;

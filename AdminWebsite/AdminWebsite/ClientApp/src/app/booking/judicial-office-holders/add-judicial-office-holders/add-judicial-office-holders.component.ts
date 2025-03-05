@@ -12,7 +12,8 @@ import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-add-judicial-office-holders',
-    templateUrl: './add-judicial-office-holders.component.html'
+    templateUrl: './add-judicial-office-holders.component.html',
+    standalone: false
 })
 export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
     noPanelMemberText = 'Add a Judicial Office Holder';

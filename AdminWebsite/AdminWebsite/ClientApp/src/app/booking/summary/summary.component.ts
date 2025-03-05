@@ -30,7 +30,8 @@ import { faLink } from '@fortawesome/free-solid-svg-icons';
 @Component({
     selector: 'app-summary',
     templateUrl: './summary.component.html',
-    styleUrls: ['./summary.component.css']
+    styleUrls: ['./summary.component.css'],
+    standalone: false
 })
 export class SummaryComponent implements OnInit, OnDestroy {
     protected readonly loggerPrefix: string = '[Booking] - [Summary] -';

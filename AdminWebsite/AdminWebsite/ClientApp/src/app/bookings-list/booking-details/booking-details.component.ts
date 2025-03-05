@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import * as moment from 'moment';
+import moment from 'moment';
 import { interval, lastValueFrom, Subject, Subscription, takeUntil } from 'rxjs';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingService } from '../../services/booking.service';
@@ -20,7 +20,8 @@ import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/model
 @Component({
     selector: 'app-booking-details',
     templateUrl: 'booking-details.component.html',
-    styleUrls: ['booking-details.component.css']
+    styleUrls: ['booking-details.component.css'],
+    standalone: false
 })
 export class BookingDetailsComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[BookingDetails] -';

@@ -8,7 +8,8 @@ import { ParticipantDeleteService } from '../../services/participant-delete-serv
 
 @Component({
     selector: 'app-delete-participant',
-    templateUrl: './delete-participant-search.component.html'
+    templateUrl: './delete-participant-search.component.html',
+    standalone: false
 })
 export class DeleteParticipantSearchComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[DeleteParticipant] -';
