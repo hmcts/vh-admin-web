@@ -6,7 +6,8 @@ import { ConfigService } from '../../services/config.service';
 @Component({
     selector: 'app-copy-join-link',
     templateUrl: './copy-join-link.component.html',
-    styleUrls: ['./copy-join-link.component.scss']
+    styleUrls: ['./copy-join-link.component.scss'],
+    standalone: false
 })
 export class CopyJoinLinkComponent extends CopyDetailsBase implements OnInit {
     @Input() set quickLinkDetails(value: string) {

@@ -3,7 +3,8 @@ import { JusticeUserRole } from '../../services/clients/api-client';
 import { AvailableRoles } from '../../common/constants';
 
 @Pipe({
-    name: 'rolesToDisplay'
+    name: 'rolesToDisplay',
+    standalone: false
 })
 export class RolesToDisplayPipe implements PipeTransform {
     transform(roles: JusticeUserRole[]): string {

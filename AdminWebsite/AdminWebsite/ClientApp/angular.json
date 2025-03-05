@@ -1,126 +1,126 @@
 {
-  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "version": 1,
-  "newProjectRoot": "projects",
-  "projects": {
-    "AdminWebsite": {
-      "root": "",
-      "sourceRoot": "src",
-      "projectType": "application",
-      "prefix": "app",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "outputPath": "dist",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "src/tsconfig.app.json",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets",
-              "src/web.config",
-              {
-                "glob": "*",
-                "input": "node_modules/govuk-frontend/dist/govuk/assets/fonts",
-                "output": "assets/fonts/"
-              },
-              {
-                "glob": "*",
-                "input": "node_modules/govuk-frontend/dist/govuk/assets/images",
-                "output": "assets/images/"
-              }
-            ],
-            "styles": ["src/styles.scss"],
-            "scripts": [],
-            "vendorChunk": true,
-            "extractLicenses": false,
-            "buildOptimizer": false,
-            "sourceMap": true,
-            "optimization": false,
-            "namedChunks": true
-          },
-          "configurations": {
-            "production": {
-              "budgets": [
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "version": 1,
+    "newProjectRoot": "projects",
+    "projects": {
+        "AdminWebsite": {
+            "root": "",
+            "sourceRoot": "src",
+            "projectType": "application",
+            "prefix": "app",
+            "schematics": {},
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:browser",
+                    "options": {
+                        "outputPath": "dist",
+                        "index": "src/index.html",
+                        "main": "src/main.ts",
+                        "polyfills": "src/polyfills.ts",
+                        "tsConfig": "src/tsconfig.app.json",
+                        "assets": [
+                            "src/favicon.ico",
+                            "src/assets",
+                            "src/web.config",
+                            {
+                                "glob": "*",
+                                "input": "node_modules/govuk-frontend/dist/govuk/assets/fonts",
+                                "output": "assets/fonts/"
+                            },
+                            {
+                                "glob": "*",
+                                "input": "node_modules/govuk-frontend/dist/govuk/assets/images",
+                                "output": "assets/images/"
+                            }
+                        ],
+                        "styles": ["src/styles.scss"],
+                        "scripts": [],
+                        "vendorChunk": true,
+                        "extractLicenses": false,
+                        "buildOptimizer": false,
+                        "sourceMap": true,
+                        "optimization": false,
+                        "namedChunks": true
+                    },
+                    "configurations": {
+                        "production": {
+                            "budgets": [
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb"
+                                }
+                            ],
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.prod.ts"
+                                }
+                            ],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "namedChunks": false,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "buildOptimizer": true
+                        }
+                    },
+                    "defaultConfiguration": ""
+                },
+                "serve": {
+                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "options": {
+                        "buildTarget": "AdminWebsite:build"
+                    },
+                    "configurations": {
+                        "production": {
+                            "buildTarget": "AdminWebsite:build:production"
+                        }
+                    }
+                },
+                "extract-i18n": {
+                    "builder": "@angular-devkit/build-angular:extract-i18n",
+                    "options": {
+                        "buildTarget": "AdminWebsite:build"
+                    }
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "src/test.ts",
+                        "polyfills": "src/polyfills.ts",
+                        "tsConfig": "src/tsconfig.spec.json",
+                        "karmaConfig": "src/karma.conf.js",
+                        "codeCoverageExclude": ["src/app/security/auth-config.module.ts", "src/app/services/clients/*", "src/app/testing/**", "src/app/app.module.ts"],
+                        "styles": ["src/styles.scss"],
+                        "scripts": [],
+                        "assets": [
+                            "src/favicon.ico",
+                            "src/assets",
+                            {
+                                "glob": "*",
+                                "input": "node_modules/govuk-frontend/dist/govuk/assets/fonts",
+                                "output": "assets/fonts/"
+                            },
+                            {
+                                "glob": "*",
+                                "input": "node_modules/govuk-frontend/dist/govuk/assets/images",
+                                "output": "assets/images/"
+                            }
+                        ]
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-eslint/builder:lint",
+                    "options": {
+                        "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+                    }
                 }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true
             }
-          },
-          "defaultConfiguration": ""
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "buildTarget": "AdminWebsite:build"
-          },
-          "configurations": {
-            "production": {
-              "buildTarget": "AdminWebsite:build:production"
-            }
-          }
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "buildTarget": "AdminWebsite:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "src/tsconfig.spec.json",
-            "karmaConfig": "src/karma.conf.js",
-            "codeCoverageExclude": ["src/app/security/auth-config.module.ts", "src/app/services/clients/*", "src/app/testing/**"],
-            "styles": ["src/styles.scss"],
-            "scripts": [],
-            "assets": [
-              "src/favicon.ico",
-              "src/assets",
-              {
-                "glob": "*",
-                "input": "node_modules/govuk-frontend/dist/govuk/assets/fonts",
-                "output": "assets/fonts/"
-              },
-              {
-                "glob": "*",
-                "input": "node_modules/govuk-frontend/dist/govuk/assets/images",
-                "output": "assets/images/"
-              }
-            ]
-          }
-        },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
-          }
         }
-      }
+    },
+    "cli": {
+        "analytics": "a4fce46a-39b8-4b94-a0be-6e6dd4751653",
+        "schematicCollections": ["@angular-eslint/schematics"]
     }
-  },
-  "cli": {
-    "analytics": "a4fce46a-39b8-4b94-a0be-6e6dd4751653",
-    "schematicCollections": ["@angular-eslint/schematics"]
-  }
 }

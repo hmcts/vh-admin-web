@@ -5,7 +5,8 @@ import { InterpreterSelectedDto } from '../../interpreter-form/interpreter-selec
 @Component({
     selector: 'app-video-endpoint-item',
     templateUrl: './video-endpoint-item.component.html',
-    styleUrl: './video-endpoint-item.component.scss'
+    styleUrl: './video-endpoint-item.component.scss',
+    standalone: false
 })
 export class VideoEndpointItemComponent {
     @Input() set videoEndpoint(videoEndpoint: VideoAccessPointDto) {

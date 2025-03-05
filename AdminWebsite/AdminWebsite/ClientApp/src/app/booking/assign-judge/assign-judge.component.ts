@@ -19,7 +19,8 @@ import { VHParticipant } from 'src/app/common/model/vh-participant';
 @Component({
     selector: 'app-assign-judge',
     templateUrl: './assign-judge.component.html',
-    styleUrls: ['./assign-judge.component.css']
+    styleUrls: ['./assign-judge.component.css'],
+    standalone: false
 })
 export class AssignJudgeComponent extends BookingBaseComponent implements OnInit, OnDestroy {
     judgeLocator = 'judge-email';

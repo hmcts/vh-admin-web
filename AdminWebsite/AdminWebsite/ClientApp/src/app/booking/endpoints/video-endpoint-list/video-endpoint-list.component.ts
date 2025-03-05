@@ -4,7 +4,8 @@ import { VideoAccessPointDto } from '../models/video-access-point.model';
 @Component({
     selector: 'app-video-endpoint-list',
     templateUrl: './video-endpoint-list.component.html',
-    styleUrl: './video-endpoint-list.component.scss'
+    styleUrl: './video-endpoint-list.component.scss',
+    standalone: false
 })
 export class VideoEndpointListComponent {
     @Input() videoEndpoints: VideoAccessPointDto[];

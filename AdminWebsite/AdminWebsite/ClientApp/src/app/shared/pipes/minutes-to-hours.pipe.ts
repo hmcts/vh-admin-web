@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { DateAndTimeService } from '../../services/date-and-time.service';
 
 @Pipe({
-    name: 'minutesToHours'
+    name: 'minutesToHours',
+    standalone: false
 })
 export class MinutesToHoursPipe implements PipeTransform {
     constructor(private readonly dateTimeService: DateAndTimeService) {}

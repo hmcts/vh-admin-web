@@ -6,7 +6,8 @@ import { JusticeUsersService } from 'src/app/services/justice-users.service';
 
 @Component({
     selector: 'app-confirm-restore-justice-user-popup',
-    templateUrl: './confirm-restore-justice-user-popup.component.html'
+    templateUrl: './confirm-restore-justice-user-popup.component.html',
+    standalone: false
 })
 export class ConfirmRestoreJusticeUserPopupComponent {
     errorIcon = faExclamationCircle;

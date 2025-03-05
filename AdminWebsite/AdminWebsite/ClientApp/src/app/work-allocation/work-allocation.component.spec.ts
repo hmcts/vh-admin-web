@@ -10,13 +10,15 @@ import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.ser
 
 @Component({
     selector: 'app-upload-work-hours',
-    template: '<span class="govuk-details__summary-text" id="upload-availability"> Upload working hours / non-availability </span>'
+    template: '<span class="govuk-details__summary-text" id="upload-availability"> Upload working hours / non-availability </span>',
+    standalone: false
 })
 class UploadWorkHoursStubComponent {}
 
 @Component({
     selector: 'app-edit-work-hours',
-    template: '<span class="govuk-details__summary-text" id="edit-availability">  Edit working hours / non-availability  </span>'
+    template: '<span class="govuk-details__summary-text" id="edit-availability">  Edit working hours / non-availability  </span>',
+    standalone: false
 })
 class EditWorkHoursStubComponent {
     @Input() isVhTeamLeader: boolean;
@@ -25,7 +27,8 @@ class EditWorkHoursStubComponent {
 
 @Component({
     selector: 'app-manage-team',
-    template: ''
+    template: '',
+    standalone: false
 })
 class ManageTeamStubComponent {
     @Input() showHeader = true;
@@ -33,7 +36,8 @@ class ManageTeamStubComponent {
 
 @Component({
     selector: 'app-allocate-hearings',
-    template: '<span class="govuk-details__summary-text" id="allocate-hearings">  Allocate hearings  </span>'
+    template: '<span class="govuk-details__summary-text" id="allocate-hearings">  Allocate hearings  </span>',
+    standalone: false
 })
 class AllocateHearingsStubComponent {}
 

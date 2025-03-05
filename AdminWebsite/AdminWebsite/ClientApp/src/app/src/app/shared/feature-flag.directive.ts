@@ -4,7 +4,8 @@ import { Subscription } from 'rxjs';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 @Directive({
-    selector: '[appFeatureFlag]'
+    selector: '[appFeatureFlag]',
+    standalone: false
 })
 export class FeatureFlagDirective {
     private subscription: Subscription;

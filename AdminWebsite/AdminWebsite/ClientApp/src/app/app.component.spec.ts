@@ -1,4 +1,4 @@
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { fakeAsync, inject, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -70,7 +70,6 @@ describe('AppComponent', () => {
 
         httpClient = jasmine.createSpyObj<HttpClient>(['head']);
         TestBed.configureTestingModule({
-            imports: [HttpClientModule, RouterTestingModule],
             declarations: [
                 AppComponent,
                 HeaderComponent,
@@ -80,6 +79,7 @@ describe('AppComponent', () => {
                 UnsupportedBrowserComponent,
                 WaitPopupComponent
             ],
+            imports: [RouterTestingModule],
             providers: [
                 { provide: SecurityService, useValue: mockSecurityService },
                 { provide: ConfigService, useValue: configServiceSpy },
@@ -89,7 +89,8 @@ describe('AppComponent', () => {
                 { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
                 { provide: DeviceType, useValue: deviceTypeServiceSpy },
                 { provide: DynatraceService, useValue: dynatraceServiceSpy },
-                { provide: ConnectionService, useFactory: () => mockConnectionService }
+                { provide: ConnectionService, useFactory: () => mockConnectionService },
+                provideHttpClient(withInterceptorsFromDi())
             ]
         }).compileComponents();
     }));
@@ -164,7 +165,6 @@ describe('AppComponent - ConnectionService', () => {
         deviceTypeServiceSpy = jasmine.createSpyObj<DeviceType>(['isSupportedBrowser']);
 
         TestBed.configureTestingModule({
-            imports: [HttpClientModule, RouterTestingModule],
             declarations: [
                 AppComponent,
                 HeaderComponent,
@@ -174,6 +174,7 @@ describe('AppComponent - ConnectionService', () => {
                 UnsupportedBrowserComponent,
                 WaitPopupComponent
             ],
+            imports: [RouterTestingModule],
             providers: [
                 { provide: SecurityService, useValue: mockSecurityService },
                 { provide: Router, useValue: router },
@@ -182,7 +183,8 @@ describe('AppComponent - ConnectionService', () => {
                 { provide: DeviceType, useValue: deviceTypeServiceSpy },
                 { provide: ConfigService, useValue: configServiceSpy },
                 { provide: DynatraceService, useValue: dynatraceServiceSpy },
-                { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } }
+                { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } },
+                provideHttpClient(withInterceptorsFromDi())
             ]
         }).compileComponents();
         videoHearingServiceSpy.cancelVhoNonAvailabiltiesRequest.calls.reset();

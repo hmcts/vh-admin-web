@@ -3,7 +3,8 @@ import { Component, EventEmitter, Output, Input } from '@angular/core';
 @Component({
     selector: 'app-cancel-popup',
     templateUrl: './cancel-popup.component.html',
-    styleUrls: ['./cancel-popup.component.css']
+    styleUrls: ['./cancel-popup.component.css'],
+    standalone: false
 })
 export class CancelPopupComponent {
     @Output() continueBooking: EventEmitter<any> = new EventEmitter<any>();

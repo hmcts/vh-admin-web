@@ -6,7 +6,8 @@ import { Logger } from 'src/app/services/logger';
 
 @Component({
     selector: 'app-cancel-booking-popup',
-    templateUrl: './cancel-booking-popup.component.html'
+    templateUrl: './cancel-booking-popup.component.html',
+    standalone: false
 })
 export class CancelBookingPopupComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[CancelBookingPopup] -';

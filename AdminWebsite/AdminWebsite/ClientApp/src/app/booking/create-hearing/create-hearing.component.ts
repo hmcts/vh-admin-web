@@ -22,7 +22,8 @@ import { CaseTypeModel } from 'src/app/common/model/case-type.model';
 @Component({
     selector: 'app-create-hearing',
     templateUrl: './create-hearing.component.html',
-    styleUrls: ['./create-hearing.component.scss']
+    styleUrls: ['./create-hearing.component.scss'],
+    standalone: false
 })
 export class CreateHearingComponent extends BookingBaseComponent implements OnInit, OnDestroy {
     attemptingCancellation: boolean;

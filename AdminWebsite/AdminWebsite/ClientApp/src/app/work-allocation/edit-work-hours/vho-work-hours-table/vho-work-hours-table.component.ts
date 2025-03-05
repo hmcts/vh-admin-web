@@ -12,7 +12,8 @@ export class ValidationFailure {
 
 @Component({
     selector: 'app-vho-work-hours-table',
-    templateUrl: './vho-work-hours-table.component.html'
+    templateUrl: './vho-work-hours-table.component.html',
+    standalone: false
 })
 export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
     constructor(private readonly videoHearingsService: VideoHearingsService) {}

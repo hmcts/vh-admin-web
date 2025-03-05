@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -237,7 +237,8 @@ describe('CreateHearingComponent with single Service', () => {
         refDataServiceSpy.getCaseTypes.and.returnValue(of(MockValues.CaseTypesSingle));
 
         TestBed.configureTestingModule({
-            imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
+            declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent],
+            imports: [ReactiveFormsModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 { provide: ReferenceDataService, useValue: refDataServiceSpy },
@@ -246,9 +247,9 @@ describe('CreateHearingComponent with single Service', () => {
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
                 { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
-                { provide: BreadcrumbComponent, useClass: BreadcrumbStubComponent }
-            ],
-            declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
+                { provide: BreadcrumbComponent, useClass: BreadcrumbStubComponent },
+                provideHttpClient(withInterceptorsFromDi())
+            ]
         }).compileComponents();
 
         fixture = TestBed.createComponent(CreateHearingComponent);
@@ -304,7 +305,8 @@ describe('CreateHearingComponent with existing request in session', () => {
         refDataServiceSpy.getCaseTypes.and.returnValue(of(MockValues.CaseTypesList));
 
         TestBed.configureTestingModule({
-            imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
+            declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent],
+            imports: [ReactiveFormsModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 { provide: ReferenceDataService, useValue: refDataServiceSpy },
@@ -313,9 +315,9 @@ describe('CreateHearingComponent with existing request in session', () => {
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
                 { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
-                { provide: BreadcrumbComponent, useClass: BreadcrumbStubComponent }
-            ],
-            declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
+                { provide: BreadcrumbComponent, useClass: BreadcrumbStubComponent },
+                provideHttpClient(withInterceptorsFromDi())
+            ]
         }).compileComponents();
 
         const existingCase = new CaseModel();

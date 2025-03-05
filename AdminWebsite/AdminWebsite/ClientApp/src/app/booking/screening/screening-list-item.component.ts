@@ -7,7 +7,8 @@ import { VHParticipant } from 'src/app/common/model/vh-participant';
 @Component({
     selector: 'app-screening-list-item',
     templateUrl: './screening-list-item.component.html',
-    styleUrls: ['./screening-list-item.component.scss']
+    styleUrls: ['./screening-list-item.component.scss'],
+    standalone: false
 })
 export class ScreeningListItemComponent implements OnChanges {
     @Output() deleteScreening = new EventEmitter<void>();
