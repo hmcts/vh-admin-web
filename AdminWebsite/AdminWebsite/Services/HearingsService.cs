@@ -22,6 +22,7 @@ namespace AdminWebsite.Services
         Task<IParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, IParticipantRequest newParticipant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
         Task ProcessEndpoints(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList);
         UpdateHearingEndpointsRequestV2 MapUpdateHearingEndpointsRequestV2(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList, HearingChanges hearingChanges = null);
+        UpdateEndpointRequestV2 MapToUpdateEndpointRequest(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint, IEnumerable<IParticipantRequest> newParticipantList);
     }
 
     public class HearingsService : IHearingsService
@@ -192,7 +193,7 @@ namespace AdminWebsite.Services
             return request;
         }
 
-        private static void UpdateEndpointWithNewlyAddedParticipant(List<IParticipantRequest> newParticipantList, EditEndpointRequest endpoint)
+        public static void UpdateEndpointWithNewlyAddedParticipant(List<IParticipantRequest> newParticipantList, EditEndpointRequest endpoint)
         {
             var epToUpdate = newParticipantList
                 .Find(p => p.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,
@@ -240,7 +241,7 @@ namespace AdminWebsite.Services
             await _bookingsApiClient.UpdateEndpointV2Async(hearing.Id, endpoint.Id!.Value, request);
         }
 
-        private UpdateEndpointRequestV2 MapToUpdateEndpointRequest(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint,
+        public UpdateEndpointRequestV2 MapToUpdateEndpointRequest(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint,
             IEnumerable<IParticipantRequest> newParticipantList)
         {
             var existingEndpointToEdit = hearing.Endpoints.Find(e => e.Id.Equals(endpoint.Id));
