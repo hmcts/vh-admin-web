@@ -1,19 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Models;
-using AdminWebsite.Services;
 using BookingsApi.Contract.Interfaces.Requests;
 using BookingsApi.Contract.V2.Requests;
 
 namespace AdminWebsite.Mappers;
 
-public class UpdateHearingParticipantsRequestV2Mapper(IHearingsService hearingsService)
+public static class UpdateHearingParticipantsRequestV2Mapper
 {
-    public async Task<UpdateHearingParticipantsRequestV2> Map(
+    public static UpdateHearingParticipantsRequestV2 Map(
         Guid hearingId,
         List<EditParticipantRequest> participants,
         HearingDetailsResponse originalHearing)
@@ -27,8 +25,8 @@ public class UpdateHearingParticipantsRequestV2Mapper(IHearingsService hearingsS
             var newParticipantToAdd = NewParticipantRequestMapper.MapToV2(participant);
             if (participant.Id.HasValue)
                 ExtractExistingParticipantsV2(originalHearing, participant, existingParticipants);
-            else if (await hearingsService.ProcessNewParticipant(hearingId, participant, newParticipantToAdd, removedParticipantIds, originalHearing) is { } newParticipant)
-                newParticipants.Add((ParticipantRequestV2)newParticipant);
+            else
+                newParticipants.Add(newParticipantToAdd);
         }
             
         var linkedParticipants = ExtractLinkedParticipants(participants, originalHearing, removedParticipantIds, new List<IUpdateParticipantRequest>(existingParticipants), new List<IParticipantRequest>(newParticipants));

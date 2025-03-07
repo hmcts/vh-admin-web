@@ -19,10 +19,7 @@ namespace AdminWebsite.Services
     {
         void AssignEndpointDefenceAdvocates(List<Contracts.Requests.EndpointRequest> endpointsWithDa, IReadOnlyCollection<Contracts.Requests.ParticipantRequest> participants);
         Task ProcessParticipantsV2(Guid hearingId, List<UpdateParticipantRequestV2> existingParticipants, List<ParticipantRequestV2> newParticipants, List<Guid> removedParticipantIds, List<LinkedParticipantRequestV2> linkedParticipants);
-        Task<IParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, IParticipantRequest newParticipant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
         Task ProcessEndpoints(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList);
-        UpdateHearingEndpointsRequestV2 MapUpdateHearingEndpointsRequestV2(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList, HearingChanges hearingChanges = null);
-        UpdateEndpointRequestV2 MapToUpdateEndpointRequest(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint, IEnumerable<IParticipantRequest> newParticipantList);
     }
 
     public class HearingsService : IHearingsService
@@ -76,18 +73,6 @@ namespace AdminWebsite.Services
                 LinkedParticipants = linkedParticipants
             };
             await _bookingsApiClient.UpdateHearingParticipantsV2Async(hearingId, updateHearingParticipantsRequest);
-        }
-        
-        public Task<IParticipantRequest> ProcessNewParticipant(
-            Guid hearingId,
-            EditParticipantRequest participant,
-            IParticipantRequest newParticipant,
-            List<Guid> removedParticipantIds,
-            HearingDetailsResponse hearing)
-        {
-            _logger.LogDebug("Adding participant {Participant} to hearing {Hearing}",
-                newParticipant.DisplayName, hearingId);
-            return Task.FromResult(newParticipant);
         }
 
         public async Task ProcessEndpoints(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing,
@@ -169,7 +154,7 @@ namespace AdminWebsite.Services
 
                 if (endpoint.Id.HasValue)
                 {
-                    var updateEndpointRequest = MapToUpdateEndpointRequest(hearingId, hearing, endpoint, newParticipantList);
+                    var updateEndpointRequest = UpdateEndpointRequestV2Mapper.Map(hearing, endpoint, newParticipantList);
                     if (updateEndpointRequest != null)
                     {
                         request.ExistingEndpoints.Add(updateEndpointRequest);
@@ -232,61 +217,13 @@ namespace AdminWebsite.Services
         private async Task UpdateEndpointInHearing(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint,
             IEnumerable<IParticipantRequest> newParticipantList)
         {
-            var request = MapToUpdateEndpointRequest(hearingId, hearing, endpoint, newParticipantList);
+            var request = UpdateEndpointRequestV2Mapper.Map(hearing, endpoint, newParticipantList);
             if (request == null) return;
             
             _logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
                 endpoint.Id, endpoint.DisplayName, hearingId);
             
             await _bookingsApiClient.UpdateEndpointV2Async(hearing.Id, endpoint.Id!.Value, request);
-        }
-
-        public UpdateEndpointRequestV2 MapToUpdateEndpointRequest(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint,
-            IEnumerable<IParticipantRequest> newParticipantList)
-        {
-            var existingEndpointToEdit = hearing.Endpoints.Find(e => e.Id.Equals(endpoint.Id));
-            var defenceAdvocates = DefenceAdvocateMapper.Map(hearing.Participants, newParticipantList);
-            var endpointRequestDefenceAdvocate = defenceAdvocates.Find(e => e.ContactEmail == endpoint.DefenceAdvocateContactEmail);
-            var isNewDefenceAdvocate = endpointRequestDefenceAdvocate?.Id == null;
-
-            var screeningChanged = HasScreeningRequirementForEndpointChanged(endpoint, existingEndpointToEdit);
-
-            if (existingEndpointToEdit == null ||
-                existingEndpointToEdit.DisplayName == endpoint.DisplayName &&
-                existingEndpointToEdit.DefenceAdvocateId == endpointRequestDefenceAdvocate?.Id &&
-                existingEndpointToEdit.ExternalReferenceId == endpoint.ExternalReferenceId &&
-                !screeningChanged && !isNewDefenceAdvocate)
-                return null;
-
-            _logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
-                existingEndpointToEdit.Id, existingEndpointToEdit.DisplayName, hearingId);
-            var updateEndpointRequest = new UpdateEndpointRequestV2()
-            {
-                Id = endpoint.Id.GetValueOrDefault(),
-                DisplayName = endpoint.DisplayName,
-                DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail,
-                InterpreterLanguageCode = endpoint.InterpreterLanguageCode,
-                Screening = endpoint.ScreeningRequirements?.MapToV2(),
-                ExternalParticipantId = endpoint.ExternalReferenceId
-            };
-
-            return updateEndpointRequest;
-        }
-
-        private static bool HasScreeningRequirementForEndpointChanged(EditEndpointRequest endpoint,
-            EndpointResponse existingEndpointToEdit)
-        {
-            var screeningRemoved = endpoint.ScreeningRequirements == null &&
-                                   existingEndpointToEdit.ScreeningRequirement != null;
-            var screeningAdded = endpoint.ScreeningRequirements != null &&
-                                 existingEndpointToEdit.ScreeningRequirement == null;
-
-            var existingScreenIds = existingEndpointToEdit.ScreeningRequirement?.ProtectFrom;
-            var newScreenIds = endpoint.ScreeningRequirements?.ScreenFromExternalReferenceIds ?? new List<string>();
-            var areListsIdentical = existingScreenIds?.OrderBy(id => id).SequenceEqual(newScreenIds.OrderBy(id => id)) ?? false;
-            
-            var screeningChanged = screeningRemoved || screeningAdded || !areListsIdentical;
-            return screeningChanged;
         }
 
         private static List<EditEndpointRequest> MapNewOrExistingEndpointsFromHearingChanges(

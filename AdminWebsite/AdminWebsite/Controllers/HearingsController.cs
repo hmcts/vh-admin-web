@@ -43,8 +43,6 @@ namespace AdminWebsite.Controllers
         private readonly IConferenceDetailsService _conferenceDetailsService;
         private readonly ILogger<HearingsController> _logger;
         private readonly IUserIdentity _userIdentity;
-        private readonly UpdateHearingsInGroupRequestMapper _updateHearingsInGroupRequestMapper;
-        private readonly UpdateHearingParticipantsRequestV2Mapper _updateHearingParticipantsRequestV2Mapper;
 
         /// <summary>
         ///     Instantiates the controller
@@ -61,8 +59,6 @@ namespace AdminWebsite.Controllers
             _logger = logger;
             _hearingsService = hearingsService;
             _conferenceDetailsService = conferenceDetailsService;
-            _updateHearingsInGroupRequestMapper = new UpdateHearingsInGroupRequestMapper(_hearingsService);
-            _updateHearingParticipantsRequestV2Mapper = new UpdateHearingParticipantsRequestV2Mapper(_hearingsService);
         }
 #pragma warning restore S107
         /// <summary>
@@ -440,7 +436,7 @@ namespace AdminWebsite.Controllers
         {
             var updatedBy = _userIdentity.GetUserIdentityName();
             
-            var bookingsApiRequest = await _updateHearingsInGroupRequestMapper.Map(
+            var bookingsApiRequest = UpdateHearingsInGroupRequestMapper.Map(
                 hearingsToUpdate, 
                 originalEditedHearingId, 
                 request, 
@@ -484,7 +480,7 @@ namespace AdminWebsite.Controllers
         
         private async Task UpdateParticipantsAndEndpointsV2(Guid hearingId, List<EditParticipantRequest> participants, List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
         {
-            var request = await _updateHearingParticipantsRequestV2Mapper.Map(hearingId, participants, originalHearing);
+            var request = UpdateHearingParticipantsRequestV2Mapper.Map(hearingId, participants, originalHearing);
 
             if (participants.Count != 0 || request.RemovedParticipantIds.Count != 0)
                 await _hearingsService.ProcessParticipantsV2(hearingId, request.ExistingParticipants, request.NewParticipants, request.RemovedParticipantIds, request.LinkedParticipants);

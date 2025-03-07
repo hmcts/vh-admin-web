@@ -14,18 +14,9 @@ using BookingsApi.Contract.V2.Responses;
 
 namespace AdminWebsite.Mappers;
 
-public class UpdateHearingsInGroupRequestMapper
+public static class UpdateHearingsInGroupRequestMapper
 {
-    private readonly IHearingsService _hearingsService;
-    private readonly UpdateHearingParticipantsRequestV2Mapper _updateHearingParticipantsRequestV2Mapper;
-
-    public UpdateHearingsInGroupRequestMapper(IHearingsService hearingsService)
-    {
-        _hearingsService = hearingsService;
-        _updateHearingParticipantsRequestV2Mapper = new UpdateHearingParticipantsRequestV2Mapper(_hearingsService);
-    }
-    
-    public async Task<UpdateHearingsInGroupRequestV2> Map(
+    public static UpdateHearingsInGroupRequestV2 Map(
         List<HearingDetailsResponseV2> hearingsToUpdate,
         Guid originalEditedHearingId,
         EditMultiDayHearingRequest request,
@@ -70,16 +61,16 @@ public class UpdateHearingsInGroupRequestMapper
 
                 var newParticipantList = new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants);
 
-                hearingRequest.Endpoints = MapUpdateHearingEndpointsRequestV2(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList, hearingChanges: hearingChanges);
+                hearingRequest.Endpoints = MapUpdateHearingEndpointsRequestV2(endpoints, hearingToUpdate, newParticipantList, hearingChanges: hearingChanges);
                 hearingRequest.JudiciaryParticipants = UpdateJudiciaryParticipantsRequestMapper.Map(judiciaryParticipants, hearingToUpdate, skipUnchangedParticipants: false, hearingChanges: hearingChanges);
             }
             else
             {
-                hearingRequest.Participants = await _updateHearingParticipantsRequestV2Mapper.Map(hearingToUpdate.Id, participants, hearingToUpdate);
+                hearingRequest.Participants = UpdateHearingParticipantsRequestV2Mapper.Map(hearingToUpdate.Id, participants, hearingToUpdate);
                 
                 var newParticipantList = new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants);
                 
-                hearingRequest.Endpoints = MapUpdateHearingEndpointsRequestV2(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList, hearingChanges: hearingChanges);
+                hearingRequest.Endpoints = MapUpdateHearingEndpointsRequestV2(endpoints, hearingToUpdate, newParticipantList, hearingChanges: hearingChanges);
                 hearingRequest.JudiciaryParticipants = UpdateJudiciaryParticipantsRequestMapper.Map(judiciaryParticipants, hearingToUpdate, skipUnchangedParticipants: false);
                 
                 participantsForEditedHearing = hearingRequest.Participants;
@@ -91,10 +82,13 @@ public class UpdateHearingsInGroupRequestMapper
         return bookingsApiRequest;
     }
 
-    private UpdateHearingEndpointsRequestV2 MapUpdateHearingEndpointsRequestV2(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing,
-        List<IParticipantRequest> newParticipantList, HearingChanges hearingChanges = null)
+    private static UpdateHearingEndpointsRequestV2 MapUpdateHearingEndpointsRequestV2(
+        List<EditEndpointRequest> endpoints, 
+        HearingDetailsResponse hearing,
+        List<IParticipantRequest> newParticipantList, 
+        HearingChanges hearingChanges = null)
     {
-        var endpointsV1 = MapUpdateHearingEndpointsRequest(hearingId, endpoints, hearing, newParticipantList, hearingChanges: hearingChanges);
+        var endpointsV1 = MapUpdateHearingEndpointsRequest(endpoints, hearing, newParticipantList, hearingChanges: hearingChanges);
         var endpointsV2 = new UpdateHearingEndpointsRequestV2
         {
             NewEndpoints = endpointsV1.NewEndpoints
@@ -118,8 +112,11 @@ public class UpdateHearingsInGroupRequestMapper
         return endpointsV2;
     }
     
-    private UpdateHearingEndpointsRequestV2 MapUpdateHearingEndpointsRequest(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing,
-        List<IParticipantRequest> newParticipantList, HearingChanges hearingChanges = null)
+    private static UpdateHearingEndpointsRequestV2 MapUpdateHearingEndpointsRequest(
+        List<EditEndpointRequest> endpoints, 
+        HearingDetailsResponse hearing,
+        List<IParticipantRequest> newParticipantList, 
+        HearingChanges hearingChanges = null)
     {
         if (hearing.Endpoints == null) return null;
 
@@ -151,7 +148,7 @@ public class UpdateHearingsInGroupRequestMapper
 
             if (endpoint.Id.HasValue)
             {
-                var updateEndpointRequest = _hearingsService.MapToUpdateEndpointRequest(hearingId, hearing, endpoint, newParticipantList);
+                var updateEndpointRequest = UpdateEndpointRequestV2Mapper.Map(hearing, endpoint, newParticipantList);
                 if (updateEndpointRequest != null)
                 {
                     request.ExistingEndpoints.Add(updateEndpointRequest);
