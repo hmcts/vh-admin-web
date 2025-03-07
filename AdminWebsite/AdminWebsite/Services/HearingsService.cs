@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Models.EditMultiDayHearing;
 using BookingsApi.Contract.Interfaces.Requests;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V2.Requests;
@@ -46,18 +45,6 @@ namespace AdminWebsite.Services
             }
         }
         
-        public static List<EditParticipantRequest> GetAddedParticipant(List<EditParticipantRequest> originalParticipants, List<EditParticipantRequest> requestParticipants)
-        {
-            return originalParticipants
-                .Except(requestParticipants, EditParticipantRequest.EditParticipantRequestComparer)
-                .ToList()
-                .Count == 0
-                ? requestParticipants
-                    .Except(originalParticipants, EditParticipantRequest.EditParticipantRequestComparer)
-                    .ToList()
-                : new List<EditParticipantRequest>();
-        }
-        
         public async Task ProcessParticipantsV2(Guid hearingId, 
             List<UpdateParticipantRequestV2> existingParticipants, 
             List<ParticipantRequestV2> newParticipants,
@@ -92,90 +79,6 @@ namespace AdminWebsite.Services
                 else
                     await AddEndpointToHearing(hearingId, hearing, endpoint);
             }
-        }
-
-        public UpdateHearingEndpointsRequestV2 MapUpdateHearingEndpointsRequestV2(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing,
-            List<IParticipantRequest> newParticipantList, HearingChanges hearingChanges = null)
-        {
-            var endpointsV1 = MapUpdateHearingEndpointsRequest(hearingId, endpoints, hearing, newParticipantList, hearingChanges: hearingChanges);
-            var endpointsV2 = new UpdateHearingEndpointsRequestV2
-            {
-                NewEndpoints = endpointsV1.NewEndpoints
-                    .Select(v1 => new EndpointRequestV2
-                    {
-                        DisplayName = v1.DisplayName,
-                        DefenceAdvocateContactEmail = v1.DefenceAdvocateContactEmail
-                    })
-                    .ToList(),
-                ExistingEndpoints = endpointsV1.ExistingEndpoints
-                    .Select(v1 => new UpdateEndpointRequestV2
-                    {
-                        Id = v1.Id,
-                        DisplayName = v1.DisplayName,
-                        DefenceAdvocateContactEmail = v1.DefenceAdvocateContactEmail
-                    })
-                    .ToList(),
-                RemovedEndpointIds = endpointsV1.RemovedEndpointIds.ToList()
-            };
-
-            return endpointsV2;
-        }
-        
-        private UpdateHearingEndpointsRequestV2 MapUpdateHearingEndpointsRequest(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing,
-            List<IParticipantRequest> newParticipantList, HearingChanges hearingChanges = null)
-        {
-            if (hearing.Endpoints == null) return null;
-
-            var request = new UpdateHearingEndpointsRequestV2();
-
-            var listOfEndpointsToDelete =
-                hearing.Endpoints.Where(e => endpoints.TrueForAll(re => re.Id != e.Id)).ToList();
-            if (hearingChanges != null)
-            {
-                // Only remove endpoints that have been explicitly removed as part of this request, if they exist on this hearing
-                listOfEndpointsToDelete = hearing.Endpoints.Where(e => hearingChanges.RemovedEndpoints.Exists(re => re.DisplayName == e.DisplayName)).ToList();
-            }
-
-            foreach (var endpointToDelete in listOfEndpointsToDelete)
-            {
-                request.RemovedEndpointIds.Add(endpointToDelete.Id);
-            }
-
-            var newOrExistingEndpoints = endpoints.ToList();
-            
-            if (hearingChanges != null)
-            {
-                newOrExistingEndpoints = MapNewOrExistingEndpointsFromHearingChanges(endpoints, hearing, hearingChanges, listOfEndpointsToDelete);
-            }
-
-            foreach (var endpoint in newOrExistingEndpoints)
-            {
-                UpdateEndpointWithNewlyAddedParticipant(newParticipantList, endpoint);
-
-                if (endpoint.Id.HasValue)
-                {
-                    var updateEndpointRequest = UpdateEndpointRequestV2Mapper.Map(hearing, endpoint, newParticipantList);
-                    if (updateEndpointRequest != null)
-                    {
-                        request.ExistingEndpoints.Add(updateEndpointRequest);
-                    }
-                }
-                else
-                {
-                    var addEndpointRequest = new EndpointRequestV2
-                    {
-                        DisplayName = endpoint.DisplayName,
-                        DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail,
-                        InterpreterLanguageCode = endpoint.InterpreterLanguageCode,
-                        Screening = endpoint.ScreeningRequirements?.MapToV2(),
-                        ExternalParticipantId = endpoint.ExternalReferenceId
-                    };
-                
-                    request.NewEndpoints.Add(addEndpointRequest);
-                }
-            }
-
-            return request;
         }
 
         public static void UpdateEndpointWithNewlyAddedParticipant(List<IParticipantRequest> newParticipantList, EditEndpointRequest endpoint)
@@ -224,57 +127,6 @@ namespace AdminWebsite.Services
                 endpoint.Id, endpoint.DisplayName, hearingId);
             
             await _bookingsApiClient.UpdateEndpointV2Async(hearing.Id, endpoint.Id!.Value, request);
-        }
-
-        private static List<EditEndpointRequest> MapNewOrExistingEndpointsFromHearingChanges(
-            IEnumerable<EditEndpointRequest> endpoints, 
-            HearingDetailsResponse hearing, 
-            HearingChanges hearingChanges, 
-            IEnumerable<EndpointResponse> listOfEndpointsToDelete)
-        {
-            var newOrExistingEndpoints = new List<EditEndpointRequest>();
-                
-            var newEndpoints = endpoints
-                .Where(e => !hearingChanges.EndpointChanges.Exists(ec => ec.EndpointRequest.DisplayName == e.DisplayName))
-                .ToList();
-                
-            var existingEndpoints = hearing.Endpoints
-                .ToList();
-                
-            // Add the existing endpoints on this hearing
-            newOrExistingEndpoints.AddRange(existingEndpoints.Select(e => new EditEndpointRequest
-            {
-                Id = e.Id,
-                DisplayName = e.DisplayName,
-                DefenceAdvocateContactEmail = hearing.Participants.Find(x => x.Id == e.DefenceAdvocateId)?.ContactEmail
-            }));
-            
-            // If any of these endpoints relate to the ones in the request, update their properties to match those in the request
-            foreach (var endpoint in newOrExistingEndpoints)
-            {
-                var relatedEndpoint = hearingChanges.EndpointChanges.Find(x => x.OriginalDisplayName == endpoint.DisplayName);
-                if (relatedEndpoint != null)
-                {
-                    endpoint.DisplayName = relatedEndpoint.EndpointRequest.DisplayName;
-                    endpoint.DefenceAdvocateContactEmail = relatedEndpoint.EndpointRequest.DefenceAdvocateContactEmail;
-                }
-            }
-
-            // Add any new endpoints that have been added as part of this request
-            foreach (var newEndpoint in newEndpoints)
-            {
-                if (!newOrExistingEndpoints.Exists(e => e.DisplayName == newEndpoint.DisplayName))
-                {
-                    newOrExistingEndpoints.Add(newEndpoint);
-                }
-            }
-
-            // Exclude any that have been removed as part of this request
-            newOrExistingEndpoints = newOrExistingEndpoints
-                .Where(e => listOfEndpointsToDelete.All(d => d.DisplayName != e.DisplayName))
-                .ToList();
-
-            return newOrExistingEndpoints;
         }
     }
 }

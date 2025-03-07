@@ -244,7 +244,7 @@ namespace AdminWebsite.Controllers
             HearingDetailsResponse originalHearing;
             try
             {
-                originalHearing = await GetHearing(hearingId);
+                originalHearing = (await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId)).Map();
             }
             catch (BookingsApiException e)
             {
@@ -255,7 +255,7 @@ namespace AdminWebsite.Controllers
             }
             try
             {
-                var updatedHearing = await MapHearingToUpdate(hearingId);
+                var updatedHearing = (await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId)).Map();
 
                 await UpdateHearing(request, hearingId, updatedHearing);
 
@@ -294,7 +294,7 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                var hearing = await GetHearing(hearingId);
+                var hearing = (await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId)).Map();
 
                 if (hearing.GroupId == null)
                 {
@@ -304,7 +304,7 @@ namespace AdminWebsite.Controllers
 
                 await UpdateMultiDayHearing(request, hearing.Id, hearing.GroupId.Value);
 
-                var updatedHearing = await MapHearingToUpdate(hearingId);
+                var updatedHearing = (await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId)).Map();
             
                 return Ok(updatedHearing);
             }
@@ -336,7 +336,7 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                var hearing = await GetHearing(hearingId);
+                var hearing = (await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId)).Map();
 
                 if (hearing.GroupId == null)
                 {
@@ -365,18 +365,6 @@ namespace AdminWebsite.Controllers
                 _logger.LogError(e, "Unexpected error trying to cancel multi day hearing");
                 return StatusCode(500, e.Message);
             }
-        }
-
-        private async Task<HearingDetailsResponse> GetHearing(Guid hearingId)
-        {
-            var responseV2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
-            return responseV2.Map();
-        }
-
-        private async Task<HearingDetailsResponse> MapHearingToUpdate(Guid hearingId)
-        {
-            var updatedHearing2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
-            return updatedHearing2.Map();
         }
 
         private async Task UpdateHearing(EditHearingRequest request, Guid hearingId, HearingDetailsResponse originalHearing)
@@ -425,20 +413,11 @@ namespace AdminWebsite.Controllers
                     h.Status != BookingStatusV2.Failed)
                 .ToList();
                 
-            await UpdateMultiDayHearingV2(hearingsToUpdate, hearingId, groupId, request);
-        }
-        
-        private async Task UpdateMultiDayHearingV2(
-            List<HearingDetailsResponseV2> hearingsToUpdate,
-            Guid originalEditedHearingId,
-            Guid groupId,
-            EditMultiDayHearingRequest request)
-        {
             var updatedBy = _userIdentity.GetUserIdentityName();
             
             var bookingsApiRequest = UpdateHearingsInGroupRequestMapper.Map(
                 hearingsToUpdate, 
-                originalEditedHearingId, 
+                hearingId, 
                 request, 
                 updatedBy);
 
@@ -625,7 +604,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 _logger.LogDebug("Hearing {HearingId} is booked. Polling for the status in BookingsApi", hearingId);
-                var response = await GetHearing(hearingId);
+                var response = (await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId)).Map();
                 var participantsNeedVhAccounts = ParticipantsNeedVhAccounts(response.Participants);
                 var accountsStillNeedCreating = participantsNeedVhAccounts.Any(x => x.ContactEmail == x.Username);
                 var isMultiDay = response.GroupId != null;
