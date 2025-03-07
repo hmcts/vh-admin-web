@@ -69,21 +69,11 @@ namespace AdminWebsite.Controllers
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookHearingRequest request)
         {
-            var newBookingRequest = request.BookingDetails;
-            newBookingRequest.IsMultiDayHearing = request.IsMultiDay;
             try
             {
-                if (newBookingRequest.Endpoints != null && newBookingRequest.Endpoints.Count != 0)
-                {
-                    var endpointsWithDa = newBookingRequest.Endpoints
-                        .Where(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocateContactEmail))
-                        .ToList();
-                    _hearingsService.AssignEndpointDefenceAdvocates(endpointsWithDa, newBookingRequest.Participants.AsReadOnly());
-                }
+                var createdBy = _userIdentity.GetUserIdentityName();
 
-                newBookingRequest.CreatedBy = _userIdentity.GetUserIdentityName();
-
-                var response = await BookNewHearing(newBookingRequest);
+                var response = await _hearingsService.BookNewHearing(request, createdBy);
                 
                 return Created("", response);
             }
@@ -101,20 +91,9 @@ namespace AdminWebsite.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, "BookNewHearing - Failed to save hearing - {Message} -  for request: {RequestBody}",
-                    e.Message, JsonConvert.SerializeObject(newBookingRequest));
+                    e.Message, JsonConvert.SerializeObject(request));
                 return StatusCode(500, e.Message);
             }
-        }
-        
-        private async Task<HearingDetailsResponse> BookNewHearing(BookingDetailsRequest newBookingRequest)
-        {
-            _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
-            var newBookingRequestV2 = newBookingRequest.MapToV2();
-            var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingWithCodeAsync(newBookingRequestV2);
-            var hearingId = hearingDetailsResponse.Id;
-            var response = hearingDetailsResponse.Map();
-            _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}", hearingId);
-            return response;
         }
 
         /// <summary>
@@ -179,7 +158,7 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 return StatusCode(500, e.Message);
             }
-            catch (HearingsServiceException e)
+            catch (ServiceException e)
             {
                 return BadRequest(e.Message);
             }

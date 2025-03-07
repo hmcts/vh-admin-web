@@ -21,8 +21,8 @@ namespace AdminWebsite.Services
 {
     public interface IHearingsService
     {
-        void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa, IReadOnlyCollection<ParticipantRequest> participants);
         Task CancelMultiDayHearing(CancelMultiDayHearingRequest request, Guid hearingId, Guid groupId, string updatedBy);
+        Task<HearingDetailsResponse> BookNewHearing(BookHearingRequest request, string createdBy);
         Task UpdateHearing(EditHearingRequest request, Guid hearingId, HearingDetailsResponse originalHearing, string updatedBy);
         Task UpdateMultiDayHearing(EditMultiDayHearingRequest request, Guid hearingId, Guid groupId, string updatedBy);
         Task CloneHearing(Guid hearingId, MultiHearingRequest hearingRequest);
@@ -144,7 +144,7 @@ namespace AdminWebsite.Services
             {
                 const string errorMessage = "No working dates provided to clone to";
                 _logger.LogWarning(errorMessage);
-                throw new HearingsServiceException(errorMessage);
+                throw new ServiceException(errorMessage);
             }
 
             var cloneHearingRequest = new CloneHearingRequestV2()
@@ -158,6 +158,30 @@ namespace AdminWebsite.Services
             _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
         }
 
+        public async Task<HearingDetailsResponse> BookNewHearing(BookHearingRequest request, string createdBy)
+        {
+            var newBookingRequest = request.BookingDetails;
+            newBookingRequest.IsMultiDayHearing = request.IsMultiDay;
+            
+            if (newBookingRequest.Endpoints != null && newBookingRequest.Endpoints.Count != 0)
+            {
+                var endpointsWithDa = newBookingRequest.Endpoints
+                    .Where(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocateContactEmail))
+                    .ToList();
+                AssignEndpointDefenceAdvocates(endpointsWithDa, newBookingRequest.Participants.AsReadOnly());
+            }
+            
+            newBookingRequest.CreatedBy = createdBy;
+            
+            _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
+            var newBookingRequestV2 = newBookingRequest.MapToV2();
+            var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingWithCodeAsync(newBookingRequestV2);
+            var hearingId = hearingDetailsResponse.Id;
+            var response = hearingDetailsResponse.Map();
+            _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}", hearingId);
+            return response;
+        }
+        
         public async Task UpdateHearing(
             EditHearingRequest request, 
             Guid hearingId, 
