@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Exceptions;
+using AdminWebsite.Helper;
 using BookingsApi.Contract.Interfaces.Requests;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V2.Enums;
@@ -23,6 +25,7 @@ namespace AdminWebsite.Services
         Task CancelMultiDayHearing(CancelMultiDayHearingRequest request, Guid hearingId, Guid groupId, string updatedBy);
         Task UpdateHearing(EditHearingRequest request, Guid hearingId, HearingDetailsResponse originalHearing, string updatedBy);
         Task UpdateMultiDayHearing(EditMultiDayHearingRequest request, Guid hearingId, Guid groupId, string updatedBy);
+        Task CloneHearing(Guid hearingId, MultiHearingRequest hearingRequest);
     }
 
     public class HearingsService : IHearingsService
@@ -129,6 +132,30 @@ namespace AdminWebsite.Services
             };
 
             await _bookingsApiClient.CancelHearingsInGroupAsync(groupId, cancelRequest);
+        }
+
+        public async Task CloneHearing(Guid hearingId, MultiHearingRequest hearingRequest)
+        {
+            _logger.LogDebug("Attempting to clone hearing {Hearing}", hearingId);
+
+            var hearingDates = GetDatesForClonedHearings(hearingRequest);
+            
+            if (hearingDates.Count == 0)
+            {
+                const string errorMessage = "No working dates provided to clone to";
+                _logger.LogWarning(errorMessage);
+                throw new HearingsServiceException(errorMessage);
+            }
+
+            var cloneHearingRequest = new CloneHearingRequestV2()
+            {
+                Dates = hearingDates, 
+                ScheduledDuration = hearingRequest.ScheduledDuration
+            };
+            
+            _logger.LogDebug("Sending request to clone hearing to Bookings API");
+            await _bookingsApiClient.CloneHearingAsync(hearingId, cloneHearingRequest);
+            _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
         }
 
         public async Task UpdateHearing(
@@ -310,6 +337,21 @@ namespace AdminWebsite.Services
                 endpoint.Id, endpoint.DisplayName, hearingId);
             
             await _bookingsApiClient.UpdateEndpointV2Async(hearing.Id, endpoint.Id!.Value, request);
+        }
+        
+        private static List<DateTime> GetDatesForClonedHearings(MultiHearingRequest hearingRequest)
+        {
+            if (hearingRequest.HearingDates != null && hearingRequest.HearingDates.Any())
+            {
+                return hearingRequest.HearingDates.Skip(1).ToList();
+            }
+            
+            if (DateListMapper.IsWeekend(hearingRequest.StartDate) || DateListMapper.IsWeekend(hearingRequest.EndDate))
+            {
+                return DateListMapper.GetListOfDates(hearingRequest.StartDate, hearingRequest.EndDate);
+            }
+            
+            return DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
         }
     }
 }

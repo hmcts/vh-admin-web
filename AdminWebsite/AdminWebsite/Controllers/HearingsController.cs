@@ -6,15 +6,14 @@ using System.Threading.Tasks;
 using AdminWebsite.Attributes;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
+using AdminWebsite.Exceptions;
 using AdminWebsite.Extensions;
-using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V2.Requests;
 using BookingsApi.Contract.V2.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -159,27 +158,9 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CloneHearing(Guid hearingId, MultiHearingRequest hearingRequest)
         {
-            _logger.LogDebug("Attempting to clone hearing {Hearing}", hearingId);
-
-            var hearingDates = GetDatesForClonedHearings(hearingRequest);
-            
-            if (hearingDates.Count == 0)
-            {
-                _logger.LogWarning("No working dates provided to clone to");
-                return BadRequest();
-            }
-
-            var cloneHearingRequest = new CloneHearingRequestV2()
-            {
-                Dates = hearingDates, 
-                ScheduledDuration = hearingRequest.ScheduledDuration
-            };
-
             try
             {
-                _logger.LogDebug("Sending request to clone hearing to Bookings API");
-                await _bookingsApiClient.CloneHearingAsync(hearingId, cloneHearingRequest);
-                _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
+                await _hearingsService.CloneHearing(hearingId, hearingRequest);
 
                 var groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdV2Async(hearingId);
 
@@ -187,7 +168,7 @@ namespace AdminWebsite.Controllers
                     .Exists(gh => gh.HearingRoleName == RoleNames.Judge) ?? false);
                 var tasks = conferenceStatusToGet.Select(x => GetHearingConferenceStatus(x.Id)).ToList();
                 await Task.WhenAll(tasks);
-                
+
                 return NoContent();
             }
             catch (BookingsApiException e)
@@ -198,21 +179,10 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 return StatusCode(500, e.Message);
             }
-        }
-
-        private static List<DateTime> GetDatesForClonedHearings(MultiHearingRequest hearingRequest)
-        {
-            if (hearingRequest.HearingDates != null && hearingRequest.HearingDates.Any())
+            catch (HearingsServiceException e)
             {
-                return hearingRequest.HearingDates.Skip(1).ToList();
+                return BadRequest(e.Message);
             }
-            
-            if (DateListMapper.IsWeekend(hearingRequest.StartDate) || DateListMapper.IsWeekend(hearingRequest.EndDate))
-            {
-                return DateListMapper.GetListOfDates(hearingRequest.StartDate, hearingRequest.EndDate);
-            }
-            
-            return DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
         }
 
         /// <summary>
