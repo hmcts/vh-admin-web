@@ -39,7 +39,7 @@ namespace AdminWebsite.Services
             _logger = logger;
         }
 
-        public void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa, IReadOnlyCollection<ParticipantRequest> participants)
+        private void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa, IReadOnlyCollection<ParticipantRequest> participants)
         {
             // update the username of defence advocate 
             foreach (var endpoint in endpointsWithDa)
