@@ -123,6 +123,7 @@ stages:
         displayName: Docker Build and Push ${{ stage.env }}
         steps:
         - checkout: self
+          fetchTags: true
 
         - bash: |
             sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.config

@@ -105,6 +105,7 @@ stages:
         displayName: "Build and Push Image ${{ variables.git_repo_name }}"
         steps:
           - checkout: self
+            fetchTags: true
 
           - template: templates\Github\get-app-token.yaml@azTemplates
             parameters:
