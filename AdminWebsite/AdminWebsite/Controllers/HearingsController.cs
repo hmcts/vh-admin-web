@@ -13,9 +13,7 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using BookingsApi.Client;
-using BookingsApi.Contract.Interfaces.Requests;
 using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Requests;
 using BookingsApi.Contract.V2.Responses;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +23,6 @@ using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
 using HearingDetailsResponse = AdminWebsite.Contracts.Responses.HearingDetailsResponse;
-using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
 using ParticipantResponse = AdminWebsite.Contracts.Responses.ParticipantResponse;
 
 namespace AdminWebsite.Controllers
@@ -109,7 +106,7 @@ namespace AdminWebsite.Controllers
                 return StatusCode(500, e.Message);
             }
         }
-
+        
         private async Task<HearingDetailsResponse> BookNewHearing(BookingDetailsRequest newBookingRequest)
         {
             _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
@@ -256,8 +253,9 @@ namespace AdminWebsite.Controllers
             try
             {
                 var updatedHearing = (await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId)).Map();
-
-                await UpdateHearing(request, hearingId, updatedHearing);
+                var updatedBy = _userIdentity.GetUserIdentityName();
+                
+                await _hearingsService.UpdateHearing(request, hearingId, updatedHearing, updatedBy);
 
                 if (updatedHearing.Status == BookingStatus.Failed) return Ok(updatedHearing);
                 if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
@@ -302,7 +300,8 @@ namespace AdminWebsite.Controllers
                     return ValidationProblem(ModelState);
                 }
 
-                await UpdateMultiDayHearing(request, hearing.Id, hearing.GroupId.Value);
+                var updatedBy = _userIdentity.GetUserIdentityName();
+                await _hearingsService.UpdateMultiDayHearing(request, hearing.Id, hearing.GroupId.Value, updatedBy);
 
                 var updatedHearing = (await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId)).Map();
             
@@ -344,7 +343,8 @@ namespace AdminWebsite.Controllers
                     return ValidationProblem(ModelState);
                 }
 
-                await CancelMultiDayHearing(request, hearing.Id, hearing.GroupId.Value);
+                var updatedBy = _userIdentity.GetUserIdentityName();
+                await _hearingsService.CancelMultiDayHearing(request, hearing.Id, hearing.GroupId.Value, updatedBy);
                 
                 return Ok(new UpdateBookingStatusResponse { Success = true });
             }
@@ -364,170 +364,6 @@ namespace AdminWebsite.Controllers
                 
                 _logger.LogError(e, "Unexpected error trying to cancel multi day hearing");
                 return StatusCode(500, e.Message);
-            }
-        }
-
-        private async Task UpdateHearing(EditHearingRequest request, Guid hearingId, HearingDetailsResponse originalHearing)
-        {
-            //Save hearing details
-            
-            // Adding an interpreter forces the audio recording to be required. The update hearing details do not work
-            // with the close to start time window, but the domain will update the audio recording required flag when
-            // an interpreter is added. Revert to the original audio recording setting to avoid the time clash.
-            // This is only an issue because we update hearing details and participants in the same request.
-            var containsInterpreter =
-                request.Participants.Exists(p => p.IsInterpreter());
-            
-            if(containsInterpreter)
-            {
-                // revert to the original audio recording setting if an interpreter is added so that the domain rules
-                // kick in rather than using update hearing details which do not work with the close to start time window
-                request.AudioRecordingRequired = originalHearing.AudioRecordingRequired;
-            }
-            
-            var updateHearingRequestV2 = HearingUpdateRequestMapper.MapToV2(request, _userIdentity.GetUserIdentityName());
-            await _bookingsApiClient.UpdateHearingDetailsV2Async(hearingId, updateHearingRequestV2);
-            await UpdateParticipantsAndEndpointsV2(hearingId, request.Participants, request.Endpoints, originalHearing);
-            await UpdateJudiciaryParticipants(hearingId, request.JudiciaryParticipants, originalHearing);
-        }
-
-        private async Task UpdateMultiDayHearing(EditMultiDayHearingRequest request, Guid hearingId, Guid groupId)
-        {
-            var hearingsInMultiDay = await _bookingsApiClient.GetHearingsByGroupIdV2Async(groupId);
-            var thisHearing = hearingsInMultiDay.First(x => x.Id == hearingId);
-            
-            var hearingsToUpdate = new List<HearingDetailsResponseV2>
-            {
-                thisHearing
-            };
-            
-            if (request.UpdateFutureDays)
-            {
-                var futureHearings = hearingsInMultiDay.Where(x => x.ScheduledDateTime.Date > thisHearing.ScheduledDateTime.Date);
-                hearingsToUpdate.AddRange(futureHearings);
-            }
-            
-            hearingsToUpdate = hearingsToUpdate
-                .Where(h => 
-                    h.Status != BookingStatusV2.Cancelled && 
-                    h.Status != BookingStatusV2.Failed)
-                .ToList();
-                
-            var updatedBy = _userIdentity.GetUserIdentityName();
-            
-            var bookingsApiRequest = UpdateHearingsInGroupRequestMapper.Map(
-                hearingsToUpdate, 
-                hearingId, 
-                request, 
-                updatedBy);
-
-            await _bookingsApiClient.UpdateHearingsInGroupV2Async(groupId, bookingsApiRequest);
-        }
-
-        private async Task CancelMultiDayHearing(CancelMultiDayHearingRequest request, Guid hearingId, Guid groupId)
-        {
-            var hearingsInMultiDay = await _bookingsApiClient.GetHearingsByGroupIdV2Async(groupId);
-            var thisHearing = hearingsInMultiDay.First(x => x.Id == hearingId);
-            
-            var hearingsToCancel = new List<HearingDetailsResponseV2>
-            {
-                thisHearing
-            };
-            
-            if (request.UpdateFutureDays)
-            {
-                var futureHearings = hearingsInMultiDay.Where(x => x.ScheduledDateTime.Date > thisHearing.ScheduledDateTime.Date);
-                hearingsToCancel.AddRange(futureHearings.ToList());
-            }
-
-            // Hearings with these statuses will be rejected by bookings api, so filter them out
-            hearingsToCancel = hearingsToCancel
-                .Where(h => 
-                    h.Status != BookingStatusV2.Cancelled && 
-                    h.Status != BookingStatusV2.Failed)
-                .ToList();
-
-            var cancelRequest = new CancelHearingsInGroupRequest
-            {
-                HearingIds = hearingsToCancel.Select(h => h.Id).ToList(),
-                CancelReason = request.CancelReason,
-                UpdatedBy = _userIdentity.GetUserIdentityName()
-            };
-
-            await _bookingsApiClient.CancelHearingsInGroupAsync(groupId, cancelRequest);
-        }
-        
-        private async Task UpdateParticipantsAndEndpointsV2(Guid hearingId, List<EditParticipantRequest> participants, List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
-        {
-            var request = UpdateHearingParticipantsRequestV2Mapper.Map(hearingId, participants, originalHearing);
-
-            if (participants.Count != 0 || request.RemovedParticipantIds.Count != 0)
-                await _hearingsService.ProcessParticipantsV2(hearingId, request.ExistingParticipants, request.NewParticipants, request.RemovedParticipantIds, request.LinkedParticipants);
-            
-            await _hearingsService.ProcessEndpoints(hearingId, endpoints, originalHearing, new List<IParticipantRequest>(request.NewParticipants));
-        }
-
-        private async Task UpdateJudiciaryParticipants(Guid hearingId, List<JudiciaryParticipantRequest> judiciaryParticipants,
-            HearingDetailsResponse originalHearing)
-        {
-            var request = UpdateJudiciaryParticipantsRequestMapper.Map(judiciaryParticipants, originalHearing);
-            
-            // Due to booking api's domain restrictions for removing participants, we have to update judges differently
-            var oldJudge = originalHearing.JudiciaryParticipants.Find(ojp => ojp.RoleCode == JudiciaryParticipantHearingRoleCode.Judge.ToString());
-            var newJudge = judiciaryParticipants.Find(njp => njp.Role == JudiciaryParticipantHearingRoleCode.Judge.ToString());
-            if (oldJudge?.PersonalCode != newJudge?.PersonalCode && newJudge != null)
-            {
-                await _bookingsApiClient.ReassignJudiciaryJudgeAsync(hearingId, new ReassignJudiciaryJudgeRequest
-                {
-                    DisplayName = newJudge.DisplayName,
-                    PersonalCode = newJudge.PersonalCode,
-                    OptionalContactEmail = newJudge.OptionalContactEmail,
-                    InterpreterLanguageCode = newJudge.InterpreterLanguageCode
-                });
-            }
-
-            foreach (var removedJohPersonalCode in request.RemovedJudiciaryParticipantPersonalCodes)
-            {
-                var removedJoh = originalHearing.JudiciaryParticipants.Find(p => p.PersonalCode == removedJohPersonalCode);
-                if (removedJoh.RoleCode == JudiciaryParticipantHearingRoleCode.Judge.ToString())
-                {
-                    // Judges are re-assigned instead of removed or added
-                    continue;
-                }
-                
-                await _bookingsApiClient.RemoveJudiciaryParticipantFromHearingAsync(hearingId, removedJoh.PersonalCode);
-            }
-
-            var johsToAdd = request.NewJudiciaryParticipants
-                .Select(jp => new BookingsApi.Contract.V2.Requests.JudiciaryParticipantRequest()
-                {
-                    DisplayName = jp.DisplayName,
-                    PersonalCode = jp.PersonalCode,
-                    HearingRoleCode = jp.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge ? JudiciaryParticipantHearingRoleCode.Judge
-                        : JudiciaryParticipantHearingRoleCode.PanelMember,
-                    InterpreterLanguageCode = jp.InterpreterLanguageCode
-                })
-                // Judges are re-assigned instead of removed or added
-                .Where(jp => jp.HearingRoleCode != JudiciaryParticipantHearingRoleCode.Judge)
-                .ToList();
-         
-            if (johsToAdd.Count != 0)
-            {
-                await _bookingsApiClient.AddJudiciaryParticipantsToHearingAsync(hearingId, johsToAdd);
-            }
-
-            foreach (var joh in request.ExistingJudiciaryParticipants)
-            {
-                var roleCode = joh.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge ? JudiciaryParticipantHearingRoleCode.Judge
-                    : JudiciaryParticipantHearingRoleCode.PanelMember;
-                
-                await _bookingsApiClient.UpdateJudiciaryParticipantAsync(hearingId, joh.PersonalCode,
-                    new UpdateJudiciaryParticipantRequest
-                    {
-                        DisplayName = joh.DisplayName, 
-                        HearingRoleCode = roleCode, 
-                        InterpreterLanguageCode = joh.InterpreterLanguageCode
-                    });
             }
         }
 
