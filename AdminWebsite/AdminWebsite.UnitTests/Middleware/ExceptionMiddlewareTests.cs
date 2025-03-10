@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -11,18 +12,18 @@ namespace AdminWebsite.UnitTests.Middleware;
 [TestFixture]
 public class ExceptionMiddlewareTests
 {
-    public Mock<IDelegateMock> RequestDelegateMock { get; set; }
-    public ExceptionMiddleware ExceptionMiddleware { get; set; }
-    public HttpContext _HttpContext { get; set; }
-
-
     [SetUp]
     public void ExceptionMiddleWareSetup()
     {
         RequestDelegateMock = new Mock<IDelegateMock>();
-        _HttpContext = new DefaultHttpContext();
-        _HttpContext.Response.Body = new MemoryStream();
+        HttpContext = new DefaultHttpContext();
+        HttpContext.Response.Body = new MemoryStream();
+        _ = new Activity("TestActivity").Start();
     }
+
+    private Mock<IDelegateMock> RequestDelegateMock { get; set; }
+    private ExceptionMiddleware ExceptionMiddleware { get; set; }
+    private HttpContext HttpContext { get; set; }
 
     [Test]
     public async Task Should_Invoke_Delegate()
@@ -45,12 +46,12 @@ public class ExceptionMiddlewareTests
         ExceptionMiddleware = new ExceptionMiddleware(RequestDelegateMock.Object.RequestDelegate);
 
 
-        await ExceptionMiddleware.InvokeAsync(_HttpContext);
+        await ExceptionMiddleware.InvokeAsync(HttpContext);
 
-        ClassicAssert.AreEqual(bookingsApiException.StatusCode, _HttpContext.Response.StatusCode);
-        _HttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
+        ClassicAssert.AreEqual(bookingsApiException.StatusCode, HttpContext.Response.StatusCode);
+        HttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
     }
-    
+
     [Test]
     public async Task Should_return_status_code_and_message_from_user_api_exception()
     {
@@ -61,10 +62,10 @@ public class ExceptionMiddlewareTests
         ExceptionMiddleware = new ExceptionMiddleware(RequestDelegateMock.Object.RequestDelegate);
 
 
-        await ExceptionMiddleware.InvokeAsync(_HttpContext);
+        await ExceptionMiddleware.InvokeAsync(HttpContext);
 
-        ClassicAssert.AreEqual(userApiException.StatusCode, _HttpContext.Response.StatusCode);
-        _HttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
+        ClassicAssert.AreEqual(userApiException.StatusCode, HttpContext.Response.StatusCode);
+        HttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
     }
 
     [Test]
@@ -77,10 +78,10 @@ public class ExceptionMiddlewareTests
         ExceptionMiddleware = new ExceptionMiddleware(RequestDelegateMock.Object.RequestDelegate);
 
 
-        await ExceptionMiddleware.InvokeAsync(_HttpContext);
+        await ExceptionMiddleware.InvokeAsync(HttpContext);
 
-        ClassicAssert.AreEqual((int) HttpStatusCode.InternalServerError, _HttpContext.Response.StatusCode);
-        _HttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
+        ClassicAssert.AreEqual((int) HttpStatusCode.InternalServerError, HttpContext.Response.StatusCode);
+        HttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
     }
 
     [Test]
@@ -93,13 +94,13 @@ public class ExceptionMiddlewareTests
             .Returns(Task.FromException(exception));
         ExceptionMiddleware = new ExceptionMiddleware(RequestDelegateMock.Object.RequestDelegate);
 
-        await ExceptionMiddleware.InvokeAsync(_HttpContext);
+        await ExceptionMiddleware.InvokeAsync(HttpContext);
 
-        ClassicAssert.AreEqual((int) HttpStatusCode.InternalServerError, _HttpContext.Response.StatusCode);
-        _HttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
+        ClassicAssert.AreEqual((int) HttpStatusCode.InternalServerError, HttpContext.Response.StatusCode);
+        HttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
 
-        _HttpContext.Response.Body.Seek(0, SeekOrigin.Begin);
-        var body = await new StreamReader(_HttpContext.Response.Body).ReadToEndAsync();
+        HttpContext.Response.Body.Seek(0, SeekOrigin.Begin);
+        var body = await new StreamReader(HttpContext.Response.Body).ReadToEndAsync();
         body.Should().Contain(exception.Message).And.Contain(inner.Message);
     }
 
