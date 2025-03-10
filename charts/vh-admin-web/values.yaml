@@ -8,12 +8,10 @@ java:
   livenessPath: /health/liveness
   readinessPath: /health/readiness
   startupPath: /health/startup
-  aadIdentityName: vh-aad-identity
   keyVaults:
     vh-infra-core:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
-      usePodIdentity: true
       secrets:
         - name: connectionstrings--applicationinsights
           alias: applicationinsights--connectionstring
@@ -28,7 +26,6 @@ java:
     vh-admin-web:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
-      usePodIdentity: true
       secrets:
         - azuread--clientsecret
         - azuread--clientid
@@ -45,28 +42,24 @@ java:
     vh-bookings-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
-      usePodIdentity: true
       secrets:
         - name: azuread--identifieruri
           alias: VhServices--BookingsApiResourceId
     vh-video-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
-      usePodIdentity: true
       secrets:
         - name: azuread--identifieruri
           alias: VhServices--VideoApiResourceId
     vh-notification-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
-      usePodIdentity: true
       secrets:
         - name: azuread--identifieruri
           alias: VhServices--NotificationApiResourceId
     vh-user-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
-      usePodIdentity: true
       secrets:
         - name: azuread--identifieruri
           alias: VhServices--UserApiResourceId
