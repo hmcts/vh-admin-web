@@ -39,19 +39,6 @@ namespace AdminWebsite.Services
             _logger = logger;
         }
 
-        private void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa, IReadOnlyCollection<ParticipantRequest> participants)
-        {
-            // update the username of defence advocate 
-            foreach (var endpoint in endpointsWithDa)
-            {
-                _logger.LogDebug("Attempting to find defence advocate {DefenceAdvocate} for endpoint {Endpoint}",
-                    endpoint.DefenceAdvocateContactEmail, endpoint.DisplayName);
-                var defenceAdvocate = participants.Single(x => 
-                    x.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,StringComparison.CurrentCultureIgnoreCase));
-                endpoint.DefenceAdvocateContactEmail = defenceAdvocate.ContactEmail;
-            }
-        }
-        
         public async Task ProcessParticipantsV2(Guid hearingId, 
             List<UpdateParticipantRequestV2> existingParticipants, 
             List<ParticipantRequestV2> newParticipants,
@@ -67,25 +54,6 @@ namespace AdminWebsite.Services
                 LinkedParticipants = linkedParticipants
             };
             await _bookingsApiClient.UpdateHearingParticipantsV2Async(hearingId, updateHearingParticipantsRequest);
-        }
-
-        private async Task ProcessEndpoints(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing,
-            List<IParticipantRequest> newParticipantList)
-        {
-            if (hearing.Endpoints == null) return;
-            
-            var listOfEndpointsToDelete = hearing.Endpoints.Where(e => endpoints.TrueForAll(re => re.Id != e.Id));
-            await RemoveEndpointsFromHearing(hearing, listOfEndpointsToDelete);
-            
-            foreach (var endpoint in endpoints)
-            {
-                UpdateEndpointWithNewlyAddedParticipant(newParticipantList, endpoint);
-            
-                if (endpoint.Id.HasValue)
-                    await UpdateEndpointInHearing(hearingId, hearing, endpoint, newParticipantList);
-                else
-                    await AddEndpointToHearing(hearingId, hearing, endpoint);
-            }
         }
 
         public static void UpdateEndpointWithNewlyAddedParticipant(List<IParticipantRequest> newParticipantList, EditEndpointRequest endpoint)
@@ -376,6 +344,38 @@ namespace AdminWebsite.Services
             }
             
             return DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
+        }
+        
+        private void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa, IReadOnlyCollection<ParticipantRequest> participants)
+        {
+            // update the username of defence advocate 
+            foreach (var endpoint in endpointsWithDa)
+            {
+                _logger.LogDebug("Attempting to find defence advocate {DefenceAdvocate} for endpoint {Endpoint}",
+                    endpoint.DefenceAdvocateContactEmail, endpoint.DisplayName);
+                var defenceAdvocate = participants.Single(x => 
+                    x.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,StringComparison.CurrentCultureIgnoreCase));
+                endpoint.DefenceAdvocateContactEmail = defenceAdvocate.ContactEmail;
+            }
+        }
+        
+        private async Task ProcessEndpoints(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing,
+            List<IParticipantRequest> newParticipantList)
+        {
+            if (hearing.Endpoints == null) return;
+            
+            var listOfEndpointsToDelete = hearing.Endpoints.Where(e => endpoints.TrueForAll(re => re.Id != e.Id));
+            await RemoveEndpointsFromHearing(hearing, listOfEndpointsToDelete);
+            
+            foreach (var endpoint in endpoints)
+            {
+                UpdateEndpointWithNewlyAddedParticipant(newParticipantList, endpoint);
+            
+                if (endpoint.Id.HasValue)
+                    await UpdateEndpointInHearing(hearingId, hearing, endpoint, newParticipantList);
+                else
+                    await AddEndpointToHearing(hearingId, hearing, endpoint);
+            }
         }
     }
 }
