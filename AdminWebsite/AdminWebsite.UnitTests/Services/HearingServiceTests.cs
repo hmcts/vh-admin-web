@@ -52,46 +52,6 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_when_nothing_changed_in_participants()
-        {
-            var participantRequest1 = new EditParticipantRequest { Id = It.IsAny<Guid>(), DisplayName = "Test", };
-            var editParticipants1 = new List<EditParticipantRequest> { participantRequest1 };
-            var editParticipants2 = new List<EditParticipantRequest> { participantRequest1 };
-
-            ClassicAssert.True(HearingsService.GetAddedParticipant(editParticipants1, editParticipants2).Count == 0);
-        }
-
-        [Test]
-        public void Should_have_one_added_participant()
-        {
-            var originalParticipants = new List<EditParticipantRequest> 
-            { 
-                new EditParticipantRequest 
-                { 
-                    Id = It.IsAny<Guid>(), 
-                    DisplayName = "Test" 
-                } 
-            };
-
-            // This should contain the existing participants as well as the new participants
-            var editParticipantRequest = new List<EditParticipantRequest> 
-            { 
-                new EditParticipantRequest 
-                { 
-                    Id = It.IsAny<Guid>(), 
-                    DisplayName = "Test" 
-                }, 
-                new EditParticipantRequest 
-                { 
-                    Id = It.IsAny<Guid>(), 
-                    DisplayName = "Test2" 
-                } 
-            };
-
-            ClassicAssert.AreEqual(1, HearingsService.GetAddedParticipant(originalParticipants, editParticipantRequest).Count);
-        }
-
-        [Test]
         public async Task Should_process_participants()
         {
             var existingParticipants = new List<UpdateParticipantRequestV2>();
