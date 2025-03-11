@@ -1,12 +1,12 @@
 using System;
+using System.Collections.Generic;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Health;
 using AdminWebsite.Middleware;
-using AdminWebsite.Services;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using FluentValidation.AspNetCore;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +14,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 namespace AdminWebsite
 {
@@ -30,9 +32,42 @@ namespace AdminWebsite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplicationInsightsTelemetry();
-            services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
+            var instrumentationKey = Configuration["ApplicationInsights:ConnectionString"];
+            services.AddOpenTelemetry()
+                .ConfigureResource(r =>
+                {
+                    r.AddService("vh-admin-web")
+                        .AddTelemetrySdk()
+                        .AddAttributes(new Dictionary<string, object>
+                            { ["service.instance.id"] = Environment.MachineName });
+                })
+                .UseAzureMonitor(options => options.ConnectionString = instrumentationKey) 
+                .WithTracing(tracerProvider =>
+                {
+                    tracerProvider
+                        .AddAspNetCoreInstrumentation(options => options.RecordException = true)
+                        .AddHttpClientInstrumentation(options =>
+                        {
+                            options.RecordException = true;
+                            options.EnrichWithHttpRequestMessage = (activity, request) =>
+                            {
+                                if (request.Content != null)
+                                {
+                                    var requestBody = request.Content.ReadAsStringAsync().Result;
+                                    activity.SetTag("http.request.body", requestBody);
+                                }
+                            };
+
+                            options.EnrichWithHttpResponseMessage = (activity, response) =>
+                            {
+                                var responseBody = response.Content.ReadAsStringAsync().Result;
+                                activity.SetTag("http.response.body", responseBody);
+                            };
+                        });
+                });
+            
             var envName = Configuration["AzureAd:RedirectUri"]; // resource ID is a GUID, 
+            
             services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["FeatureToggle:SdkKey"], envName));
 
             services.AddSwagger();
