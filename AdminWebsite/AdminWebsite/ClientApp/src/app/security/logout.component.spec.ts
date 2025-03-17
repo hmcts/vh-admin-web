@@ -32,4 +32,26 @@ describe('LogoutComponent', () => {
         oidcSecurityService.setAuthenticatedResult(IdpProviders.main, false);
         expect(userIdentityServiceSpy.clearUserProfile).toHaveBeenCalledTimes(0);
     }));
+
+    it('should return false for "loggedIn" when authenticated', fakeAsync(() => {
+        let loggedIn = false;
+        oidcSecurityService.setAuthenticatedResult(IdpProviders.main, true);
+        component.loggedIn.subscribe(isLoggedIn => (loggedIn = isLoggedIn));
+
+        component.ngOnInit();
+
+        expect(loggedIn).toBeTruthy();
+        expect(userIdentityServiceSpy.clearUserProfile).toHaveBeenCalled();
+    }));
+
+    it('should return false for "loggedIn" when not authenticated', fakeAsync(() => {
+        let loggedIn = true;
+        oidcSecurityService.setAuthenticatedResult(IdpProviders.main, false);
+        component.loggedIn.subscribe(isLoggedIn => (loggedIn = isLoggedIn));
+
+        component.ngOnInit();
+
+        expect(loggedIn).toBeFalsy();
+        expect(userIdentityServiceSpy.clearUserProfile).toHaveBeenCalledTimes(0);
+    }));
 });

@@ -1,1 +1,3 @@
-<p>Logged out</p>
+<p class="govuk-body govuk-!-margin-bottom-1 govuk-!-margin-top-5" *ngIf="!(loggedIn | async)">
+  Signed out successfully. Click <a [routerLink]="[loginPath]">here</a> to log back in.
+</p>
