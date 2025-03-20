@@ -1,6 +1,7 @@
 import { OnInit, Component, Injectable } from '@angular/core';
 import { UserIdentityService } from '../services/user-identity.service';
 import { SecurityService } from './services/security.service';
+import { Observable } from 'rxjs';
 @Component({
     selector: 'app-logout',
     templateUrl: './logout.component.html',
@@ -20,5 +21,9 @@ export class LogoutComponent implements OnInit {
                 this.securityService.logoffAndRevokeTokens().subscribe();
             }
         });
+    }
+
+    get loggedIn(): Observable<boolean> {
+        return this.securityService.isAuthenticated();
     }
 }
