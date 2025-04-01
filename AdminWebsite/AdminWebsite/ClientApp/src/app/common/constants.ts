@@ -7,7 +7,6 @@ export const Constants = {
     },
     BookHearingTitle: 'Book a video hearing',
     PleaseSelect: 'Please select',
-    Representative: 'Representative',
     PleaseSelectPattern: '^((?!Please select).)*$',
     TextInputPattern: /^[^%{}~|]+$/,
     TextInputPatternDisplayName: /^[\p{L}\p{N}\s',._-]+$/u,
@@ -99,7 +98,9 @@ export const Constants = {
     HearingRoleCodes: {
         Judge: 'JUDG',
         PanelMember: 'PANL',
-        StaffMember: 'STAF'
+        StaffMember: 'STAF',
+        Representative: 'RPTT',
+        Intermediary: 'INTE'
     }
 };
 

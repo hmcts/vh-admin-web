@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.Contracts.Responses;
@@ -11,44 +12,56 @@ public static class UpdateEndpointRequestV2Mapper
 {
     public static UpdateEndpointRequestV2 Map(
         HearingDetailsResponse hearing, 
-        EditEndpointRequest endpoint,
+        EditEndpointRequest editEndpointRequest,
         IEnumerable<IParticipantRequest> newParticipantList)
     {
-        var existingEndpointToEdit = hearing.Endpoints.Find(e => e.Id.Equals(endpoint.Id));
-        var defenceAdvocates = DefenceAdvocateMapper.Map(hearing.Participants, newParticipantList);
-        var endpointRequestDefenceAdvocate = defenceAdvocates.Find(e => e.ContactEmail == endpoint.DefenceAdvocateContactEmail);
-        var isNewDefenceAdvocate = endpointRequestDefenceAdvocate?.Id == null;
+        var existingEndpointToEdit = hearing.Endpoints.Find(e => e.Id.Equals(editEndpointRequest.Id));
+        
+        var participants = hearing.Participants
+            .Select(ep => new EndpointParticipant { Id = ep.Id, ContactEmail = ep.ContactEmail })
+            .Concat(newParticipantList.Select(np => new EndpointParticipant { Id = null, ContactEmail = np.ContactEmail }))
+            .DistinctBy(da => da.ContactEmail) 
+            .ToList();
+        
+        var endpointRequestParticipants = participants
+            .Where(e => editEndpointRequest.LinkedParticipantEmails.Contains(e.ContactEmail, StringComparer.CurrentCultureIgnoreCase))
+            .ToList();
 
-        var screeningChanged = HasScreeningRequirementForEndpointChanged(endpoint, existingEndpointToEdit);
+        var newParticipantsAdded = endpointRequestParticipants.Exists(erp => erp.Id == null);
 
-        if (existingEndpointToEdit == null ||
-            existingEndpointToEdit.DisplayName == endpoint.DisplayName &&
-            existingEndpointToEdit.DefenceAdvocateId == endpointRequestDefenceAdvocate?.Id &&
-            existingEndpointToEdit.ExternalReferenceId == endpoint.ExternalReferenceId &&
-            !screeningChanged && !isNewDefenceAdvocate)
+        var screeningChanged = HasScreeningRequirementForEndpointChanged(editEndpointRequest, existingEndpointToEdit);
+
+        if (EndpointStateUnchanged(existingEndpointToEdit, editEndpointRequest, endpointRequestParticipants) && !screeningChanged && !newParticipantsAdded)
             return null;
 
-        var updateEndpointRequest = new UpdateEndpointRequestV2()
+        var updateEndpointRequest = new UpdateEndpointRequestV2
         {
-            Id = endpoint.Id.GetValueOrDefault(),
-            DisplayName = endpoint.DisplayName,
-            DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail,
-            InterpreterLanguageCode = endpoint.InterpreterLanguageCode,
-            Screening = endpoint.ScreeningRequirements?.MapToV2(),
-            ExternalParticipantId = endpoint.ExternalReferenceId
+            Id = editEndpointRequest.Id.GetValueOrDefault(),
+            DisplayName = editEndpointRequest.DisplayName,
+            LinkedParticipantEmails = editEndpointRequest.LinkedParticipantEmails,
+            InterpreterLanguageCode = editEndpointRequest.InterpreterLanguageCode,
+            Screening = editEndpointRequest.ScreeningRequirements?.MapToV2(),
+            ExternalParticipantId = editEndpointRequest.ExternalReferenceId
         };
 
         return updateEndpointRequest;
     }
-
-    private static bool HasScreeningRequirementForEndpointChanged(
-        EditEndpointRequest endpoint,
-        EndpointResponse existingEndpointToEdit)
+    
+    private static bool EndpointStateUnchanged(EndpointResponse existing, EditEndpointRequest updated, List<EndpointParticipant> endpointRequestParticipants)
     {
-        var screeningRemoved = endpoint.ScreeningRequirements == null &&
-                               existingEndpointToEdit.ScreeningRequirement != null;
-        var screeningAdded = endpoint.ScreeningRequirements != null &&
-                             existingEndpointToEdit.ScreeningRequirement == null;
+        if (updated == null) 
+            return false;
+
+        return existing.DisplayName == updated.DisplayName &&
+               existing.ExternalReferenceId == updated.ExternalReferenceId &&
+               (existing.LinkedParticipantIds?.All(id => endpointRequestParticipants.Exists(e => e.Id == id)) ?? true);
+    }
+
+
+    private static bool HasScreeningRequirementForEndpointChanged(EditEndpointRequest endpoint, EndpointResponse existingEndpointToEdit)
+    {
+        var screeningRemoved = endpoint.ScreeningRequirements == null && existingEndpointToEdit.ScreeningRequirement != null;
+        var screeningAdded = endpoint.ScreeningRequirements != null && existingEndpointToEdit.ScreeningRequirement == null;
 
         var existingScreenIds = existingEndpointToEdit.ScreeningRequirement?.ProtectFrom;
         var newScreenIds = endpoint.ScreeningRequirements?.ScreenFromExternalReferenceIds ?? new List<string>();

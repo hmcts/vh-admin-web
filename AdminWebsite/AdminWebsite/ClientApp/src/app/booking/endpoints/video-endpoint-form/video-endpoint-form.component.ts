@@ -17,6 +17,8 @@ export class VideoEndpointFormComponent {
     featureFlags = FeatureFlags;
 
     availableRepresentatives: VHParticipant[] = [];
+    availableIntermediaries: VHParticipant[] = [];
+
     constants = Constants;
 
     form: FormGroup<VideoEndpointForm>;
@@ -28,16 +30,8 @@ export class VideoEndpointFormComponent {
     @Input() set existingVideoEndpoint(value: VideoAccessPointDto) {
         if (value) {
             this.videoEndpoint = value;
-            this.form.setValue(
-                {
-                    displayName: value.displayName,
-                    linkedRepresentative: value.defenceAdvocate?.email ?? null
-                },
-                { emitEvent: false, onlySelf: true }
-            );
+            this.populateFormForExistingEndpoint();
             this.editMode = true;
-            this.form.markAllAsTouched();
-            this.interpreterForm?.prepopulateForm(value.interpretationLanguage);
             this.saveButtonText = 'Update Access Point';
         } else {
             this.editMode = false;
@@ -49,8 +43,12 @@ export class VideoEndpointFormComponent {
 
     @Input() set participants(value: VHParticipant[]) {
         this._participants = value;
-
-        this.availableRepresentatives = this._participants.filter(p => p.userRoleName === this.constants.Representative && p.email);
+        this.availableIntermediaries = this._participants.filter(
+            p => p.hearingRoleCode === this.constants.HearingRoleCodes.Intermediary && p.email
+        );
+        this.availableRepresentatives = this._participants.filter(
+            p => p.hearingRoleCode === this.constants.HearingRoleCodes.Representative && p.email
+        );
     }
     @Output() endpointAdded = new EventEmitter<VideoAccessPointDto>();
     @Output() endpointUpdated = new EventEmitter<{ original: VideoAccessPointDto; updated: VideoAccessPointDto }>();
@@ -70,7 +68,8 @@ export class VideoEndpointFormComponent {
                 Validators.pattern(this.constants.EndpointDisplayNamePattern),
                 this.uniqueDisplayNameValidator()
             ]),
-            linkedRepresentative: this.formBuilder.control(null, [Validators.maxLength(255)])
+            representative: this.formBuilder.control(null, [Validators.maxLength(255)]),
+            intermediary: this.formBuilder.control(null, [Validators.maxLength(255)])
         });
     }
 
@@ -82,18 +81,12 @@ export class VideoEndpointFormComponent {
         if (!this.form.valid || (includeInterpreter && !this.interpreterForm?.form.valid)) {
             return;
         }
-        let defenceAdvocate: EndpointLink = null;
-        if (this.form.value.linkedRepresentative && this.form.value.linkedRepresentative !== 'null') {
-            const representative = this.availableRepresentatives.find(p => p.email === this.form.value.linkedRepresentative);
-            defenceAdvocate = {
-                email: representative.email,
-                displayName: representative.displayName
-            };
-        }
+        const participantsLinked = this.extractLinkedParticipants();
+
         const dto: VideoAccessPointDto = {
             ...this.videoEndpoint,
             displayName: this.form.value.displayName,
-            defenceAdvocate,
+            participantsLinked: participantsLinked,
             interpretationLanguage: this.interpreterSelection,
             screening: this.videoEndpoint?.screening,
             externalReferenceId: this.videoEndpoint?.externalReferenceId
@@ -106,7 +99,8 @@ export class VideoEndpointFormComponent {
 
         this.form.reset({
             displayName: null,
-            linkedRepresentative: null
+            representative: null,
+            intermediary: null
         });
         this.interpreterForm?.resetForm();
     }
@@ -130,6 +124,56 @@ export class VideoEndpointFormComponent {
             return isUnique ? null : { displayNameExists: { value: control.value } };
         };
     }
+
+    private populateFormForExistingEndpoint() {
+        const linkedParticipants = this.videoEndpoint.participantsLinked || [];
+        const representative = linkedParticipants.find(lp =>
+            this._participants.some(ar => ar.hearingRoleCode === this.constants.HearingRoleCodes.Representative && ar.email === lp.email)
+        )?.email ?? null;
+        const intermediary = linkedParticipants.find(lp =>
+            this._participants.some(ai => ai.hearingRoleCode === this.constants.HearingRoleCodes.Intermediary && ai.email === lp.email)
+        )?.email ?? null;
+        this.form.setValue(
+            {
+                displayName: this.videoEndpoint.displayName,
+                representative: representative,
+                intermediary: intermediary
+            },
+            { emitEvent: false, onlySelf: true }
+        );
+        this.form.markAllAsTouched();
+        this.interpreterForm?.prepopulateForm(this.videoEndpoint.interpretationLanguage);
+    }
+
+    private extractLinkedParticipants() {
+        const representative = this.extractRep();
+        const intermediary = this.extractIntermediary();
+        return !representative && !intermediary ? null : [representative, intermediary].filter(p => p !== null);
+    }
+
+    private extractIntermediary() {
+        let inter: EndpointLink = null;
+        if (this.form.value.intermediary && this.form.value.intermediary !== 'null') {
+            const intermediary = this.availableIntermediaries.find(p => p.email === this.form.value.intermediary);
+            inter = {
+                email: intermediary.email,
+                displayName: intermediary.displayName
+            };
+        }
+        return inter;
+    }
+
+    private extractRep() {
+        let rep: EndpointLink = null;
+        if (this.form.value.representative && this.form.value.representative !== 'null') {
+            const representative = this.availableRepresentatives.find(p => p.email === this.form.value.representative);
+            rep = {
+                email: representative.email,
+                displayName: representative.displayName
+            };
+        }
+        return rep;
+    }
 }
 
 function blankSpaceValidator(control: AbstractControl): { [key: string]: any } | null {
@@ -143,5 +187,6 @@ function blankSpaceValidator(control: AbstractControl): { [key: string]: any } |
 
 interface VideoEndpointForm {
     displayName: FormControl<string | null>;
-    linkedRepresentative: FormControl<string | null>;
+    representative: FormControl<string | null>;
+    intermediary: FormControl<string | null>;
 }

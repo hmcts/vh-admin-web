@@ -9,7 +9,7 @@ namespace AdminWebsite.Mappers
             new()
             {
                 DisplayName = request.DisplayName,
-                DefenceAdvocateContactEmail = request.DefenceAdvocateContactEmail,
+                LinkedParticipantEmails = request.LinkedParticipantEmails,
                 InterpreterLanguageCode = request.InterpreterLanguageCode,
                 Screening = request.ScreeningRequirements.MapToV2(),
                 ExternalParticipantId = request.ExternalReferenceId

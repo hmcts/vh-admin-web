@@ -97,7 +97,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             const endpointModel = new EndpointModel(vapDto.externalReferenceId);
             endpointModel.id = vapDto.id;
             endpointModel.displayName = vapDto.displayName;
-            endpointModel.defenceAdvocate = vapDto.defenceAdvocate?.email;
+            endpointModel.participants_linked = vapDto.participantsLinked?.map(e => e.email);
             endpointModel.interpretationLanguage = vapDto.interpretationLanguage;
             endpointModel.screening = vapDto.screening;
             newEndpointsArray.push(endpointModel);
@@ -182,19 +182,24 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
     private checkForExistingRequest(): void {
         this.hearing = this.videoHearingService.getCurrentRequest();
-        this.participants = this.hearing.participants.filter(p => p.userRoleName === this.constants.Representative);
+        this.participants = this.hearing.participants;
         this.videoEndpoints = this.hearing.endpoints.map(e => {
-            const defenceAdvocate = this.participants.find(p => p.email === e.defenceAdvocate);
+
+            const endpointParticipants = this.participants?.filter(p =>
+                e.participants_linked?.some(contactEmail => contactEmail === p.contactEmail)
+            ) ?? [];
+
             return {
                 ...e,
                 id: e.id,
                 displayName: e.displayName,
-                defenceAdvocate: defenceAdvocate
-                    ? {
-                          displayName: defenceAdvocate?.displayName,
-                          email: defenceAdvocate?.email
-                      }
-                    : null,
+                participantsLinked:
+                    endpointParticipants.length > 0
+                        ? endpointParticipants.map(p => ({
+                              displayName: p.displayName,
+                              email: p.email
+                          }))
+                        : null,
                 interpretationLanguage: e.interpretationLanguage,
                 screening: e.screening,
                 externalReferenceId: e.externalReferenceId

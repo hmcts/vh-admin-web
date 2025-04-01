@@ -12,7 +12,7 @@ export class VideoEndpointItemComponent {
     @Input() set videoEndpoint(videoEndpoint: VideoAccessPointDto) {
         this._videoEndpoint = videoEndpoint;
         this.displayName = videoEndpoint.displayName;
-        this.linkedRepresentative = videoEndpoint.defenceAdvocate;
+        this.linkedParticipants = videoEndpoint.participantsLinked ?? [];
         this.interpretationLanguage = videoEndpoint.interpretationLanguage;
     }
 
@@ -22,7 +22,7 @@ export class VideoEndpointItemComponent {
     @Output() deleteEndpoint = new EventEmitter<VideoAccessPointDto>();
 
     displayName: string;
-    linkedRepresentative: EndpointLink;
+    linkedParticipants: EndpointLink[];
     interpretationLanguage: InterpreterSelectedDto;
 
     private _videoEndpoint: VideoAccessPointDto;

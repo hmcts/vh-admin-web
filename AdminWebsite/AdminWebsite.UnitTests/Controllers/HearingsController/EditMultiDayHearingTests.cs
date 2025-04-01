@@ -107,13 +107,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Update an endpoint
             var endpointToUpdate = request.Endpoints.First(x => x.DisplayName == "Endpoint A");
             endpointToUpdate.DisplayName = "Endpoint A EDITED";
-            endpointToUpdate.DefenceAdvocateContactEmail = newParticipant.ContactEmail;
+            endpointToUpdate.LinkedParticipantEmails = [newParticipant.ContactEmail];
             // Add an endpoint
-            var newEndpoint = new EditEndpointRequest
-            {
-                DisplayName = "Endpoint D",
-                DefenceAdvocateContactEmail = ""
-            };
+            var newEndpoint = new EditEndpointRequest { DisplayName = "Endpoint D" };
             request.Endpoints.Add(newEndpoint);
 
             var updatedHearing = MapUpdatedHearingV2(hearing, request);
@@ -170,7 +166,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         h.Participants.LinkedParticipants.Count == 3 &&
                         h.Endpoints.ExistingEndpoints.Count == 1 &&
                         h.Endpoints.ExistingEndpoints[0].DisplayName == endpointToUpdate.DisplayName &&
-                        h.Endpoints.ExistingEndpoints[0].DefenceAdvocateContactEmail == endpointToUpdate.DefenceAdvocateContactEmail &&
+                        h.Endpoints.ExistingEndpoints[0].LinkedParticipantEmails.Contains(endpointToUpdate.LinkedParticipantEmails[0]) &&
                         h.Endpoints.RemovedEndpointIds.Any(id => removedEndpoints.Any(e => e.Id == id) &&
                         h.Endpoints.NewEndpoints.Count == 1 &&
                         h.Endpoints.NewEndpoints.Exists(e => e.DisplayName == newEndpoint.DisplayName) &&

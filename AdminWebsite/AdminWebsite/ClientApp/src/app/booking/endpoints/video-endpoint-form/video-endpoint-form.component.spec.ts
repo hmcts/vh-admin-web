@@ -19,6 +19,7 @@ describe('VideoEndpointFormComponent', () => {
             email: 'john@doe.com',
             displayName: 'John Doe',
             userRoleName: 'Representative',
+            hearingRoleCode: 'RPTT',
             interpretation_language: undefined
         }),
         new VHParticipant({
@@ -28,6 +29,7 @@ describe('VideoEndpointFormComponent', () => {
             email: 'chris@green,com',
             displayName: 'Chris Green',
             userRoleName: 'Representative',
+            hearingRoleCode: 'RPTT',
             interpretation_language: undefined
         }),
         new VHParticipant({
@@ -37,6 +39,17 @@ describe('VideoEndpointFormComponent', () => {
             email: 'jane@smith.com',
             displayName: 'Jane Smith',
             userRoleName: 'Individual',
+            hearingRoleCode: 'APPL',
+            interpretation_language: undefined
+        }),
+        new VHParticipant({
+            id: '4',
+            firstName: 'Will',
+            lastName: 'Smith',
+            email: 'will@smith.com',
+            displayName: 'Will Smith',
+            userRoleName: 'Individual',
+            hearingRoleCode: 'INTE',
             interpretation_language: undefined
         })
     ];
@@ -81,14 +94,15 @@ describe('VideoEndpointFormComponent', () => {
             spyOn(component.endpointAdded, 'emit');
             const dto: VideoAccessPointDto = {
                 displayName: 'Test',
-                defenceAdvocate: null,
+                participantsLinked: null,
                 interpretationLanguage: undefined,
                 screening: undefined,
                 externalReferenceId: undefined
             };
             component.form.setValue({
                 displayName: dto.displayName,
-                linkedRepresentative: null
+                representative: null,
+                intermediary: null
             });
             component.onSubmit();
             expect(component.endpointAdded.emit).toHaveBeenCalledWith(dto);
@@ -98,7 +112,8 @@ describe('VideoEndpointFormComponent', () => {
             spyOn(component.endpointAdded, 'emit');
             component.form.setValue({
                 displayName: null,
-                linkedRepresentative: null
+                representative: null,
+                intermediary: null
             });
             component.onSubmit();
             expect(component.endpointAdded.emit).not.toHaveBeenCalled();
@@ -109,7 +124,7 @@ describe('VideoEndpointFormComponent', () => {
             const originalDto: VideoAccessPointDto = {
                 id: '1',
                 displayName: 'Original',
-                defenceAdvocate: null,
+                participantsLinked: null,
                 interpretationLanguage: undefined,
                 screening: undefined,
                 externalReferenceId: undefined
@@ -117,7 +132,7 @@ describe('VideoEndpointFormComponent', () => {
             const updatedDto: VideoAccessPointDto = {
                 id: '1',
                 displayName: 'Updated',
-                defenceAdvocate: null,
+                participantsLinked: null,
                 interpretationLanguage: undefined,
                 screening: undefined,
                 externalReferenceId: undefined
@@ -125,17 +140,20 @@ describe('VideoEndpointFormComponent', () => {
             component.existingVideoEndpoint = originalDto;
             component.form.setValue({
                 displayName: updatedDto.displayName,
-                linkedRepresentative: null
+                representative: null,
+                intermediary: null
             });
             component.onSubmit();
             expect(component.saveButtonText).toBe('Update Access Point');
             expect(component.endpointUpdated.emit).toHaveBeenCalledWith({ original: originalDto, updated: updatedDto });
         });
 
-        it('should find the defence advocate when linkedRepresentative is set', () => {
+        it('should find the correct participants when form fields set', () => {
             spyOn(component.endpointAdded, 'emit');
 
             const rep = component.availableRepresentatives[0];
+            const int = component.availableIntermediaries[0];
+
             // update the input field with the email of the first participant via the debug fixture element
             const displayNameInput = fixture.nativeElement.querySelector('[id="displayName"]') as HTMLInputElement;
             displayNameInput.value = 'Test Endpoint';
@@ -145,13 +163,23 @@ describe('VideoEndpointFormComponent', () => {
             linkedRepresentativeInput.value = rep.email;
             linkedRepresentativeInput.dispatchEvent(new Event('change'));
 
+            const linkedIntermediaryInput = fixture.nativeElement.querySelector('[id="intermediary"]') as HTMLSelectElement;
+            linkedIntermediaryInput.value = int.email;
+            linkedIntermediaryInput.dispatchEvent(new Event('change'));
+
             component.onSubmit();
             expect(component.endpointAdded.emit).toHaveBeenCalledWith({
                 displayName: 'Test Endpoint',
-                defenceAdvocate: {
-                    email: rep.email,
-                    displayName: rep.displayName
-                },
+                participantsLinked: [
+                    {
+                        email: rep.email,
+                        displayName: rep.displayName
+                    },
+                    {
+                        email: int.email,
+                        displayName: int.displayName
+                    }
+                ] ,
                 interpretationLanguage: undefined,
                 screening: undefined,
                 externalReferenceId: undefined
@@ -162,7 +190,8 @@ describe('VideoEndpointFormComponent', () => {
             spyOn(component.endpointAdded, 'emit');
             component.form.setValue({
                 displayName: null,
-                linkedRepresentative: null
+                representative: null,
+                intermediary: null,
             });
             component.onSubmit();
             expect(component.endpointAdded.emit).not.toHaveBeenCalled();
@@ -173,7 +202,7 @@ describe('VideoEndpointFormComponent', () => {
                 {
                     id: '1',
                     displayName: 'Test',
-                    defenceAdvocate: null,
+                    participantsLinked: null,
                     interpretationLanguage: undefined,
                     screening: undefined,
                     externalReferenceId: undefined
@@ -182,14 +211,15 @@ describe('VideoEndpointFormComponent', () => {
             component.videoEndpoint = {
                 id: '2',
                 displayName: 'Test',
-                defenceAdvocate: null,
+                participantsLinked: null,
                 interpretationLanguage: undefined,
                 screening: undefined,
                 externalReferenceId: undefined
             };
             component.form.setValue({
                 displayName: 'Test',
-                linkedRepresentative: null
+                representative: null,
+                intermediary: null
             });
             component.onSubmit();
             expect(component.form.valid).toBeFalse();

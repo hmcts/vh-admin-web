@@ -143,13 +143,17 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         MiddleNames = "MiddleNames"
                     }
                 },
-                Endpoints = new List<EditEndpointRequest>
-                {
-                    new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
-                    new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
-                    new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 },
-                    new EditEndpointRequest { Id = endpointGuid4, DisplayName = "data4-edit", DefenceAdvocateContactEmail = defenceAdvocate4 }
-                }
+                Endpoints =
+                [
+                    new EditEndpointRequest
+                        { Id = endpointGuid1, DisplayName = "data1", LinkedParticipantEmails = [defenceAdvocate1] },
+                    new EditEndpointRequest
+                        { Id = endpointGuid2, DisplayName = "data2", LinkedParticipantEmails = [defenceAdvocate2] },
+                    new EditEndpointRequest
+                        { Id = endpointGuid3, DisplayName = "data3", LinkedParticipantEmails = [defenceAdvocate3] },
+                    new EditEndpointRequest
+                        { Id = endpointGuid4, DisplayName = "data4-edit", LinkedParticipantEmails = [defenceAdvocate4] }
+                ]
             };
 
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
@@ -623,7 +627,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_update_endpoint_to_be_linked_to_new_defence_advocate_when_endpoint_is_not_currently_linked()
+        public async Task Should_update_endpoint_to_be_linked_to_new_participant_when_endpoint_is_not_currently_linked()
         {
             // ie there is an endpoint currently not linked to a defence advocate
             // as part of the request we add a new participant and link them to this endpoint as a defence advocate
@@ -638,7 +642,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Id = endpointInRequestToUpdate.Id.Value,
                 DisplayName = "Endpoint A",
-                DefenceAdvocateId = null
+                LinkedParticipantIds = null
             };
             hearing.Endpoints.RemoveAll(e => e.Id != existingEndpointToUpdate.Id);
             hearing.Endpoints.Add(existingEndpointToUpdate);
@@ -660,7 +664,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             request.Participants.Add(newParticipantDefenceAdvocate);
             
             request.Endpoints.RemoveAll(e => e.Id != endpointInRequestToUpdate.Id);
-            endpointInRequestToUpdate.DefenceAdvocateContactEmail = newParticipantDefenceAdvocate.ContactEmail;
+            endpointInRequestToUpdate.LinkedParticipantEmails = [newParticipantDefenceAdvocate.ContactEmail];
             
             // Act
             var result = await _controller.EditHearing(_validId, _editEndpointOnHearingRequestWithJudge);
@@ -671,7 +675,58 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Verify(
                 x => x.UpdateEndpointV2Async(hearingId, It.IsAny<Guid>(),
                     It.Is<UpdateEndpointRequestV2>(r =>
-                        r.DefenceAdvocateContactEmail == newParticipantDefenceAdvocate.ContactEmail)), 
+                        r.LinkedParticipantEmails.Contains(newParticipantDefenceAdvocate.ContactEmail))), 
+                Times.Exactly(expectedUpdatedEndpointCount));
+        }
+
+        [Test]
+        public async Task should_create_a_new_link_to_an_existing_participant_to_endpoint_that_already_has_two_and_removes_one()
+        {
+            var participantToAddToEndpoint = new ParticipantResponseV2()
+            {
+                Id = Guid.NewGuid(),
+                ContactEmail = "new@email.com"
+            };
+            var participantToRemoveFromEndpoint = new ParticipantResponseV2
+            {
+                Id = Guid.NewGuid(),
+                ContactEmail = "old@email.com"
+            };
+
+            var request = _editEndpointOnHearingRequestWithJudge;
+            var endpointInRequestToUpdate = request.Endpoints[0];
+            
+            var hearing = _v2HearingDetailsResponse;
+            var existingEndpointLink = hearing.Participants[0];
+            hearing.Participants.AddRange([participantToAddToEndpoint, participantToRemoveFromEndpoint]);
+            var existingEndpointToUpdate = new EndpointResponseV2
+            {
+                Id = endpointInRequestToUpdate.Id.Value,
+                DisplayName = "Endpoint A",
+                LinkedParticipantIds = [existingEndpointLink.Id, participantToRemoveFromEndpoint.Id]
+            };
+            hearing.Endpoints.RemoveAll(e => e.Id != existingEndpointToUpdate.Id);
+            hearing.Endpoints.Add(existingEndpointToUpdate);
+            
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(hearing);
+
+            request.Endpoints.RemoveAll(e => e.Id != endpointInRequestToUpdate.Id);
+            endpointInRequestToUpdate.LinkedParticipantEmails = [existingEndpointLink.ContactEmail, participantToAddToEndpoint.ContactEmail];
+            
+            // Act
+            var result = await _controller.EditHearing(_validId, _editEndpointOnHearingRequestWithJudge);
+            
+            // Assert
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            var expectedUpdatedEndpointCount = request.Endpoints.Count;
+            _bookingsApiClient.Verify(
+                x => x.UpdateEndpointV2Async(hearing.Id, It.IsAny<Guid>(),
+                    It.Is<UpdateEndpointRequestV2>(r =>
+                        r.LinkedParticipantEmails.Count == 2 &&
+                        r.LinkedParticipantEmails.Contains(existingEndpointLink.ContactEmail) &&
+                        r.LinkedParticipantEmails.Contains(participantToAddToEndpoint.ContactEmail) && 
+                        r.LinkedParticipantEmails.All(e => e != participantToRemoveFromEndpoint.ContactEmail))), 
                 Times.Exactly(expectedUpdatedEndpointCount));
         }
     }

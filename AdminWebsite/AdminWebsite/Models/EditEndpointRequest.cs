@@ -24,10 +24,11 @@ namespace AdminWebsite.Models
         [StringLength(255, ErrorMessage = "Display name max length is 255 characters")]
         [RegularExpression(@"^[\p{L}\p{N}\s',._-]+$")]
         public string DisplayName { get; set; }
+
         /// <summary>
         ///     The username of the participant
         /// </summary>
-        public string DefenceAdvocateContactEmail { get; set; }
+        public List<string> LinkedParticipantEmails { get; set; } = new();
         
         /// <summary>
         ///     The code for the endpoint's interpreter language, if applicable
@@ -48,14 +49,14 @@ namespace AdminWebsite.Models
                 if (ReferenceEquals(y, null)) return false;
                 if (x.GetType() != y.GetType()) return false;
                 return Nullable.Equals(x.Id, y.Id) && x.DisplayName == y.DisplayName &&
-                       x.DefenceAdvocateContactEmail == y.DefenceAdvocateContactEmail &&
+                       x.LinkedParticipantEmails.Equals(y.LinkedParticipantEmails) &&
                        x.InterpreterLanguageCode == y.InterpreterLanguageCode &&
                        x.ExternalReferenceId == y.ExternalReferenceId;
             }
 
             public int GetHashCode(EditEndpointRequest obj)
             {
-                return HashCode.Combine(obj.Id, obj.DisplayName, obj.DefenceAdvocateContactEmail);
+                return HashCode.Combine(obj.Id, obj.DisplayName, obj.LinkedParticipantEmails);
             }
         }
 

@@ -5659,7 +5659,7 @@ export interface IEditMultiDayHearingRequest {
 export class EndpointRequest implements IEndpointRequest {
     display_name?: string | undefined;
     external_reference_id?: string | undefined;
-    defence_advocate_contact_email?: string | undefined;
+    linked_participant_emails?: string[] | undefined;
     interpreter_language_code?: string | undefined;
     screening_requirements?: SpecialMeasureScreeningRequest;
 
@@ -5675,7 +5675,10 @@ export class EndpointRequest implements IEndpointRequest {
         if (_data) {
             this.display_name = _data['display_name'];
             this.external_reference_id = _data['external_reference_id'];
-            this.defence_advocate_contact_email = _data['defence_advocate_contact_email'];
+            if (Array.isArray(_data['linked_participant_emails'])) {
+                this.linked_participant_emails = [] as any;
+                for (let item of _data['linked_participant_emails']) this.linked_participant_emails!.push(item);
+            }
             this.interpreter_language_code = _data['interpreter_language_code'];
             this.screening_requirements = _data['screening_requirements']
                 ? SpecialMeasureScreeningRequest.fromJS(_data['screening_requirements'])
@@ -5694,7 +5697,10 @@ export class EndpointRequest implements IEndpointRequest {
         data = typeof data === 'object' ? data : {};
         data['display_name'] = this.display_name;
         data['external_reference_id'] = this.external_reference_id;
-        data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
+        if (Array.isArray(this.linked_participant_emails)) {
+            data['linked_participant_emails'] = [];
+            for (let item of this.linked_participant_emails) data['linked_participant_emails'].push(item);
+        }
         data['interpreter_language_code'] = this.interpreter_language_code;
         data['screening_requirements'] = this.screening_requirements ? this.screening_requirements.toJSON() : <any>undefined;
         return data;
@@ -5704,7 +5710,7 @@ export class EndpointRequest implements IEndpointRequest {
 export interface IEndpointRequest {
     display_name?: string | undefined;
     external_reference_id?: string | undefined;
-    defence_advocate_contact_email?: string | undefined;
+    linked_participant_emails?: string[] | undefined;
     interpreter_language_code?: string | undefined;
     screening_requirements?: SpecialMeasureScreeningRequest;
 }
@@ -6774,7 +6780,7 @@ export class EndpointResponse implements IEndpointResponse {
     display_name?: string | undefined;
     sip?: string | undefined;
     pin?: string | undefined;
-    defence_advocate_id?: string | undefined;
+    linked_participant_ids?: string[] | undefined;
     interpreter_language?: AvailableLanguageResponse;
     screening_requirement?: ScreeningResponse;
 
@@ -6794,7 +6800,10 @@ export class EndpointResponse implements IEndpointResponse {
             this.display_name = _data['display_name'];
             this.sip = _data['sip'];
             this.pin = _data['pin'];
-            this.defence_advocate_id = _data['defence_advocate_id'];
+            if (Array.isArray(_data['linked_participant_ids'])) {
+                this.linked_participant_ids = [] as any;
+                for (let item of _data['linked_participant_ids']) this.linked_participant_ids!.push(item);
+            }
             this.interpreter_language = _data['interpreter_language']
                 ? AvailableLanguageResponse.fromJS(_data['interpreter_language'])
                 : <any>undefined;
@@ -6819,7 +6828,10 @@ export class EndpointResponse implements IEndpointResponse {
         data['display_name'] = this.display_name;
         data['sip'] = this.sip;
         data['pin'] = this.pin;
-        data['defence_advocate_id'] = this.defence_advocate_id;
+        if (Array.isArray(this.linked_participant_ids)) {
+            data['linked_participant_ids'] = [];
+            for (let item of this.linked_participant_ids) data['linked_participant_ids'].push(item);
+        }
         data['interpreter_language'] = this.interpreter_language ? this.interpreter_language.toJSON() : <any>undefined;
         data['screening_requirement'] = this.screening_requirement ? this.screening_requirement.toJSON() : <any>undefined;
         return data;
@@ -6833,7 +6845,7 @@ export interface IEndpointResponse {
     display_name?: string | undefined;
     sip?: string | undefined;
     pin?: string | undefined;
-    defence_advocate_id?: string | undefined;
+    linked_participant_ids?: string[] | undefined;
     interpreter_language?: AvailableLanguageResponse;
     screening_requirement?: ScreeningResponse;
 }
@@ -7730,7 +7742,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
     /** The display name for the endpoint */
     display_name?: string | undefined;
     /** The username of the participant */
-    defence_advocate_contact_email?: string | undefined;
+    linked_participant_emails?: string[] | undefined;
     /** The code for the endpoint's interpreter language, if applicable */
     interpreter_language_code?: string | undefined;
     screening_requirements?: SpecialMeasureScreeningRequest;
@@ -7748,7 +7760,10 @@ export class EditEndpointRequest implements IEditEndpointRequest {
             this.id = _data['id'];
             this.external_reference_id = _data['external_reference_id'];
             this.display_name = _data['display_name'];
-            this.defence_advocate_contact_email = _data['defence_advocate_contact_email'];
+            if (Array.isArray(_data['linked_participant_emails'])) {
+                this.linked_participant_emails = [] as any;
+                for (let item of _data['linked_participant_emails']) this.linked_participant_emails!.push(item);
+            }
             this.interpreter_language_code = _data['interpreter_language_code'];
             this.screening_requirements = _data['screening_requirements']
                 ? SpecialMeasureScreeningRequest.fromJS(_data['screening_requirements'])
@@ -7768,7 +7783,10 @@ export class EditEndpointRequest implements IEditEndpointRequest {
         data['id'] = this.id;
         data['external_reference_id'] = this.external_reference_id;
         data['display_name'] = this.display_name;
-        data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
+        if (Array.isArray(this.linked_participant_emails)) {
+            data['linked_participant_emails'] = [];
+            for (let item of this.linked_participant_emails) data['linked_participant_emails'].push(item);
+        }
         data['interpreter_language_code'] = this.interpreter_language_code;
         data['screening_requirements'] = this.screening_requirements ? this.screening_requirements.toJSON() : <any>undefined;
         return data;
@@ -7783,7 +7801,7 @@ export interface IEditEndpointRequest {
     /** The display name for the endpoint */
     display_name?: string | undefined;
     /** The username of the participant */
-    defence_advocate_contact_email?: string | undefined;
+    linked_participant_emails?: string[] | undefined;
     /** The code for the endpoint's interpreter language, if applicable */
     interpreter_language_code?: string | undefined;
     screening_requirements?: SpecialMeasureScreeningRequest;

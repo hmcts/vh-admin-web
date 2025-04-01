@@ -14,7 +14,7 @@ public static class EndpointResponseMapper
             DisplayName = endpointResponse.DisplayName,
             Sip = endpointResponse.Sip,
             Pin = endpointResponse.Pin,
-            DefenceAdvocateId = endpointResponse.DefenceAdvocateId,
+            LinkedParticipantIds = endpointResponse.LinkedParticipantIds,
             InterpreterLanguage = endpointResponse.InterpreterLanguage?.Map(),
             ScreeningRequirement = endpointResponse.Screening?.Map(hearingDetails)
         };
