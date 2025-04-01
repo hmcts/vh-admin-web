@@ -184,10 +184,8 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         this.hearing = this.videoHearingService.getCurrentRequest();
         this.participants = this.hearing.participants;
         this.videoEndpoints = this.hearing.endpoints.map(e => {
-
-            const endpointParticipants = this.participants?.filter(p =>
-                e.participants_linked?.some(contactEmail => contactEmail === p.contactEmail)
-            ) ?? [];
+            const endpointParticipants =
+                this.participants?.filter(p => e.participants_linked?.some(contactEmail => contactEmail === p.contactEmail)) ?? [];
 
             return {
                 ...e,

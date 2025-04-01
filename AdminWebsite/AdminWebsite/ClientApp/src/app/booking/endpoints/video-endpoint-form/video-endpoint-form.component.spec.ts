@@ -179,7 +179,7 @@ describe('VideoEndpointFormComponent', () => {
                         email: int.email,
                         displayName: int.displayName
                     }
-                ] ,
+                ],
                 interpretationLanguage: undefined,
                 screening: undefined,
                 externalReferenceId: undefined
@@ -191,7 +191,7 @@ describe('VideoEndpointFormComponent', () => {
             component.form.setValue({
                 displayName: null,
                 representative: null,
-                intermediary: null,
+                intermediary: null
             });
             component.onSubmit();
             expect(component.endpointAdded.emit).not.toHaveBeenCalled();

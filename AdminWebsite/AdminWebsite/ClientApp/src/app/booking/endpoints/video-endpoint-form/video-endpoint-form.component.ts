@@ -127,12 +127,16 @@ export class VideoEndpointFormComponent {
 
     private populateFormForExistingEndpoint() {
         const linkedParticipants = this.videoEndpoint.participantsLinked || [];
-        const representative = linkedParticipants.find(lp =>
-            this._participants.some(ar => ar.hearingRoleCode === this.constants.HearingRoleCodes.Representative && ar.email === lp.email)
-        )?.email ?? null;
-        const intermediary = linkedParticipants.find(lp =>
-            this._participants.some(ai => ai.hearingRoleCode === this.constants.HearingRoleCodes.Intermediary && ai.email === lp.email)
-        )?.email ?? null;
+        const representative =
+            linkedParticipants.find(lp =>
+                this._participants.some(
+                    ar => ar.hearingRoleCode === this.constants.HearingRoleCodes.Representative && ar.email === lp.email
+                )
+            )?.email ?? null;
+        const intermediary =
+            linkedParticipants.find(lp =>
+                this._participants.some(ai => ai.hearingRoleCode === this.constants.HearingRoleCodes.Intermediary && ai.email === lp.email)
+            )?.email ?? null;
         this.form.setValue(
             {
                 displayName: this.videoEndpoint.displayName,
