@@ -47,7 +47,7 @@ export class VideoEndpointFormComponent {
             p => p.hearingRoleCode === this.constants.HearingRoleCodes.Intermediary && p.email
         );
         this.availableRepresentatives = this._participants.filter(
-            p => p.hearingRoleCode === this.constants.HearingRoleCodes.Representative && p.email
+            p => p.userRoleName === this.constants.UserRoles.Representative && p.email
         );
     }
     @Output() endpointAdded = new EventEmitter<VideoAccessPointDto>();

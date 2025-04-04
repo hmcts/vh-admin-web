@@ -83,7 +83,8 @@ export const Constants = {
     },
     UserRoles: {
         Judge: 'Judge',
-        StaffMember: 'Staff Member'
+        StaffMember: 'Staff Member',
+        Representative: 'Representative'
     },
     ManageJusticeUsers: {
         EmptySearchResults:
