@@ -27,11 +27,11 @@
       },
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[3.2.6-pr-0956-0008, )",
-        "resolved": "3.2.6-pr-0956-0008",
-        "contentHash": "yLYxWBy+YjZgU63JYiNfXTkRSPqq3H2pp/u5bAxwLd1HyDPYAeF2sfZ0r7U8JC6FnlFX1KOeQBBEfrlSsg5PsQ==",
+        "requested": "[3.2.6, )",
+        "resolved": "3.2.6",
+        "contentHash": "C6oJuaaoxmMI+V8RBLgHTyjz2mOGjNVx9Q2lCWdVI+s0DCS8zXnYmzoqnXCOwLHP5YiBZ5dTkDXdJWJlq5Nxww==",
         "dependencies": {
-          "BookingsApi.Common.DotNet6": "3.2.6-pr-0956-0008",
+          "BookingsApi.Common.DotNet6": "3.2.6",
           "System.Text.Json": "8.0.5"
         }
       },
@@ -229,9 +229,9 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[3.2.12-pr-0729-0018, )",
-        "resolved": "3.2.12-pr-0729-0018",
-        "contentHash": "jKcRcviLPOR0ZPw+BSrCXQQWPqI96FbcePT/ebtUSTeHrynBbbR3nFNm1Zm9dotXPSg3nKMswsMGSsVmmUsgLw==",
+        "requested": "[3.2.12, )",
+        "resolved": "3.2.12",
+        "contentHash": "D8aT2GeUvt0Z/UoTIFaBVHK3zeba+Cyh1uYn3HLXT79piWyxv/DZ/an0E/ePe+k7Ow4OoWiz3JqPspcJPnjbzw==",
         "dependencies": {
           "System.Text.Json": "8.0.5"
         }
@@ -263,8 +263,8 @@
       },
       "BookingsApi.Common.DotNet6": {
         "type": "Transitive",
-        "resolved": "3.2.6-pr-0956-0008",
-        "contentHash": "Psm4Xe0HBZDmuFXfV1XomCJAmbC3wwKQn7R7S4UjaRkqf5brToqpjPwV63xO7MiA5knrxF4gnNvXwxaG14m/rQ==",
+        "resolved": "3.2.6",
+        "contentHash": "6U/pWQExBDvV/6qKGud1uze+JP3iXc3tob0ko84kxYlVdz9k1saqT5OHbHUEg6Nbqshw8o5/xSPmJ5Pe2lpfIw==",
         "dependencies": {
           "System.Text.Json": "8.0.5"
         }
