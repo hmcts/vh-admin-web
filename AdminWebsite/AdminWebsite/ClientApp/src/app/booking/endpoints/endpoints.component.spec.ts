@@ -52,7 +52,7 @@ function initHearingRequest(): VHBooking {
         {
             id: '1',
             displayName: 'Already Here',
-            participants_linked: null,
+            participantsLinked: null,
             sip: 'sip',
             pin: 'pin',
             username: 'test@existing.com',

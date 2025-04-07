@@ -12,7 +12,7 @@ export class EndpointModel {
     displayName?: string;
     sip?: string;
     pin?: string;
-    participants_linked?: string[];
+    participantsLinked?: string[];
     username?: string;
     contactEmail?: string;
     interpretationLanguage: InterpreterSelectedDto;

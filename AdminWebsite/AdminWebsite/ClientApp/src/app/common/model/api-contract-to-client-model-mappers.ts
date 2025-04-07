@@ -1,14 +1,14 @@
 import {
-    CaseResponse,
-    HearingDetailsResponse,
-    ParticipantResponse,
-    LinkedParticipantResponse,
-    EndpointResponse,
     BookingsHearingResponse,
-    PersonResponseV2,
+    CaseResponse,
+    CaseTypeResponse,
+    EndpointResponse,
+    HearingDetailsResponse,
     JudgeAccountType,
     JudgeResponse,
-    CaseTypeResponse
+    LinkedParticipantResponse,
+    ParticipantResponse,
+    PersonResponseV2
 } from 'src/app/services/clients/api-client';
 import { VHBooking } from './vh-booking';
 import { CaseModel } from './case.model';
@@ -161,7 +161,7 @@ export function mapEndpointResponseToEndpointModel(response: EndpointResponse[],
             endpoint.displayName = e.display_name;
             endpoint.pin = e.pin;
             endpoint.sip = e.sip;
-            endpoint.participants_linked = endpointParticipants.map(p => p.contact_email);
+            endpoint.participantsLinked = endpointParticipants.map(p => p.contact_email);
             endpoint.interpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(e.interpreter_language);
             endpoint.screening = mapScreeningResponseToScreeningDto(e.screening_requirement);
             endpoints.push(endpoint);

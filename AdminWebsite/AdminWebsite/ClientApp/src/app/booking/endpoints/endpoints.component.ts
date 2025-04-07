@@ -97,7 +97,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             const endpointModel = new EndpointModel(vapDto.externalReferenceId);
             endpointModel.id = vapDto.id;
             endpointModel.displayName = vapDto.displayName;
-            endpointModel.participants_linked = vapDto.participantsLinked?.map(e => e.email);
+            endpointModel.participantsLinked = vapDto.participantsLinked?.map(e => e.email);
             endpointModel.interpretationLanguage = vapDto.interpretationLanguage;
             endpointModel.screening = vapDto.screening;
             newEndpointsArray.push(endpointModel);
@@ -185,7 +185,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         this.participants = this.hearing.participants;
         this.videoEndpoints = this.hearing.endpoints.map(e => {
             const endpointParticipants =
-                this.participants?.filter(p => e.participants_linked?.some(contactEmail => contactEmail === p.contactEmail)) ?? [];
+                this.participants?.filter(p => e.participantsLinked?.some(contactEmail => contactEmail === p.contactEmail)) ?? [];
 
             return {
                 ...e,

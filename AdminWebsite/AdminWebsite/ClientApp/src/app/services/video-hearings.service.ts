@@ -308,7 +308,7 @@ export class VideoHearingsService {
         editEndpoint.id = endpoint.id;
         editEndpoint.external_reference_id = endpoint.externalReferenceId;
         editEndpoint.display_name = endpoint.displayName;
-        editEndpoint.linked_participant_emails = endpoint.participants_linked;
+        editEndpoint.linked_participant_emails = endpoint.participantsLinked;
         editEndpoint.interpreter_language_code = this.mapInterpreterLanguageCode(endpoint.interpretationLanguage);
         editEndpoint.screening_requirements = this.mapScreeningRequirementDtoToRequest(endpoint.screening);
         return editEndpoint;
@@ -395,7 +395,7 @@ export class VideoHearingsService {
             endpointModel.forEach(e => {
                 endpoint = new EndpointRequest();
                 endpoint.display_name = e.displayName;
-                endpoint.linked_participant_emails = e.participants_linked;
+                endpoint.linked_participant_emails = e.participantsLinked;
                 endpoint.interpreter_language_code = this.mapInterpreterLanguageCode(e.interpretationLanguage);
                 endpoint.screening_requirements = this.mapScreeningRequirementDtoToRequest(e.screening);
                 endpoint.external_reference_id = e.externalReferenceId;
