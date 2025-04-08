@@ -43,12 +43,8 @@ export class VideoEndpointFormComponent {
 
     @Input() set participants(value: VHParticipant[]) {
         this._participants = value;
-        this.availableIntermediaries = this._participants.filter(
-            p => p.hearingRoleCode === this.constants.HearingRoleCodes.Intermediary && p.email
-        );
-        this.availableRepresentatives = this._participants.filter(
-            p => p.userRoleName === this.constants.UserRoles.Representative && p.email
-        );
+        this.availableIntermediaries = this._participants.filter(p => this.filterInts(p) && p.email);
+        this.availableRepresentatives = this._participants.filter(p => this.filterReps(p) && p.email);
     }
     @Output() endpointAdded = new EventEmitter<VideoAccessPointDto>();
     @Output() endpointUpdated = new EventEmitter<{ original: VideoAccessPointDto; updated: VideoAccessPointDto }>();
@@ -128,15 +124,9 @@ export class VideoEndpointFormComponent {
     private populateFormForExistingEndpoint() {
         const linkedParticipants = this.videoEndpoint.participantsLinked || [];
         const representative =
-            linkedParticipants.find(lp =>
-                this._participants.some(
-                    ar => ar.hearingRoleCode === this.constants.HearingRoleCodes.Representative && ar.email === lp.email
-                )
-            )?.email ?? null;
+            linkedParticipants.find(lp => this._participants.some(ar => this.filterReps(ar) && ar.email === lp.email))?.email ?? null;
         const intermediary =
-            linkedParticipants.find(lp =>
-                this._participants.some(ai => ai.hearingRoleCode === this.constants.HearingRoleCodes.Intermediary && ai.email === lp.email)
-            )?.email ?? null;
+            linkedParticipants.find(lp => this._participants.some(ai => this.filterInts(ai) && ai.email === lp.email))?.email ?? null;
         this.form.setValue(
             {
                 displayName: this.videoEndpoint.displayName,
@@ -178,6 +168,16 @@ export class VideoEndpointFormComponent {
         }
         return rep;
     }
+
+    private filterInts = (p: VHParticipant) => {
+        return p.hearingRoleCode === this.constants.HearingRoleCodes.Intermediary;
+    };
+
+    private filterReps = (p: VHParticipant) => {
+        return (
+            p.userRoleName === this.constants.UserRoles.Representative && p.hearingRoleCode !== this.constants.HearingRoleCodes.Intermediary
+        );
+    };
 }
 
 function blankSpaceValidator(control: AbstractControl): { [key: string]: any } | null {

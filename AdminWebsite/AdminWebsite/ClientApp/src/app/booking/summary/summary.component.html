@@ -96,10 +96,10 @@
           <ng-container *ngIf="endpoint.screening">
             <app-screening-enabled-badge [screening]="endpoint.screening"></app-screening-enabled-badge>
           </ng-container>
-          <div *ngIf="getDefenceAdvocateByContactEmail(endpoint.defenceAdvocate)" class="govuk-grid-row govuk-!-padding-bottom-3">
-            <div class="govuk-grid-column-full vh-representee" id="defenceAdvocateRep{{ +i }}">
+          <div *ngIf="endpoint.participantsLinked" class="govuk-grid-row govuk-!-padding-bottom-3">
+            <div *ngFor="let pl of endpoint.participantsLinked" class="govuk-grid-column-full vh-representee" id="endpoint-linked-participant{{ +i }}">
               <fa-icon [icon]="linkIcon" size="xs"></fa-icon>
-              {{ getDefenceAdvocateByContactEmail(endpoint.defenceAdvocate) }}
+                {{getDefenceAdvocateByContactEmail(pl)}}
             </div>
           </div>
         </div>
