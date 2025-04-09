@@ -169,15 +169,10 @@ export class VideoEndpointFormComponent {
         return rep;
     }
 
-    private filterInts = (p: VHParticipant) => {
-        return p.hearingRoleCode === this.constants.HearingRoleCodes.Intermediary;
-    };
+    private filterInts = (p: VHParticipant) => p.hearingRoleCode === this.constants.HearingRoleCodes.Intermediary;
 
-    private filterReps = (p: VHParticipant) => {
-        return (
-            p.userRoleName === this.constants.UserRoles.Representative && p.hearingRoleCode !== this.constants.HearingRoleCodes.Intermediary
-        );
-    };
+    private filterReps = (p: VHParticipant) =>
+        p.userRoleName === this.constants.UserRoles.Representative && p.hearingRoleCode !== this.constants.HearingRoleCodes.Intermediary;
 }
 
 function blankSpaceValidator(control: AbstractControl): { [key: string]: any } | null {
