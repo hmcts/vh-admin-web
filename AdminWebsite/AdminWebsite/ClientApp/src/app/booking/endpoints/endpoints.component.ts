@@ -28,6 +28,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     attemptingDiscardChanges = false;
 
     participants: VHParticipant[] = [];
+    availableReps: VHParticipant[] = [];
 
     multiDayBookingEnhancementsEnabled: boolean;
     specialMeasureEnabled = false;
@@ -168,6 +169,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             this.videoHearingService.setBookingHasChanged();
         }
         this.upsertEndpointsToBooking();
+        this.generatePoolOfAvailableReps();
     }
 
     onEndpointSelectedForDeletion(existingEndpoint: VideoAccessPointDto) {
@@ -203,5 +205,15 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
                 externalReferenceId: e.externalReferenceId
             };
         });
+        this.generatePoolOfAvailableReps();
     }
+
+    // Filter the participants who are representatives and not already linked to an endpoint
+    private generatePoolOfAvailableReps = () => {
+        this.availableReps = this.participants.filter(
+            p =>
+                p.userRoleName === Constants.UserRoles.Representative &&
+                !this.videoEndpoints.some(endpoint => endpoint.participantsLinked?.some(linked => linked.email === p.email))
+        );
+    };
 }

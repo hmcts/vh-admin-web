@@ -72,6 +72,7 @@ describe('VideoEndpointFormComponent', () => {
         fixture = TestBed.createComponent(VideoEndpointFormComponent);
         component = fixture.componentInstance;
         component.participants = participants;
+        component.availableParticipantPool = participants.filter(p => p.hearingRoleCode === 'INTE' || p.hearingRoleCode === 'RPTT');
 
         fixture.detectChanges();
     });

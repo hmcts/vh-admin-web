@@ -16,8 +16,8 @@ export class VideoEndpointFormComponent {
     errorMessages = Constants.Error;
     featureFlags = FeatureFlags;
 
-    availableRepresentatives: VHParticipant[] = [];
-    availableIntermediaries: VHParticipant[] = [];
+    availableRepresentatives: EndpointLink[] = [];
+    availableIntermediaries: EndpointLink[] = [];
 
     constants = Constants;
 
@@ -38,21 +38,18 @@ export class VideoEndpointFormComponent {
             this.saveButtonText = 'Save Access Point';
         }
     }
-
     @Input() existingVideoEndpoints: VideoAccessPointDto[] = [];
-
-    @Input() set participants(value: VHParticipant[]) {
-        this._participants = value;
-        this.availableIntermediaries = this._participants.filter(p => this.filterInts(p) && p.email);
-        this.availableRepresentatives = this._participants.filter(p => this.filterReps(p) && p.email);
-    }
+    @Input() participants: VHParticipant[] = [];
+    private _availableParticipants: VHParticipant[];
     @Output() endpointAdded = new EventEmitter<VideoAccessPointDto>();
     @Output() endpointUpdated = new EventEmitter<{ original: VideoAccessPointDto; updated: VideoAccessPointDto }>();
 
     @ViewChild('interpreterForm') interpreterForm: InterpreterFormComponent;
 
-    private _participants: VHParticipant[];
-
+    @Input() set availableParticipantPool(value: VHParticipant[]) {
+        this._availableParticipants = value;
+        this.populateParticipantLists();
+    }
     constructor(private readonly formBuilder: FormBuilder) {
         this.createForm();
     }
@@ -122,16 +119,24 @@ export class VideoEndpointFormComponent {
     }
 
     private populateFormForExistingEndpoint() {
-        const linkedParticipants = this.videoEndpoint.participantsLinked || [];
-        const representative =
-            linkedParticipants.find(lp => this._participants.some(ar => this.filterReps(ar) && ar.email === lp.email))?.email ?? null;
-        const intermediary =
-            linkedParticipants.find(lp => this._participants.some(ai => this.filterInts(ai) && ai.email === lp.email))?.email ?? null;
+        this.populateParticipantLists();
+        const representative = this.videoEndpoint.participantsLinked?.find(lp =>
+            this.participants.some(ar => this.filterReps(ar) && ar.email === lp.email)
+        );
+        const intermediary = this.videoEndpoint.participantsLinked?.find(lp =>
+            this.participants.some(ai => this.filterInts(ai) && ai.email === lp.email)
+        );
+
+        this.updateParticipantPool(representative, intermediary);
+
+        const defaultRep = representative?.email ?? null;
+        const defaultInt = intermediary?.email ?? null;
+
         this.form.setValue(
             {
                 displayName: this.videoEndpoint.displayName,
-                representative: representative,
-                intermediary: intermediary
+                representative: defaultRep,
+                intermediary: defaultInt
             },
             { emitEvent: false, onlySelf: true }
         );
@@ -173,6 +178,31 @@ export class VideoEndpointFormComponent {
 
     private filterReps = (p: VHParticipant) =>
         p.userRoleName === this.constants.UserRoles.Representative && p.hearingRoleCode !== this.constants.HearingRoleCodes.Intermediary;
+
+    private updateParticipantPool(representative: EndpointLink, intermediary: EndpointLink) {
+        if (representative) {
+            this.availableRepresentatives.push(representative);
+        }
+        if (intermediary) {
+            this.availableIntermediaries.push(intermediary);
+        }
+    }
+
+    private populateParticipantLists = () => {
+        this.availableIntermediaries = this._availableParticipants
+            .filter(p => this.filterInts(p) && p.email)
+            .map(p => ({
+                email: p.email,
+                displayName: p.displayName
+            }));
+
+        this.availableRepresentatives = this._availableParticipants
+            .filter(p => this.filterReps(p) && p.email)
+            .map(p => ({
+                email: p.email,
+                displayName: p.displayName
+            }));
+    };
 }
 
 function blankSpaceValidator(control: AbstractControl): { [key: string]: any } | null {
