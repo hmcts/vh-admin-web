@@ -156,6 +156,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             this.videoHearingService.setBookingHasChanged();
         }
         this.upsertEndpointsToBooking();
+        this.generatePoolOfAvailableReps();
     }
 
     onEndpointUpdated($event: { original: VideoAccessPointDto; updated: VideoAccessPointDto }) {
@@ -176,6 +177,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         this.videoEndpoints = this.videoEndpoints.filter(endpoint => endpoint.displayName !== existingEndpoint.displayName);
         this.videoHearingService.setBookingHasChanged();
         this.upsertEndpointsToBooking();
+        this.generatePoolOfAvailableReps();
     }
 
     onEndpointSelectedForEdit(existingEndpoint: VideoAccessPointDto) {
