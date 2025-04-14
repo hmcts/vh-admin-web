@@ -90,6 +90,32 @@ describe('VideoEndpointFormComponent', () => {
         expect(component.saveButtonText).toBe('Save Access Point');
     });
 
+    it('should have correct available participants when initialising existing endpoint', () => {
+        const representative = participants[0];
+        const otherRepresentative = participants[1];
+        const intermediary = participants[3];
+        component.availableParticipantPool = [otherRepresentative];
+        component.existingVideoEndpoint = {
+            displayName: 'Test',
+            id: '1',
+            screening: undefined,
+            interpretationLanguage: undefined,
+            externalReferenceId: '1',
+            participantsLinked: [
+                { displayName: representative.displayName, email: representative.email },
+                { displayName: intermediary.displayName, email: intermediary.email }
+            ]
+        };
+        fixture.detectChanges();
+        //lists should contain otherRepresentative from availableParticipantPool aswell as the other two participants already linked to the JVS
+        expect(component.availableRepresentatives.length).toBe(2);
+        expect(component.availableRepresentatives[0].email).toBe(otherRepresentative.email);
+        expect(component.availableRepresentatives[1].email).toBe(representative.email);
+
+        expect(component.availableIntermediaries.length).toBe(1);
+        expect(component.availableIntermediaries[0].email).toBe(intermediary.email);
+    });
+
     describe('on form submit', () => {
         it('should emit endpointAdded event when onSubmit is called and form is valid', () => {
             spyOn(component.endpointAdded, 'emit');

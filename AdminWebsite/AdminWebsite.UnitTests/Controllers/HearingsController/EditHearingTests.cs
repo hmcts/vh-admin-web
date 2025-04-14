@@ -1,6 +1,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
+using AdminWebsite.Contracts.Enums;
+using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
@@ -14,6 +16,7 @@ using Microsoft.Extensions.Options;
 using VideoApi.Contract.Consts;
 using VideoApi.Contract.Responses;
 using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
+using JudiciaryParticipantResponse = BookingsApi.Contract.V2.Responses.JudiciaryParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -197,7 +200,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     new()
                     {
-                        DefenceAdvocateId = Guid.NewGuid(),
+                        LinkedParticipantIds = [Guid.NewGuid()],
                         DisplayName = "displayName",
                         Id = Guid.NewGuid(),
                         Pin = "pin",
@@ -228,7 +231,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             validationProblems!.Errors.ContainsKey(key).Should().BeTrue();
             validationProblems.Errors[key][0].Should().Be(errorMessage);
         }
-        
+
         [Test]
         public async Task Should_return_updated_hearing2()
         {
@@ -249,7 +252,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     {
                         ParticipantContactEmail = "interpreter@domain.net",
                         LinkedParticipantContactEmail = existingParticipant.ContactEmail,
-                        Type = AdminWebsite.Contracts.Enums.LinkedParticipantType.Interpreter
+                        Type = LinkedParticipantType.Interpreter
                     }
                 }
             });
@@ -264,7 +267,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     {
                         ParticipantContactEmail = existingParticipant.ContactEmail,
                         LinkedParticipantContactEmail = "interpreter@domain.net",
-                        Type = AdminWebsite.Contracts.Enums.LinkedParticipantType.Interpreter
+                        Type = LinkedParticipantType.Interpreter
                     }
                 },
             });
@@ -290,7 +293,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             panelMemberToUpdate.DisplayName = "NewPanelMemberDisplayName";
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
-            var hearing = (AdminWebsite.Contracts.Responses.HearingDetailsResponse)((OkObjectResult)result.Result).Value;
+            var hearing = (HearingDetailsResponse)((OkObjectResult)result.Result).Value;
             hearing.Id.Should().Be(updatedHearing.Id);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsV2Async(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequestV2>(u =>

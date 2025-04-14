@@ -46,8 +46,8 @@ public static class UpdateEndpointRequestV2Mapper
 
         return updateEndpointRequest;
     }
-    
-    private static bool EndpointStateUnchanged(EndpointResponse existing, EditEndpointRequest updated, List<EndpointParticipant> endpointRequestParticipants)
+
+    public static bool EndpointStateUnchanged(EndpointResponse existing, EditEndpointRequest updated, List<EndpointParticipant> endpointRequestParticipants)
     {
         if (updated == null) 
             return false;

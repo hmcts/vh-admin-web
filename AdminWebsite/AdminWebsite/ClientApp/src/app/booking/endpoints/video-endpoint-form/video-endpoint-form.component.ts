@@ -40,7 +40,6 @@ export class VideoEndpointFormComponent {
     }
     @Input() existingVideoEndpoints: VideoAccessPointDto[] = [];
     @Input() participants: VHParticipant[] = [];
-    private _availableParticipants: VHParticipant[];
     @Output() endpointAdded = new EventEmitter<VideoAccessPointDto>();
     @Output() endpointUpdated = new EventEmitter<{ original: VideoAccessPointDto; updated: VideoAccessPointDto }>();
 
@@ -50,6 +49,9 @@ export class VideoEndpointFormComponent {
         this._availableParticipants = value;
         this.populateParticipantLists();
     }
+
+    private _availableParticipants: VHParticipant[];
+
     constructor(private readonly formBuilder: FormBuilder) {
         this.createForm();
     }
@@ -124,7 +126,7 @@ export class VideoEndpointFormComponent {
             this.participants.some(ar => this.filterReps(ar) && ar.email === lp.email)
         );
         const intermediary = this.videoEndpoint.participantsLinked?.find(lp =>
-            this.participants.some(ai => this.filterInts(ai) && ai.email === lp.email)
+            this.participants.some(ai => this.filterIntermediaries(ai) && ai.email === lp.email)
         );
 
         this.updateParticipantPool(representative, intermediary);
@@ -174,9 +176,9 @@ export class VideoEndpointFormComponent {
         return rep;
     }
 
-    private filterInts = (p: VHParticipant) => p.hearingRoleCode === this.constants.HearingRoleCodes.Intermediary;
+    private readonly filterIntermediaries = (p: VHParticipant) => p.hearingRoleCode === this.constants.HearingRoleCodes.Intermediary;
 
-    private filterReps = (p: VHParticipant) =>
+    private readonly filterReps = (p: VHParticipant) =>
         p.userRoleName === this.constants.UserRoles.Representative && p.hearingRoleCode !== this.constants.HearingRoleCodes.Intermediary;
 
     private updateParticipantPool(representative: EndpointLink, intermediary: EndpointLink) {
@@ -188,9 +190,9 @@ export class VideoEndpointFormComponent {
         }
     }
 
-    private populateParticipantLists = () => {
+    private populateParticipantLists(): void {
         this.availableIntermediaries = this._availableParticipants
-            .filter(p => this.filterInts(p) && p.email)
+            .filter(p => this.filterIntermediaries(p) && p.email)
             .map(p => ({
                 email: p.email,
                 displayName: p.displayName
@@ -202,7 +204,7 @@ export class VideoEndpointFormComponent {
                 email: p.email,
                 displayName: p.displayName
             }));
-    };
+    }
 }
 
 function blankSpaceValidator(control: AbstractControl): { [key: string]: any } | null {

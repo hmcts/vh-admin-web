@@ -211,11 +211,11 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     }
 
     // Filter the participants who are representatives and not already linked to an endpoint
-    private generatePoolOfAvailableReps = () => {
+    private generatePoolOfAvailableReps(): void {
         this.availableReps = this.participants.filter(
             p =>
                 p.userRoleName === Constants.UserRoles.Representative &&
                 !this.videoEndpoints.some(endpoint => endpoint.participantsLinked?.some(linked => linked.email === p.email))
         );
-    };
+    }
 }
