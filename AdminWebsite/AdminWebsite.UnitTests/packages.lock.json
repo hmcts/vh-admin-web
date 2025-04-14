@@ -131,17 +131,17 @@
       },
       "BookingsApi.Client": {
         "type": "Transitive",
-        "resolved": "3.1.18",
-        "contentHash": "yZHztvLtbAKmrL6dzk2G69sQnJhnt+mUkvDOUMqf+zvvZchGyJP8wmL0zYBvSlqjfURiRBsC+oKA1ktv5DMbTg==",
+        "resolved": "3.2.6",
+        "contentHash": "C6oJuaaoxmMI+V8RBLgHTyjz2mOGjNVx9Q2lCWdVI+s0DCS8zXnYmzoqnXCOwLHP5YiBZ5dTkDXdJWJlq5Nxww==",
         "dependencies": {
-          "BookingsApi.Common.DotNet6": "3.1.18",
+          "BookingsApi.Common.DotNet6": "3.2.6",
           "System.Text.Json": "8.0.5"
         }
       },
       "BookingsApi.Common.DotNet6": {
         "type": "Transitive",
-        "resolved": "3.1.18",
-        "contentHash": "d/JHB4vc3QLOuEXukJqOAmo3iYU3A+4HK3u/BP2xqqNP57GbkcPm7eJcDEylYtJHkIV/QUuyWWNKUAKdrsN02g==",
+        "resolved": "3.2.6",
+        "contentHash": "6U/pWQExBDvV/6qKGud1uze+JP3iXc3tob0ko84kxYlVdz9k1saqT5OHbHUEg6Nbqshw8o5/xSPmJ5Pe2lpfIw==",
         "dependencies": {
           "System.Text.Json": "8.0.5"
         }
@@ -1906,8 +1906,8 @@
       },
       "VideoApi.Client": {
         "type": "Transitive",
-        "resolved": "3.1.18",
-        "contentHash": "KjsY3vJIgsikLc0fg8hEA5iESwtXIR89e7l46Zlk2A6Ba+kq/OmzHTW3jfFfRzpPYmoL3wfHaG0tBRW82lgsgw==",
+        "resolved": "3.2.12",
+        "contentHash": "D8aT2GeUvt0Z/UoTIFaBVHK3zeba+Cyh1uYn3HLXT79piWyxv/DZ/an0E/ePe+k7Ow4OoWiz3JqPspcJPnjbzw==",
         "dependencies": {
           "System.Text.Json": "8.0.5"
         }
@@ -1917,7 +1917,7 @@
         "dependencies": {
           "AspNetCore.HealthChecks.Uris": "[8.0.1, )",
           "Azure.Monitor.OpenTelemetry.AspNetCore": "[1.3.0-beta.2, )",
-          "BookingsApi.Client": "[3.1.18, )",
+          "BookingsApi.Client": "[3.2.6, )",
           "FluentValidation.AspNetCore": "[11.3.0, )",
           "LaunchDarkly.ServerSdk": "[8.5.0, )",
           "MicroElements.Swashbuckle.FluentValidation": "[6.0.0, )",
@@ -1938,7 +1938,7 @@
           "Swashbuckle.AspNetCore.Swagger": "[6.6.1, )",
           "TimeZoneConverter": "[6.1.0, )",
           "UserApi.Client": "[3.1.10, )",
-          "VideoApi.Client": "[3.1.18, )"
+          "VideoApi.Client": "[3.2.12, )"
         }
       },
       "adminwebsite.testing.common": {

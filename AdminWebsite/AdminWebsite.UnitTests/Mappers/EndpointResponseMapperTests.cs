@@ -29,7 +29,7 @@ namespace AdminWebsite.UnitTests.Mappers
                 DisplayName = "DisplayName",
                 Sip = "Sip",
                 Pin = "Pin",
-                DefenceAdvocateId = Guid.NewGuid(),
+                LinkedParticipantIds = [Guid.NewGuid()],
                 InterpreterLanguage = new V2.InterpreterLanguagesResponse
                 {
                     Code = "spa",
@@ -55,7 +55,7 @@ namespace AdminWebsite.UnitTests.Mappers
             result.ExternalReferenceId.Should().Be(endpoint.ExternalReferenceId);
             result.MeasuresExternalId.Should().Be(endpoint.MeasuresExternalId);
             result.Pin.Should().Be(endpoint.Pin);
-            result.DefenceAdvocateId.Should().Be(endpoint.DefenceAdvocateId);
+            result.LinkedParticipantIds.Should().Contain(endpoint.LinkedParticipantIds[0]);
             result.InterpreterLanguage.Should().NotBeNull();
             result.InterpreterLanguage.Should().BeEquivalentTo(endpoint.InterpreterLanguage.Map());
             result.ScreeningRequirement.Should().NotBeNull();

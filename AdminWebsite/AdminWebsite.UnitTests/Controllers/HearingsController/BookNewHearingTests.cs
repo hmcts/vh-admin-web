@@ -116,9 +116,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Endpoints = new List<EndpointRequest>
                 {
                     new()
-                        {DisplayName = "displayname1", DefenceAdvocateContactEmail = "contact2@hmcts.net"},
+                        {DisplayName = "displayname1", LinkedParticipantEmails = ["contact2@hmcts.net"]},
                     new()
-                        {DisplayName = "displayname2", DefenceAdvocateContactEmail = "contact3@hmcts.net"},
+                        {DisplayName = "displayname2", LinkedParticipantEmails = ["contact3@hmcts.net"]},
                 },
                 LinkedParticipants = new List<LinkedParticipantRequest>
                 {

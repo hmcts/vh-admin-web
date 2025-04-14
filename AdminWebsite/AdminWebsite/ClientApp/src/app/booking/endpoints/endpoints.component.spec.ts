@@ -52,7 +52,7 @@ function initHearingRequest(): VHBooking {
         {
             id: '1',
             displayName: 'Already Here',
-            defenceAdvocate: null,
+            participantsLinked: null,
             sip: 'sip',
             pin: 'pin',
             username: 'test@existing.com',
@@ -217,7 +217,7 @@ describe('EndpointsComponent', () => {
                 {
                     id: '1',
                     displayName: 'Test',
-                    defenceAdvocate: null,
+                    participantsLinked: null,
                     interpretationLanguage: undefined,
                     screening: undefined,
                     externalReferenceId: '1'
@@ -269,7 +269,7 @@ describe('EndpointsComponent', () => {
                 {
                     id: '1',
                     displayName: 'Test',
-                    defenceAdvocate: null,
+                    participantsLinked: null,
                     interpretationLanguage: undefined,
                     screening: undefined,
                     externalReferenceId: '1'
@@ -277,7 +277,7 @@ describe('EndpointsComponent', () => {
                 {
                     id: '2',
                     displayName: 'Test2',
-                    defenceAdvocate: null,
+                    participantsLinked: null,
                     interpretationLanguage: undefined,
                     screening: undefined,
                     externalReferenceId: '1'
@@ -335,7 +335,7 @@ describe('EndpointsComponent', () => {
                 {
                     id: '1',
                     displayName: 'Test',
-                    defenceAdvocate: null,
+                    participantsLinked: null,
                     interpretationLanguage: undefined,
                     screening: undefined,
                     externalReferenceId: '1'
@@ -343,7 +343,7 @@ describe('EndpointsComponent', () => {
                 {
                     id: '2',
                     displayName: 'Test2',
-                    defenceAdvocate: null,
+                    participantsLinked: null,
                     interpretationLanguage: undefined,
                     screening: undefined,
                     externalReferenceId: '1'

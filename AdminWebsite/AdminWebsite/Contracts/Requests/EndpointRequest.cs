@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace AdminWebsite.Contracts.Requests;
@@ -8,7 +9,7 @@ public class EndpointRequest
     [RegularExpression(@"^[\p{L}\p{N}\s',._-]+$")]
     public string DisplayName { get; set; }
     public string ExternalReferenceId { get; set; }
-    public string DefenceAdvocateContactEmail { get; set; }
+    public List<string> LinkedParticipantEmails { get; set; }
     public string InterpreterLanguageCode { get; set; }
     /// <summary>
     /// Screening requirements for an endpoint (optional)

@@ -136,10 +136,10 @@
           </ng-container>
         </div>
       </div>
-      <div *ngIf="getDefenceAdvocateByContactEmail(endpoint.defenceAdvocate)" class="govuk-grid-row">
-        <div class="govuk-grid-column-full" id="defenceAdvocateRep{{ +i }}">
+      <div *ngIf="endpoint.participantsLinked" class="govuk-grid-row">
+        <div *ngFor="let pl of endpoint.participantsLinked" class="govuk-grid-column-full" id="endpoint-linked-participant{{ +i }}">
           <fa-icon [icon]="linkIcon" size="xs"></fa-icon>
-          {{ getDefenceAdvocateByContactEmail(endpoint.defenceAdvocate) }}
+          {{ getDefenceAdvocateByContactEmail(pl) }}
         </div>
       </div>
       <div class="govuk-grid-row">
