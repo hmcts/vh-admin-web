@@ -12,10 +12,7 @@ export class EndpointModel {
     displayName?: string;
     sip?: string;
     pin?: string;
-    /**
-     * Defence advocate email address, not their ID
-     */
-    defenceAdvocate?: string;
+    participantsLinked?: string[];
     username?: string;
     contactEmail?: string;
     interpretationLanguage: InterpreterSelectedDto;

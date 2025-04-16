@@ -13,7 +13,7 @@ namespace AdminWebsite.UnitTests.Mappers
             var request = new EndpointRequest
             {
                 DisplayName = "DisplayName",
-                DefenceAdvocateContactEmail = "email@email.com",
+                LinkedParticipantEmails = ["email@email.com"],
                 InterpreterLanguageCode = "spa",
                 ScreeningRequirements = new SpecialMeasureScreeningRequest()
                 {
@@ -27,7 +27,7 @@ namespace AdminWebsite.UnitTests.Mappers
 
             // Assert
             result.DisplayName.Should().Be(request.DisplayName);
-            result.DefenceAdvocateContactEmail.Should().Be(request.DefenceAdvocateContactEmail);
+            result.LinkedParticipantEmails.Should().Contain(request.LinkedParticipantEmails[0]);
             result.InterpreterLanguageCode.Should().Be(request.InterpreterLanguageCode);
             
             result.Screening.Type.Should().Be(ScreeningType.Specific);

@@ -653,7 +653,7 @@ function createEndpoints(): EndpointResponse[] {
     endpoint.display_name = 'EndpointDisplayName';
     endpoint.sip = 'sip';
     endpoint.pin = '4634';
-    endpoint.defence_advocate_id = DEFENCE_COUNSEL_ID;
+    endpoint.linked_participant_ids = [DEFENCE_COUNSEL_ID];
     endpoints.push(endpoint);
 
     return endpoints;

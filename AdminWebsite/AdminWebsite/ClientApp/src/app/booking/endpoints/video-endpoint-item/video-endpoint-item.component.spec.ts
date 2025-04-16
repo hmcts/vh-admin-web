@@ -24,7 +24,7 @@ describe('VideoEndpointItemComponent', () => {
         spyOn(component.editEndpoint, 'emit');
         const dto: VideoAccessPointDto = {
             displayName: 'Test',
-            defenceAdvocate: null,
+            participantsLinked: null,
             interpretationLanguage: undefined,
             screening: undefined,
             externalReferenceId: undefined
@@ -38,7 +38,7 @@ describe('VideoEndpointItemComponent', () => {
         spyOn(component.deleteEndpoint, 'emit');
         const dto: VideoAccessPointDto = {
             displayName: 'Test',
-            defenceAdvocate: null,
+            participantsLinked: null,
             interpretationLanguage: undefined,
             screening: undefined,
             externalReferenceId: undefined

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace AdminWebsite.Contracts.Responses;
 public class EndpointResponse
@@ -9,7 +10,7 @@ public class EndpointResponse
     public string DisplayName { get; set; }
     public string Sip { get; set; }
     public string Pin { get; set; }
-    public Guid? DefenceAdvocateId { get; set; }
+    public IList<Guid> LinkedParticipantIds { get; set; } = new List<Guid>();
     public AvailableLanguageResponse InterpreterLanguage { get; set; }
     public ScreeningResponse ScreeningRequirement { get; set; }
 }

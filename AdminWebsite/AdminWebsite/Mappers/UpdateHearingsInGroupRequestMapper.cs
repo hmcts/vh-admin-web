@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Mappers.EditMultiDayHearing;
@@ -95,7 +94,7 @@ public static class UpdateHearingsInGroupRequestMapper
                 .Select(v1 => new EndpointRequestV2
                 {
                     DisplayName = v1.DisplayName,
-                    DefenceAdvocateContactEmail = v1.DefenceAdvocateContactEmail
+                    LinkedParticipantEmails = v1.LinkedParticipantEmails
                 })
                 .ToList(),
             ExistingEndpoints = endpointsV1.ExistingEndpoints
@@ -103,7 +102,7 @@ public static class UpdateHearingsInGroupRequestMapper
                 {
                     Id = v1.Id,
                     DisplayName = v1.DisplayName,
-                    DefenceAdvocateContactEmail = v1.DefenceAdvocateContactEmail
+                    LinkedParticipantEmails = v1.LinkedParticipantEmails
                 })
                 .ToList(),
             RemovedEndpointIds = endpointsV1.RemovedEndpointIds.ToList()
@@ -122,8 +121,7 @@ public static class UpdateHearingsInGroupRequestMapper
 
         var request = new UpdateHearingEndpointsRequestV2();
 
-        var listOfEndpointsToDelete =
-            hearing.Endpoints.Where(e => endpoints.TrueForAll(re => re.Id != e.Id)).ToList();
+        var listOfEndpointsToDelete = hearing.Endpoints.Where(e => endpoints.TrueForAll(re => re.Id != e.Id)).ToList();
         if (hearingChanges != null)
         {
             // Only remove endpoints that have been explicitly removed as part of this request, if they exist on this hearing
@@ -159,7 +157,7 @@ public static class UpdateHearingsInGroupRequestMapper
                 var addEndpointRequest = new EndpointRequestV2
                 {
                     DisplayName = endpoint.DisplayName,
-                    DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail,
+                    LinkedParticipantEmails = endpoint.LinkedParticipantEmails,
                     InterpreterLanguageCode = endpoint.InterpreterLanguageCode,
                     Screening = endpoint.ScreeningRequirements?.MapToV2(),
                     ExternalParticipantId = endpoint.ExternalReferenceId
@@ -192,7 +190,10 @@ public static class UpdateHearingsInGroupRequestMapper
         {
             Id = e.Id,
             DisplayName = e.DisplayName,
-            DefenceAdvocateContactEmail = hearing.Participants.Find(x => x.Id == e.DefenceAdvocateId)?.ContactEmail
+            LinkedParticipantEmails = hearing.Participants
+                .Where(x => e.LinkedParticipantIds?.Contains(x.Id) ?? false)
+                .Select(p => p.ContactEmail)
+                .ToList(),
         }));
         
         // If any of these endpoints relate to the ones in the request, update their properties to match those in the request
@@ -202,7 +203,7 @@ public static class UpdateHearingsInGroupRequestMapper
             if (relatedEndpoint != null)
             {
                 endpoint.DisplayName = relatedEndpoint.EndpointRequest.DisplayName;
-                endpoint.DefenceAdvocateContactEmail = relatedEndpoint.EndpointRequest.DefenceAdvocateContactEmail;
+                endpoint.LinkedParticipantEmails = relatedEndpoint.EndpointRequest.LinkedParticipantEmails;
             }
         }
 
