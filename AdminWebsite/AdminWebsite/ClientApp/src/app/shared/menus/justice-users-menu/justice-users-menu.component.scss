@@ -1,4 +1,4 @@
-@use 'govuk-frontend/dist/govuk/base'  as *;
+@use 'govuk-frontend/dist/govuk/base' as *;
 
 .ng-select.custom ::ng-deep .ng-placeholder {
   color: govuk-colour('black');

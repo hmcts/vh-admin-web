@@ -1,4 +1,4 @@
-@use 'govuk-frontend/dist/govuk/base'  as *;
+@use 'govuk-frontend/dist/govuk/base' as *;
 
 .detailsBox {
   @include govuk-font(16, $weight: 'regular', $tabular: false, $line-height: false);
