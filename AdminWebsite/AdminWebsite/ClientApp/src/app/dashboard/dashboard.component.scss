@@ -1,4 +1,4 @@
-@import 'govuk-frontend/dist/govuk/base';
+@use 'govuk-frontend/dist/govuk/base'  as *;
 // global styles for <a> and <p> tags
 $govuk-global-styles: true;
 

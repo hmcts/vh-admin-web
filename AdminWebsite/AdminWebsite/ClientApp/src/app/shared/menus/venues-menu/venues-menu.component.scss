@@ -1,9 +1,4 @@
-@import 'govuk-frontend/dist/govuk/base';
-@import 'govuk-frontend/dist/govuk/core';
-
-#venue-list {
-  @extend .govuk-body;
-}
+@use 'govuk-frontend/dist/govuk/base'  as *;
 
 .ng-select.custom ::ng-deep .ng-placeholder {
   color: govuk-colour('black');

@@ -1,5 +1,4 @@
-@import 'govuk-frontend/dist/govuk/base';
-@import 'govuk-frontend/dist/govuk/core';
+@use 'govuk-frontend/dist/govuk/base'  as *;
 
 p {
   overflow: hidden;
@@ -93,10 +92,6 @@ p {
 .vh-searchicon {
   height: 12px;
   margin-right: 6px;
-}
-
-#venue-list {
-  @extend .govuk-body;
 }
 
 .ng-select.custom ::ng-deep .ng-placeholder {
