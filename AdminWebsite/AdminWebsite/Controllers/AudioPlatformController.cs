@@ -13,6 +13,7 @@ using VideoApi.Client;
 using VideoApi.Contract.Responses;
 using CvpForAudioFileResponse = AdminWebsite.Models.CvpForAudioFileResponse;
 using HearingAudioRecordingResponse = AdminWebsite.Models.HearingAudioRecordingResponse;
+using AdminWebsite.Extensions.Logging;
 
 namespace AdminWebsite.Controllers
 {
@@ -43,7 +44,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetAudioRecordingLinkAsync(Guid hearingId)
         {
-            _logger.LogInformation("Getting audio recording for hearing: {HearingId}", hearingId);
+            _logger.LogAudioRecordingRetrieved(hearingId);
 
             try
             {

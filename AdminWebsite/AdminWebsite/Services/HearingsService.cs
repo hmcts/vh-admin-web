@@ -16,6 +16,7 @@ using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Requests;
 using BookingsApi.Contract.V2.Responses;
 using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
+using AdminWebsite.Extensions.Logging;
 
 namespace AdminWebsite.Services;
 
@@ -100,14 +101,14 @@ public class HearingsService(IBookingsApiClient bookingsApiClient, ILogger<Heari
 
     public async Task CloneHearing(Guid hearingId, MultiHearingRequest hearingRequest)
     {
-        logger.LogDebug("Attempting to clone hearing {Hearing}", hearingId);
+        logger.LogAttemptingToCloneHearing(hearingId);
 
         var hearingDates = GetDatesForClonedHearings(hearingRequest);
             
         if (hearingDates.Count == 0)
         {
             const string errorMessage = "No working dates provided to clone to";
-            logger.LogWarning(errorMessage);
+            logger.LogNoWorkingDatesToClone();
             throw new ServiceException(errorMessage);
         }
 
@@ -117,9 +118,9 @@ public class HearingsService(IBookingsApiClient bookingsApiClient, ILogger<Heari
             ScheduledDuration = hearingRequest.ScheduledDuration
         };
             
-        logger.LogDebug("Sending request to clone hearing to Bookings API");
+        logger.LogSendingCloneRequest();
         await bookingsApiClient.CloneHearingAsync(hearingId, cloneHearingRequest);
-        logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
+        logger.LogSuccessfullyClonedHearing(hearingId);
     }
 
     public async Task<HearingDetailsResponse> BookNewHearing(BookHearingRequest request, string createdBy)
@@ -128,12 +129,12 @@ public class HearingsService(IBookingsApiClient bookingsApiClient, ILogger<Heari
         newBookingRequest.IsMultiDayHearing = request.IsMultiDay;
         newBookingRequest.CreatedBy = createdBy;
             
-        logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
+        logger.LogAttemptingToBookNewHearing();
         var newBookingRequestV2 = newBookingRequest.MapToV2();
         var hearingDetailsResponse = await bookingsApiClient.BookNewHearingWithCodeAsync(newBookingRequestV2);
         var hearingId = hearingDetailsResponse.Id;
         var response = hearingDetailsResponse.Map();
-        logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}", hearingId);
+        logger.LogSuccessfullyBookedHearing(hearingId);
         return response;
     }
         
@@ -284,8 +285,7 @@ public class HearingsService(IBookingsApiClient bookingsApiClient, ILogger<Heari
     {
         foreach (var endpointToDelete in listOfEndpointsToDelete)
         {
-            logger.LogDebug("Removing endpoint {Endpoint} - {EndpointDisplayName} from hearing {Hearing}",
-                endpointToDelete.Id, endpointToDelete.DisplayName, hearing.Id);
+            logger.LogRemovingEndpoint(endpointToDelete.Id, endpointToDelete.DisplayName, hearing.Id);
             await bookingsApiClient.RemoveEndPointFromHearingAsync(hearing.Id, endpointToDelete.Id);
         }
     }
@@ -293,8 +293,7 @@ public class HearingsService(IBookingsApiClient bookingsApiClient, ILogger<Heari
     private async Task AddEndpointToHearing(Guid hearingId, HearingDetailsResponse hearing,
         EditEndpointRequest endpoint)
     {
-        logger.LogDebug("Adding endpoint {EndpointDisplayName} to hearing {Hearing}",
-            endpoint.DisplayName, hearingId);
+        logger.LogAddingEndpoint(endpoint.DisplayName, hearingId);
         var addEndpointRequest = new EndpointRequestV2()
         {
             DisplayName = endpoint.DisplayName,
@@ -312,8 +311,7 @@ public class HearingsService(IBookingsApiClient bookingsApiClient, ILogger<Heari
         var request = UpdateEndpointRequestV2Mapper.Map(hearing, endpoint, newParticipantList);
         if (request == null) return;
             
-        logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
-            endpoint.Id, endpoint.DisplayName, hearingId);
+        logger.LogUpdatingEndpoint(endpoint.Id!.Value, endpoint.DisplayName, hearingId);
             
         await bookingsApiClient.UpdateEndpointV2Async(hearing.Id, endpoint.Id!.Value, request);
     }
