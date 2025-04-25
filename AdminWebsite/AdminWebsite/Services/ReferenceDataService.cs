@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AdminWebsite.Extensions.Logging;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Responses;
 using BookingsApi.Contract.V2.Responses;
@@ -32,7 +33,7 @@ public class ReferenceDataService(IBookingsApiClient bookingsApiClient, IMemoryC
         await GetHearingVenuesAsync();
         await GetNonDeletedCaseTypesAsync();
         await GetHearingRolesAsync();
-        logger.LogInformation("Static ref data (languages, venues, case types and hearing roles) cached");
+        logger.LogStaticRefDataCached();
     }
 
     public async Task<List<CaseTypeResponseV2>> GetNonDeletedCaseTypesAsync(

@@ -8,6 +8,7 @@ using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Exceptions;
 using AdminWebsite.Extensions;
+using AdminWebsite.Extensions.Logging;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
@@ -79,8 +80,7 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                _logger.LogError(e, "BookNewHearing - There was a problem saving the booking. Status Code {StatusCode} - Message {Message}",
-                    e.StatusCode, e.Response);
+                _logger.LogBookNewHearingError(e.StatusCode, e.Response, e);
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
                     var typedException = e as BookingsApiException<ValidationProblemDetails>;
@@ -90,8 +90,7 @@ namespace AdminWebsite.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "BookNewHearing - Failed to save hearing - {Message} -  for request: {RequestBody}",
-                    e.Message, JsonConvert.SerializeObject(request));
+                _logger.LogBookNewHearingFailed(e.Message, JsonConvert.SerializeObject(request), e);
                 return StatusCode(500, e.Message);
             }
         }
@@ -116,9 +115,7 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                _logger.LogError(e,
-                    "There was a problem rebooking the hearing. Status Code {StatusCode} - Message {Message}",
-                    e.StatusCode, e.Response);
+                _logger.LogRebookHearingError(e.StatusCode, e.Response, e);
                 if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound(e.Response);
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 return StatusCode(500, e.Message);
@@ -152,9 +149,7 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                _logger.LogError(e,
-                    "There was a problem cloning the booking. Status Code {StatusCode} - Message {Message}",
-                    e.StatusCode, e.Response);
+                _logger.LogCloneHearingError(e.StatusCode, e.Response, e);
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 return StatusCode(500, e.Message);
             }
@@ -181,12 +176,12 @@ namespace AdminWebsite.Controllers
         {
             if (hearingId == Guid.Empty)
             {
-                _logger.LogWarning("No hearing id found to edit");
+                _logger.LogNoHearingIdToEdit();
                 ModelState.AddModelError(nameof(hearingId), $"Please provide a valid {nameof(hearingId)}");
                 return ValidationProblem(ModelState);
             }
 
-            _logger.LogDebug("Attempting to edit hearing {Hearing}", hearingId);
+            _logger.LogAttemptingToEditHearing(hearingId);
             HearingDetailsResponse originalHearing;
             try
             {
@@ -194,8 +189,7 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                _logger.LogError(e, "Failed to get hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
-                    hearingId, e.StatusCode, e.Response);
+                _logger.LogFailedToGetHearing(hearingId, e.StatusCode, e.Response);
                 if (e.StatusCode != (int)HttpStatusCode.NotFound) throw;
                 return NotFound($"No hearing with id found [{hearingId}]");
             }
@@ -212,8 +206,7 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                _logger.LogError(e, "Failed to edit hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
-                    hearingId, e.StatusCode, e.Response);
+                _logger.LogFailedToEditHearing(hearingId, e.StatusCode, e.Response);
                 
                 if (e.StatusCode is (int)HttpStatusCode.BadRequest)
                 {
@@ -270,7 +263,7 @@ namespace AdminWebsite.Controllers
                     return ValidationProblem(typedException!.Result);
                 }
 
-                _logger.LogError(e, "Unexpected error trying to edit multi day hearing");
+                _logger.LogUnexpectedErrorEditingMultiDayHearing(e);
                 return StatusCode(500, e.Message);
             }
         }
@@ -311,7 +304,7 @@ namespace AdminWebsite.Controllers
                     return ValidationProblem(typedException!.Result);
                 }
                 
-                _logger.LogError(e, "Unexpected error trying to cancel multi day hearing");
+                _logger.LogUnexpectedErrorCancellingMultiDayHearing(e);
                 return StatusCode(500, e.Message);
             }
         }
@@ -388,7 +381,7 @@ namespace AdminWebsite.Controllers
             var errorMessage = $"Failed to get the booking created status, possibly the conference was not created - hearingId: {hearingId}";
             try
             {
-                _logger.LogDebug("Hearing {HearingId} is booked. Polling for the status in BookingsApi", hearingId);
+                _logger.LogPollingHearingStatus(hearingId);
                 var response = (await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId)).Map();
                 var participantsNeedVhAccounts = ParticipantsNeedVhAccounts(response.Participants);
                 var accountsStillNeedCreating = participantsNeedVhAccounts.Any(x => x.ContactEmail == x.Username);
@@ -417,7 +410,7 @@ namespace AdminWebsite.Controllers
                 }
                 catch (VideoApiException e)
                 {
-                    _logger.LogError(e, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
+                    _logger.LogFailedToGetBookingCreatedStatusError(hearingId, e);
                     if (e.StatusCode == (int)HttpStatusCode.NotFound)
                     {
                         return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
@@ -434,7 +427,7 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                _logger.LogError(e, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
+                _logger.LogFailedToGetBookingCreatedStatusError(hearingId, e);
                 if (e.StatusCode == (int)HttpStatusCode.NotFound)
                     return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
                 
@@ -463,12 +456,12 @@ namespace AdminWebsite.Controllers
                 };
                 await _bookingsApiClient.CancelBookingAsync(hearingId, cancelRequest);
 
-                _logger.LogDebug("Updated hearing {Hearing} to booking status {BookingStatus}", hearingId, BookingStatus.Cancelled);
+                _logger.LogUpdatedHearingStatus(hearingId, BookingStatus.Cancelled.ToString());
                 return Ok(new UpdateBookingStatusResponse { Success = true });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "There was an unknown error updating status for hearing {Hearing}", hearingId);
+                _logger.LogUnknownErrorUpdatingHearingStatus(hearingId, ex);
                 if (ex is BookingsApiException e)
                 {
                     if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
@@ -497,7 +490,7 @@ namespace AdminWebsite.Controllers
             }
             catch (VideoApiException e)
             {
-                _logger.LogError(e, "Failed to update the failed status for a hearing - hearingId: {HearingId}", hearingId);
+                _logger.LogFailedToUpdateFailedStatus(hearingId, e);
                 if (e.StatusCode == (int) HttpStatusCode.NotFound) return NotFound();
                 if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
             }

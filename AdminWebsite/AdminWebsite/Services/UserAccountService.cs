@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Extensions.Logging;
 using AdminWebsite.Security;
 using BookingsApi.Client;
 using Microsoft.Extensions.Logging;
@@ -89,17 +90,17 @@ namespace AdminWebsite.Services
             {
                 if (e.StatusCode != (int)HttpStatusCode.NotFound)
                 {
-                    _logger.LogError(e, "Unhandled error getting an AD user by username {Username}", username);
+                    _logger.LogUnhandledErrorGettingAdUser(username, e);
                     throw;
                 }
-                _logger.LogWarning("AD User not found for username {Username}", username);
+                _logger.LogAdUserNotFound(username);
                 return null;
             }
         }
 
         public async Task<IEnumerable<JudgeResponse>> SearchJudgesByEmail(string term)
         {
-            _logger.LogDebug("Attempting to get all judge accounts");
+            _logger.LogAttemptingToGetAllJudgeAccounts();
 
             var judgesList = (await _userApiClient.GetJudgesByUsernameAsync(term)).Select(x => new JudgeResponse
             {
@@ -178,9 +179,9 @@ namespace AdminWebsite.Services
             }
             catch (UserApiException e)
             {
-                _logger.LogError(e, "Failed to get user in User API. Status Code {StatusCode} - Message {Message}",e.StatusCode, e.Response);
+                _logger.LogFailedToGetUserInUserApi(e.StatusCode, e.Response, e);
                 if (e.StatusCode != (int)HttpStatusCode.NotFound) throw;
-                _logger.LogWarning(e, "User not found. Status Code {StatusCode} - Message {Message}",e.StatusCode, e.Response);
+                _logger.LogUserNotFoundInUserApi(e.StatusCode, e.Response);
                 return false;
             }
         }
@@ -194,9 +195,9 @@ namespace AdminWebsite.Services
             }
             catch (BookingsApiException e)
             {
-                _logger.LogError(e, "Failed to get person in User API. Status Code {StatusCode} - Message {Message}",e.StatusCode, e.Response);
+                _logger.LogFailedToGetPersonInUserApi(e.StatusCode, e.Response, e);
                 if (e.StatusCode != (int)HttpStatusCode.NotFound) throw;
-                _logger.LogWarning(e, "User not found. Status Code {StatusCode} - Message {Message}", e.StatusCode, e.Response);
+                _logger.LogUserNotFoundInUserApi(e.StatusCode, e.Response);
                 return false;
             }
         }
