@@ -1,12 +1,7 @@
-@import 'govuk-frontend/dist/govuk/base';
-@import 'govuk-frontend/dist/govuk/core';
+@use 'govuk-frontend/dist/govuk/base' as *;
 
 :host {
   display: block;
-}
-
-#user-list {
-  @extend .govuk-body;
 }
 
 .ng-select.custom ::ng-deep .ng-placeholder {

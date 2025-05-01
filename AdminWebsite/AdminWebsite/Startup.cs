@@ -5,7 +5,7 @@ using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Health;
 using AdminWebsite.Middleware;
-using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Azure.Monitor.OpenTelemetry.Exporter;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,19 +14,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 namespace AdminWebsite
 {
-    public class Startup
+    public class Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; } = configuration;
         private Settings Settings { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -34,37 +30,17 @@ namespace AdminWebsite
         {
             var instrumentationKey = Configuration["ApplicationInsights:ConnectionString"];
             services.AddOpenTelemetry()
-                .ConfigureResource(r =>
-                {
-                    r.AddService("vh-admin-web")
-                        .AddTelemetrySdk()
-                        .AddAttributes(new Dictionary<string, object>
-                            { ["service.instance.id"] = Environment.MachineName });
-                })
-                .UseAzureMonitor(options => options.ConnectionString = instrumentationKey) 
-                .WithTracing(tracerProvider =>
-                {
-                    tracerProvider
-                        .AddAspNetCoreInstrumentation(options => options.RecordException = true)
-                        .AddHttpClientInstrumentation(options =>
-                        {
-                            options.RecordException = true;
-                            options.EnrichWithHttpRequestMessage = (activity, request) =>
-                            {
-                                if (request.Content != null)
-                                {
-                                    var requestBody = request.Content.ReadAsStringAsync().Result;
-                                    activity.SetTag("http.request.body", requestBody);
-                                }
-                            };
-
-                            options.EnrichWithHttpResponseMessage = (activity, response) =>
-                            {
-                                var responseBody = response.Content.ReadAsStringAsync().Result;
-                                activity.SetTag("http.response.body", responseBody);
-                            };
-                        });
-                });
+                .ConfigureResource(r => r.AddService("vh-admin-web")
+                    .AddTelemetrySdk()
+                    .AddAttributes(new Dictionary<string, object> { ["service.instance.id"] = Environment.MachineName }))
+                .WithMetrics(metricsProvider => metricsProvider
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddAzureMonitorMetricExporter(o => o.ConnectionString = instrumentationKey))
+                .WithTracing(tracerProvider => tracerProvider
+                    .AddAspNetCoreInstrumentation(options => options.RecordException = true)
+                    .AddHttpClientInstrumentation()
+                    .AddAzureMonitorTraceExporter(o => o.ConnectionString = instrumentationKey));
             
             var envName = Configuration["AzureAd:RedirectUri"]; // resource ID is a GUID, 
             

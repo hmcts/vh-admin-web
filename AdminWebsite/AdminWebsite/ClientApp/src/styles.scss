@@ -1,8 +1,6 @@
-$govuk-suppressed-warnings: ('govuk-typography-scale-14');
-
-@import 'govuk-frontend/dist/govuk/index';
-@import '@ministryofjustice/frontend/moj/all';
-@import '@ng-select/ng-select/themes/default.theme.css';
+@use 'govuk-frontend/dist/govuk/index' as *;
+@use '@ministryofjustice/frontend/moj/all' as moj;
+@use '@ng-select/ng-select/themes/default.theme.css';
 
 body {
   font-family: 'nta', Arial, sans-serif;
