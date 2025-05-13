@@ -5103,7 +5103,8 @@ export enum ScreeningType {
 }
 
 export enum VideoSupplier {
-    Vodafone = 'Vodafone'
+    Vodafone = 'Vodafone',
+    Stub = 'Stub'
 }
 
 /** Create a new Justice User */
