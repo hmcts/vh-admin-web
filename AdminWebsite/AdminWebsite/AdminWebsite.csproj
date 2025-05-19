@@ -55,7 +55,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="TimeZoneConverter" Version="6.1.0" />
-    <PackageReference Include="UserApi.Client" Version="3.1.10" />
+    <PackageReference Include="UserApi.Client" Version="3.2.9-pr-0279-0009" />
     <PackageReference Include="VideoApi.Client" Version="3.2.12" />
   </ItemGroup>
 
