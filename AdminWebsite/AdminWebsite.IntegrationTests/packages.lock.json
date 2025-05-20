@@ -1072,8 +1072,8 @@
       },
       "UserApi.Client": {
         "type": "Transitive",
-        "resolved": "3.1.10",
-        "contentHash": "wZOra3f8bhqdD9PAXXFN5OkBp+JZbkV+pFTgYS1lypmMtnPcn7WeaNH8K6Zbf75I4CvGOGLHjdExw7nGGoN2IQ==",
+        "resolved": "3.2.9-pr-0279-0009",
+        "contentHash": "F1sk4GqkWkQrdANhdsEiDMwRBhebBYyVBKwHHM5CBVb0dVKrjYaZ6EDuoyFAnXg0x52D2DDe5G8B/4UIFuKi7Q==",
         "dependencies": {
           "System.Text.Json": "8.0.5"
         }
@@ -1111,7 +1111,7 @@
           "Swashbuckle.AspNetCore.Newtonsoft": "[6.6.1, )",
           "Swashbuckle.AspNetCore.Swagger": "[6.6.1, )",
           "TimeZoneConverter": "[6.1.0, )",
-          "UserApi.Client": "[3.1.10, )",
+          "UserApi.Client": "[3.2.9-pr-0279-0009, )",
           "VideoApi.Client": "[3.2.12, )"
         }
       },
