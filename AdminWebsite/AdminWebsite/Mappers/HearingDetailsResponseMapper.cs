@@ -25,6 +25,7 @@ public static class HearingDetailsResponseMapper
             }).ToList(),
             Participants = hearingDetails.Participants?.Map(hearingDetails),
             HearingRoomName = hearingDetails.HearingRoomName,
+            HearingVenueName = hearingDetails.HearingVenueName,
             OtherInformation = hearingDetails.OtherInformation,
             CreatedDate = hearingDetails.CreatedDate,
             CreatedBy = hearingDetails.CreatedBy,
